@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.91.0/http/mod.ts"
-import getRoutes from "./routes/index.js"
+import getRoutes from "../lib/routes/index.js"
 const routes = await getRoutes()
 
 const port = 7777
