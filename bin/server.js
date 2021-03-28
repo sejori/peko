@@ -1,10 +1,17 @@
+import { config } from "https://deno.land/x/dotenv/mod.ts"
 import { serve } from "https://deno.land/std@0.91.0/http/mod.ts"
+
 import getRoutes from "../lib/routes/index.js"
-const routes = await getRoutes()
+
+const { ENVIRONMENT } = config({ safe: true })
+console.log(`Starting Velocireno HTTP server in ${ENVIRONMENT} environment with the following routes:`)
+
+const routes = await getRoutes(ENVIRONMENT)
+console.log(routes)
 
 const port = 7777
 const server = serve({ hostname: "0.0.0.0", port })
-console.log(`HTTP webserver running on port ${port}`)
+console.log(`Velocireno running on port ${port}`)
 
 for await (const request of server) {
     let start = Date.now()
