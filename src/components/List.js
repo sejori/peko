@@ -11,18 +11,16 @@ const List = ({ data }) => { // takes a data prop
     }
 
     return html`
-        <ul>
-            ${data && data.map(i => html`
-                <li>
-                    <!-- listen for button clicks --> 
-                    ${i}: <button onClick=${handleClick}>Click me</button>
-                </li>
-            `)}
-            <li>
-                <!-- list how many clicks we've seen, with the right plural -->
-                ${count} ${count === 1 ? 'click' : 'clicks'} counted
-            </li>
-        </ul>
+        <div>
+            <ul>
+                ${data && data.map(i => html`
+                    <li>
+                        ${i}: <button onClick=${handleClick}>Click me</button>
+                    </li>
+                `)}
+            </ul>
+            <h2>${count} ${count === 1 ? 'click' : 'clicks'} counted</h2>
+        </div>
     `
 }
 

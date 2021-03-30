@@ -4,7 +4,7 @@ import { serve } from "https://deno.land/std@0.91.0/http/mod.ts"
 import getRoutes from "../lib/routes/index.js"
 
 const { ENVIRONMENT } = config({ safe: true })
-console.log(`Starting Velocireno HTTP server in ${ENVIRONMENT} environment with the following routes:`)
+console.log(`Starting Velocireno in ${ENVIRONMENT} environment. Routes found:`)
 
 const routes = await getRoutes(ENVIRONMENT)
 console.log(routes)

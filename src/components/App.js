@@ -9,16 +9,20 @@ const App = () => {
     return html`
         <div>
             <${List} data=${dataArray} />
-            <button style=${buttonStyle} onClick=${() => setDataArray(dataArray => [...dataArray, `Item ${dataArray.length}`])}>add item</button>
+            <button 
+                class="btn-lg-primary" 
+                onClick=${() => setDataArray(dataArray => [...dataArray, `Item ${dataArray.length}`])}
+            >
+                add item
+            </button>
+            <button 
+                class="btn-lg-secondary" 
+                onClick=${() => setDataArray(dataArray => dataArray.slice(0, dataArray.length-1))}
+            >
+                remove item
+            </button>
         </div>
     `
 }
-
-const buttonStyle = `
-    border: solid 1px red;
-    background-color: orange;
-    padding: 0.5rem;
-    font-size: 1rem;
-`
 
 export default App

@@ -1,0 +1,13 @@
+.btn-lg-primary {
+    border: solid 1px limegreen;
+    background-color: turquoise;
+    padding: 0.5rem;
+    font-size: 1rem;
+}
+
+.btn-lg-secondary {
+    border: solid 1px red;
+    background-color: orange;
+    padding: 0.5rem;
+    font-size: 1rem;
+}
