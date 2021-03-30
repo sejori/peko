@@ -1,4 +1,4 @@
-# velocireno - Frontend Web Framework
+# Velocireno, a frontend web server framework.
 
 ## The epic union of Deno 🦕, Skypack 🛰️ & Preact ⚛️
 
