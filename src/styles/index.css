@@ -4,3 +4,5 @@ html, body {
     margin: 0;
     font-family: helvetica;
 }
+
+img { max-width: 100%; }
