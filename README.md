@@ -2,7 +2,7 @@
 
 ## The epic union of Deno 🦕 &  Preact ⚛️
 
-A deno http server renders the content of the page and serves it to the browser as html. The browser then fetches the page's Javascript via Skypack CDN (for external modules) and the Deno server (for custom modules) and hydrates the page.
+A deno http server renders the content of the page and serves it to the browser as html. The browser then fetches the page's Javascript via Skypack CDN (for external modules) and the Deno server (for internal modules) and hydrates the page.
 
 ## Why is this cool?
 
