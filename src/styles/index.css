@@ -6,3 +6,6 @@ html, body {
 }
 
 img { max-width: 100%; }
+.container { max-width: 900px; margin: auto; }
+.row { display: flex; }
+.justify-around { justify-content: space-around; }

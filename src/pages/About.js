@@ -4,7 +4,7 @@ import Layout from "../layouts/Layout.js"
 
 const About = () => {
     return html`
-        <${Layout} navColour="lavender">
+        <${Layout} navColor="lavender">
             <h1>About!</h1>
             <img src="/assets/lighthouse-score.png" alt="lighthouse-score" />
             <p>Need I say more?</p>

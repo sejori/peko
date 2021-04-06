@@ -1,10 +1,11 @@
 import { html } from  'https://cdn.skypack.dev/htm/preact'
 
-const Layout = ({ navColour, children }) => {
+const Layout = ({ navColor, children }) => {
 
     return html`<div>
-        <nav style=${navStyle(navColour)}>
+        <nav style=${navStyle(navColor)}>
             <a style=${navLinkStyle} href="/">Home</a>
+            <span style="font-size: 5rem;">🐓</span>
             <a style=${navLinkStyle} href="/about">About</a>
         </nav>
         <main style=${mainStyle}>
@@ -14,16 +15,17 @@ const Layout = ({ navColour, children }) => {
         
 }
 
-const navStyle = (colour) => `
+const navStyle = (navColor) => `
     width: 100%;
     display: flex;
     justify-content: center;
-    padding: 1rem 0;
-    background-color: ${colour};
+    align-items: center;
+    color: firebrick;
+    background-color: ${navColor};
 `
 
 const navLinkStyle = `
-    margin: 1rem;
+    margin: 1rem 3rem;
 `
 
 const mainStyle = `
