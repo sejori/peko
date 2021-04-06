@@ -1,4 +1,4 @@
-import { html } from  'https://cdn.skypack.dev/htm/preact'
+import { html } from  '/htm/preact'
 
 const Layout = ({ navColour, children }) => {
 

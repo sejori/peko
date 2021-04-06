@@ -19,4 +19,4 @@ No code bundling is required either and by using es modules we can leverage the 
 
 ## Commands:
 
-Start: `$ deno run --allow-net --allow-read --allow-env --unstable lib/server.js`
+Start: `$ deno run --allow-net --allow-read --allow-write --allow-env --allow-run --unstable lib/server.js`

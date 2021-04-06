@@ -1,5 +1,5 @@
-import { html } from  "https://cdn.skypack.dev/htm/preact"
-import { useState } from "https://cdn.skypack.dev/preact/hooks"
+import { html } from  "/htm/preact"
+import { useState } from "/preact/hooks"
 
 const List = ({ data }) => { // takes a data prop
     // how many clicks have we counted? Default to 0
