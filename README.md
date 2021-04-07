@@ -56,7 +56,7 @@
         <a href="https://deno.land/manual/getting_started/installation">Install Denon</a> - make sure to add to PATH (use provided export command for MacOS)
     </li>
     <li>
-        Start server in development mode: <br /><code>$ denon run --allow-net --allow-read --allow-env --allow-run --unstable lib/server.js</code>
+        Start development server: <code>$ denon start</code>
     </li>
     <li>
         Edit /src files for frontend changes. Add new /routes and /middlewares in /lib for backend changes.
