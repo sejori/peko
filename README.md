@@ -17,8 +17,6 @@
 <p>
     The client-side JavaScript then imports the page's source module (or an optimised production <a href="https://deno.land/manual/tools/bundler">bundle</a>) for page hydration (credit to htm here for giving us browser-friendly JavaScript markup) and Voilà, we have a webapp.
 </p>
-<p>To see this in action refresh the page and watch the last render time below.</p> 
-<p><strong>Last render:</strong> ${new Date().toString()}</p>
 
 <h2>Why is this cool?</h2>
 <p>
