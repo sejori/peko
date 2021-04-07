@@ -1,6 +1,6 @@
 FROM hayd/deno:latest
 
-# Velocireno port
+# Beko port
 EXPOSE 7777
 
 # Prefer not to run as root.
