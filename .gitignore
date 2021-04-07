@@ -3,3 +3,6 @@
 
 # Bundle dependencies
 dist
+
+# env file
+.env
