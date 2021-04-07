@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    ports:
+      - "7777:7777"
+    volumes:
+    - .:/app
+  redis:
+    image: "redis:alpine"
