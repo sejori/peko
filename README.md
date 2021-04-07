@@ -1,5 +1,6 @@
 <img 
-    style="height: 100px; margin: 1rem auto;" 
+    height="100px"
+    style="margin: 1rem auto;"
     src="https://raw.githubusercontent.com/sebringrose/velocireno/main/src/assets/twemoji_chicken.svg" alt="chicken" 
 />
 <h1>Velocireno<h1>
