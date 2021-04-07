@@ -1,8 +1,10 @@
-<img 
-    height="100px"
-    style="margin: 1rem auto;"
-    src="https://raw.githubusercontent.com/sebringrose/velocireno/main/src/assets/twemoji_chicken.svg" alt="chicken" 
-/>
+<p align="center">
+    <img 
+        height="100px"
+        style="margin: 1rem auto;"
+        src="https://raw.githubusercontent.com/sebringrose/velocireno/main/src/assets/twemoji_chicken.svg" alt="chicken" 
+    />
+</p>
 <h1>Velocireno<h1>
 <p>
     A simple, monolithic web application framework for Deno. Made possible by the epic union of <a href="https://deno.land">Deno</a>, <a href="https://preactjs.com">Preact</a> and <a href="https://github.com/developit/htm">htm</a> 💖
