@@ -1,5 +1,5 @@
-import { html } from  "/htm/preact"
-import { useState } from "/preact/hooks"
+import { html } from  "https://cdn.skypack.dev/htm/preact"
+import { useState } from "https://cdn.skypack.dev/preact/hooks"
 
 const List = ({ data }) => { // takes a data prop
     // how many clicks have we counted? Default to 0
@@ -19,7 +19,7 @@ const List = ({ data }) => { // takes a data prop
                     </li>
                 `)}
             </ul>
-            <h2>${count} ${count === 1 ? 'click' : 'clicks'} counted</h2>
+            <h3>${count} ${count === 1 ? 'click' : 'clicks'} counted</h3>
         </div>
     `
 }
