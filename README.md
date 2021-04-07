@@ -22,4 +22,4 @@ The epic union of Deno 🦕 & Preact ⚛️
 
 ## Commands:
 
-Start: `$ deno run --allow-net --allow-read --allow-env --unstable lib/server.js`
+Start: `$ deno run --allow-net --allow-read --allow-write --allow-env --allow-run --unstable lib/server.js`
