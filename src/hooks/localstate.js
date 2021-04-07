@@ -1,4 +1,4 @@
-import { useState, useEffect } from "/preact/hooks"
+import { useState, useEffect } from "https://cdn.skypack.dev/preact/hooks"
 
 // This hook will create a state variable and record it's value
 // to localStorage anytime it is set.
