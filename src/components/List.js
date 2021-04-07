@@ -15,7 +15,7 @@ const List = ({ data }) => { // takes a data prop
             <ul>
                 ${data && data.map(i => html`
                     <li>
-                        ${i}: <button onClick=${handleClick}>Click me</button>
+                        ${i}: <button onClick=${handleClick}>Click this</button>
                     </li>
                 `)}
             </ul>
