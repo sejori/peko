@@ -68,8 +68,7 @@ const Home = () => {
             <h2>Deployment</h2>
             <p>
                 Dockerfile is preconfigured for production. For local testing run:<br />
-                <code>$ docker build . -t velocireno</code><br />
-                <code>$ docker run -dp 7777:7777 velocireno</code>
+                <code>$ docker-compose up</code>
             </p>
         </${Layout}>
     `
