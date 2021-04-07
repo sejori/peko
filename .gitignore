@@ -1,1 +1,5 @@
+# MacOS thingy
 .DS_Store
+
+# Bundle dependencies
+dist
