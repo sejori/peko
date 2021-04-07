@@ -16,7 +16,7 @@ export default ({ path, css, html, script }) => `
         <div id="root">
             ${html}
         </div>
-        <script type="module" async preload>
+        <script type="module" defer preload>
             ${script}
         </script>
     </body>
