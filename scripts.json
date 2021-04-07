@@ -1,9 +1,11 @@
 {
-  "$schema": "https://deno.land/x/denon@2.4.7/schema.json",
-  "scripts": {
-    "start": {
-      "cmd": "deno run app.ts",
-      "desc": "run my app.ts file"
+    "scripts": {
+        "start": {
+        "cmd": "deno run --allow-net --allow-read --allow-env --allow-run --unstable lib/server.js",
+        "desc": "Development start command"
+        }
+    },
+    "watcher": {
+        "exts": ["js", "jsx", "ts", "tsx", "json", "css"]
     }
-  }
 }
