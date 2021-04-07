@@ -7,7 +7,7 @@ const Home = () => {
         <${Layout} navColor="palegreen">
             <h1>Beko</h1>
             <p>
-                The featherweight webapp framework. Built with <a href="https://deno.land">Deno</a>, <a href="https://deno.land/x/denon">Denon</a>, <a href="https://preactjs.com">Preact</a> and <a href="https://github.com/developit/htm">htm</a> 💖
+                The featherweight full-stack webapp framework. Built with <a href="https://deno.land">Deno</a>, <a href="https://deno.land/x/denon">Denon</a>, <a href="https://preactjs.com">Preact</a> and <a href="https://github.com/developit/htm">htm</a> 💖
             </p>
 
             <h2>How does it work?</h2>
@@ -17,8 +17,6 @@ const Home = () => {
             <p>
                 The client-side JavaScript then imports the page's source module (or an optimised production <a href="https://deno.land/manual/tools/bundler">bundle</a>) for page hydration (credit to htm here for giving us browser-friendly JavaScript markup) and Voilà, we have a webapp.
             </p>
-            <p>To see this in action refresh the page and watch the last render time below.</p> 
-            <p><strong>Last render:</strong> ${new Date().toString()}</p>
 
             <h2>Why is this cool?</h2>
             <p>
@@ -36,7 +34,7 @@ const Home = () => {
 
             <h2>Production / Development mode</h2>
             <p>
-                <strong>Production mode</strong>, a JavaScript bundle is created for each page and page renders are cached on request (via Redis instance created in Dockerfile) with a configurable lifetime for optimal service.
+                <strong>Production mode</strong>, a JavaScript bundle is created for each page and page renders are cached on request (in Redis service created via docker-compose.yml) with a configurable lifetime for optimal service.
             </p>
             <p>
                 <strong>Development mode</strong>, source files are served directly to the browser for easy debugging. The DevSocket route is created and called by the client which triggers a reload in the browser when Denon file watcher restarts the Deno process.
