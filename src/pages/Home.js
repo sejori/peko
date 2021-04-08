@@ -65,8 +65,11 @@ const Home = () => {
 
             <h2>Deployment</h2>
             <p>
-                Dockerfile is preconfigured for production. For local testing run:<br />
-                <code>$ docker-compose up</code>
+                Dockerfile is preconfigured for production. For local testing run: <code>$ docker-compose up</code><br />
+                Note: You may want to use <code>--renew-anon-volumes</code> flag to clear redis cache.
+            </p>
+            <p>
+                <strong>This project aims to be ready for production soon but it is not complete with extensive testing yet! Use at your own risk.</strong>
             </p>
         </${Layout}>
     `
