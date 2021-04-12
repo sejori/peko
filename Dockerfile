@@ -1,6 +1,6 @@
 FROM hayd/deno:latest
 
-# Beko port
+# Peco port
 EXPOSE 7777
 
 # Prefer not to run as root.
