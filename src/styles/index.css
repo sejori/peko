@@ -6,7 +6,7 @@ html, body {
 }
 
 img { max-width: 100%; }
-li { margin: 5px 0; }
+li { margin: 10px 0; }
 .container { max-width: 900px; margin: auto; }
 .row { display: flex; }
 .justify-around { justify-content: space-around; }
