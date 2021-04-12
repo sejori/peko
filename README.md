@@ -12,10 +12,10 @@
 <h2>Summary</h2>
 <ul>
     <li>
-        <strong>First-class frontend</strong> - server-side rendered then rapidly hydrated with no bulky external scripts.
+        <strong>First-class frontend</strong> - server-side rendered then rapidly hydrated with optimized JavaScript bundles.
     </li>
     <li>
-        <strong>Production-ready backend</strong> - optimal performance with native Typescript and Redis page caching.
+        <strong>Production-ready backend</strong> - reliablility and performance with native Typescript and Redis page caching.
     </li>
     <li>
         <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (&lt;100MB Docker images).
