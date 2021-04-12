@@ -18,7 +18,7 @@
         <strong>Production-ready backend</strong> - optimal performance with native Typescript and Redis page caching.
     </li>
     <li>
-        <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (${'<'}100MB Docker images).
+        <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (&lt;100MB Docker images).
     </li>
     <li>
         <strong>Ease of adoption</strong> - simple and familiar project structure and preconfigured deployment files.
