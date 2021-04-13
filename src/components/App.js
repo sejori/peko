@@ -4,7 +4,7 @@ import { useLocalState } from "../hooks/localstate.js"
 import List from "./List.js"
 
 const App = () => {
-    const [dataArray, setDataArray] = useLocalState("dataArray", ['Item 0', 'Item 1', 'Item 2'])
+    const [dataArray, setDataArray] = useLocalState('dataArray')
 
     return html`
         <div style="margin: 2rem 0;">
