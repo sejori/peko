@@ -1,7 +1,6 @@
-import { html } from  'https://cdn.skypack.dev/htm/preact'
+import { html } from  "https://cdn.skypack.dev/htm/preact"
 
 const Layout = ({ navColor, children }) => {
-
     return html`<div>
         <nav style=${navStyle(navColor)}>
             <a style=${navLinkStyle} href="/">Home</a>
