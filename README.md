@@ -46,6 +46,9 @@
         Edit /src files for frontend changes. Add new /routes and /middlewares in /lib for backend changes.
     </li>
 </ol>
+<p>
+    <strong><a href="https://marketplace.visualstudio.com/items?itemName=bierner.lit-html">Lit-html</a> VS Code plugin recommended for intellisense and syntax-highlighting of html in .js (/.ts) files.</strong>
+</p>
 
 <h2>Deployment</h2>
 <p>
