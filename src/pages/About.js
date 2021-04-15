@@ -1,5 +1,7 @@
 import { html } from "https://cdn.skypack.dev/htm/preact"
 
+import { hydrate } from "../hooks/hydrate.js"
+
 import Layout from "../layouts/Layout.js"
 import App from "../components/App.js"
 
@@ -16,4 +18,4 @@ const About = () => {
     `
 }
 
-export default About
+export default hydrate(About)

@@ -1,5 +1,7 @@
 import { html } from "https://cdn.skypack.dev/htm/preact"
 
+import { hydrate } from "../hooks/hydrate.js"
+
 import Layout from "../layouts/Layout.js"
 
 const Home = () => {
@@ -87,4 +89,4 @@ const Home = () => {
     `
 }
 
-export default Home
+export default hydrate(Home)
