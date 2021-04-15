@@ -1,4 +1,5 @@
-import { html } from  "https://cdn.skypack.dev/htm/preact"
+import { html } from  "../utils/preact.js"
+
 import { useLocalState } from "../hooks/localstate.js"
 
 import List from "./List.js"

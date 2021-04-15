@@ -1,4 +1,5 @@
-import { html } from  "https://cdn.skypack.dev/htm/preact"
+import { html } from  "../utils/preact.js"
+
 import { useState } from "https://cdn.skypack.dev/preact/hooks"
 
 const List = ({ data }) => { // takes a data prop
