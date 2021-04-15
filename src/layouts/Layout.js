@@ -4,7 +4,7 @@ const Layout = ({ navColor, children }) => {
     return html`<div>
         <nav style=${navStyle(navColor)}>
             <a style=${navLinkStyle} href="/">Home</a>
-            <img style="height: 100px; margin: 1rem;" src="/assets/twemoji_chicken.svg" alt="chicken" />
+            <img height="100px" width="100px" style="margin: 1rem;" src="/assets/twemoji_chicken.svg" alt="chicken" />
             <a style=${navLinkStyle} href="/about">About</a>
         </nav>
         <main style=${mainStyle}>
