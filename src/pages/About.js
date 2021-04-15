@@ -1,8 +1,6 @@
-import { html } from "https://cdn.skypack.dev/htm/preact"
+import { html, hydrate } from "../utils/preact.js"
 
-import { hydrate } from "../hooks/hydrate.js"
-
-import Layout from "../layouts/Layout.js"
+import Layout from "../components/layouts/Layout.js"
 import App from "../components/App.js"
 
 const About = () => {

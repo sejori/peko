@@ -1,15 +1,13 @@
-import { html } from "https://cdn.skypack.dev/htm/preact"
+import { html, hydrate } from "../utils/preact.js"
 
-import { hydrate } from "../hooks/hydrate.js"
-
-import Layout from "../layouts/Layout.js"
+import Layout from "../components/layouts/Layout.js"
 
 const Home = () => {
     return html`
         <${Layout} navColor="palegreen">
             <h1>Peco</h1>
             <p>
-                The featherweight Deno webapp framework. Built with <a href="https://preactjs.com">Preact</a> and <a href="https://github.com/developit/htm">htm</a>.
+                A featherweight Preact SSR framework for Deno.
             </p>
             <h2>Summary</h2>
             <ul>
@@ -20,7 +18,7 @@ const Home = () => {
                     <strong>Production-ready backend</strong> - reliablility and performance with native Typescript and Redis page caching.
                 </li>
                 <li>
-                    <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (${'<'}100MB Docker images).
+                    <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (&lt;100MB Docker images).
                 </li>
                 <li>
                     <strong>Ease of adoption</strong> - simple and familiar project structure and preconfigured deployment files.
@@ -63,11 +61,11 @@ const Home = () => {
 
             <h2>How does it work?</h2>
             <p>
-                Deno http server receives page requests and renders Preact (+ htm) page components to HTML using <a href="https://github.com/preactjs/preact-render-to-string">preact-render-to-string</a>. The HTML is injected into an HTML template along with request metadata, CSS and a JavaScript module before being served to the user's browser client. In production mode the page render is also cached so subsequent requests can be served instantly until the pages cache lifetime is reached.
+                Deno http server receives page requests and renders <a href="https://preactjs.com">Preact</a> page components to HTML using <a href="https://github.com/preactjs/preact-render-to-string">preact-render-to-string</a>. The HTML is injected into an HTML template along with request metadata, CSS and a JavaScript module before being served to the user's browser client. In production mode the page render is also cached so subsequent requests can be served instantly until the pages cache lifetime is reached.
             </p>
             <p>
                 The JavaScript module in the client hydrates the page with the page's source modules in development mode or an optimised <a href="https://deno.land/manual/tools/bundler">bundle</a> in production mode. To see this in action refresh the page and watch the last render time below.
-            </p> 
+            </p>
             <p><strong>Last render:</strong> ${new Date().toString()}</p>
 
             <h2>Why is this cool?</h2>
@@ -75,9 +73,9 @@ const Home = () => {
                 Because it provides all of the SEO and UX benefits of Server-Side Rendering (SSR) with no JavaScript transpilation or bundling required - the server and browser use the exact same code! This completely eliminates part of the traditional JavaScript SSR toolchain, increasing project maintainability and simplicity of development.
             </p>
             <p>
-                It is all possible because of the unique combination of these powerful tools. Deno, unlike Node.js, is built to the <a href="https://tc39.es/">ECMAScript specification</a>. This makes it compatible with browser JavaScript and vice versa which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). Preact offers lightning fast client-side hydration and htm provides a transpiler-free JavaScript markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and a standard library full of great tools as well as a passionate community supporting it.
+                It is all possible because of the unique combination of these powerful tools. Deno, unlike Node.js, is built to the <a href="https://tc39.es/">ECMAScript specification</a>. This makes it compatible with browser JavaScript and vice versa which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). Preact offers lightning fast client-side hydration and <a href="https://github.com/developit/htm">htm</a> provides a transpiler-free JavaScript markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and a standard library full of great tools as well as a passionate community supporting it.
             </p>
-            
+
             <h2>Differences between other frameworks like Next.js, etc.</h2>
             <p>
                 Peco is built with one radical design decision: it isn't built to support the npm/React universe. This is a deliberate step away from the inflated state that many modern web applications find themselves in.
