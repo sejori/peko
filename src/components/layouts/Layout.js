@@ -25,6 +25,8 @@ const navStyle = (navColor) => `
 
 const navLinkStyle = `
     margin: 1rem 3rem;
+    color: white;
+    text-decoration-color: red;
 `
 
 const mainStyle = `

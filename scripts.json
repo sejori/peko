@@ -1,8 +1,8 @@
 {
     "scripts": {
         "start": {
-        "cmd": "deno run --allow-net --allow-read --allow-env --allow-run --unstable lib/server.js",
-        "desc": "Development start command"
+            "cmd": "deno run --allow-net --allow-read --allow-env --allow-run --unstable server.js",
+            "desc": "Development start command"
         }
     },
     "watcher": {

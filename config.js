@@ -1,3 +1,13 @@
+// site metadate - used in template
+export const meta = {
+    title: "Peko",
+    description: "A featherweight Deno webapp template.",
+    keywords: [ 
+        "site", 
+        "description"
+    ]
+}
+
 // export all .env vars as attributes to env export
 export const env = Deno.env.toObject()
 
