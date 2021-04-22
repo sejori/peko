@@ -12,7 +12,7 @@ const Home = () => {
             <h2>Summary</h2>
             <ul>
                 <li>
-                    <strong>First-class frontend</strong> - server-side rendered then rapidly hydrated with optimized JavaScript bundles.
+                    <strong>First-class frontend</strong> - server-side rendered then rapidly hydrated with optimized JavaScript bundles (~25kb).
                 </li>
                 <li>
                     <strong>Production-ready backend</strong> - reliablility and performance with native Typescript and Redis page caching.
@@ -21,10 +21,10 @@ const Home = () => {
                     <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (&lt;100MB Docker images).
                 </li>
                 <li>
-                    <strong>Ease of adoption</strong> - simple and familiar project structure and preconfigured deployment files.
+                    <strong>Ease of adoption</strong> - simple and familiar project structure with preconfigured deployment files.
                 </li>
                 <li>
-                    <strong>Uncompromised developer experience</strong> - CSS bundling, global state, hot-reloading and offline editing.
+                    <strong>Uncompromised developer experience</strong> - Hot-reloading, CSS bundling, global state, and offline editing.
                 </li>
             </ul>
             <p>
@@ -81,7 +81,7 @@ const Home = () => {
                 Peko is built with one radical design decision: it isn't built to support the npm/React universe. This is a deliberate step away from the inflated state that many modern web applications find themselves in.
             </p>
             <p>
-                By using Preact and htm with no transpiler Peko bridges the gap between old and new, allowing the use of plain old HTML and CSS alongside JavaScript state management. This means you can utilise your favourite CSS libraries and HTML templates/snippets with no issue but you won't have access to the endless pool of community-made React components.
+                By using Preact and htm with no transpiler Peko bridges the gap between old and new; by allowing the use of plain old HTML and CSS alongside JavaScript app components and state management (VDOM diffing). This means you can utilise your favourite CSS libraries and HTML templates/snippets in a modern JavaScript app but you won't have access to the endless pool of community-made React components.
             </p>
         </${Layout}>
     `
