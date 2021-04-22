@@ -1,16 +1,16 @@
 import { serve } from "https://deno.land/std/http/mod.ts"
 
 import { devMode } from "./config.js"
-import { log } from "./utils/logger.js"
-import createRoutes from "./routes/index.js"
+import { log } from "./lib/utils/logger.js"
+import createRoutes from "./lib/routes/index.js"
 
-log(`Starting Peco server in ${devMode ? "development" : "production"} config. Routes found:`)
+log(`Starting Peko server in ${devMode ? "development" : "production"} config. Routes found:`)
 const routes = await createRoutes()
 log(routes)
 
 const port = 7777
 const server = serve({ hostname: "0.0.0.0", port })
-log(`Peco running on port ${port}`)
+log(`Peko running on port ${port}`)
 
 for await (const request of server) {
     let start = Date.now()

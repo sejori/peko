@@ -1,6 +1,6 @@
 FROM hayd/deno:latest
 
-# Peco port
+# Peko port
 EXPOSE 7777
 
 # Prefer not to run as root.
@@ -12,4 +12,4 @@ ADD . .
 
 ENV ENVIRONMENT=production
 
-CMD ["run", "--allow-net", "--allow-read", "--allow-write", "--allow-env", "--allow-run", "--unstable", "lib/server.js"]
+CMD ["run", "--allow-net", "--allow-read", "--allow-write", "--allow-env", "--allow-run", "--unstable", "server.js"]
