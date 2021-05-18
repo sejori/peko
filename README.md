@@ -75,7 +75,7 @@
     It is all possible because of the unique combination of these powerful tools. Deno, unlike Node.js, is built to the <a href="https://tc39.es/">ECMAScript specification</a>. This makes it compatible with browser JavaScript and vice versa which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). Preact offers lightning fast client-side hydration and <a href="https://github.com/developit/htm">htm</a> provides a transpiler-free JavaScript markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and a standard library full of great tools as well as a passionate community supporting it.
 </p>
 
-<h2>Differences between other templates like Next.js, etc.</h2>
+<h2>Differences between other frameworks like Next.js, etc.</h2>
 <p>
     Peko is built with one radical design decision: it isn't built to support the npm/React universe. This is a deliberate step away from the inflated state that many modern web applications find themselves in.
 </p>
