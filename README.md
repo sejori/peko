@@ -2,7 +2,7 @@
     <img 
         height="100px"
         style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/velocireno/main/src/assets/twemoji_chicken.svg" alt="chicken" 
+        src="https://raw.githubusercontent.com/sebringrose/peko/main/src/assets/twemoji_chicken.svg" alt="chicken" 
     />
 </p>
 <h1 align="center">Peko</h1>
