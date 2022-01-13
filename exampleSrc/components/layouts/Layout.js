@@ -1,4 +1,4 @@
-import { html } from  "../../utils/preact.js"
+import { html } from "https://github.com/sebringrose/peko/preact.js"
 
 const Layout = ({ navColor, children }) => {
     return html`<div>
