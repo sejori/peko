@@ -1,4 +1,4 @@
-import { PekoConfig } from "./types.ts"
+import { PekoConfig, PekoLogData } from "./types.ts"
 
 const env = Deno.env.toObject()
 
@@ -9,7 +9,7 @@ let config: PekoConfig = {
     defaultCacheLifetime: 3600,
     hotReloadDelay: 400,
     logHandler: (log: string) => console.log(log),
-    requestCaptureHandler: (request: Request) => console.log(JSON.stringify(request)),
+    requestDataHandler: (data: PekoLogData) => console.log(JSON.stringify(data)),
     error404Response: new Response("404: Nothing found here!", {
         headers: new Headers(),
         status: 404

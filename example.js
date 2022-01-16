@@ -1,10 +1,10 @@
-import Peko from "https://raw.githubusercontent.com/sebringrose/peko/main/index.ts"
+import { setConfig, addRoute, addPageRoute, addStaticRoute, start } from "./index.ts"
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
 
-import htmlTemplate from "https://raw.githubusercontent.com/sebringrose/peko/main/exampleSrc/htmlTemplate.js"
+import htmlTemplate from "./exampleSrc/htmlTemplate.js"
 
 // Configure Peko
-Peko.setConfig({
+setConfig({
     // host set-up
     port: 7777,
     hostname: "0.0.0.0",
@@ -19,7 +19,7 @@ Peko.setConfig({
     logHandler: (log) => console.log(log),
 
     // handle request objects after server response
-    requestCaptureHandler: (analyticsObj) => console.log(JSON.stringify(analyticsObj)),
+    requestDataHandler: (data) => console.log(JSON.stringify(data)),
 
     // customisable 404 response
     error404Response: new Response("404: Nothing found here!", {
@@ -39,30 +39,32 @@ const pageRoutes = [
     // must be PekoPageRouteData type (see types.ts)
     {
         url: "/",
-        template: htmlTemplate(),
-        componentURL: new URL("./exampleSrc/pages/Home.js"),
+        template: htmlTemplate({ pageTitle: "" }),
+        componentURL: new URL("./exampleSrc/pages/Home.js", import.meta.url),
         cacheLifetime: 60
     },
     {
         url: "/about",
         template: htmlTemplate({ pageTitle: "About" }),
-        componentURL: new URL("./exampleSrc/pages/About.js"),
+        componentURL: new URL("./exampleSrc/pages/About.js", import.meta.url),
         // cacheLifetime: 3600 <- this can be left out as it will default to 3600  
     }
 ]
-pageRoutes.forEach(pageRoute => Peko.addPageRoute(pageRoute))
+pageRoutes.forEach(pageRoute => addPageRoute(pageRoute))
 
 // Setup static asset routes - these use the static middleware
 const staticRoutes = []
-for await (const file of Deno.readDir(`./exampleSrc/assets`)) {
-    // must be PekoStaticRouteData type (see types.ts)
-    staticRoutes.push({
-        url: `/assets/${file}`,
-        fileURL: new URL(`./exampleSrc/assets/${file}`),
-        contentType: lookup(file)
-    })
+for await (const file of Deno.readDir(`./exampleSrc/assets`, import.meta.url)) {
+    if (file.isFile) {
+        // must be PekoStaticRouteData type (see types.ts)
+        staticRoutes.push({
+            url: `/assets/${file.name}`,
+            fileURL: new URL(`./exampleSrc/assets/${file.name}`, import.meta.url),
+            contentType: lookup(file.name)
+        })
+    }
 }
-staticRoutes.forEach(staticRoute => Peko.addStaticRoute(staticRoute))
+staticRoutes.forEach(staticRoute => addStaticRoute(staticRoute))
 
 // Setup any custom routes (e.g. any server-side API functions)
 const customRoutes = [
@@ -73,7 +75,7 @@ const customRoutes = [
         handler: (request) => request.respond({ body: `Parrot sqwarks: ${JSON.stringify(request.body)}` })
     }
 ]
-customRoutes.forEach(route => Peko.addRoute(route))
+customRoutes.forEach(route => addRoute(route))
 
 // Start your Peko server :)
-Peko.start()
+start()

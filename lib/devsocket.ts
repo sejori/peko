@@ -1,27 +1,23 @@
-import { acceptable, acceptWebSocket } from "https://deno.land/std/ws/mod.ts"
+import { acceptWebSocket } from "https://deno.land/std@0.95.0/ws/mod.ts"
 
 import { getConfig } from "../config.ts"
 
 const config = getConfig()
 
-export const devSocket = async (request: Request) => {
-    if (acceptable(request)) {
-        // TODO: what is the right type for request arg?
-        const { conn, r: bufReader, w: bufWriter, headers } = request;
-        try {
-            await acceptWebSocket({
-                headers: headers,
-                conn: conn,
-                bufWriter: bufReader,
-                bufReader: bufWriter,
-            })
-        } catch(e) {
-            config.logHandler(`failed to accept websocket: ${e}`)
-            return new Response("Devsocket connection failed", { status: 400 })
-        }
-
-        config.logHandler("DevSocket connected - will trigger hot reload on connection close.")
+export const devSocket = async (request: any) => {
+    // TODO: what is the right type for request arg?
+    const { conn, r: bufReader, w: bufWriter, headers } = request;
+    try {
+        await acceptWebSocket({
+            headers: headers,
+            conn: conn,
+            bufWriter: bufReader,
+            bufReader: bufWriter,
+        })
+        config.logHandler("DevSocket connected - will close and trigger hot reload in client on server restart.")
+        return new Response("Devsocket connection succeeded", { status: 200 })
+    } catch(e) {
+        config.logHandler(`failed to accept websocket: ${e}`)
+        return new Response("Devsocket connection failed", { status: 400 })
     }
-
-    return new Response()
 }
