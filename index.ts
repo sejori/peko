@@ -14,11 +14,11 @@ export const start = async () => {
 
     // if dev create devsocket route
     if (config.devMode) {
-        const devSocketImport = await import("./lib/devsocket.ts")
+        const devSocketImport = await import("./lib/handlers/devsocket.ts")
         addRoute({
             method: 'GET',
             url: "/devsocket",
-            handler: devSocketImport.devSocket
+            handler: devSocketImport.devSocketHandler
         })
     }
 
