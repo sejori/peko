@@ -1,4 +1,6 @@
 import { serve } from "https://deno.land/std@0.121.0/http/server.ts"
+import { ensureFile } from "https://deno.land/std@0.121.0/fs/mod.ts"
+import { toFileUrl } from "https://deno.land/std@0.121.0/path/mod.ts";
 
 import { ssrHandler, staticHandler } from "./lib/handlers/index.ts"
 import { getConfig, setConfig } from "./config.ts"
@@ -48,8 +50,6 @@ export const start = async () => {
             response = config.error404Response
         }
 
-
-
         const responseTime = Date.now() - start
         logRequest(request, status, start, responseTime)
         return response
@@ -62,19 +62,27 @@ export const start = async () => {
 }
 
 export const addRoute = (route: PekoRoute) => routes.push(route)
-
-export const addPageRoute = (routeData: PekoPageRouteData) => routes.push({
-    url: routeData.url,
-    method: "GET",
-    // use default cacheLifetime if none provided  
-    handler: (req) => ssrHandler(req, { ...routeData, cacheLifetime: routeData.cacheLifetime ? routeData.cacheLifetime : config.defaultCacheLifetime })
-})
-
 export const addStaticRoute = (routeData: PekoStaticRouteData) => routes.push({
     url: routeData.url,
     method: "GET",
     handler: (req) => staticHandler(req, routeData)
 })
+export const addPageRoute = (routeData: PekoPageRouteData) => {
+    // create page js bundles - there is a hacky fix on the file path here that will likely break
+    const bundlePath = `${Deno.cwd()}/stdout/${routeData.componentURL.pathname.substring(routeData.componentURL.pathname.lastIndexOf('/') + 1)}`
+    ensureFile(bundlePath).then(() => {
+        Deno.run({ cmd: ["deno", "bundle", `file:///C:/${routeData.componentURL.pathname.substring(routeData.componentURL.pathname.lastIndexOf('C:') + 2)}`, bundlePath] })
+    })
+    // ^ TODO: If devMode generate a source-map to place inside script too
+
+    // add page to route
+    return routes.push({
+        url: routeData.url,
+        method: "GET",
+        // use default cacheLifetime if none provided  
+        handler: (req) => ssrHandler(req, { ...routeData, cacheLifetime: routeData.cacheLifetime ? routeData.cacheLifetime : config.defaultCacheLifetime })
+    })
+}
 
 const logRequest = async (request: Request, status: number, start: number, responseTime: number) => await new Promise((resolve: (value: void) => void) => {
     // log request summary and handle analytics
@@ -92,6 +100,6 @@ const logRequest = async (request: Request, status: number, start: number, respo
         headers
     }
 
-    config.requestDataHandler(logData)
+    config.logDataHandler(logData)
     resolve()
 })

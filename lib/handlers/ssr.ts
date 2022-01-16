@@ -1,5 +1,3 @@
-import { ensureFile } from "https://deno.land/std@0.121.0/fs/mod.ts"
-
 import { html } from "https://cdn.skypack.dev/htm/preact"
 import render from "https://cdn.skypack.dev/preact-render-to-string"
 
@@ -7,6 +5,7 @@ import { getConfig } from "../../config.ts"
 import { PekoPageRouteData } from "../types.ts"
 
 const config = getConfig()
+const decoder = new TextDecoder()
 
 type pageCacheItem = { url: string, response: Response, dob: number, lifetime: number }
 const pageCache: Array<pageCacheItem> = []
@@ -27,13 +26,12 @@ export const ssrHandler = async (request: Request, ssrData: PekoPageRouteData) =
     // ssr preact code to html for browser goodness ^^
     const pageHtml = render(html`<${pageComponent} />`)
 
-    // ensure bundle file exists
-    const bundlePath = `${Deno.cwd()}/stdout/${ssrData.componentURL.pathname.substring(ssrData.componentURL.pathname.lastIndexOf('/') + 1)}`
-    await ensureFile(bundlePath)
+    // TODO: Think about this. Do you want to always serve bundles?
+    //       In dev it would be handy to trace errors in source quickly
 
-    // create js bundle
-    await Deno.run({ cmd: ["deno", "bundle", ssrData.componentURL.pathname] })
-    const bundledJS = Deno.readFile(bundlePath)
+    // get page component's js bundle
+    const bundlePath = `${Deno.cwd()}/stdout/${ssrData.componentURL.pathname.substring(ssrData.componentURL.pathname.lastIndexOf('/') + 1)}`
+    const bundledJS = decoder.decode(await Deno.readFile(bundlePath))
 
     // create script to be injected in html, devsocket in dev for hot reloads & our module/bundle route
     const pageScript = `
