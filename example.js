@@ -1,7 +1,7 @@
-import Peko from "https://github.com/sebringrose/peko/index.js"
+import Peko from "https://raw.githubusercontent.com/sebringrose/peko/main/index.ts"
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
 
-import htmlTemplate from "https://github.com/sebringrose/peko/exampleSrc/htmlTemplate.js"
+import htmlTemplate from "https://raw.githubusercontent.com/sebringrose/peko/main/exampleSrc/htmlTemplate.js"
 
 // Configure Peko
 Peko.setConfig({

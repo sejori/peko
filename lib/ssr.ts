@@ -6,7 +6,7 @@ import { PekoPageRouteData } from "../types.ts"
 
 const config = getConfig()
 
-type pageCacheItem = {url: string, response: Response, dob: number, lifetime: number}
+type pageCacheItem = { url: string, response: Response, dob: number, lifetime: number }
 const pageCache: Array<pageCacheItem> = []
 
 export const ssrHandler = async (request: Request, ssrData: PekoPageRouteData) => {
@@ -54,10 +54,12 @@ export const ssrHandler = async (request: Request, ssrData: PekoPageRouteData) =
     return response
 }
 
-const cacheResponseItem = async (newItem: pageCacheItem) => {
+// this is a promise so that is doesn't block the process when called without "await" keyword
+const cacheResponseItem = async (newItem: pageCacheItem) => await new Promise((resolve: (value: void) => void) => {
     // remove outdated response from cache if present
     const oldCachedIndex = pageCache.findIndex(item => item.url === newItem.url)
     if (oldCachedIndex > 0) pageCache.splice(oldCachedIndex, 1)
 
     pageCache.push(newItem)
-}
+    return resolve()
+})

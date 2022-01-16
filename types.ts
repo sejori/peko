@@ -3,8 +3,7 @@ export type PekoConfig = {
     port: number, 
     hostname: string, 
     defaultCacheLifetime: number, 
-    hotReloadDelay: number, 
-    srcDirURL: URL,
+    hotReloadDelay: number,
     logHandler: (log: string) => void, 
     requestCaptureHandler: (request: Request) => void, 
     error404Response: Response, 
@@ -21,7 +20,7 @@ export type PekoPageRouteData = {
     url: string,
     template: (request: Request, html: string, script: string) => string, 
     componentURL: URL, 
-    cacheLifetime: number | undefined
+    cacheLifetime: number
 }
 export type PekoStaticRouteData = { 
     url: string,
