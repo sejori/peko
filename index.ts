@@ -1,9 +1,9 @@
 import { serve } from "https://deno.land/std@0.121.0/http/server.ts"
 
-import { ssrHandler, staticHandler } from "./lib/index.ts"
+import { ssrHandler, staticHandler } from "./lib/handlers/index.ts"
 import { getConfig, setConfig } from "./config.ts"
 
-import { PekoRoute, PekoPageRouteData, PekoStaticRouteData, PekoLogData } from "./types.ts"
+import { PekoRoute, PekoPageRouteData, PekoStaticRouteData, PekoLogData } from "./lib/types.ts"
 
 const config = getConfig()
 export { getConfig, setConfig }

@@ -1,4 +1,4 @@
-import { html } from "https://github.com/sebringrose/peko/preact.js"
+import { html } from "https://raw.githubusercontent.com/sebringrose/peko/main/preact.js"
 
 import { useState } from "https://cdn.skypack.dev/preact/hooks"
 

@@ -1,4 +1,4 @@
-import { html, hydrate } from "https://github.com/sebringrose/peko/preact.js"
+import { html, hydrate } from "https://raw.githubusercontent.com/sebringrose/peko/main/preact.js"
 
 import Layout from "../components/layouts/Layout.js"
 import App from "../components/App.js"
