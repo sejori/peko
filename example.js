@@ -19,7 +19,7 @@ setConfig({
     logHandler: (log) => console.log(log),
 
     // handle request objects after server response
-    requestDataHandler: (data) => console.log(JSON.stringify(data)),
+    logDataHandler: (data) => console.log(JSON.stringify(data)),
 
     // customisable 404 response
     error404Response: new Response("404: Nothing found here!", {
@@ -53,18 +53,16 @@ const pageRoutes = [
 pageRoutes.forEach(pageRoute => addPageRoute(pageRoute))
 
 // Setup static asset routes - these use the static middleware
-const staticRoutes = []
 for await (const file of Deno.readDir(`./exampleSrc/assets`, import.meta.url)) {
     if (file.isFile) {
         // must be PekoStaticRouteData type (see types.ts)
-        staticRoutes.push({
+        addStaticRoute({
             url: `/assets/${file.name}`,
             fileURL: new URL(`./exampleSrc/assets/${file.name}`, import.meta.url),
             contentType: lookup(file.name)
         })
     }
 }
-staticRoutes.forEach(staticRoute => addStaticRoute(staticRoute))
 
 // Setup any custom routes (e.g. any server-side API functions)
 const customRoutes = [

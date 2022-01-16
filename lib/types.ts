@@ -5,7 +5,7 @@ export type PekoConfig = {
     defaultCacheLifetime: number, 
     hotReloadDelay: number,
     logHandler: (log: string) => void, 
-    requestDataHandler: (data: PekoLogData) => void,
+    logDataHandler: (data: PekoLogData) => void,
     error404Response: Response, 
     error500Response: Response 
 }
