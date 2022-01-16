@@ -5,7 +5,7 @@ export type PekoConfig = {
     defaultCacheLifetime: number, 
     hotReloadDelay: number,
     logHandler: (log: string) => void, 
-    requestCaptureHandler: (request: Request) => void, 
+    requestDataHandler: (data: PekoLogData) => void,
     error404Response: Response, 
     error500Response: Response 
 }
@@ -15,7 +15,6 @@ export type PekoRoute = {
     method: string, 
     handler: (a: Request) => Promise<Response>, 
 }
-
 export type PekoPageRouteData = { 
     url: string,
     template: (request: Request, html: string, script: string) => string, 
@@ -26,4 +25,13 @@ export type PekoStaticRouteData = {
     url: string,
     fileURL: URL, 
     contentType: string 
+}
+
+export type PekoLogData = {
+    date: string,
+    status: number,
+    method: string,
+    url: string,
+    responseTime: number,
+    headers: Record<string, string>
 }
