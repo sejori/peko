@@ -47,7 +47,8 @@ export const ssrHandler = async (request: Request, ssrData: PekoPageRouteData) =
         }
     `
 
-    const response = new Response(ssrData.template(request, pageHtml, pageScript), {
+    const body = ssrData.template(request, pageHtml, pageScript)
+    const response = new Response(body, {
         headers : new Headers({
             'Content-Type': 'text/html; charset=utf-8'
         })

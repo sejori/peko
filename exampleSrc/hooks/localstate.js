@@ -1,4 +1,4 @@
-import { useState, useEffect } from "https://cdn.skypack.dev/preact/hooks"
+import { useState, useEffect } from "https://unpkg.com/htm/preact/standalone.module.js"
 
 // INITIAL STATE
 const initialState = {

@@ -1,6 +1,6 @@
-import { html } from "https://raw.githubusercontent.com/sebringrose/peko/main/preact.js"
+import { html } from "https://raw.githubusercontent.com/sebringrose/peko/main/lib/preact.js"
 
-import { useState } from "https://cdn.skypack.dev/preact/hooks"
+import { useState } from "https://unpkg.com/htm/preact/standalone.module.js"
 
 const List = ({ data }) => { // takes a data prop
     // how many clicks have we counted? Default to 0
