@@ -1,10 +1,12 @@
-import { toFileUrl } from "https://deno.land/std@0.121.0/path/mod.ts";
-
 import { PekoStaticRouteData } from "../types.ts"
 
+// I think there is a much more efficient method by streaming the file...
 export const staticHandler = async (_request: Request, staticData: PekoStaticRouteData) => {
-    // const body = await Deno.readFile(toFileUrl(staticData.fileURL.pathname).href)
-    const body = await Deno.readFile(toFileUrl(staticData.fileURL.pathname).href)
+    let filePath = decodeURI(staticData.fileURL.pathname)
+    // fix shitty windows paths
+    if (Deno.build.os === "windows") filePath = filePath.substring(1)
+
+    const body = await Deno.readFile(filePath)
 
     return new Response(body, {
         headers: new Headers({
