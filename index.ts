@@ -71,7 +71,8 @@ export const addPageRoute = (routeData: PekoPageRouteData) => {
     // create page js bundles - there is a hacky fix on the file path here that will likely break
     const bundlePath = `${Deno.cwd()}/stdout/${routeData.componentURL.pathname.substring(routeData.componentURL.pathname.lastIndexOf('/') + 1)}`
     ensureFile(bundlePath).then(() => {
-        Deno.run({ cmd: ["deno", "bundle", toFileUrl(routeData.componentURL.pathname).href, bundlePath] })
+        const componentURL = toFileUrl(decodeURI(routeData.componentURL.pathname))
+        Deno.run({ cmd: ["deno", "bundle", componentURL.href, bundlePath] })
     })
     // ^ TODO: If devMode generate a source-map to place inside script too
 
