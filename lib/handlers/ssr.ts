@@ -1,4 +1,4 @@
-import { html } from "https://cdn.skypack.dev/htm/preact"
+import { html } from "https://unpkg.com/htm/preact/standalone.module.js"
 import render from "https://cdn.skypack.dev/preact-render-to-string"
 
 import { getConfig } from "../../config.ts"
