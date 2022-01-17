@@ -70,7 +70,7 @@ const customRoutes = [
     {
         url: "/api/parrotFcn",
         method: "POST",
-        handler: (request) => request.respond({ body: `Parrot sqwarks: ${JSON.stringify(request.body)}` })
+        handler: (request) => new Response(`Parrot sqwarks: ${JSON.stringify(request.body)}`)
     }
 ]
 customRoutes.forEach(route => addRoute(route))
