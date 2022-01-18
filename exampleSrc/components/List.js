@@ -1,5 +1,4 @@
-import { html } from "https://jspm.dev/htm@3.1.0/preact"
-import { useState } from "https://jspm.dev/preact@10.6.4/hooks"
+import { html, useState } from "https://raw.githubusercontent.com/sebringrose/peko/main/lib/preact.js"
 
 const List = ({ data }) => { // takes a data prop
     // how many clicks have we counted? Default to 0

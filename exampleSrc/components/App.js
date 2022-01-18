@@ -1,4 +1,4 @@
-import { html } from "https://jspm.dev/htm@3.1.0/preact"
+import { html } from "https://raw.githubusercontent.com/sebringrose/peko/main/lib/preact.js"
 
 import { useLocalState } from "../hooks/localstate.js"
 
