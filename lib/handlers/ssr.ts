@@ -1,4 +1,4 @@
-import render from "https://cdn.skypack.dev/preact-render-to-string"
+import render from "https://jspm.dev/preact-render-to-string@5.1.19"
 
 import { getConfig } from "../../config.ts"
 import { PekoPageRouteData } from "../types.ts"
