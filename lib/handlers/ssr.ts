@@ -1,5 +1,4 @@
-import { html } from "../react.js"
-import { renderToString } from "https://jspm.dev/react-dom@17.0.2/server"
+import render from "https://jspm.dev/preact-render-to-string@5.1.19"
 
 import { getConfig } from "../../config.ts"
 import { PekoPageRouteData } from "../types.ts"
@@ -24,7 +23,7 @@ export const ssrHandler = async (request: Request, ssrData: PekoPageRouteData) =
     const pageComponent = pageImport.default
 
     // ssr preact code to html for browser goodness ^^
-    const pageHtml = renderToString(html`<${pageComponent} />`)
+    const pageHtml = render(pageComponent())
 
     // TODO: Think about this. Do you want to always serve bundles?
     //       In dev it would be handy to trace errors in source quickly
