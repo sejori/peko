@@ -1,4 +1,4 @@
-import { html, render } from "https://raw.githubusercontent.com/sebringrose/peko/main/lib/preact.js"
+import { html, hydrate } from "https://raw.githubusercontent.com/sebringrose/peko/main/lib/preact.js"
 
 import Layout from "../components/layouts/Layout.js"
 import App from "../components/App.js"
@@ -16,4 +16,4 @@ const About = () => {
     `
 }
 
-export default render(About)
+export default hydrate(About)
