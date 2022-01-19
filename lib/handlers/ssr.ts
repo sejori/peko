@@ -27,6 +27,7 @@ export const ssrHandler = async (request: Request, ssrData: PekoPageRouteData) =
 
     // TODO: Think about this. Do you want to always serve bundles?
     //       In dev it would be handy to trace errors in source quickly
+    //       This can be achieved with a source map... deno bundle?
 
     // get page component's js bundle
     const bundlePath = `${Deno.cwd()}/stdout/${ssrData.componentURL.pathname.substring(ssrData.componentURL.pathname.lastIndexOf('/') + 1)}`
