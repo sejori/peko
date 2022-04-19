@@ -1,11 +1,8 @@
 import { serve } from "https://deno.land/std@0.121.0/http/server.ts"
-import { ensureFile } from "https://deno.land/std@0.121.0/fs/mod.ts"
-import { toFileUrl } from "https://deno.land/std@0.121.0/path/mod.ts";
 
 import { ssrHandler, staticHandler } from "./lib/handlers/index.ts"
 import { getConfig, setConfig } from "./config.ts"
-
-import { PekoRoute, PekoPageRouteData, PekoStaticRouteData, PekoLogData } from "./lib/types.ts"
+import { PekoRoute, PekoPageRouteData, PekoStaticRouteData, PekoAnalyticsData } from "./lib/types.ts"
 
 const config = getConfig()
 export { getConfig, setConfig }
@@ -19,7 +16,7 @@ export const start = async () => {
         const devSocketImport = await import("./lib/handlers/devsocket.ts")
         addRoute({
             method: 'GET',
-            url: "/devsocket",
+            route: "/devsocket",
             handler: devSocketImport.devSocketHandler
         })
     }
@@ -33,21 +30,19 @@ export const start = async () => {
 
         const requestURL = new URL(request.url)
 
-        // find route matching url & method
-        const route = routes.find(route => route.url === requestURL.pathname && route.method === request.method)
+        const route = routes.find(route => route.route === requestURL.pathname && route.method === request.method)
         
-        // attempt to respond with route content if route found
         if (route) {
             try {
                 response = await route.handler(request)
             } catch(error) {
                 status = 500
                 config.logHandler(error)
-                response = config.error500Response
+                response = config.errorHandler(status, request)
             }
         } else {
             status = 404
-            response = config.error404Response
+            response = config.errorHandler(status, request)
         }
 
         const responseTime = Date.now() - start
@@ -62,37 +57,30 @@ export const start = async () => {
 }
 
 export const addRoute = (route: PekoRoute) => routes.push(route)
+
 export const addStaticRoute = (routeData: PekoStaticRouteData) => routes.push({
-    url: routeData.url,
+    route: routeData.route,
     method: "GET",
     handler: (req) => staticHandler(req, routeData)
 })
-export const addPageRoute = (routeData: PekoPageRouteData) => {
-    // create page js bundles - there is a hacky fix on the file path here that will likely break
-    const bundlePath = `${Deno.cwd()}/stdout/${routeData.componentURL.pathname.substring(routeData.componentURL.pathname.lastIndexOf('/') + 1)}`
-    ensureFile(bundlePath).then(() => {
-        const componentURL = toFileUrl(decodeURI(routeData.componentURL.pathname))
-        Deno.run({ cmd: ["deno", "bundle", componentURL.href, bundlePath] })
-    })
-    // ^ TODO: If devMode generate a source-map to place inside script too
 
-    // add page to route
-    return routes.push({
-        url: routeData.url,
-        method: "GET",
-        // use default cacheLifetime if none provided  
-        handler: (req) => ssrHandler(req, { ...routeData, cacheLifetime: routeData.cacheLifetime ? routeData.cacheLifetime : config.defaultCacheLifetime })
+export const addPageRoute = (routeData: PekoPageRouteData) => routes.push({
+    route: routeData.route,
+    method: "GET",
+    handler: (req) => ssrHandler(req, { 
+        ...routeData, 
+        cacheLifetime: routeData.cacheLifetime ? routeData.cacheLifetime : config.defaultCacheLifetime,
+        customParams: routeData.customParams ? routeData.customParams : {} 
     })
-}
+})
 
 const logRequest = async (request: Request, status: number, start: number, responseTime: number) => await new Promise((resolve: (value: void) => void) => {
-    // log request summary and handle analytics
     const headers: Record<string, string> = {}
     for (const pair of request.headers.entries()) {
         headers[pair[0]] = pair[1]
     }
 
-    const logData: PekoLogData = {
+    const logData: PekoAnalyticsData = {
         date: new Date(start).toString(),
         status,
         method: request.method,
@@ -101,6 +89,7 @@ const logRequest = async (request: Request, status: number, start: number, respo
         headers
     }
 
-    config.logDataHandler(logData)
+    config.logHandler(`[${logData.date}] ${logData.status} ${logData.method} ${logData.url} ${logData.responseTime}`)
+    config.analyticsHandler(logData)
     resolve()
 })

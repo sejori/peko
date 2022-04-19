@@ -1,11 +1,12 @@
-import { html, hydrate } from "https://raw.githubusercontent.com/sebringrose/peko/main/lib/preact.js" 
+import { html } from "https://jspm.dev/htm@3.1.0/preact/standalone.module.js"
 
-import Layout from "../components/layouts/Layout.js"
+import Layout from "../layouts/Layout.js"
 
 const Home = () => {
     return html`
         <${Layout} navColor="palegreen">
             <h1>Peko</h1>
+            <p>${Date.now()}</p>
             <p>
                 A featherweight Preact SSR template for Deno.
             </p>
@@ -87,4 +88,4 @@ const Home = () => {
     `
 }
 
-export default hydrate(Home)
+export default Home

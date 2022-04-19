@@ -1,6 +1,6 @@
-import { html, hydrate } from "https://raw.githubusercontent.com/sebringrose/peko/main/lib/preact.js"
+import { html } from "https://jspm.dev/htm@3.1.0/preact/standalone.module.js"
 
-import Layout from "../components/layouts/Layout.js"
+import Layout from "../layouts/Layout.js"
 import App from "../components/App.js"
 
 const About = () => {
@@ -10,10 +10,10 @@ const About = () => {
             <${App} />
             <img src="/assets/lighthouse-score.png" alt="lighthouse-score" />
             <p>Need I say more?</p>
-            <a href="https://github.com/sebringrose/velocireno">Github</a>
+            <a href="https://github.com/sebringrose/peko">Github</a>
             <p>Credit for the birds: <a href="https://twemoji.twitter.com">https://twemoji.twitter.com</a></p>
         </${Layout}>
     `
 }
 
-export default hydrate(About)
+export default About
