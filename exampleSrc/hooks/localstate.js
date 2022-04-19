@@ -1,4 +1,4 @@
-import { useState, useEffect } from "../../lib/preact.js"
+import { useState, useEffect } from "https://jspm.dev/preact/hooks@10.7.1"
 
 // INITIAL STATE
 const initialState = {
