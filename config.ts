@@ -1,4 +1,4 @@
-import { PekoConfig, PekoLogData } from "./lib/types.ts"
+import { PekoConfig, PekoAnalyticsData } from "./lib/types.ts"
 
 const env = Deno.env.toObject()
 
@@ -9,14 +9,36 @@ let config: PekoConfig = {
     defaultCacheLifetime: 3600,
     hotReloadDelay: 400,
     logHandler: (log: string) => console.log(log),
-    logDataHandler: (data: PekoLogData) => console.log(JSON.stringify(data)),
-    error404Response: new Response("404: Nothing found here!", {
-        headers: new Headers(),
-        status: 404
-    }),
-    error500Response: new Response("500: Internal Server Error!", {
-        headers: new Headers(),
-        status: 500
+    analyticsHandler: (data: PekoAnalyticsData) => console.log(JSON.stringify(data)),
+    errorHandler: async (statusCode: number, _request: Request) => await new Promise((resolve, _reject) => {
+        let response;
+        switch (statusCode) {
+            case 401:  
+                response = new Response("401: Unauthorized!", {
+                    headers: new Headers(),
+                    status: 401
+                })
+                break
+            case 404: 
+                response = new Response("404: Nothing found here!", {
+                    headers: new Headers(),
+                    status: 404
+                })
+                break
+            case 500: 
+                response = new Response("500: Internal Server Error!", {
+                    headers: new Headers(),
+                    status: 500
+                })
+                break
+            default:
+                response = new Response("500: Internal Server Error!", {
+                    headers: new Headers(),
+                    status: 500
+                })
+                break
+        }
+        resolve(response);
     })
 }
 export const setConfig = (newConfObj: PekoConfig) => config = { ...config, ...newConfObj }
