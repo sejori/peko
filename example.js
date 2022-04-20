@@ -1,17 +1,18 @@
 import Peko from "./index.ts"
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
+import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
 
 import htmlTemplate from "./exampleSrc/htmlTemplate.js"
-import * as preactRender from "https://jspm.dev/preact-render-to-string@5.1.19"
+import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 // global styles (could extract page specific css in future)
-const styleString = `
+const style = `
     <style>
         html, body {
             height: 100%;
             width: 100%;
             margin: 0;
-            font-family: helvetica;
+            font-family: helvetica, sans-serif;
         }
 
         img { max-width: 100%; }
@@ -51,10 +52,10 @@ Peko.setConfig({
     hotReloadDelay: 400,
 
     // handle log strings from server requests
-    logHandler: (log) => console.log(log),
+    logHandler: async (log) => await console.log(log),
 
     // handle request objects after server response
-    logDataHandler: (data) => console.log(JSON.stringify(data)),
+    analyticsHandler: async (_data) => await null,
 
     // custom error handling
     errorHandler: async (statusCode, _request) => await new Promise((resolve, _reject) => {
@@ -86,46 +87,65 @@ const pageRoutes = [
         customParams: {
             pageTitle: "",
             description: "The Featherweight Deno SSR Library",
-            css: styleString,
+            css: style,
         },
         moduleURL: new URL("./exampleSrc/pages/Home.js", import.meta.url),
         clientHydrate: {
-            module: "https://jspm.dev/preact@10.7.1",
-            script: `<script type="module">
-                import { hydrate as preactHydrate } from "https://jspm.dev/preact@10.7.1";
-                preactHydrate(app, document.getElementById("root"));
-            </script>`,
+            modulepreloads: `
+                <script modulepreload="true" type="text/plain" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
+                <script modulepreload="true" type="module" src="/exampleSrc/pages/Home.js"></script>
+            `,
+            scripts: `
+                <script type="module">
+                    import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+                    import Home from "/exampleSrc/pages/Home.js";
+                    hydrate(Home(), document.getElementById("root"))
+                </script>
+            `,
         },
-        serverRender: (app) => preactRender(app, null, null),
-        cacheLifetime: 60
+        serverRender: (app) => renderToString(app, null, null),
+        cacheLifetime: 6000
     },
     {
-        url: "/",
-        moduleURL: new URL("./exampleSrc/pages/About.js", import.meta.url),
-        render: (app) => preactRender(app, null, null),
-        hydrate: (app) => preactHydrate(app, document.getElementById("root")),
+        route: "/about",
         template: htmlTemplate,
         customParams: {
             pageTitle: "",
             description: "The Featherweight Deno SSR Library",
-            css: styleString,
+            css: style,
         },
+        moduleURL: new URL("./exampleSrc/pages/About.js", import.meta.url),
+        clientHydrate: {
+            modulepreloads: `
+                <script modulepreload="true" type="module" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
+                <script modulepreload="true" type="module" src="/exampleSrc/pages/About.js"></script>
+            `,
+            scripts: `
+                <script type="module">
+                    import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+                    import About from "/exampleSrc/pages/About.js";
+                    hydrate(About(), document.getElementById("root"));
+                </script>
+            `,
+        },
+        serverRender: (app) => renderToString(app, null, null),
         // cacheLifetime: 3600 <- this can be left out as it will default to 3600
     }
 ]
 pageRoutes.forEach(pageRoute => Peko.addPageRoute(pageRoute))
 
-// Setup static asset routes - these use the static middleware
-for await (const file of Deno.readDir(`./exampleSrc/assets`, import.meta.url)) {
-    if (file.isFile) {
-        // must be PekoStaticRouteData type (see types.ts)
-        Peko.addStaticRoute({
-            route: `/assets/${file.name}`,
-            fileURL: new URL(`./exampleSrc/assets/${file.name}`, import.meta.url),
-            contentType: lookup(file.name)
-        })
-    }
-}
+// Setup src file routes - these use the static middleware
+const files = await recursiveReaddir(`./exampleSrc`) 
+files.forEach(file => {
+    file = `/${file}`
+
+    // must be PekoStaticRouteData type (see types.ts)
+    Peko.addStaticRoute({
+        route: file,
+        fileURL: new URL(`.${file}`, import.meta.url),
+        contentType: lookup(file)
+    })
+})
 
 // Setup any custom routes (e.g. any server-side API functions)
 const customRoutes = [

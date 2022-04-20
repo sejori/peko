@@ -23,20 +23,19 @@ export const ssrHandler = async (request: Request, ssrData: PekoPageRouteData) =
     const prerenderedHTML = ssrData.serverRender(pageComponent())
 
     // create client script, contains client-side hydration function + devsocket for hot reloads in devMode
-    const pageScript = `
-        <script type="module" async>
-            ${ssrData.clientHydrate.script}
-        </script>
-        ${config.devMode
-            ? `<script>
-                const devSocket = new WebSocket("ws://" + location.host + "/devsocket");
-                devSocket.onclose = () => setTimeout(() => location.reload(), ${config.hotReloadDelay});
-            </script>`
-            : ''
-        }
+    const pageScripts = `
+        ${ssrData.clientHydrate.scripts}
     `
+    
+    // ${config.devMode
+    //     ? `<script>
+    //         const devSocket = new WebSocket("ws://" + location.host + "/devsocket");
+    //         devSocket.onclose = () => setTimeout(() => location.reload(), ${config.hotReloadDelay});
+    //     </script>`
+    //     : ''
+    // }
 
-    const body = ssrData.template(request, ssrData.customParams, prerenderedHTML, ssrData.clientHydrate.module, pageScript)
+    const body = ssrData.template(request, ssrData.customParams, prerenderedHTML, ssrData.clientHydrate.modulepreloads, pageScripts)
     const response = new Response(body, {
         headers : new Headers({
             'Content-Type': 'text/html; charset=utf-8'

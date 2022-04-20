@@ -1,4 +1,4 @@
-import { html, useState } from "../../lib/preact.js"
+import { html, useState } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 const List = ({ data }) => { // takes a data prop
     // how many clicks have we counted? Default to 0

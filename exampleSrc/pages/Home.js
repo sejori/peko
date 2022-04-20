@@ -1,4 +1,4 @@
-import { html } from "https://jspm.dev/htm@3.1.0/preact/standalone.module.js"
+import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 import Layout from "../layouts/Layout.js"
 
@@ -6,26 +6,27 @@ const Home = () => {
     return html`
         <${Layout} navColor="palegreen">
             <h1>Peko</h1>
-            <p>${Date.now()}</p>
-            <p>
-                A featherweight Preact SSR template for Deno.
-            </p>
+            <p><strong>
+                The featherweight & UI-library-agnostic SSR toolkit for Deno.
+            </strong></p>
+            <p>No bundling or build process. Server & Browser share all source modules!</p>
+            <p><span style="text-decoration: underline;">${Date.now()}</span> ${"<-"} refresh to see the initial server rendered value get hydrated!</p>
             <h2>Summary</h2>
             <ul>
                 <li>
-                    <strong>First-class frontend</strong> - server-side rendered then rapidly hydrated with optimized JavaScript bundles (~25kb).
+                    <strong>First-class frontend</strong> - server-side rendered then rapidly hydrated with preloaded JS modules (~10kb in <code>./exampleSrc</code> dir).
                 </li>
                 <li>
-                    <strong>Production-ready backend</strong> - reliablility and performance with native Typescript and Redis page caching.
+                    <strong>Production-ready backend</strong> - reliablility and performance with Typescript and configurable page caching.
                 </li>
                 <li>
-                    <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (&lt;100MB Docker images).
+                    <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (${"<"}100MB Docker images).
                 </li>
                 <li>
-                    <strong>Ease of adoption</strong> - simple and familiar project structure with preconfigured deployment files.
+                    <strong>Ease of adoption</strong> - easy-to-understand functions & no strict project structure.
                 </li>
                 <li>
-                    <strong>Uncompromised developer experience</strong> - Hot-reloading, CSS bundling, global state, and offline editing.
+                    <strong>Enjoyable development</strong> - Hot-reloading, localState hook in <code>exampleSrc</code> and utilise Deno & browser caching for offline editing!
                 </li>
             </ul>
             <p>
@@ -38,37 +39,39 @@ const Home = () => {
                     <a href="https://deno.land/manual/getting_started/installation">Install Deno</a>
                 </li>
                 <li>
-                    <a href="https://deno.land/manual/getting_started/installation">Install Denon</a> - make sure to add to PATH (use provided export command for MacOS)
+                    <code>$ git clone https://github.com/sebringrose/peko.git</code>
                 </li>
                 <li>
-                    Start development server: <code>$ denon start</code>
+                    <code>$ cd peko</code>
                 </li>
                 <li>
-                    Edit /src files for frontend changes. Add new /routes and /middlewares in /lib for backend changes.
+                    <code>$ deno run --allow-net --allow-env --allow-read --watch example.js</code>
+                </li>
+                <li>
+                    Edit <code>./exampleSrc</code> for frontend and play around with <code>./example.js</code> for backend server.
                 </li>
             </ol>
+            <br />
+            <h3>Import Peko into your own Deno project:</h3>
+            <p><code>import Peko from "https://github.com/sebringrose/peko"</code></p>
+            <br />
             <p>
-                <strong><a href="https://marketplace.visualstudio.com/items?itemName=bierner.lit-html">Lit-html</a> VS Code plugin recommended for intellisense and syntax-highlighting of html in .js (/.ts) files.</strong>
+                <strong>Note: <a href="https://marketplace.visualstudio.com/items?itemName=bierner.lit-html">Lit-html</a></strong> VS Code plugin recommended if using HTM & Preact as per <code>exampleSrc</code>.
             </p>
 
             <h2>Deployment</h2>
-            <p>
-                Dockerfile is preconfigured for production. For local testing run: <code>$ docker-compose up</code><br />
-                Note: You may want to use <code>--renew-anon-volumes</code> flag to clear redis cache.
-            </p>
+            <p>Docker & Deno Deploy deployment guides coming soon!</p>
             <p>
                 <strong>This project aims to be ready for production soon but it is not complete with extensive testing yet! Use at your own risk.</strong>
             </p>
 
             <h2>How does it work?</h2>
             <p>
-                Deno http server receives page requests and renders <a href="https://preactjs.com">Preact</a> page components to HTML using <a href="https://github.com/preactjs/preact-render-to-string">preact-render-to-string</a>. The HTML is injected into an HTML template along with request metadata, CSS and a JavaScript module before being served to the user's browser client. In production mode the page render is also cached so subsequent requests can be served instantly until the pages cache lifetime is reached.
+                Deno http server receives page requests and renders your source UI library modules to HTML. Example uses <a href="https://preactjs.com">Preact</a> UI components and <a href="https://github.com/preactjs/preact-render-to-string">preact-render-to-string</a> for SSR. The HTML is injected into an HTML template along with configurable CSS, JS & metadata before being served to the user's browser client.
             </p>
             <p>
-                The JavaScript module in the client hydrates the page with the page's source modules in development mode or an optimised <a href="https://deno.land/manual/tools/bundler">bundle</a> in production mode. To see this in action refresh the page and watch the last render time below.
+                If <code>env.ENVIRONMENT === "production"</code> page renders are also cached so subsequent requests can be served instantly until the page's configurable cache lifetime is reached.
             </p>
-            <p><strong>Last render:</strong> ${new Date().toString()}</p>
-
             <h2>Why is this cool?</h2>
             <p>
                 Because it provides all of the SEO and UX benefits of Server-Side Rendering (SSR) with no JavaScript transpilation or bundling required - the server and browser use the exact same code! This completely eliminates part of the traditional JavaScript SSR toolchain, increasing project maintainability and simplicity of development.
@@ -79,10 +82,10 @@ const Home = () => {
 
             <h2>Differences between other frameworks like Next.js, etc.</h2>
             <p>
-                Peko is built with one radical design decision: it isn't built to support the npm/React universe. This is a deliberate step away from the inflated state that many modern web applications find themselves in.
+                Peko is built with one radical design decision: it isn't built to support the npm/React universe. This is a deliberate step away from the inflated state that many modern web applications find themselves in. The example's use Preact but there's no reason you couldn't swap out the server render function for another SSR-enabled framework/library (e.g. Vue). Just make sure your source modules can run directly in the browser without transpilation!
             </p>
             <p>
-                By using Preact and htm with no transpiler Peko bridges the gap between old and new; by allowing the use of plain old HTML and CSS alongside JavaScript app components and state management (VDOM diffing). This means you can utilise your favourite CSS libraries and HTML templates/snippets in a modern JavaScript app but you won't have access to the endless pool of community-made React components.
+                By using Preact and htm with no transpiler the Peko <code>exampleSrc</code> bridges the gap between old and new; by allowing the use of plain old HTML and CSS alongside JavaScript app components and state management (VDOM diffing). This means you can utilise your favourite CSS libraries and HTML templates/snippets in a modern JavaScript app but you won't have access to the endless pool of community-made React components (unless you add preact/compat as a dependency).
             </p>
         </${Layout}>
     `

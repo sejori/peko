@@ -1,4 +1,4 @@
-import { useState, useEffect } from "https://jspm.dev/preact/hooks@10.7.1"
+import { useState, useEffect } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 // INITIAL STATE
 const initialState = {
