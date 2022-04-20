@@ -20,10 +20,10 @@
         <strong>Production-ready backend</strong> - reliablility and performance with Typescript and configurable page caching.
     </li>
     <li>
-        <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (<100MB Docker images).
+        <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (<80MB Docker images).
     </li>
     <li>
-        <strong>Ease of adoption</strong> - easy-to-understand functions & no strict project structure.
+        <strong>Ease of adoption</strong> - easy-to-understand functions & no fixed project structure.
     </li>
     <li>
         <strong>Enjoyable development</strong> - Hot-reloading, localState hook in <code>exampleSrc</code> and utilise Deno & browser caching for offline editing!
