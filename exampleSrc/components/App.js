@@ -1,7 +1,6 @@
-import { html } from "../../lib/preact.js"
-import { useLocalState } from "../hooks/localstate.js"
-
+import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 import List from "./List.js"
+import { useLocalState } from "../hooks/localstate.js"
 
 const App = () => {
     const [dataArray, setDataArray] = useLocalState('dataArray')

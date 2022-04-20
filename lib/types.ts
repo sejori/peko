@@ -4,8 +4,8 @@ export type PekoConfig = {
     hostname: string, 
     defaultCacheLifetime: number, 
     hotReloadDelay: number,
-    logHandler: (log: string) => void, 
-    analyticsHandler: (data: PekoAnalyticsData) => void,
+    logHandler: (log: string) => Promise<void>, 
+    analyticsHandler: (data: PekoAnalyticsData) => Promise<void>,
     errorHandler: (statusCode: number, request: Request) => Promise<Response>
 }
 
@@ -19,7 +19,7 @@ export type PekoPageRouteData = {
     route: string,
     moduleURL: URL,
     serverRender: (app: Function) => string,
-    clientHydrate: { module: string, script: string },
+    clientHydrate: { modulepreloads: string, scripts: string },
     template: (request: Request, params: Record<string, unknown>, html: string, hydrationModule: string, hydrationSript: string) => string, 
     customParams: Record<string, unknown>,
     cacheLifetime: number
@@ -36,6 +36,6 @@ export type PekoAnalyticsData = {
     status: number,
     method: string,
     url: string,
-    responseTime: number,
+    responseTime: string,
     headers: Record<string, string>
 }

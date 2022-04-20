@@ -8,8 +8,8 @@ let config: PekoConfig = {
     hostname: "0.0.0.0",
     defaultCacheLifetime: 3600,
     hotReloadDelay: 400,
-    logHandler: (log: string) => console.log(log),
-    analyticsHandler: (data: PekoAnalyticsData) => console.log(JSON.stringify(data)),
+    logHandler: async (log: string) => await console.log(log),
+    analyticsHandler: async (data: PekoAnalyticsData) => await console.log(JSON.stringify(data)),
     errorHandler: async (statusCode: number, _request: Request) => await new Promise((resolve, _reject) => {
         let response;
         switch (statusCode) {

@@ -4,11 +4,12 @@ import { ssrHandler, staticHandler } from "./lib/handlers/index.ts"
 import { getConfig, setConfig } from "./config.ts"
 import { PekoRoute, PekoPageRouteData, PekoStaticRouteData, PekoAnalyticsData } from "./lib/types.ts"
 
-const config = getConfig()
+
 export { getConfig, setConfig }
 const routes: PekoRoute[] = []
 
 export const start = async () => {
+    const config = getConfig()
     config.logHandler(`Starting Peko server on port ${config.port} in ${config.devMode ? "development" : "production"} mode with routes:`)
 
     // if dev create devsocket route
@@ -64,17 +65,23 @@ export const addStaticRoute = (routeData: PekoStaticRouteData) => routes.push({
     handler: (req) => staticHandler(req, routeData)
 })
 
-export const addPageRoute = (routeData: PekoPageRouteData) => routes.push({
-    route: routeData.route,
-    method: "GET",
-    handler: (req) => ssrHandler(req, { 
-        ...routeData, 
-        cacheLifetime: routeData.cacheLifetime ? routeData.cacheLifetime : config.defaultCacheLifetime,
-        customParams: routeData.customParams ? routeData.customParams : {} 
+export const addPageRoute = (routeData: PekoPageRouteData) => {
+    const config = getConfig()
+
+    routes.push({
+        route: routeData.route,
+        method: "GET",
+        handler: (req) => ssrHandler(req, { 
+            ...routeData, 
+            cacheLifetime: routeData.cacheLifetime ? routeData.cacheLifetime : config.defaultCacheLifetime,
+            customParams: routeData.customParams ? routeData.customParams : {} 
+        })
     })
-})
+}
 
 const logRequest = async (request: Request, status: number, start: number, responseTime: number) => await new Promise((resolve: (value: void) => void) => {
+    const config = getConfig()
+    
     const headers: Record<string, string> = {}
     for (const pair of request.headers.entries()) {
         headers[pair[0]] = pair[1]
@@ -85,7 +92,7 @@ const logRequest = async (request: Request, status: number, start: number, respo
         status,
         method: request.method,
         url: request.url,
-        responseTime: responseTime,
+        responseTime: `${responseTime}ms`,
         headers
     }
 
@@ -93,3 +100,5 @@ const logRequest = async (request: Request, status: number, start: number, respo
     config.analyticsHandler(logData)
     resolve()
 })
+
+export default { getConfig, setConfig, start, addRoute, addStaticRoute, addPageRoute }
