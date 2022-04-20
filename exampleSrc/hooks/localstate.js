@@ -51,7 +51,7 @@ const getLocalState = () => {
  */
 const getLocalStateValue = (key) => {
     const localState = getLocalState()
-    if (localState.hasOwnProperty(key)) return localState[key]
+    if (localState[key]) return localState[key]
     throw new Error(`Key "${key}" does not exist in localState. Make sure it is added to initialState in /src/hooks/localstate.js.`)
     
 }
