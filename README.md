@@ -10,7 +10,7 @@
     The featherweight & UI-library-agnostic SSR toolkit for Deno.
 </strong></p>
 <p>No bundling or build process. Server & Browser share all source modules!</p>
-<p><span style="text-decoration: underline;">${Date.now()}</span> ${"<-"} refresh to see the initial server rendered value get hydrated!</p>
+
 <h2>Summary</h2>
 <ul>
     <li>
@@ -20,7 +20,7 @@
         <strong>Production-ready backend</strong> - reliablility and performance with Typescript and configurable page caching.
     </li>
     <li>
-        <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (${"<"}100MB Docker images).
+        <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (<100MB Docker images).
     </li>
     <li>
         <strong>Ease of adoption</strong> - easy-to-understand functions & no strict project structure.
