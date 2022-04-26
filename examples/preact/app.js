@@ -132,13 +132,13 @@ pageRoutes.forEach(pageRoute => Peko.addHTMLRoute(pageRoute))
 // Setup src file routes - these use the static middleware
 const files = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
 files.forEach(file => {
-    const pathRoot = `${Deno.cwd()}/examples/preact/src`
-    const fileRoute = file.slice(pathRoot.length)
+    const rootPath = `${Deno.cwd()}/examples/preact/src`
+    const fileRoute = file.slice(rootPath.length)
 
     // must be PekoStaticRouteData type (see types.ts)
     Peko.addStaticRoute({
         route: fileRoute,
-        fileURL: `./${file}`,
+        fileURL: new URL(`file:/${rootPath}${fileRoute}`),
         contentType: lookup(file)
     })
 })
