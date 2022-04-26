@@ -1,15 +1,15 @@
-import { PekoConfig, PekoAnalyticsData } from "./lib/types.ts"
+import { Config, AnalyticsData } from "./lib/types.ts"
 
 const env = Deno.env.toObject()
 
-let config: PekoConfig = {
+let config: Config = {
     devMode: env.ENVIRONMENT !== "production",
     port: 7777,
     hostname: "0.0.0.0",
     defaultCacheLifetime: 3600,
     hotReloadDelay: 400,
     logHandler: async (log: string) => await console.log(log),
-    analyticsHandler: async (data: PekoAnalyticsData) => await console.log(JSON.stringify(data)),
+    analyticsHandler: async (data: AnalyticsData) => await console.log(JSON.stringify(data)),
     errorHandler: async (statusCode: number, _request: Request) => await new Promise((resolve, _reject) => {
         let response;
         switch (statusCode) {
@@ -41,5 +41,5 @@ let config: PekoConfig = {
         resolve(response);
     })
 }
-export const setConfig = (newConfObj: PekoConfig) => config = { ...config, ...newConfObj }
+export const setConfig = (newConfObj: Config) => config = { ...config, ...newConfObj }
 export const getConfig = () => config;

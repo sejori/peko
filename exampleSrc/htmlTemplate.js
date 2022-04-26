@@ -1,4 +1,4 @@
-export default (_request, params, prerenderedHTML, hydrationModules, hydrationScripts) => `
+export default (_request, customTags, HTML) => `
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -6,18 +6,19 @@ export default (_request, params, prerenderedHTML, hydrationModules, hydrationSc
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" href="/exampleSrc/assets/favicon.ico">
-        <title>Peko ${params.pageTitle ? `| ${params.pageTitle}` : ""}</title>
-        <meta name="description" content="${params.description}">
         
-        ${params.css}
-        ${hydrationModules}
+        ${customTags.title}
+        <meta name="description" content="The Featherweight Deno SSR Library">
+        
+        ${customTags.style}
+        ${customTags.modulepreloads}
     </head>
     <body>
         <div id="root">
-            ${prerenderedHTML}
+            ${HTML}
         </div>
 
-        ${hydrationScripts}
+        ${customTags.hydrationScript}
     </body>
     </html>
 `

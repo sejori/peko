@@ -1,15 +1,15 @@
 import { getConfig } from "../../config.ts"
-import { PekoPageRouteData } from "../types.ts"
+import { HTMLRouteData } from "../types.ts"
 
 const config = getConfig()
 
-type pageCacheItem = { route: string, response: Response, dob: number, lifetime: number }
-const pageCache: Array<pageCacheItem> = []
+type HTMLCacheItem = { route: string, response: Response, dob: number, lifetime: number }
+const HTMLCache: Array<HTMLCacheItem> = []
 
-export const ssrHandler = async (request: Request, ssrData: PekoPageRouteData) => {
+export const ssrHandler = async (request: Request, ssrData: HTMLRouteData) => {
     // if not devMode and valid response is cached use that
     if (!config.devMode) {
-        const cachedResponse = pageCache.find(item => item.route === ssrData.route)
+        const cachedResponse = HTMLCache.find(item => item.route === ssrData.route)
         if (cachedResponse && Date.now() < cachedResponse.dob + cachedResponse.lifetime) {
             return cachedResponse.response
         }
@@ -17,26 +17,22 @@ export const ssrHandler = async (request: Request, ssrData: PekoPageRouteData) =
 
     // import our page module (do we need to create a type for it here?)
     const pageImport = await import(ssrData.moduleURL.pathname)
+    
+    // must remind users that the moduleURL for rendering must export the js app as default
     const pageComponent = pageImport.default
 
     // use provided server-side render function for browser goodness ^^
-    const prerenderedHTML = ssrData.serverRender(pageComponent())
+    const prerenderedHTML = ssrData.render(pageComponent())
+    const HTML = ssrData.template(request, ssrData.customTags, prerenderedHTML)
 
-    // create client script, contains client-side hydration function + devsocket for hot reloads in devMode
-    const pageScripts = `
-        ${ssrData.clientHydrate.scripts}
-    `
-    
-    // ${config.devMode
-    //     ? `<script>
-    //         const devSocket = new WebSocket("ws://" + location.host + "/devsocket");
-    //         devSocket.onclose = () => setTimeout(() => location.reload(), ${config.hotReloadDelay});
-    //     </script>`
-    //     : ''
+    // add devSocket script if in dev environment for hot reloads (requires starting server with --watch command)
+    // COMMENTED BECAUSE REQUESTS ARE CURRENTLY FAILING - TRIGGERING CONTINUOUS REFRESH
+    // if (config.devMode) {
+    //     const endOfBody = HTML.indexOf("</body>")
+    //     HTML = `${HTML.slice(0, endOfBody)}${`<script>new WebSocket("ws://" + location.host + "/devsocket").onclose = () => setTimeout(() => location.reload(), ${config.hotReloadDelay});</script>`}${HTML.slice(endOfBody)}`
     // }
 
-    const body = ssrData.template(request, ssrData.customParams, prerenderedHTML, ssrData.clientHydrate.modulepreloads, pageScripts)
-    const response = new Response(body, {
+    const response = new Response(HTML, {
         headers : new Headers({
             'Content-Type': 'text/html; charset=utf-8'
         })
@@ -48,11 +44,11 @@ export const ssrHandler = async (request: Request, ssrData: PekoPageRouteData) =
 }
 
 // this is a promise so that is doesn't block the process when called without "await" keyword
-const cacheResponseItem = async (newItem: pageCacheItem) => await new Promise((resolve: (value: void) => void) => {
+const cacheResponseItem = async (newItem: HTMLCacheItem) => await new Promise((resolve: (value: void) => void) => {
     // remove outdated response from cache if present
-    const oldCachedIndex = pageCache.findIndex(item => item.route === newItem.route)
-    if (oldCachedIndex > 0) pageCache.splice(oldCachedIndex, 1)
+    const oldCachedIndex = HTMLCache.findIndex(item => item.route === newItem.route)
+    if (oldCachedIndex > 0) HTMLCache.splice(oldCachedIndex, 1)
 
-    pageCache.push(newItem)
+    HTMLCache.push(newItem)
     return resolve()
 })
