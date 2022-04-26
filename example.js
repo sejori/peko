@@ -84,55 +84,49 @@ const pageRoutes = [
     {
         route: "/",
         template: htmlTemplate,
-        customParams: {
-            pageTitle: "",
-            description: "The Featherweight Deno SSR Library",
-            css: style,
-        },
+        render: (app) => renderToString(app, null, null),
         moduleURL: new URL("./exampleSrc/pages/Home.js", import.meta.url),
-        clientHydrate: {
+        customTags: {
+            title: `<title>Peko</title>`,
+            style: style,
             modulepreloads: `
                 <script modulepreload="true" type="text/plain" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
                 <script modulepreload="true" type="module" src="/exampleSrc/pages/Home.js"></script>
             `,
-            scripts: `
+            hydrationScript: `
                 <script type="module">
                     import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
                     import Home from "/exampleSrc/pages/Home.js";
                     hydrate(Home(), document.getElementById("root"))
                 </script>
-            `,
+            `
         },
-        serverRender: (app) => renderToString(app, null, null),
         cacheLifetime: 6000
     },
     {
         route: "/about",
         template: htmlTemplate,
-        customParams: {
-            pageTitle: "",
-            description: "The Featherweight Deno SSR Library",
-            css: style,
-        },
+        render: (app) => renderToString(app, null, null),
         moduleURL: new URL("./exampleSrc/pages/About.js", import.meta.url),
-        clientHydrate: {
+        customTags: {
+            title: `<title>Peko | About</title>`,
+            style: style,
             modulepreloads: `
-                <script modulepreload="true" type="module" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
+                <script modulepreload="true" type="text/plain" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
                 <script modulepreload="true" type="module" src="/exampleSrc/pages/About.js"></script>
             `,
-            scripts: `
+            hydrationScript: `
                 <script type="module">
                     import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
                     import About from "/exampleSrc/pages/About.js";
                     hydrate(About(), document.getElementById("root"));
                 </script>
-            `,
-        },
-        serverRender: (app) => renderToString(app, null, null),
+            `
+        }
         // cacheLifetime: 3600 <- this can be left out as it will default to 3600
     }
 ]
-pageRoutes.forEach(pageRoute => Peko.addPageRoute(pageRoute))
+pageRoutes.forEach(pageRoute => Peko.addHTMLRoute(pageRoute))
 
 // Setup src file routes - these use the static middleware
 const files = await recursiveReaddir(`./exampleSrc`) 
