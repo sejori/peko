@@ -1,4 +1,4 @@
-import { getConfig } from "../../config.ts"
+import { getConfig } from "../config.ts"
 import { HTMLRouteData } from "../types.ts"
 
 const config = getConfig()
