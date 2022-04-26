@@ -1,8 +1,9 @@
-import Peko from "./index.ts"
+import Peko from "../../mod.ts"
+
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
 
-import htmlTemplate from "./exampleSrc/htmlTemplate.js"
+import htmlTemplate from "./src/htmlTemplate.js"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 // global styles (could extract page specific css in future)
@@ -85,18 +86,18 @@ const pageRoutes = [
         route: "/",
         template: htmlTemplate,
         render: (app) => renderToString(app, null, null),
-        moduleURL: new URL("./exampleSrc/pages/Home.js", import.meta.url),
+        moduleURL: new URL("./src/pages/Home.js", import.meta.url),
         customTags: {
             title: `<title>Peko</title>`,
             style: style,
             modulepreloads: `
                 <script modulepreload="true" type="text/plain" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
-                <script modulepreload="true" type="module" src="/exampleSrc/pages/Home.js"></script>
+                <script modulepreload="true" type="module" src="/pages/Home.js"></script>
             `,
             hydrationScript: `
                 <script type="module">
                     import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-                    import Home from "/exampleSrc/pages/Home.js";
+                    import Home from "/pages/Home.js";
                     hydrate(Home(), document.getElementById("root"))
                 </script>
             `
@@ -107,18 +108,18 @@ const pageRoutes = [
         route: "/about",
         template: htmlTemplate,
         render: (app) => renderToString(app, null, null),
-        moduleURL: new URL("./exampleSrc/pages/About.js", import.meta.url),
+        moduleURL: new URL("./src/pages/About.js", import.meta.url),
         customTags: {
             title: `<title>Peko | About</title>`,
             style: style,
             modulepreloads: `
                 <script modulepreload="true" type="text/plain" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
-                <script modulepreload="true" type="module" src="/exampleSrc/pages/About.js"></script>
+                <script modulepreload="true" type="module" src="/pages/About.js"></script>
             `,
             hydrationScript: `
                 <script type="module">
                     import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-                    import About from "/exampleSrc/pages/About.js";
+                    import About from "/pages/About.js";
                     hydrate(About(), document.getElementById("root"));
                 </script>
             `
@@ -129,14 +130,15 @@ const pageRoutes = [
 pageRoutes.forEach(pageRoute => Peko.addHTMLRoute(pageRoute))
 
 // Setup src file routes - these use the static middleware
-const files = await recursiveReaddir(`./exampleSrc`) 
+const files = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
 files.forEach(file => {
-    file = `/${file}`
+    const pathRoot = `${Deno.cwd()}/examples/preact/src`
+    const fileRoute = file.slice(pathRoot.length)
 
     // must be PekoStaticRouteData type (see types.ts)
     Peko.addStaticRoute({
-        route: file,
-        fileURL: new URL(`.${file}`, import.meta.url),
+        route: fileRoute,
+        fileURL: `./${file}`,
         contentType: lookup(file)
     })
 })

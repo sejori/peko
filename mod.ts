@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.121.0/http/server.ts"
 
 import { ssrHandler, staticHandler } from "./lib/handlers/index.ts"
-import { getConfig, setConfig } from "./config.ts"
+import { getConfig, setConfig } from "./lib/config.ts"
 import { Route, HTMLRouteData, StaticRouteData, AnalyticsData } from "./lib/types.ts"
 
 

@@ -1,6 +1,6 @@
 import { acceptWebSocket } from "https://deno.land/std@0.95.0/ws/mod.ts"
 
-import { getConfig } from "../../config.ts"
+import { getConfig } from "../config.ts"
 
 const config = getConfig()
 

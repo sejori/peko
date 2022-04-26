@@ -1,4 +1,4 @@
-import { Config, AnalyticsData } from "./lib/types.ts"
+import { Config, AnalyticsData } from "./types.ts"
 
 const env = Deno.env.toObject()
 
