@@ -2,11 +2,11 @@ import { serve } from "https://deno.land/std@0.121.0/http/server.ts"
 
 import { ssrHandler, staticHandler } from "./lib/handlers/index.ts"
 import { getConfig, setConfig } from "./config.ts"
-import { PekoRoute, PekoPageRouteData, PekoStaticRouteData, PekoAnalyticsData } from "./lib/types.ts"
+import { Route, HTMLRouteData, StaticRouteData, AnalyticsData } from "./lib/types.ts"
 
 
 export { getConfig, setConfig }
-const routes: PekoRoute[] = []
+const routes: Route[] = []
 
 export const start = async () => {
     const config = getConfig()
@@ -57,15 +57,15 @@ export const start = async () => {
     })
 }
 
-export const addRoute = (route: PekoRoute) => routes.push(route)
+export const addRoute = (route: Route) => routes.push(route)
 
-export const addStaticRoute = (routeData: PekoStaticRouteData) => routes.push({
+export const addStaticRoute = (routeData: StaticRouteData) => routes.push({
     route: routeData.route,
     method: "GET",
     handler: (req) => staticHandler(req, routeData)
 })
 
-export const addPageRoute = (routeData: PekoPageRouteData) => {
+export const addHTMLRoute = (routeData: HTMLRouteData) => {
     const config = getConfig()
 
     routes.push({
@@ -74,7 +74,7 @@ export const addPageRoute = (routeData: PekoPageRouteData) => {
         handler: (req) => ssrHandler(req, { 
             ...routeData, 
             cacheLifetime: routeData.cacheLifetime ? routeData.cacheLifetime : config.defaultCacheLifetime,
-            customParams: routeData.customParams ? routeData.customParams : {} 
+            customTags: routeData.customTags ? routeData.customTags : {} 
         })
     })
 }
@@ -87,7 +87,7 @@ const logRequest = async (request: Request, status: number, start: number, respo
         headers[pair[0]] = pair[1]
     }
 
-    const logData: PekoAnalyticsData = {
+    const logData: AnalyticsData = {
         date: new Date(start).toString(),
         status,
         method: request.method,
@@ -101,4 +101,4 @@ const logRequest = async (request: Request, status: number, start: number, respo
     resolve()
 })
 
-export default { getConfig, setConfig, start, addRoute, addStaticRoute, addPageRoute }
+export default { getConfig, setConfig, start, addRoute, addStaticRoute, addHTMLRoute }

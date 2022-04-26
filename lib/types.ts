@@ -1,37 +1,36 @@
-export type PekoConfig = { 
+export type Config = { 
     devMode: boolean,
     port: number, 
     hostname: string, 
     defaultCacheLifetime: number, 
     hotReloadDelay: number,
     logHandler: (log: string) => Promise<void>, 
-    analyticsHandler: (data: PekoAnalyticsData) => Promise<void>,
+    analyticsHandler: (data: AnalyticsData) => Promise<void>,
     errorHandler: (statusCode: number, request: Request) => Promise<Response>
 }
 
-export type PekoRoute = { 
+export type Route = { 
     route: string, 
     method: string, 
     handler: (a: Request) => Promise<Response>, 
 }
 
-export type PekoPageRouteData = { 
+export type HTMLRouteData = { 
     route: string,
+    template: (request: Request, customTags: Record<string, `<${string}>`>, html: string) => string,
+    render: (app: any) => string, 
     moduleURL: URL,
-    serverRender: (app: Function) => string,
-    clientHydrate: { modulepreloads: string, scripts: string },
-    template: (request: Request, params: Record<string, unknown>, html: string, hydrationModule: string, hydrationSript: string) => string, 
-    customParams: Record<string, unknown>,
+    customTags: Record<string, `<${string}>`>,
     cacheLifetime: number
 }
 
-export type PekoStaticRouteData = { 
+export type StaticRouteData = { 
     route: string,
     fileURL: URL, 
     contentType: string 
 }
 
-export type PekoAnalyticsData = {
+export type AnalyticsData = {
     date: string,
     status: number,
     method: string,
