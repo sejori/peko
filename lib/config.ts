@@ -10,7 +10,7 @@ let config: Config = {
     hotReloadDelay: 400,
     logHandler: async (log: string) => await console.log(log),
     analyticsHandler: async (data: AnalyticsData) => await console.log(JSON.stringify(data)),
-    errorHandler: async (statusCode: number, _request: Request) => await new Promise((resolve, _reject) => {
+    errorHandler: async (_request: Request, statusCode: number) => await new Promise((resolve, _reject) => {
         let response;
         switch (statusCode) {
             case 401:  

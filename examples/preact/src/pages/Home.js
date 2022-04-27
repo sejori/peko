@@ -10,7 +10,7 @@ const Home = () => {
                 The featherweight & UI-library-agnostic SSR toolkit for Deno.
             </strong></p>
             <p>No bundling or build process. Server & Browser share all source modules!</p>
-            <p><span style="text-decoration: underline;">${Date.now()}</span> ${"<-"} refresh to see the initial server rendered value get hydrated!</p>
+            <p><span style="text-decoration: underline;">${Date.now()}</span> ${"<-"} refresh to see the initial server rendered value get hydrated</p>
 
             <h2>Summary</h2>
             <ul>
