@@ -1,2 +1,5 @@
 # MacOS gross history thingy
 .DS_Store
+exampleSrc/htmlNav.html
+requests.http
+exampleSrc/layouts/NavLayout.js
