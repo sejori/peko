@@ -39,11 +39,11 @@ export const start = async () => {
             } catch(error) {
                 status = 500
                 config.logHandler(error)
-                response = config.errorHandler(status, request)
+                response = config.errorHandler(request, status)
             }
         } else {
             status = 404
-            response = config.errorHandler(status, request)
+            response = config.errorHandler(request, status)
         }
 
         const responseTime = Date.now() - start

@@ -9,9 +9,40 @@ export default (_request, customTags, HTML) => `
         
         ${customTags.title}
         <meta name="description" content="The Featherweight Deno SSR Library">
-        
-        ${customTags.style}
-        ${customTags.modulepreloads}
+
+        <script modulepreload="true" type="text/plain" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
+        ${customTags.modulepreload}
+
+        <style>
+            html, body {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                font-family: helvetica, sans-serif;
+            }
+
+            img { max-width: 100%; }
+            li { margin: 10px 0; }
+            a { color: royalblue; }
+            a:visited { color: hotpink; }
+            .container { max-width: 900px; margin: auto; }
+            .row { display: flex; }
+            .justify-around { justify-content: space-around; }
+
+            .btn-lg-primary {
+                border: solid 1px limegreen;
+                background-color: turquoise;
+                padding: 0.5rem;
+                font-size: 1rem;
+            }
+
+            .btn-lg-secondary {
+                border: solid 1px red;
+                background-color: orange;
+                padding: 0.5rem;
+                font-size: 1rem;
+            }
+        </style>
     </head>
     <body>
         <div id="root">

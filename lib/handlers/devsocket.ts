@@ -17,7 +17,7 @@ export const devSocketHandler = async (request: any) => {
         config.logHandler("DevSocket connected - will close and trigger hot reload in client on server restart.")
         return new Response("Devsocket connection succeeded", { status: 200 })
     } catch(e) {
-        config.logHandler(`failed to accept websocket: ${e}`)
-        return new Response("Devsocket connection failed", { status: 400 })
+        config.logHandler(`DevSocket connection failed: ${e}`)
+        return new Response(`DevSocket connection failed: ${e}`, { status: 400 })
     }
 }

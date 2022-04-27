@@ -6,40 +6,6 @@ import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
 import htmlTemplate from "./src/htmlTemplate.js"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
-// global styles (could extract page specific css in future)
-const style = `
-    <style>
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            font-family: helvetica, sans-serif;
-        }
-
-        img { max-width: 100%; }
-        li { margin: 10px 0; }
-        a { color: royalblue; }
-        a:visited { color: hotpink; }
-        .container { max-width: 900px; margin: auto; }
-        .row { display: flex; }
-        .justify-around { justify-content: space-around; }
-
-        .btn-lg-primary {
-            border: solid 1px limegreen;
-            background-color: turquoise;
-            padding: 0.5rem;
-            font-size: 1rem;
-        }
-
-        .btn-lg-secondary {
-            border: solid 1px red;
-            background-color: orange;
-            padding: 0.5rem;
-            font-size: 1rem;
-        }
-    </style>
-`
-
 // Configure Peko
 Peko.setConfig({
     // host set-up
@@ -59,7 +25,7 @@ Peko.setConfig({
     analyticsHandler: async (_data) => await null,
 
     // custom error handling
-    errorHandler: async (statusCode, _request) => await new Promise((resolve, _reject) => {
+    errorHandler: async (_request, statusCode) => await new Promise((resolve, _reject) => {
         let response;
         switch (statusCode) {
             case 404: 
@@ -89,11 +55,7 @@ const pageRoutes = [
         moduleURL: new URL("./src/pages/Home.js", import.meta.url),
         customTags: {
             title: `<title>Peko</title>`,
-            style: style,
-            modulepreloads: `
-                <script modulepreload="true" type="text/plain" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
-                <script modulepreload="true" type="module" src="/pages/Home.js"></script>
-            `,
+            modulepreload: `<script modulepreload="true" type="module" src="/pages/Home.js"></script>`,
             hydrationScript: `
                 <script type="module">
                     import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
@@ -111,11 +73,7 @@ const pageRoutes = [
         moduleURL: new URL("./src/pages/About.js", import.meta.url),
         customTags: {
             title: `<title>Peko | About</title>`,
-            style: style,
-            modulepreloads: `
-                <script modulepreload="true" type="text/plain" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
-                <script modulepreload="true" type="module" src="/pages/About.js"></script>
-            `,
+            modulepreload: `<script modulepreload="true" type="module" src="/pages/About.js"></script>`,
             hydrationScript: `
                 <script type="module">
                     import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";

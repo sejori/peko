@@ -6,7 +6,7 @@ export type Config = {
     hotReloadDelay: number,
     logHandler: (log: string) => Promise<void>, 
     analyticsHandler: (data: AnalyticsData) => Promise<void>,
-    errorHandler: (statusCode: number, request: Request) => Promise<Response>
+    errorHandler: (request: Request, statusCode: number) => Promise<Response>
 }
 
 export type Route = { 
