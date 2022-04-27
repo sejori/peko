@@ -50,7 +50,7 @@
 </ol>
 <br />
 <h3>Import Peko into your own Deno project:</h3>
-<p><code>import Peko from "https://github.com/sebringrose/peko"</code></p>
+<p><code>import Peko from "https://github.com/sebringrose/peko/mod.ts"</code></p>
 <br />
 <p>
     <strong>Note: <a href="https://marketplace.visualstudio.com/items?itemName=bierner.lit-html">Lit-html</a></strong> VS Code plugin recommended if using HTM & Preact.

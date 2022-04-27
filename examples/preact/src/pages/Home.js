@@ -15,16 +15,16 @@ const Home = () => {
             <h2>Summary</h2>
             <ul>
                 <li>
-                    <strong>First-class frontend</strong> - server-side rendered then rapidly hydrated with preloaded JS modules (~10kb in Preact example dir).
+                    <strong>First-class frontend</strong> - server-side rendered then rapidly hydrated with preloaded JS modules (~10kb in Preact example).
                 </li>
                 <li>
-                    <strong>Production-ready backend</strong> - reliablility and performance with Typescript and configurable page caching.
+                    <strong>Production-ready backend</strong> - reliablility and performance with TypeScript and configurable page caching.
                 </li>
                 <li>
                     <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (&lt;80MB Docker images).
                 </li>
                 <li>
-                    <strong>Ease of adoption</strong> - easy-to-understand functions & no fixed project structure.
+                    <strong>Ease of adoption</strong> - intuitive service functions & no enforced directory structure.
                 </li>
             </ul>
             <p>
@@ -43,7 +43,7 @@ const Home = () => {
                     <code>$ cd peko</code>
                 </li>
                 <li>
-                    <code>$ deno run --allow-net --allow-env --allow-read --watch example.js</code>
+                    <code>$ deno run --allow-env --allow-read --allow-net --watch examples/preact/app.js</code>
                 </li>
                 <li>
                     Check out <code>./examples/preact/src</code> for frontend code and play around with <code>./examples/preact/app.js</code> for app server changes.
@@ -51,10 +51,9 @@ const Home = () => {
             </ol>
             <br />
             <h3>Import Peko into your own Deno project:</h3>
-            <p><code>import Peko from "https://github.com/sebringrose/peko"</code></p>
-            <br />
+            <p><code>import Peko from "https://github.com/sebringrose/peko/mod.ts"</code></p>
             <p>
-                <strong>Note: <a href="https://marketplace.visualstudio.com/items?itemName=bierner.lit-html">Lit-html</a></strong> VS Code plugin recommended if using HTM & Preact.
+                <strong>Note: <a href="https://marketplace.visualstudio.com/items?itemName=bierner.lit-html">Lit-html</a></strong> VS Code plugin can be helpful if using Preact & HTM.
             </p>
 
             <h2>Deployment</h2>
@@ -65,10 +64,10 @@ const Home = () => {
 
             <h2>How does it work?</h2>
             <p>
-                Deno http server receives page requests and renders your source UI library modules to HTML. The example uses <a href="https://preactjs.com">Preact</a> UI components and <a href="https://github.com/preactjs/preact-render-to-string">preact-render-to-string</a> for Server-Side Rendering (SSR). The HTML is injected into an HTML template along with configurable CSS, JS & metadata before being served to the user's browser client.
+                Deno http server receives page requests and renders your source UI library modules to HTML. The example uses <a href="https://preactjs.com">Preact</a> UI components and <a href="https://github.com/preactjs/preact-render-to-string">preact-render-to-string</a> for Server-Side Rendering (SSR). The HTML is injected into an HTML template along with configurable CSS, JS & metadata before being served to the user's browser.
             </p>
             <p>
-                If <code>env.ENVIRONMENT === "production"</code> page renders are also cached so subsequent requests can be served instantly until the page's configurable cache lifetime is reached.
+                If <code>env.ENVIRONMENT === "production"</code> page renders are also cached so that subsequent requests can be served immediately without a server-side render step (until the page's configurable cache lifetime is reached).
             </p>
             <h2>Why is this cool?</h2>
             <p>
@@ -80,7 +79,7 @@ const Home = () => {
 
             <h2>Differences between other frameworks like Next.js, etc.</h2>
             <p>
-                Peko is built with one radical design decision: it isn't built to support the infinite universe of npm UI libraries (as these often require bundling and transpilation). This is a deliberate step away from the inflated state that many modern web applications find themselves in. Just make sure your source modules can run directly in the browser without transpilation!
+                Peko is built with one radical design decision: it doesn't support the extended universe of NPM packages (as these often require bundling and transpilation). This is a deliberate step away from the inflated state that many modern web applications find themselves in. You can of course still use external packages and modules - just make sure your source can run in the browser without transpilation!
             </p>
         </${Layout}>
     `

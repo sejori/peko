@@ -138,7 +138,7 @@ files.forEach(file => {
     // must be PekoStaticRouteData type (see types.ts)
     Peko.addStaticRoute({
         route: fileRoute,
-        fileURL: new URL(`file:/${rootPath}${fileRoute}`),
+        fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
         contentType: lookup(file)
     })
 })
