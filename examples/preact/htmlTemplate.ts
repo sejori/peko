@@ -1,4 +1,6 @@
-export default (_request, customTags, HTML) => `
+import { CustomTag } from "../../lib/types.ts"
+
+export default (HTML: string, customTags: Record<string, CustomTag>) => `
     <!DOCTYPE html>
     <html lang="en">
     <head>

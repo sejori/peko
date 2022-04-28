@@ -1,16 +1,16 @@
 import { getConfig } from "../config.ts"
-import { HTMLRouteData } from "../types.ts"
+import { SSRRouteData } from "../types.ts"
 
 const config = getConfig()
 
-type HTMLCacheItem = { route: string, response: Response, dob: number, lifetime: number }
+type HTMLCacheItem = { route: string, response: Response, dob: number }
 const HTMLCache: Array<HTMLCacheItem> = []
 
-export const ssrHandler = async (request: Request, ssrData: HTMLRouteData) => {
+export const ssrHandler = async (request: Request, ssrData: SSRRouteData) => {
     // if not devMode and valid response is cached use that
-    if (!config.devMode) {
+    if (!config.devMode && ssrData.cacheLifetime) {
         const cachedResponse = HTMLCache.find(item => item.route === ssrData.route)
-        if (cachedResponse && Date.now() < cachedResponse.dob + cachedResponse.lifetime) {
+        if (cachedResponse && Date.now() < cachedResponse.dob + ssrData.cacheLifetime) {
             return cachedResponse.response
         }
     }
@@ -23,7 +23,7 @@ export const ssrHandler = async (request: Request, ssrData: HTMLRouteData) => {
 
     // use provided server-side render function for browser goodness ^^
     const prerenderedHTML = ssrData.render(pageComponent())
-    const HTML = ssrData.template(request, ssrData.customTags, prerenderedHTML)
+    const HTML = ssrData.template(prerenderedHTML, ssrData.customTags, request)
 
     // add devSocket script if in dev environment for hot reloads (requires starting server with --watch command)
     // COMMENTED BECAUSE REQUESTS ARE CURRENTLY FAILING - TRIGGERING CONTINUOUS REFRESH
@@ -38,7 +38,7 @@ export const ssrHandler = async (request: Request, ssrData: HTMLRouteData) => {
         })
     })
 
-    cacheResponseItem({ response, route: ssrData.route, dob: Date.now(), lifetime: ssrData.cacheLifetime })
+    cacheResponseItem({ response, route: ssrData.route, dob: Date.now() })
 
     return response
 }
