@@ -101,4 +101,4 @@ const logRequest = async (request: Request, status: number, start: number, respo
     resolve()
 })
 
-export default { getConfig, setConfig, start, addRoute, addStaticRoute, addSSRRoute }
+export default { getConfig, setConfig, start, addRoute, staticHandler, ssrHandler, addStaticRoute, addSSRRoute }
