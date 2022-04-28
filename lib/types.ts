@@ -1,12 +1,12 @@
 export type Config = { 
-    devMode?: boolean,
-    port?: number, 
-    hostname?: string, 
-    defaultCacheLifetime?: number, 
-    hotReloadDelay?: number,
-    logHandler?: (log: string) => Promise<void>, 
-    analyticsHandler?: (data: AnalyticsData) => Promise<void | null>,
-    errorHandler?: (request: Request, statusCode: number) => Promise<Response>
+    devMode: boolean,
+    port: number, 
+    hostname: string, 
+    defaultCacheLifetime: number, 
+    hotReloadDelay: number,
+    logHandler: (log: string) => Promise<void>, 
+    analyticsHandler: (data: AnalyticsData) => Promise<void | null>,
+    errorHandler: (request: Request, statusCode: number) => Promise<Response>
 }
 
 export type Route = { 
