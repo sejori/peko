@@ -1,33 +1,34 @@
 export type Config = { 
-    devMode: boolean,
-    port: number, 
-    hostname: string, 
-    defaultCacheLifetime: number, 
-    hotReloadDelay: number,
-    logHandler: (log: string) => Promise<void>, 
-    analyticsHandler: (data: AnalyticsData) => Promise<void>,
-    errorHandler: (request: Request, statusCode: number) => Promise<Response>
+    devMode?: boolean,
+    port?: number, 
+    hostname?: string, 
+    defaultCacheLifetime?: number, 
+    hotReloadDelay?: number,
+    logHandler?: (log: string) => Promise<void>, 
+    analyticsHandler?: (data: AnalyticsData) => Promise<void | null>,
+    errorHandler?: (request: Request, statusCode: number) => Promise<Response>
 }
 
 export type Route = { 
     route: string, 
     method: string, 
-    handler: (a: Request) => Promise<Response>, 
+    handler: (a: Request) => Promise<Response>
 }
 
-export type HTMLRouteData = { 
+export type CustomTag = `<${string}>`
+export type SSRRouteData = { 
     route: string,
-    template: (request: Request, customTags: Record<string, `<${string}>`>, html: string) => string,
-    render: (app: any) => string, 
+    template: (htmlContent: string, customTags?: Record<string, CustomTag>, request?: Request) => string,
+    render: (app: any, request?: Request, ) => string, 
     moduleURL: URL,
-    customTags: Record<string, `<${string}>`>,
-    cacheLifetime: number
+    customTags?: Record<string, CustomTag>,
+    cacheLifetime?: number
 }
 
 export type StaticRouteData = { 
     route: string,
     fileURL: URL, 
-    contentType: string 
+    contentType: string | undefined
 }
 
 export type AnalyticsData = {

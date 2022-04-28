@@ -1,4 +1,5 @@
 import Peko from "../../mod.ts"
+import { Route, SSRRouteData } from "../../lib/types.ts"
 
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
@@ -46,49 +47,45 @@ Peko.setConfig({
 })
 
 // Setup ssr page routes
-const pageRoutes = [
+const pageRoutes: SSRRouteData[] = [
     // must be PekoPageRouteData type (see types.ts)
     {
         route: "/",
-        template: htmlTemplate,
-        render: (app) => renderToString(app, null, null),
         moduleURL: new URL("./src/pages/Home.js", import.meta.url),
+        render: (app) => renderToString(app, null, null),
+        template: htmlTemplate,
         customTags: {
             title: `<title>Peko</title>`,
             modulepreload: `<script modulepreload="true" type="module" src="/pages/Home.js"></script>`,
-            hydrationScript: `
-                <script type="module">
-                    import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-                    import Home from "/pages/Home.js";
-                    hydrate(Home(), document.getElementById("root"))
-                </script>
-            `
+            hydrationScript: `<script type="module">
+                import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+                import Home from "/pages/Home.js";
+                hydrate(Home(), document.getElementById("root"))
+            </script>`
         },
         cacheLifetime: 6000
     },
     {
         route: "/about",
-        template: htmlTemplate,
-        render: (app) => renderToString(app, null, null),
         moduleURL: new URL("./src/pages/About.js", import.meta.url),
+        render: (app) => renderToString(app, null, null),
+        template: htmlTemplate,
         customTags: {
             title: `<title>Peko | About</title>`,
             modulepreload: `<script modulepreload="true" type="module" src="/pages/About.js"></script>`,
-            hydrationScript: `
-                <script type="module">
-                    import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-                    import About from "/pages/About.js";
-                    hydrate(About(), document.getElementById("root"));
-                </script>
-            `
+            hydrationScript: `<script type="module">
+                import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+                import About from "/pages/About.js";
+                hydrate(About(), document.getElementById("root"));
+            </script>`
         }
-        // cacheLifetime: 3600 <- this can be left out as it will default to 3600
+        // cacheLifetime: 3600 <- this can be omitted as it will default to 3600
     }
 ]
 pageRoutes.forEach(pageRoute => Peko.addHTMLRoute(pageRoute))
 
 // Setup src file routes - these use the static middleware
-const files = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
+const files: string[] = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
 files.forEach(file => {
     const rootPath = `${Deno.cwd()}/examples/preact/src`
     const fileRoute = file.slice(rootPath.length)
@@ -102,12 +99,12 @@ files.forEach(file => {
 })
 
 // Setup any custom routes (e.g. any server-side API functions)
-const customRoutes = [
+const customRoutes: Route[] = [
     // must be PekoRoute type (see types.ts)
     {
         route: "/api/parrotFcn",
         method: "POST",
-        handler: (request) => new Response(`Parrot sqwarks: ${JSON.stringify(request.body)}`)
+        handler: async (request: Request) => await new Response(`Parrot sqwarks: ${JSON.stringify(request.body)}`)
     }
 ]
 customRoutes.forEach(route => Peko.addRoute(route))
