@@ -41,5 +41,5 @@ let config: Config = {
         resolve(response);
     })
 }
-export const setConfig = (newConfObj: Config) => config = { ...config, ...newConfObj }
+export const setConfig = (newConfObj: Partial<Config>) => config = { ...config, ...newConfObj }
 export const getConfig = () => config;

@@ -82,7 +82,7 @@ const pageRoutes: SSRRouteData[] = [
         // cacheLifetime: 3600 <- this can be omitted as it will default to 3600
     }
 ]
-pageRoutes.forEach(pageRoute => Peko.addHTMLRoute(pageRoute))
+pageRoutes.forEach(pageRoute => Peko.addSSRRoute(pageRoute))
 
 // Setup src file routes - these use the static middleware
 const files: string[] = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
