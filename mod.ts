@@ -1,8 +1,8 @@
 import { serve } from "https://deno.land/std@0.121.0/http/server.ts"
 
 import { ssrHandler, staticHandler } from "./lib/handlers/index.ts"
-import { getConfig, setConfig } from "./config.ts"
-import { Route, HTMLRouteData, StaticRouteData, AnalyticsData } from "./lib/types.ts"
+import { getConfig, setConfig } from "./lib/config.ts"
+import { Route, SSRRoute, StaticRoute, RequestEvent } from "./lib/types.ts"
 
 
 export { getConfig, setConfig }
@@ -39,11 +39,11 @@ export const start = async () => {
             } catch(error) {
                 status = 500
                 config.logHandler(error)
-                response = config.errorHandler(status, request)
+                response = config.errorHandler(request, status)
             }
         } else {
             status = 404
-            response = config.errorHandler(status, request)
+            response = config.errorHandler(request, status)
         }
 
         const responseTime = Date.now() - start
@@ -59,13 +59,13 @@ export const start = async () => {
 
 export const addRoute = (route: Route) => routes.push(route)
 
-export const addStaticRoute = (routeData: StaticRouteData) => routes.push({
+export const addStaticRoute = (routeData: StaticRoute) => routes.push({
     route: routeData.route,
     method: "GET",
     handler: (req) => staticHandler(req, routeData)
 })
 
-export const addHTMLRoute = (routeData: HTMLRouteData) => {
+export const addSSRRoute = (routeData: SSRRoute) => {
     const config = getConfig()
 
     routes.push({
@@ -87,7 +87,7 @@ const logRequest = async (request: Request, status: number, start: number, respo
         headers[pair[0]] = pair[1]
     }
 
-    const logData: AnalyticsData = {
+    const requestData: RequestEvent = {
         date: new Date(start).toString(),
         status,
         method: request.method,
@@ -96,9 +96,9 @@ const logRequest = async (request: Request, status: number, start: number, respo
         headers
     }
 
-    config.logHandler(`[${logData.date}] ${logData.status} ${logData.method} ${logData.url} ${logData.responseTime}`)
-    config.analyticsHandler(logData)
+    config.logHandler(`[${requestData.date}] ${requestData.status} ${requestData.method} ${requestData.url} ${requestData.responseTime}`)
+    config.analyticsHandler(requestData)
     resolve()
 })
 
-export default { getConfig, setConfig, start, addRoute, addStaticRoute, addHTMLRoute }
+export default { getConfig, setConfig, start, addRoute, staticHandler, ssrHandler, addStaticRoute, addSSRRoute }
