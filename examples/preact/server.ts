@@ -1,5 +1,5 @@
 import Peko from "../../mod.ts"
-import { Route, SSRRouteData } from "../../lib/types.ts"
+import { Route, SSRRoute } from "../../lib/types.ts"
 
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
@@ -12,7 +12,7 @@ import config from "../config.ts"
 Peko.setConfig(config)
 
 // Setup ssr page routes
-const pageRoutes: SSRRouteData[] = [
+const pageRoutes: SSRRoute[] = [
     // must be PekoPageRouteData type (see types.ts)
     {
         route: "/",
@@ -55,7 +55,7 @@ files.forEach(file => {
     const rootPath = `${Deno.cwd()}/examples/preact/src`
     const fileRoute = file.slice(rootPath.length)
 
-    // must be PekoStaticRouteData type (see types.ts)
+    // must be PekoStaticRoute type (see types.ts)
     Peko.addStaticRoute({
         route: fileRoute,
         fileURL: new URL(`./src/${fileRoute}`, import.meta.url),

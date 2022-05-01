@@ -16,7 +16,7 @@ export type Route = {
 }
 
 export type CustomTag = `<${string}>`
-export type SSRRouteData = { 
+export type SSRRoute = { 
     route: string,
     template: (htmlContent: string, customTags?: Record<string, CustomTag>, request?: Request) => string,
     render: (app: any, request?: Request, ) => string, 
@@ -25,7 +25,7 @@ export type SSRRouteData = {
     cacheLifetime?: number
 }
 
-export type StaticRouteData = { 
+export type StaticRoute = { 
     route: string,
     fileURL: URL, 
     contentType: string | undefined
