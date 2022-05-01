@@ -1,4 +1,4 @@
-import { Config, AnalyticsData } from "./lib/types.ts"
+import { Config, RequestEvent } from "./types.ts"
 
 const env = Deno.env.toObject()
 
@@ -9,8 +9,8 @@ let config: Config = {
     defaultCacheLifetime: 3600,
     hotReloadDelay: 400,
     logHandler: async (log: string) => await console.log(log),
-    analyticsHandler: async (data: AnalyticsData) => await console.log(JSON.stringify(data)),
-    errorHandler: async (statusCode: number, _request: Request) => await new Promise((resolve, _reject) => {
+    analyticsHandler: async (data: RequestEvent) => await console.log(JSON.stringify(data)),
+    errorHandler: async (_request: Request, statusCode: number) => await new Promise((resolve, _reject) => {
         let response;
         switch (statusCode) {
             case 401:  
@@ -41,5 +41,5 @@ let config: Config = {
         resolve(response);
     })
 }
-export const setConfig = (newConfObj: Config) => config = { ...config, ...newConfObj }
+export const setConfig = (newConfObj: Partial<Config>) => config = { ...config, ...newConfObj }
 export const getConfig = () => config;
