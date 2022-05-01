@@ -4,7 +4,7 @@ import Layout from "../layouts/Layout.js"
 
 const Home = () => {
     return html`
-        <${Layout} navColor="palegreen">
+        <${Layout} navColor="limegreen">
             <h1>Peko</h1>
             <p><strong>
                 The featherweight & UI-library-agnostic SSR toolkit for Deno.

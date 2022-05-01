@@ -5,7 +5,7 @@ import App from "../components/App.js"
 
 const About = () => {
     return html`
-        <${Layout} navColor="violet">
+        <${Layout} navColor="blueviolet">
             <h1>About!</h1>
             <${App} />
             <img src="/assets/lighthouse-score.png" alt="lighthouse-score" />
