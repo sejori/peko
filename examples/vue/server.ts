@@ -3,10 +3,26 @@ import { Route, SSRRoute } from "../../lib/types.ts"
 
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
-import { renderToString } from "https://cdn.skypack.dev/@vue/server-renderer@3.2.23"
 
 import htmlTemplate from "../template.ts"
 import config from "../config.ts"
+
+// VUE FIX
+// Add document.createEvent and navigator.userAgent to global namespace
+declare global {
+    interface Navigator {
+        userAgent: string
+    }
+    interface Window { 
+        document: { createEvent: (_x: string) => number },
+        navigator: Navigator
+    }
+}
+window.document = { createEvent: (_x) => 0 }
+window.navigator.userAgent = "Deno"
+
+// dynamically imported after document.createEvent & navigator.userAgent have been declared
+const vueSSR = await import("https://cdn.skypack.dev/@vue/server-renderer@3.2.23")
 
 // Configure Peko
 Peko.setConfig(config)
@@ -17,13 +33,13 @@ const pageRoutes: SSRRoute[] = [
     {
         route: "/",
         moduleURL: new URL("./src/app.js", import.meta.url),
-        render: (app) => renderToString(app),
+        render: (app) => vueSSR.renderToString(app),
         template: htmlTemplate,
         customTags: {
             title: `<title>Peko</title>`,
             modulepreload: `<script modulepreload="true" type="module" src="/app.js"></script>`,
             hydrationScript: `<script type="module">
-                import { createApp } from '/app.js'
+                import createApp from '/app.js'
 
                 createApp().mount('#app')
             </script>`
