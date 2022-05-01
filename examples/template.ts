@@ -1,4 +1,4 @@
-import { CustomTag } from "../../lib/types.ts"
+import { CustomTag } from "../lib/types.ts"
 
 export default (HTML: string, customTags?: Record<string, CustomTag>) => `
     <!DOCTYPE html>

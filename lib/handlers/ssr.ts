@@ -22,8 +22,8 @@ export const ssrHandler = async (request: Request, ssrData: SSRRouteData) => {
     const pageComponent = pageImport.default
 
     // use provided server-side render function for browser goodness ^^
-    const prerenderedHTML = ssrData.render(pageComponent())
-    const HTML = ssrData.template(prerenderedHTML, ssrData.customTags, request)
+    const prerenderedHTML = await ssrData.render(pageComponent())
+    const HTML = await ssrData.template(prerenderedHTML, ssrData.customTags, request)
 
     // add devSocket script if in dev environment for hot reloads (requires starting server with --watch command)
     // COMMENTED BECAUSE REQUESTS ARE CURRENTLY FAILING - TRIGGERING CONTINUOUS REFRESH
