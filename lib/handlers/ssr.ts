@@ -1,12 +1,12 @@
 import { getConfig } from "../config.ts"
-import { SSRRouteData } from "../types.ts"
+import { SSRRoute } from "../types.ts"
 
 const config = getConfig()
 
 type HTMLCacheItem = { route: string, response: Response, dob: number }
 const HTMLCache: Array<HTMLCacheItem> = []
 
-export const ssrHandler = async (request: Request, ssrData: SSRRouteData) => {
+export const ssrHandler = async (request: Request, ssrData: SSRRoute) => {
     // if not devMode and valid response is cached use that
     if (!config.devMode && ssrData.cacheLifetime) {
         const cachedResponse = HTMLCache.find(item => item.route === ssrData.route)

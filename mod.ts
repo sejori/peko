@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.121.0/http/server.ts"
 
 import { ssrHandler, staticHandler } from "./lib/handlers/index.ts"
 import { getConfig, setConfig } from "./lib/config.ts"
-import { Route, SSRRouteData, StaticRouteData, RequestEvent } from "./lib/types.ts"
+import { Route, SSRRoute, StaticRoute, RequestEvent } from "./lib/types.ts"
 
 
 export { getConfig, setConfig }
@@ -59,13 +59,13 @@ export const start = async () => {
 
 export const addRoute = (route: Route) => routes.push(route)
 
-export const addStaticRoute = (routeData: StaticRouteData) => routes.push({
+export const addStaticRoute = (routeData: StaticRoute) => routes.push({
     route: routeData.route,
     method: "GET",
     handler: (req) => staticHandler(req, routeData)
 })
 
-export const addSSRRoute = (routeData: SSRRouteData) => {
+export const addSSRRoute = (routeData: SSRRoute) => {
     const config = getConfig()
 
     routes.push({
