@@ -4,7 +4,7 @@ import { Route, SSRRouteData } from "../../lib/types.ts"
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
 
-import htmlTemplate from "./src/htmlTemplate.js"
+import htmlTemplate from "./htmlTemplate.ts"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 // Configure Peko

@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.121.0/http/server.ts"
 
 import { ssrHandler, staticHandler } from "./lib/handlers/index.ts"
 import { getConfig, setConfig } from "./lib/config.ts"
-import { Route, SSRRouteData, StaticRouteData, AnalyticsData } from "./lib/types.ts"
+import { Route, SSRRouteData, StaticRouteData, RequestEvent } from "./lib/types.ts"
 
 
 export { getConfig, setConfig }
@@ -87,7 +87,7 @@ const logRequest = async (request: Request, status: number, start: number, respo
         headers[pair[0]] = pair[1]
     }
 
-    const logData: AnalyticsData = {
+    const requestData: RequestEvent = {
         date: new Date(start).toString(),
         status,
         method: request.method,
@@ -96,8 +96,8 @@ const logRequest = async (request: Request, status: number, start: number, respo
         headers
     }
 
-    config.logHandler(`[${logData.date}] ${logData.status} ${logData.method} ${logData.url} ${logData.responseTime}`)
-    config.analyticsHandler(logData)
+    config.logHandler(`[${requestData.date}] ${requestData.status} ${requestData.method} ${requestData.url} ${requestData.responseTime}`)
+    config.analyticsHandler(requestData)
     resolve()
 })
 

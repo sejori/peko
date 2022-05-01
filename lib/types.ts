@@ -5,7 +5,7 @@ export type Config = {
     defaultCacheLifetime: number, 
     hotReloadDelay: number,
     logHandler: (log: string) => Promise<void>, 
-    analyticsHandler: (data: AnalyticsData) => Promise<void | null>,
+    analyticsHandler: (data: RequestEvent) => Promise<void | null>,
     errorHandler: (request: Request, statusCode: number) => Promise<Response>
 }
 
@@ -31,7 +31,7 @@ export type StaticRouteData = {
     contentType: string | undefined
 }
 
-export type AnalyticsData = {
+export type RequestEvent = {
     date: string,
     status: number,
     method: string,
