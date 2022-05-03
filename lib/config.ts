@@ -40,5 +40,15 @@ let config: Config = {
         return response;
     }
 }
+
+/**
+ * 
+ * @param newConfObj: Config
+ */
 export const setConfig = (newConfObj: Partial<Config>) => config = { ...config, ...newConfObj }
-export const getConfig = () => config;
+
+/**
+ * 
+ * @returns Config
+ */
+ export const getConfig = () => config

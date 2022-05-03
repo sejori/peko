@@ -1,4 +1,4 @@
-import Peko from "../../mod.ts"
+import * as Peko from "../../mod.ts"
 import { Route, SSRRoute } from "../../lib/types.ts"
 
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
@@ -16,9 +16,7 @@ const pageRoutes: SSRRoute[] = [
     // must be PekoPageRouteData type (see types.ts)
     {
         route: "/",
-        middleware: (_request, params) => {
-            params["server_time"] = `${Date.now()}`
-        },
+        middleware: (_request, params) => params["server_time"] = Date.now(),
         moduleURL: new URL("./src/pages/Home.js", import.meta.url),
         render: (app, _request, params) => renderToString(app(params), null, null),
         template: htmlTemplate,

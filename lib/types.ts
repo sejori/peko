@@ -1,44 +1,54 @@
+export type LogString = (log: string) => void | Promise<void>
+export type LogEvent = (data: RequestEvent) => void | Promise<void>
+export type ErrorHandler = (statusCode: number, request?: Request, error?: Error) => Response | Promise<Response>
+
 export type Config = { 
-    devMode: boolean,
-    port: number, 
-    hostname: string, 
-    defaultCacheLifetime: number, 
-    logString: (log: string) => void | Promise<void>, 
-    logEvent: (data: RequestEvent) => void | Promise<void>,
-    errorHandler: (statusCode: number, request?: Request, error?: Error) => Response | Promise<Response>
+    devMode: boolean
+    port: number
+    hostname: string
+    defaultCacheLifetime: number
+    logString: LogString
+    logEvent: LogEvent
+    errorHandler: ErrorHandler
 }
 
-export type Middleware = (request: Request, params: Record<string, any>) => void | Promise<void> | Request | Promise<Request>
+export type Middleware = (request: Request, params: Record<string, any>) => any
+export type Handler = (request: Request, params: Record<string, any>) => Response | Promise<Response>
+
 export type Route = { 
-    route: string, 
-    method: string, 
+    route: string
+    method: string
     middleware?: Middleware
-    handler: (request: Request, params: Record<string, any>) => Response | Promise<Response>
-}
-
-export type CustomTag = `<${string}>`
-export type SSRRoute = { 
-    route: string,
-    middleware?: Middleware
-    template: (htmlContent: string, customTags?: Record<string, CustomTag>, request?: Request) => string,
-    render: (app: any, request: Request, params: Record<string, any>) => string | Promise<string>, 
-    moduleURL: URL,
-    customTags?: (request?: Request, params?: Record<string, any>) => Record<string, CustomTag>,
-    cacheLifetime?: number
+    handler: Handler
 }
 
 export type StaticRoute = { 
-    route: string,
+    route: string
     middleware?: Middleware
-    fileURL: URL, 
+    fileURL: URL
     contentType: string | undefined
 }
 
+export type CustomTag = `<${string}>`
+export type CustomTags = (request?: Request, params?: Record<string, any>) => Record<string, CustomTag>
+export type Template = (ssrResult: string, customTags?: Record<string, CustomTag>, request?: Request) => string
+export type Render = (app: any, request: Request, params: Record<string, any>) => string | Promise<string>
+
+export type SSRRoute = { 
+    route: string
+    middleware?: Middleware
+    template: Template
+    render: Render
+    moduleURL: URL
+    customTags?: CustomTags
+    cacheLifetime?: number
+}
+
 export type RequestEvent = {
-    date: string,
-    status: number,
-    method: string,
-    url: string,
-    responseTime: string,
+    date: string
+    status: number
+    method: string
+    url: string
+    responseTime: string
     headers: Record<string, string>
 }

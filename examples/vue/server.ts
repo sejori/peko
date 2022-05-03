@@ -1,4 +1,4 @@
-import Peko from "../../mod.ts"
+import * as Peko from "../../mod.ts"
 import { Route, SSRRoute } from "../../lib/types.ts"
 
 import { lookup } from "https://deno.land/x/media_types/mod.ts"

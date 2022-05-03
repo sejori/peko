@@ -6,6 +6,14 @@ const config = getConfig()
 type HTMLCacheItem = { route: string, response: Response, dob: number }
 const HTMLCache: Array<HTMLCacheItem> = []
 
+/**
+ * SSR request handler complete with JS app rendering, html templating & response caching logic. 
+ * 
+ * @param request: Request
+ * @param params: HandlerParams
+ * @param ssrData: SSRRoute
+ * @returns Promise<Response>
+ */
 export const ssrHandler = async (request: Request, params: Record<string, any>, ssrData: SSRRoute) => {
     // if not devMode and valid response is cached use that
     if (!config.devMode && ssrData.cacheLifetime) {
