@@ -7,7 +7,7 @@ const Home = ({ server_time }) => {
         <${Layout} navColor="limegreen">
             <h1>Peko</h1>
             <p><strong>
-                The featherweight & UI-library-agnostic SSR toolkit for Deno.
+            The Featherweight Deno Library for Modern JS Apps. Serve around the world effortlessly with Deno Deploy!
             </strong></p>
             <p>No bundling or build process. Server & Browser share all source modules!</p>
             
