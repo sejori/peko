@@ -1,13 +1,14 @@
 <p align="center">
     <img 
         height="100px"
+        width="100px"
         style="margin: 1rem auto;"
         src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/twemoji_chicken.svg" alt="chicken" 
     />
 </p>
 <h1 align="center">Peko</h1>
 <p><strong>
-    The featherweight & UI-library-agnostic SSR toolkit for Deno.
+    The Featherweight Deno Library for Modern JS Apps. Serve around the world effortlessly with Deno Deploy!
 </strong></p>
 <p>No bundling or build process. Server & Browser share all source modules!</p>
 

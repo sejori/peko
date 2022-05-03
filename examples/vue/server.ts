@@ -33,9 +33,9 @@ const pageRoutes: SSRRoute[] = [
     {
         route: "/",
         moduleURL: new URL("./src/app.js", import.meta.url),
-        render: (app) => vueSSR.renderToString(app),
+        render: (app) => vueSSR.renderToString(app()),
         template: htmlTemplate,
-        customTags: {
+        customTags: () => ({
             title: `<title>Peko</title>`,
             modulepreload: `<script modulepreload="true" type="module" src="/app.js"></script>`,
             hydrationScript: `<script type="module">
@@ -43,7 +43,7 @@ const pageRoutes: SSRRoute[] = [
 
                 createApp().mount('#app')
             </script>`
-        },
+        }),
         cacheLifetime: 6000
     }
 ]
