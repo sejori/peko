@@ -1,7 +1,7 @@
 import { StaticRoute } from "../types.ts"
 
 // I think there is a much more efficient method by streaming the file...
-export const staticHandler = async (_request: Request, staticData: StaticRoute) => {
+export const staticHandler = async (_request: Request, _params: Record<string, any>, staticData: StaticRoute) => {
     let filePath = decodeURI(staticData.fileURL.pathname)
     
     // fix annoying windows paths
