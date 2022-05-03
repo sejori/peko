@@ -9,9 +9,10 @@ const routes: Route[] = []
 
 /**
  * Begin listening to http requests and serve matching routes.
- * Config changes will not take effect after start is called.
  * 
- * See "lib/types.ts" for Config type details
+ * See "lib/types.ts" for Config type details.
+ * 
+ * Note: Config changes will not take effect after start is called. 
  */
 export const start = () => {
     const config = getConfig()
@@ -19,22 +20,28 @@ export const start = () => {
     config.logString(`Starting Peko server on port ${config.port} in ${config.devMode ? "development" : "production"} mode with routes:`)
     routes.forEach(route => config.logString(JSON.stringify(route)))
 
+    let lexRequest: Request;
     const requestHandler = async (request: Request) => {
         const start = Date.now()
         const requestURL = new URL(request.url)
         const route = routes.find(route => route.route === requestURL.pathname && route.method === request.method)
-        
+
         // Optional: used to pass data from middleware to handler
         const handlerParams = {}
 
+        // store request arg in start() block-scope 
+        // to avoid strange closure bug that doesn't seem to affect "start"...
+        // this bug began when logRequest() was moved to lib/utils/logger.ts
+        lexRequest = request
+        
         const respond = (status: number, response: Promise<Response> | Response) => {
             const responseTime = Date.now() - start
-            logRequest(request, status, start, responseTime)
+            logRequest(lexRequest, status, start, responseTime)
             return response
         }
 
         if (!route) return respond(404, await config.errorHandler(404, request))
-
+        
         // run middleware function first if provided
         if (route.middleware) {
             try {
@@ -65,10 +72,11 @@ export const start = () => {
 }
 
 /**
- * Add a basic route to your peko web server. "route", "method" and "handler" properties must be provided.
- * "handlerParams" argument of Middleware and Handler used to pass data from middleware logic to handler logic.
+ * Add a basic route to your peko web server.
  * 
  * See "lib/types.ts" for Middleware, Handler & HandlerParams type details
+ * 
+ * Note: "handlerParams" argument of Middleware and Handler used to pass data from middleware logic to handler logic.
  * 
  * @param routeData { 
         route: string - e.g. "/"
@@ -80,7 +88,9 @@ export const start = () => {
 export const addRoute = (routeData: Route) => routes.push(routeData)
 
 /**
- * Add a static route (uses staticHandler from /lib/handlers/static.ts)
+ * Add a static route
+ * 
+ * Uses staticHandler from /lib/handlers/static.ts
  * 
  * @param staticRouteData { 
         route: string - e.g. "favicon.png"
@@ -99,7 +109,9 @@ export const addStaticRoute = (staticRouteData: StaticRoute) => {
 }
 
 /**
- * Add a Server-Side Rendering route (uses ssrHandler from /lib/handlers/ssr.ts)
+ * Add a Server-Side Rendering route
+ * 
+ * Uses ssrHandler from /lib/handlers/ssr.ts
  * 
  * See "lib/types.ts" for Template, Render & CustomTags type details
  * 

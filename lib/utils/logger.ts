@@ -1,7 +1,18 @@
 import { getConfig } from "../config.ts"
 import { RequestEvent } from "../types.ts"
 
-export const logRequest = async (request: Request, status: number, start: number, responseTime: number) => await new Promise((resolve: (value: void) => void) => {
+/**
+ * Peko's internal logging function.
+ * 
+ * Returns promise so process isn't blocked when called without "await" keyword.
+ * 
+ * @param request: Request
+ * @param status: number
+ * @param start: number
+ * @param responseTime: number
+ * @returns Promise<void>
+ */
+export const logRequest = async (request: Request, status: number, start: number, responseTime: number) => {
   const config = getConfig()
   
   const headers: Record<string, string> = {}
@@ -19,17 +30,14 @@ export const logRequest = async (request: Request, status: number, start: number
   }
 
   try {
-      config.logString(`[${requestEvent.date}] ${requestEvent.status} ${requestEvent.method} ${requestEvent.url} ${requestEvent.responseTime}`)
+      await config.logString(`[${requestEvent.date}] ${requestEvent.status} ${requestEvent.method} ${requestEvent.url} ${requestEvent.responseTime}`)
   } catch (error) {
       console.log(error)
   }
 
   try {
-      config.logEvent(requestEvent)
+      await config.logEvent(requestEvent)
   } catch (error) {
       console.log(error)
   }
-  
-  
-  resolve()
-})
+}
