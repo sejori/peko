@@ -7,10 +7,9 @@ let config: Config = {
     port: 7777,
     hostname: "0.0.0.0",
     defaultCacheLifetime: 3600,
-    hotReloadDelay: 400,
-    logHandler: async (log: string) => await console.log(log),
-    analyticsHandler: async (data: RequestEvent) => await console.log(JSON.stringify(data)),
-    errorHandler: async (_request: Request, statusCode: number) => await new Promise((resolve, _reject) => {
+    logString: (log: string) => console.log(log),
+    logEvent: (data: RequestEvent) => console.log(JSON.stringify(data)),
+    errorHandler: (statusCode: number) => {
         let response;
         switch (statusCode) {
             case 401:  
@@ -38,8 +37,8 @@ let config: Config = {
                 })
                 break
         }
-        resolve(response);
-    })
+        return response;
+    }
 }
 export const setConfig = (newConfObj: Partial<Config>) => config = { ...config, ...newConfObj }
 export const getConfig = () => config;
