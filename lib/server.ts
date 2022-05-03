@@ -1,11 +1,18 @@
 import { serve } from "https://deno.land/std@0.121.0/http/server.ts"
 import { getConfig } from "./config.ts"
 import { ssrHandler, staticHandler } from "./handlers/index.ts"
+import { logRequest } from "./utils/logger.ts"
 
-import { Route, SSRRoute, StaticRoute, RequestEvent } from "./types.ts"
+import { Route, SSRRoute, StaticRoute } from "./types.ts"
 
 const routes: Route[] = []
 
+/**
+ * Begin listening to http requests and serve matching routes.
+ * Config changes will not take effect after start is called.
+ * 
+ * See "lib/types.ts" for Config type details
+ */
 export const start = () => {
     const config = getConfig()
 
@@ -57,61 +64,68 @@ export const start = () => {
     })
 }
 
-export const addRoute = (route: Route) => routes.push(route)
-export const addStaticRoute = (routeData: StaticRoute) => {
+/**
+ * Add a basic route to your peko web server. "route", "method" and "handler" properties must be provided.
+ * "handlerParams" argument of Middleware and Handler used to pass data from middleware logic to handler logic.
+ * 
+ * See "lib/types.ts" for Middleware, Handler & HandlerParams type details
+ * 
+ * @param routeData { 
+        route: string - e.g. "/"
+        method: string - e.g. "GET"
+        middleware?: Middleware (optional) - e.g. (_request, handlerParams) => handlerParams["time_of_request"] = Date.now()
+        handler: Handler - e.g. (_request, handlerParams) => new Response(`${handlerParams["time_of_request"]}`)
+    }
+ */
+export const addRoute = (routeData: Route) => routes.push(routeData)
+
+/**
+ * Add a static route (uses staticHandler from /lib/handlers/static.ts)
+ * 
+ * @param staticRouteData { 
+        route: string - e.g. "favicon.png"
+        middleware?: Middleware (optional)
+        fileURL: URL - e.g. new URL("./assets/favicon.png")
+        contentType: string - e.g. "image/png"
+    }
+ */
+export const addStaticRoute = (staticRouteData: StaticRoute) => {
     return addRoute({
-        route: routeData.route,
+        route: staticRouteData.route,
         method: "GET",
-        middleware: routeData.middleware,
-        handler: (req, params) => staticHandler(req, params, routeData)
+        middleware: staticRouteData.middleware,
+        handler: (req, params) => staticHandler(req, params, staticRouteData)
     })
 }
-export const addSSRRoute = (routeData: SSRRoute) => {
+
+/**
+ * Add a Server-Side Rendering route (uses ssrHandler from /lib/handlers/ssr.ts)
+ * 
+ * See "lib/types.ts" for Template, Render & CustomTags type details
+ * 
+ * @param ssrRouteData { 
+        route: string - e.g. "/home"
+        middleware?: Middleware (optional)
+        template: Template - e.g. (ssrResult, customTags, request) => `<!DOCTYPE html><html><head>${customTags.title}</head><body>${ssrResult}</body></html>`
+        render: Render - e.g. (app) => renderToString(app())
+        moduleURL: URL - e.g. new URL("./src/home.js")
+        customTags?: CustomTags - e.g. () => ({ title: <title>Home Page!</title> })
+        cacheLifetime?: number - e.g. 3600000
+    }
+ */
+export const addSSRRoute = (ssrRouteData: SSRRoute) => {
     const config = getConfig()
     
     const ssrData = { 
-        ...routeData, 
-        cacheLifetime: routeData.cacheLifetime ? routeData.cacheLifetime : config.defaultCacheLifetime,
-        customTags: routeData.customTags ? routeData.customTags : () => ({}) 
+        ...ssrRouteData, 
+        cacheLifetime: ssrRouteData.cacheLifetime ? ssrRouteData.cacheLifetime : config.defaultCacheLifetime,
+        customTags: ssrRouteData.customTags ? ssrRouteData.customTags : () => ({}) 
     }
 
     return addRoute({
-        route: routeData.route,
+        route: ssrRouteData.route,
         method: "GET",
-        middleware: routeData.middleware,
+        middleware: ssrRouteData.middleware,
         handler: (req, params) => ssrHandler(req, params, ssrData)
     })
 }
-
-const logRequest = async (request: Request, status: number, start: number, responseTime: number) => await new Promise((resolve: (value: void) => void) => {
-    const config = getConfig()
-    
-    const headers: Record<string, string> = {}
-    for (const pair of request.headers.entries()) {
-        headers[pair[0]] = pair[1]
-    }
-
-    const requestEvent: RequestEvent = {
-        date: new Date(start).toString(),
-        status,
-        method: request.method,
-        url: request.url,
-        responseTime: `${responseTime}ms`,
-        headers
-    }
-
-    try {
-        config.logString(`[${requestEvent.date}] ${requestEvent.status} ${requestEvent.method} ${requestEvent.url} ${requestEvent.responseTime}`)
-    } catch (error) {
-        console.log(error)
-    }
-
-    try {
-        config.logEvent(requestEvent)
-    } catch (error) {
-        console.log(error)
-    }
-    
-    
-    resolve()
-})
