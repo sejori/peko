@@ -23,7 +23,7 @@
         <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (<80MB Docker images).
     </li>
     <li>
-        <strong>Ease of adoption</strong> - easy-to-understand functions & no fixed project structure.
+        <strong>Ease of adoption</strong> - intuitive functions & zero fixed project structure.
     </li>
 </ul>
 <p>
