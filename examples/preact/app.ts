@@ -34,7 +34,7 @@ const pageRoutes: SSRRoute[] = [
     {
         route: "/about",
         moduleURL: new URL("./src/pages/About.js", import.meta.url),
-        render: (app) => renderToString(app, null, null),
+        render: (app) => renderToString(app(), null, null),
         template: htmlTemplate,
         customTags: () => ({
             title: `<title>Peko | About</title>`,
