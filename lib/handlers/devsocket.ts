@@ -2,6 +2,12 @@ import { acceptWebSocket } from "https://deno.land/std@0.95.0/ws/mod.ts"
 
 import { getConfig } from "../config.ts"
 
+////////////////////////////////////////////////////////////////
+//                                                            //
+////////////////  THIS FILE IS LEGACY CODE  ////////////////////
+//                                                            //
+////////////////////////////////////////////////////////////////
+
 const config = getConfig()
 
 export const devSocketHandler = async (request: any) => {
@@ -14,10 +20,10 @@ export const devSocketHandler = async (request: any) => {
             bufWriter: bufReader,
             bufReader: bufWriter,
         })
-        config.logHandler("DevSocket connected - will close and trigger hot reload in client on server restart.")
+        config.logString("DevSocket connected - will close and trigger hot reload in client on server restart.")
         return new Response("Devsocket connection succeeded", { status: 200 })
     } catch(e) {
-        config.logHandler(`DevSocket connection failed: ${e}`)
+        config.logString(`DevSocket connection failed: ${e}`)
         return new Response(`DevSocket connection failed: ${e}`, { status: 400 })
     }
 }

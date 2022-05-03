@@ -6,7 +6,7 @@ const config = getConfig()
 type HTMLCacheItem = { route: string, response: Response, dob: number }
 const HTMLCache: Array<HTMLCacheItem> = []
 
-export const ssrHandler = async (request: Request, ssrData: SSRRoute) => {
+export const ssrHandler = async (request: Request, params: Record<string, any>, ssrData: SSRRoute) => {
     // if not devMode and valid response is cached use that
     if (!config.devMode && ssrData.cacheLifetime) {
         const cachedResponse = HTMLCache.find(item => item.route === ssrData.route)
@@ -22,15 +22,9 @@ export const ssrHandler = async (request: Request, ssrData: SSRRoute) => {
     const pageComponent = pageImport.default
 
     // use provided server-side render function for browser goodness ^^
-    const prerenderedHTML = await ssrData.render(pageComponent())
-    const HTML = await ssrData.template(prerenderedHTML, ssrData.customTags, request)
-
-    // add devSocket script if in dev environment for hot reloads (requires starting server with --watch command)
-    // COMMENTED BECAUSE REQUESTS ARE CURRENTLY FAILING - TRIGGERING CONTINUOUS REFRESH
-    // if (config.devMode) {
-    //     const endOfBody = HTML.indexOf("</body>")
-    //     HTML = `${HTML.slice(0, endOfBody)}${`<script>new WebSocket("ws://" + location.host + "/devsocket").onclose = () => setTimeout(() => location.reload(), ${config.hotReloadDelay});</script>`}${HTML.slice(endOfBody)}`
-    // }
+    const prerenderedHTML = await ssrData.render(pageComponent, request, params)
+    const customTags = ssrData.customTags ? ssrData.customTags(request, params) : {}
+    const HTML = await ssrData.template(prerenderedHTML, customTags, request)
 
     const response = new Response(HTML, {
         headers : new Headers({

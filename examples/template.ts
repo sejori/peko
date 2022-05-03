@@ -21,6 +21,7 @@ export default (HTML: string, customTags?: Record<string, CustomTag>) => `
                 width: 100%;
                 margin: 0;
                 font-family: helvetica, sans-serif;
+                line-height: 1.5rem;
             }
 
             img { max-width: 100%; }

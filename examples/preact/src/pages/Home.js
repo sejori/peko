@@ -2,7 +2,7 @@ import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact
 
 import Layout from "../layouts/Layout.js"
 
-const Home = () => {
+const Home = ({ server_time }) => {
     return html`
         <${Layout} navColor="limegreen">
             <h1>Peko</h1>
@@ -10,7 +10,9 @@ const Home = () => {
                 The featherweight & UI-library-agnostic SSR toolkit for Deno.
             </strong></p>
             <p>No bundling or build process. Server & Browser share all source modules!</p>
-            <p><span style="text-decoration: underline;">${Date.now()}</span> ${"<-"} refresh to see the initial server rendered value get hydrated</p>
+            
+            <p>Time of server request: <strong>${server_time}</strong></p>
+            <p>Time of latest render: <strong>${Date.now()}</strong> ${"<"}- changes with hydration!</p>
 
             <h2>Summary</h2>
             <ul>
@@ -21,10 +23,10 @@ const Home = () => {
                     <strong>Production-ready backend</strong> - reliablility and performance with TypeScript and configurable page caching.
                 </li>
                 <li>
-                    <strong>Software minimalism</strong> - zero build-time technologies or bloated node_modules (&lt;80MB Docker images).
+                    <strong>Software minimalism</strong> - no build process or bloated dependencies (${"<"}80MB Deno Docker images).
                 </li>
                 <li>
-                    <strong>Ease of adoption</strong> - intuitive service functions & no enforced directory structure.
+                    <strong>Ease of adoption</strong> - intuitive functions & zero enforced directory structure.
                 </li>
             </ul>
             <p>
@@ -49,7 +51,6 @@ const Home = () => {
                     Check out <code>./examples/preact/src</code> for frontend code and play around with <code>./examples/preact/app.js</code> for app server changes.
                 </li>
             </ol>
-            <br />
             <h3>Import Peko into your own Deno project:</h3>
             <p><code>import Peko from "https://github.com/sebringrose/peko/mod.ts"</code></p>
             <p>

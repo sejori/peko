@@ -9,34 +9,46 @@ const routes: Route[] = []
 export const start = () => {
     const config = getConfig()
 
-    config.logHandler(`Starting Peko server on port ${config.port} in ${config.devMode ? "development" : "production"} mode with routes:`)
-    routes.forEach(route => config.logHandler(JSON.stringify(route)))
+    config.logString(`Starting Peko server on port ${config.port} in ${config.devMode ? "development" : "production"} mode with routes:`)
+    routes.forEach(route => config.logString(JSON.stringify(route)))
 
     const requestHandler = async (request: Request) => {
         const start = Date.now()
-        let status = 200
-        let response
-
         const requestURL = new URL(request.url)
-
         const route = routes.find(route => route.route === requestURL.pathname && route.method === request.method)
         
-        if (route) {
-            try {
-                response = await route.handler(request)
-            } catch(error) {
-                status = 500
-                config.logHandler(error)
-                response = config.errorHandler(request, status)
-            }
-        } else {
-            status = 404
-            response = config.errorHandler(request, status)
+        // Optional: used to pass data from middleware to handler
+        const handlerParams = {}
+
+        const respond = (status: number, response: Promise<Response> | Response) => {
+            const responseTime = Date.now() - start
+            logRequest(request, status, start, responseTime)
+            return response
         }
 
-        const responseTime = Date.now() - start
-        logRequest(request, status, start, responseTime)
-        return response
+        if (!route) return respond(404, await config.errorHandler(404, request))
+
+        // run middleware function first if provided
+        if (route.middleware) {
+            try {
+                const mwResult = await route.middleware(request, handlerParams)
+                request = mwResult ? mwResult : request
+            } catch (error) {
+                config.logString(error)
+                return respond(500, await config.errorHandler(500, request, error))
+            }
+        }
+
+        // run handler function
+        let response;
+        try {
+            response = await route.handler(request, handlerParams)
+        } catch(error) {
+            config.logString(error)
+            return respond(500, await config.errorHandler(500, request, error))
+        }
+
+        return respond(response.status, response)
     }
 
     serve(requestHandler, { 
@@ -46,24 +58,28 @@ export const start = () => {
 }
 
 export const addRoute = (route: Route) => routes.push(route)
-
-export const addStaticRoute = (routeData: StaticRoute) => addRoute({
-    route: routeData.route,
-    method: "GET",
-    handler: (req) => staticHandler(req, routeData)
-})
-
-export const addSSRRoute = (routeData: SSRRoute) => {
-    const config = getConfig()
-
-    addRoute({
+export const addStaticRoute = (routeData: StaticRoute) => {
+    return addRoute({
         route: routeData.route,
         method: "GET",
-        handler: (req) => ssrHandler(req, { 
-            ...routeData, 
-            cacheLifetime: routeData.cacheLifetime ? routeData.cacheLifetime : config.defaultCacheLifetime,
-            customTags: routeData.customTags ? routeData.customTags : {} 
-        })
+        middleware: routeData.middleware,
+        handler: (req, params) => staticHandler(req, params, routeData)
+    })
+}
+export const addSSRRoute = (routeData: SSRRoute) => {
+    const config = getConfig()
+    
+    const ssrData = { 
+        ...routeData, 
+        cacheLifetime: routeData.cacheLifetime ? routeData.cacheLifetime : config.defaultCacheLifetime,
+        customTags: routeData.customTags ? routeData.customTags : () => ({}) 
+    }
+
+    return addRoute({
+        route: routeData.route,
+        method: "GET",
+        middleware: routeData.middleware,
+        handler: (req, params) => ssrHandler(req, params, ssrData)
     })
 }
 
@@ -75,7 +91,7 @@ const logRequest = async (request: Request, status: number, start: number, respo
         headers[pair[0]] = pair[1]
     }
 
-    const requestData: RequestEvent = {
+    const requestEvent: RequestEvent = {
         date: new Date(start).toString(),
         status,
         method: request.method,
@@ -84,7 +100,18 @@ const logRequest = async (request: Request, status: number, start: number, respo
         headers
     }
 
-    config.logHandler(`[${requestData.date}] ${requestData.status} ${requestData.method} ${requestData.url} ${requestData.responseTime}`)
-    config.analyticsHandler(requestData)
+    try {
+        config.logString(`[${requestEvent.date}] ${requestEvent.status} ${requestEvent.method} ${requestEvent.url} ${requestEvent.responseTime}`)
+    } catch (error) {
+        console.log(error)
+    }
+
+    try {
+        config.logEvent(requestEvent)
+    } catch (error) {
+        console.log(error)
+    }
+    
+    
     resolve()
 })
