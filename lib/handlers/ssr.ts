@@ -7,7 +7,7 @@ type HTMLCacheItem = { route: string, response: Response, dob: number }
 const HTMLCache: Array<HTMLCacheItem> = []
 
 /**
- * SSR request handler complete with JS app rendering, html templating & response caching logic. 
+ * SSR request handler complete with JS app rendering, HTML templating & response caching logic. 
  * 
  * @param request: Request
  * @param params: HandlerParams
@@ -30,9 +30,9 @@ export const ssrHandler = async (request: Request, params: Record<string, any>, 
     const pageComponent = pageImport.default
 
     // use provided server-side render function for browser goodness ^^
-    const prerenderedHTML = await ssrData.render(pageComponent, request, params)
+    const HTMLResult = await ssrData.render(pageComponent, request, params)    
     const customTags = ssrData.customTags ? ssrData.customTags(request, params) : {}
-    const HTML = await ssrData.template(prerenderedHTML, customTags, request)
+    const HTML = await ssrData.template(HTMLResult, customTags, request)
 
     const response = new Response(HTML, {
         headers : new Headers({
@@ -45,7 +45,7 @@ export const ssrHandler = async (request: Request, params: Record<string, any>, 
     return response
 }
 
-// this is a promise so that is doesn't block the process when called without "await" keyword
+// promise so doesn't block process when called without "await" keyword
 const cacheResponseItem = async (newItem: HTMLCacheItem) => await new Promise((resolve: (value: void) => void) => {
     // remove outdated response from cache if present
     const oldCachedIndex = HTMLCache.findIndex(item => item.route === newItem.route)
