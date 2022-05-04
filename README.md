@@ -51,7 +51,7 @@
         <code>$ deno run --allow-net --allow-env --allow-read --watch examples/preact/app.ts</code>
     </li>
     <li>
-        Edit <code>./examples/preact/src</code> for frontend changes and play with <code>./examples/preact/app.js</code> for app server logic.
+        Edit <code>./examples/preact/src</code> for frontend changes and play with <code>./examples/preact/app.ts</code> for app server logic.
     </li>
 </ol>
 <br />
