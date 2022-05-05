@@ -34,8 +34,8 @@ const pageRoutes: SSRRoute[] = [
         route: "/",
         moduleURL: new URL("./src/app.js", import.meta.url),
         render: (app) => vueSSR.renderToString(app()),
-        template: htmlTemplate,
-        customTags: () => ({
+        template: (appHTML) => htmlTemplate({
+            appHTML,
             title: `<title>Peko</title>`,
             modulepreload: `<script modulepreload="true" type="module" src="/app.js"></script>`,
             hydrationScript: `<script type="module">
