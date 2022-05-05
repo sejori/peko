@@ -6,11 +6,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" href="/assets/favicon.ico">
         
-        <%= it.title %>
+        <%~ it.title %>
         <meta name="description" content="The Featherweight Deno SSR Library">
 
         <script modulepreload="true" type="text/plain" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
-        <%= it.modulepreload %>
+        <%~ it.modulepreload %>
 
         <style>
             html, body {
@@ -46,11 +46,11 @@
     </head>
     <body>
         <div id="root">
-            <%= it.appHTML %>
+            <%~ it.appHTML %>
         </div>
 
         <%~ includeFile('./footer') %>
 
-        <%= it.hydrationScript %>
+        <%~ it.hydrationScript %>
     </body>
 </html>

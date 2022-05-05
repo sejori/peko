@@ -16,13 +16,23 @@ configure({
 // Static source routes for client-side loading
 Peko.addStaticRoute({
     route: "/Home.js",
-    fileURL: new URL(`./src/Home.js`, import.meta.url),
+    fileURL: new URL("./src/Home.js", import.meta.url),
     contentType: "application/javascript"
 })
 Peko.addStaticRoute({
   route: "/Layout.js",
-  fileURL: new URL(`./src/Layout.js`, import.meta.url),
+  fileURL: new URL("./src/Layout.js", import.meta.url),
   contentType: "application/javascript"
+})
+Peko.addStaticRoute({
+  route: "/assets/twemoji_chicken.svg",
+  fileURL: new URL("./src/assets/twemoji_chicken.svg", import.meta.url),
+  contentType: "image/svg+xml"
+})
+Peko.addStaticRoute({
+  route: "/assets/favicon.ico",
+  fileURL: new URL("./src/assets/favicon.ico", import.meta.url),
+  contentType: "image/x-icon"
 })
 
 Peko.addSSRRoute({
