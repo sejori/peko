@@ -127,17 +127,16 @@ export const addStaticRoute = (staticRouteData: StaticRoute) => {
  */
 export const addSSRRoute = (ssrRouteData: SSRRoute) => {
     const config = getConfig()
-    
-    const ssrData = { 
-        ...ssrRouteData, 
-        cacheLifetime: ssrRouteData.cacheLifetime ? ssrRouteData.cacheLifetime : config.defaultCacheLifetime,
-        customTags: ssrRouteData.customTags ? ssrRouteData.customTags : () => ({}) 
-    }
 
     return addRoute({
         route: ssrRouteData.route,
         method: "GET",
         middleware: ssrRouteData.middleware,
-        handler: (req, params) => ssrHandler(req, params, ssrData)
+        handler: (req, params) => ssrHandler(req, params, { 
+            ...ssrRouteData, 
+            cacheLifetime: ssrRouteData.cacheLifetime 
+                ? ssrRouteData.cacheLifetime 
+                : config.defaultCacheLifetime 
+        })
     })
 }

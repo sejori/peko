@@ -16,11 +16,11 @@ const pageRoutes: SSRRoute[] = [
     // must be PekoPageRouteData type (see types.ts)
     {
         route: "/",
-        middleware: (_request, params) => params["server_time"] = Date.now(),
         moduleURL: new URL("./src/pages/Home.js", import.meta.url),
+        middleware: (_request, params) => params["server_time"] = Date.now(),
         render: (app, _request, params) => renderToString(app(params), null, null),
-        template: htmlTemplate,
-        customTags: (_request, params) => ({
+        template: (appHTML, _request, params) => htmlTemplate({
+            appHTML,
             title: `<title>Peko</title>`,
             modulepreload: `<script modulepreload="true" type="module" src="/pages/Home.js"></script>`,
             hydrationScript: `<script type="module">
@@ -35,16 +35,16 @@ const pageRoutes: SSRRoute[] = [
         route: "/about",
         moduleURL: new URL("./src/pages/About.js", import.meta.url),
         render: (app) => renderToString(app(), null, null),
-        template: htmlTemplate,
-        customTags: () => ({
+        template: (appHTML, _request, _params) => htmlTemplate({
+            appHTML,
             title: `<title>Peko | About</title>`,
             modulepreload: `<script modulepreload="true" type="module" src="/pages/About.js"></script>`,
             hydrationScript: `<script type="module">
                 import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
                 import About from "/pages/About.js";
-                hydrate(About(), document.getElementById("root"));
+                hydrate(About(), document.getElementById("root"))
             </script>`
-        })
+        }),
         // cacheLifetime: 3600 <- this can be omitted as it will default to 3600
     }
 ]
