@@ -12,8 +12,9 @@ export type Config = {
     errorHandler: ErrorHandler
 }
 
-export type Middleware = (request: Request, params: Record<string, any>) => any
-export type Handler = (request: Request, params: Record<string, any>) => Response | Promise<Response>
+export type HandlerParams = Record<string, any>
+export type Middleware = (request: Request, params: HandlerParams) => any
+export type Handler = (request: Request, params: HandlerParams) => Response | Promise<Response>
 
 export type Route = { 
     route: string
@@ -29,18 +30,16 @@ export type StaticRoute = {
     contentType: string | undefined
 }
 
-export type CustomTag = `<${string}>`
-export type CustomTags = (request?: Request, params?: Record<string, any>) => Record<string, CustomTag>
-export type Template = (ssrResult: string, customTags?: Record<string, CustomTag>, request?: Request) => string
-export type Render = (app: any, request: Request, params: Record<string, any>) => string | Promise<string>
+export type HTMLContent = `<${string}>`
+export type Template = (ssrResult: HTMLContent, request?: Request, params?: HandlerParams) => string
+export type Render = (app: any, request: Request, params: Record<string, any>) => HTMLContent | Promise<HTMLContent>
 
 export type SSRRoute = { 
     route: string
+    moduleURL: URL
     middleware?: Middleware
     template: Template
     render: Render
-    moduleURL: URL
-    customTags?: CustomTags
     cacheLifetime?: number
 }
 

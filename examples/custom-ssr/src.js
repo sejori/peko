@@ -26,10 +26,10 @@ const Home = ({ server_time }) => {
                     <code>$ cd peko</code>
                 </li>
                 <li>
-                    <code>$ deno run --allow-env --allow-read --allow-net --watch examples/preact/server.js</code>
+                    <code>$ deno run --allow-env --allow-read --allow-net --watch examples/preact/app.ts</code>
                 </li>
                 <li>
-                    Check out <code>./examples/preact/src</code> for frontend code and play around with <code>./examples/preact/app.js</code> for app server changes.
+                    Check out <code>./examples/preact/src</code> for frontend code and play around with <code>./examples/preact/app.ts</code> for app server changes.
                 </li>
             </ol>
             <br />

@@ -35,24 +35,24 @@ Peko.addRoute({
     // we will grab the HTML from the body of the response and use in our custom JSON response below
     const ssrResponse = await Peko.ssrHandler(request, {}, {
       route: "/",
-      middleware: (_request, params) => params["server_time"] = Date.now(),
       moduleURL: new URL("./src.js", import.meta.url),
+      middleware: (_request, params) => params["server_time"] = Date.now(),
       render: (app, _request, params) => renderToString(app(params), null, null),
-      template: htmlTemplate,
-      customTags: (_request, params) => ({
-          title: `<title>Peko</title>`,
-          modulepreload: `<script modulepreload="true" type="module" src="/src.js"></script>`,
-          hydrationScript: `<script type="module">
-              import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-              import Home from "/src.js";
-              hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
-          </script>`
+      template: (appHTML, _request, params) => htmlTemplate({
+        appHTML,
+        title: `<title>Peko</title>`,
+        modulepreload: `<script modulepreload="true" type="module" src="/src.js"></script>`,
+        hydrationScript: `<script type="module">
+            import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+            import Home from "/src.js";
+            hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
+        </script>`
       }),
       cacheLifetime: 6000
     })
 
-    // it may seem convoluted to pull the html string out of a request but it allows us to use the ssrHanlder's caching
-    // alternatively we could simply call render() from "preact-render-to-string" to generate an html string from our source module here
+    // it may seem convoluted to pull the html string out of the request returned from ssrHandler but it allows us to use ssrHandler's caching
+    // alternatively we could simply call render() from "preact-render-to-string" to generate the html string from our source module here
     let htmlString = ""
     const htmlReader = ssrResponse.body?.getReader()
     if (htmlReader) {

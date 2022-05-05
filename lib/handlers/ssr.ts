@@ -31,8 +31,7 @@ export const ssrHandler = async (request: Request, params: Record<string, any>, 
 
     // use provided server-side render function for browser goodness ^^
     const HTMLResult = await ssrData.render(pageComponent, request, params)    
-    const customTags = ssrData.customTags ? ssrData.customTags(request, params) : {}
-    const HTML = await ssrData.template(HTMLResult, customTags, request)
+    const HTML = await ssrData.template(HTMLResult, request, params)
 
     const response = new Response(HTML, {
         headers : new Headers({

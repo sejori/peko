@@ -1,6 +1,6 @@
-import { CustomTag } from "../lib/types.ts"
+import { HTMLContent } from "../lib/types.ts"
 
-export default (HTML: string, customTags?: Record<string, CustomTag>) => `
+export default (tags: Record<string, HTMLContent>) => `
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -9,11 +9,11 @@ export default (HTML: string, customTags?: Record<string, CustomTag>) => `
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" href="/assets/favicon.ico">
         
-        ${customTags && customTags.title}
+        ${tags && tags.title}
         <meta name="description" content="The Featherweight Deno SSR Library">
 
         <script modulepreload="true" type="text/plain" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
-        ${customTags && customTags.modulepreload}
+        ${tags && tags.modulepreload}
 
         <style>
             html, body {
@@ -49,10 +49,10 @@ export default (HTML: string, customTags?: Record<string, CustomTag>) => `
     </head>
     <body>
         <div id="root">
-            ${HTML}
+            ${tags.appHTML}
         </div>
 
-        ${customTags && customTags.hydrationScript}
+        ${tags && tags.hydrationScript}
     </body>
     </html>
 `
