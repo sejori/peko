@@ -33,6 +33,8 @@ export const ssrHandler = async (request: Request, params: Record<string, any>, 
     const HTMLResult = await ssrData.render(pageComponent, request, params)    
     const HTML = await ssrData.template(HTMLResult, request, params)
 
+    console.log(HTML)
+
     const response = new Response(HTML, {
         headers : new Headers({
             'Content-Type': 'text/html; charset=utf-8'
