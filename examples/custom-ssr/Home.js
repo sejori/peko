@@ -1,6 +1,6 @@
 import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
-import Layout from "../layouts/Layout.js"
+import Layout from "./Layout.js"
 
 const Home = ({ server_time }) => {
     return html`
