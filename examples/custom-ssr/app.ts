@@ -9,8 +9,8 @@ Peko.setConfig(config)
 
 // Static source routes for client-side loading
 Peko.addStaticRoute({
-    route: "/src.js",
-    fileURL: new URL(`./src.js`, import.meta.url),
+    route: "/Home.js",
+    fileURL: new URL(`./Home.js`, import.meta.url),
     contentType: "application/javascript"
 })
 Peko.addStaticRoute({
@@ -28,14 +28,14 @@ Peko.addRoute({
     const decoder = new TextDecoder();
 
     // load the contents of the JS file (could use static handler but simpler to use Deno.readFile)
-    const jsUInt8Array = await Deno.readFile(new URL("./src.js", import.meta.url))
+    const jsUInt8Array = await Deno.readFile(new URL("./Home.js", import.meta.url))
     const jsString = decoder.decode(jsUInt8Array);
 
     // here we manually call the ssrHandler to generate a standard HTML response
     // we will grab the HTML from the body of the response and use in our custom JSON response below
     const ssrResponse = await Peko.ssrHandler(request, {}, {
       route: "/",
-      moduleURL: new URL("./src.js", import.meta.url),
+      moduleURL: new URL("./Home.js", import.meta.url),
       middleware: (_request, params) => params["server_time"] = Date.now(),
       render: (app, _request, params) => renderToString(app(params), null, null),
       template: (appHTML, _request, params) => htmlTemplate({
@@ -44,7 +44,7 @@ Peko.addRoute({
         modulepreload: `<script modulepreload="true" type="module" src="/src.js"></script>`,
         hydrationScript: `<script type="module">
             import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-            import Home from "/src.js";
+            import Home from "/Home.js";
             hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
         </script>`
       }),
