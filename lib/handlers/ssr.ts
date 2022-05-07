@@ -1,10 +1,22 @@
 import { getConfig } from "../config.ts"
-import { SSRRoute } from "../types.ts"
+import { SSRRoute, HandlerParams } from "../types.ts"
+import render from "../utils/render.ts"
 
 const config = getConfig()
 
-type HTMLCacheItem = { route: string, response: Response, dob: number }
-const HTMLCache: Array<HTMLCacheItem> = []
+type ResponseCacheItem = { key: string, response: Response, dob: number }
+const ResponseCache: Array<ResponseCacheItem> = []
+
+const cache = (key: string, fcn: Function) => {
+    const store: Record<string, any> = {}
+
+    return (arg: string) => {
+        if (store[key]) return store[key]
+        const result = fcn(arg)
+        store[key] = result
+        return result
+    }
+}
 
 /**
  * SSR request handler complete with JS app rendering, HTML templating & response caching logic. 
@@ -14,24 +26,25 @@ const HTMLCache: Array<HTMLCacheItem> = []
  * @param ssrData: SSRRoute
  * @returns Promise<Response>
  */
-export const ssrHandler = async (request: Request, params: Record<string, any>, ssrData: SSRRoute) => {
+export const ssrHandler = async (ssrData: SSRRoute) => {
     // if not devMode and valid response is cached use that
     if (!config.devMode && ssrData.cacheLifetime) {
-        const cachedResponse = HTMLCache.find(item => item.route === ssrData.route)
+        // cache based on route & params
+        // const cachedResponse = ResponseCache.find(item => item.key === `${ssrData.route}-${JSON.stringify(params)}`)
+        const cachedResponse = ResponseCache.find(item => item.key === ssrData.route)
         if (cachedResponse && Date.now() < cachedResponse.dob + ssrData.cacheLifetime) {
             return cachedResponse.response
         }
     }
 
-    // import our page module (do we need to create a type for it here?)
-    const pageImport = await import(ssrData.moduleURL.pathname)
-    
-    // must remind users that the moduleURL for rendering must export the js app as default
-    const pageComponent = pageImport.default
+    // import the app module
+    const appImport = await import(ssrData.moduleURL.pathname)
+        
+    // app module must export app as default
+    const app = appImport.default
 
-    // use provided server-side render function for browser goodness ^^
-    const HTMLResult = await ssrData.render(pageComponent, request, params)    
-    const HTML = await ssrData.template(HTMLResult, request, params)
+    // use render util for HTML generation
+    const HTML = await render(app, ssrData.render, ssrData.template)
 
     const response = new Response(HTML, {
         headers : new Headers({
@@ -39,17 +52,18 @@ export const ssrHandler = async (request: Request, params: Record<string, any>, 
         })
     })
 
-    cacheResponseItem({ response, route: ssrData.route, dob: Date.now() })
+    cacheResponse({ key: ssrData.route, response: new Response(), dob: Date.now() })
+    // cacheResponse({ key: `${ssrData.route}-${JSON.stringify(params)}`, response: new Response(), dob: Date.now() })
 
     return response
 }
 
 // promise so doesn't block process when called without "await" keyword
-const cacheResponseItem = async (newItem: HTMLCacheItem) => await new Promise((resolve: (value: void) => void) => {
+const cacheResponse = async (newItem: ResponseCacheItem) => await new Promise((resolve: (value: void) => void) => {
     // remove outdated response from cache if present
-    const oldCachedIndex = HTMLCache.findIndex(item => item.route === newItem.route)
-    if (oldCachedIndex > 0) HTMLCache.splice(oldCachedIndex, 1)
+    const oldCachedIndex = ResponseCache.findIndex(item => item.key === newItem.key)
+    if (oldCachedIndex > 0) ResponseCache.splice(oldCachedIndex, 1)
 
-    HTMLCache.push(newItem)
+    ResponseCache.push(newItem)
     return resolve()
 })

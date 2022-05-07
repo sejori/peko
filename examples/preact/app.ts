@@ -17,7 +17,7 @@ const pageRoutes: SSRRoute[] = [
     {
         route: "/",
         moduleURL: new URL("./src/pages/Home.js", import.meta.url),
-        middleware: (_request, params) => params["server_time"] = Date.now(),
+        middleware: (_request) => ({ "server_time": Date.now() }),
         render: (app, _request, params) => renderToString(app(params), null, null),
         template: (appHTML, _request, params) => htmlTemplate({
             appHTML,

@@ -26,9 +26,6 @@ export const start = () => {
         const requestURL = new URL(request.url)
         const route = routes.find(route => route.route === requestURL.pathname && route.method === request.method)
 
-        // Optional: used to pass data from middleware to handler
-        const handlerParams = {}
-
         // store request arg in start() block-scope 
         // to avoid strange closure bug that doesn't seem to affect "start"...
         // this bug began when logRequest() was moved to lib/utils/logger.ts
@@ -43,10 +40,10 @@ export const start = () => {
         if (!route) return respond(404, await config.errorHandler(404, request))
         
         // run middleware function first if provided
+        let mwParams = {}
         if (route.middleware) {
             try {
-                const mwResult = await route.middleware(request, handlerParams)
-                request = mwResult ? mwResult : request
+                mwParams = await route.middleware(request)
             } catch (error) {
                 config.logString(error)
                 return respond(500, await config.errorHandler(500, request, error))
@@ -54,9 +51,9 @@ export const start = () => {
         }
 
         // run handler function
-        let response;
+        let response
         try {
-            response = await route.handler(request, handlerParams)
+            response = await route.handler(request, mwParams)
         } catch(error) {
             config.logString(error)
             return respond(500, await config.errorHandler(500, request, error))
@@ -104,7 +101,7 @@ export const addStaticRoute = (staticRouteData: StaticRoute) => {
         route: staticRouteData.route,
         method: "GET",
         middleware: staticRouteData.middleware,
-        handler: (req, params) => staticHandler(req, params, staticRouteData)
+        handler: (_req, _params) => staticHandler(staticRouteData)
     })
 }
 
@@ -132,7 +129,7 @@ export const addSSRRoute = (ssrRouteData: SSRRoute) => {
         route: ssrRouteData.route,
         method: "GET",
         middleware: ssrRouteData.middleware,
-        handler: (req, params) => ssrHandler(req, params, { 
+        handler: (_req, _params) => ssrHandler({ 
             ...ssrRouteData, 
             cacheLifetime: ssrRouteData.cacheLifetime 
                 ? ssrRouteData.cacheLifetime 
