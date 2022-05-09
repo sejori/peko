@@ -8,8 +8,10 @@ const config: Partial<Config> = {
     port: 7777,
     hostname: "0.0.0.0",
 
+    devMode: false,
+
     // default ssr cache lifetime (ms - same as default)
-    defaultCacheLifetime: 3600,
+    defaultCacheLifetime: 6000,
 
     // handle internally-generated log strings (same as default)
     // Note: it is recommended to POST these to a logging service or db record
