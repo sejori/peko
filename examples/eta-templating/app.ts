@@ -1,6 +1,9 @@
 import * as Peko from "../../mod.ts"
-import { renderFile, configure } from "https://deno.land/x/eta@v1.11.0/mod.ts"
+import { renderFile, configure as configureEta } from "https://deno.land/x/eta@v1.11.0/mod.ts"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
+
+import { lookup } from "https://deno.land/x/media_types/mod.ts"
+import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
 
 import config from "../config.ts"
 
@@ -8,37 +11,30 @@ import config from "../config.ts"
 Peko.setConfig(config)
 
 // Configure eta
-configure({
+configureEta({
   // This tells Eta to look for templates in the /views directory
   views: `${Deno.cwd()}/examples/eta-templating/views/`
 })
 
 // Static source routes for client-side loading
-Peko.addStaticRoute({
-    route: "/Home.js",
-    fileURL: new URL("./src/Home.js", import.meta.url),
-    contentType: "application/javascript"
-})
-Peko.addStaticRoute({
-  route: "/Layout.js",
-  fileURL: new URL("./src/Layout.js", import.meta.url),
-  contentType: "application/javascript"
-})
-Peko.addStaticRoute({
-  route: "/assets/twemoji_chicken.svg",
-  fileURL: new URL("./src/assets/twemoji_chicken.svg", import.meta.url),
-  contentType: "image/svg+xml"
-})
-Peko.addStaticRoute({
-  route: "/assets/favicon.ico",
-  fileURL: new URL("./src/assets/favicon.ico", import.meta.url),
-  contentType: "image/x-icon"
+const files: string[] = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
+files.forEach(file => {
+    const rootPath = `${Deno.cwd()}/examples/eta-templating/src`
+    const fileRoute = file.slice(rootPath.length)
+
+    // must be PekoStaticRoute type (see types.ts)
+    Peko.addStaticRoute({
+        route: fileRoute,
+        fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
+        contentType: lookup(file)
+    })
 })
 
+// SSR Route using eta renderFile fcn 
 Peko.addSSRRoute({
   route: "/",
   moduleURL: new URL("./src/Home.js", import.meta.url),
-  middleware: (_request, params) => params["server_time"] = Date.now(),
+  middleware: (_request) => ({ "server_time": Date.now() }),
   render: (app, _request, params) => renderToString(app(params), null, null),
   template: (appHTML, _request, params) => renderFile("./template.eta", {
       appHTML,

@@ -1,7 +1,11 @@
 import { serve } from "https://deno.land/std@0.121.0/http/server.ts"
 import { getConfig } from "./config.ts"
-import { ssrHandler, staticHandler } from "./handlers/index.ts"
+
+import { staticHandler } from "./handlers/static.ts"
+import { ssrHandler } from "./handlers/ssr.ts"
+
 import { logRequest } from "./utils/logger.ts"
+import { createResponseCache } from "./utils/cacher.ts"
 
 import { Route, SSRRoute, StaticRoute } from "./types.ts"
 
@@ -125,15 +129,20 @@ export const addStaticRoute = (staticRouteData: StaticRoute) => {
 export const addSSRRoute = (ssrRouteData: SSRRoute) => {
     const config = getConfig()
 
+    const { memoizeHandler } = createResponseCache({
+        lifetime: ssrRouteData.cacheLifetime
+    }) 
+
+    const cachedSSRHandler = memoizeHandler((request, params) => ssrHandler(ssrRouteData, request, params))
+
     return addRoute({
         route: ssrRouteData.route,
         method: "GET",
         middleware: ssrRouteData.middleware,
-        handler: (_req, _params) => ssrHandler({ 
-            ...ssrRouteData, 
-            cacheLifetime: ssrRouteData.cacheLifetime 
-                ? ssrRouteData.cacheLifetime 
-                : config.defaultCacheLifetime 
-        })
+        handler: async (request, params) => !config.devMode
+            // use cache-enabled fcn if not in prod env and pass in params 
+            // so we cache renders by params as well as SSRRoute data
+            ? await cachedSSRHandler(request, params)
+            : await ssrHandler(ssrRouteData, request, params)
     })
 }

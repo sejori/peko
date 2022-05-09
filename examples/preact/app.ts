@@ -12,7 +12,7 @@ import config from "../config.ts"
 Peko.setConfig(config)
 
 // SSR'ed app page routes
-const pageRoutes: SSRRoute[] = [
+const ssrRoutes: SSRRoute[] = [
     // must be PekoPageRouteData type (see types.ts)
     {
         route: "/",
@@ -48,9 +48,9 @@ const pageRoutes: SSRRoute[] = [
         // cacheLifetime: 3600 <- this can be omitted as it will default to 3600
     }
 ]
-pageRoutes.forEach(pageRoute => Peko.addSSRRoute(pageRoute))
+ssrRoutes.forEach(ssrRoute => Peko.addSSRRoute(ssrRoute))
 
-// Static source routes from src dir
+// Static src routes for loading into client
 const files: string[] = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
 files.forEach(file => {
     const rootPath = `${Deno.cwd()}/examples/preact/src`
