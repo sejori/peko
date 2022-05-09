@@ -13,7 +13,7 @@ export type Config = {
 }
 
 export type HandlerParams = Record<string, any>
-export type Middleware = (request: Request, params: HandlerParams) => any
+export type Middleware = (request: Request) => HandlerParams
 export type Handler = (request: Request, params: HandlerParams) => Response | Promise<Response>
 
 export type Route = { 
@@ -32,7 +32,7 @@ export type StaticRoute = {
 
 export type HTMLContent = `<${string}>`
 export type Template = (ssrResult: HTMLContent, request?: Request, params?: HandlerParams) => string
-export type Render = (app: any, request: Request, params: Record<string, any>) => HTMLContent | Promise<HTMLContent>
+export type Render = (app: Function, request?: Request, params?: HandlerParams) => HTMLContent | Promise<HTMLContent>
 
 export type SSRRoute = { 
     route: string
