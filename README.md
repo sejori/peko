@@ -29,7 +29,7 @@
         <strong>Software Minimalism</strong> - No build-step, just a sleek runtime using only the Deno std library.
     </li>
     <li>
-        <strong>Ease of Adoption</strong> - Intuitive API & types with zero enforced directory structure.
+        <strong>Ease of Adoption</strong> - Intuitive API & types with zero UI framework lock-in or forced server directory structure.
     </li>
 </ul>
 <p>
