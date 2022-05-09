@@ -6,7 +6,7 @@ let config: Config = {
     devMode: env.ENVIRONMENT !== "production",
     port: 7777,
     hostname: "0.0.0.0",
-    defaultCacheLifetime: 3600,
+    defaultCacheLifetime: 10000, // <- 10 seconds
     logString: (log: string) => console.log(log),
     logEvent: (data: RequestEvent) => console.log(JSON.stringify(data)),
     errorHandler: (statusCode: number) => {

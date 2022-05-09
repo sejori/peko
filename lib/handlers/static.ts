@@ -10,7 +10,7 @@ import { StaticRoute } from "../types.ts"
  * @param staticData: StaticRoute
  * @returns Promise<Response>
  */
-export const staticHandler = async (_request: Request, _params: Record<string, any>, staticData: StaticRoute) => {
+export const staticHandler = async (staticData: StaticRoute) => {
     let filePath = decodeURI(staticData.fileURL.pathname)
     
     // fix annoying windows paths

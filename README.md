@@ -54,7 +54,6 @@
         Edit <code>./examples/preact/src</code> for frontend changes and play with <code>./examples/preact/app.ts</code> for app server logic.
     </li>
 </ol>
-<br />
 <h3>Import Peko into your own project:</h3>
 <p><code>import * as peko from "https://deno.land/x/peko/mod.ts"</code></p>
 <br />
@@ -70,14 +69,23 @@
 
 <h2>How does it work?</h2>
 <p>
-    Deno http server receives page requests and renders your frontend source modules to HTML. The Preact example codebase uses <a href="https://preactjs.com">Preact</a> UI components and <a href="https://github.com/preactjs/preact-render-to-string">preact-render-to-string</a> for Server-Side Rendering (SSR). The HTML is injected into an HTML template along with any custom defined tags and request metadata before being served to the user's browser client.
+    Deno http server receives HTTP requests and matches them to your defined app routes. If a route with matching HTTP path and url is found, the route's middleware function is run followed by the handler function. 
+</p> 
+<p>
+    Peko contains premade Server-Side Rendering (SSR) and Static Asset handlers that can be easily accessed using `Peko.addStaticRoute` or `Peko.addSSRRoute`. The Preact example codebase uses <a href="https://preactjs.com">Preact</a> UI components with <a href="https://github.com/preactjs/preact-render-to-string">preact-render-to-string</a> and a simple HTML tagged template for SSR. 
 </p>
 <p>
-    If <code>env.ENVIRONMENT === "production"</code> page renders are also cached so subsequent requests can be served instantly until the page's configurable cache lifetime is reached.
+    Advanced templating can be done with <a href="https://github.com/eta-dev/eta">eta</a> - take a look at `/examples/eta-templating`. Or for an example of a custom SSR handler that uses Peko's internal Response caching system have a look at `/examples/custom-ssr`!
+</p>
+<p>
+    Caching only enabled if `config.devMode == false`. You can manually edit the config using `Peko.setConfig({ ... })` or keep the default but set `env.ENVIRONMENT = "production"` to test caching locally.
+</p>
+<p>
+    Note: `Peko.addSSRRoute({ ... })` is the only route function that implements caching by default.
 </p>
 <h2>Why is this cool?</h2>
 <p>
-    Because it provides all of the SEO and UX benefits of SSR with no JavaScript transpilation or bundling required - the server and browser use the exact same code! This completely eliminates part of the traditional JavaScript SSR toolchain, increasing project maintainability and simplicity of development.
+    Because it provides all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling required - the server and browser use the exact same code! This completely eliminates part of the traditional JavaScript SSR toolchain, increasing project maintainability and simplicity of development.
 </p>
 <p>
     Better yet, Peko is not build for any specific frontend framework or library. You can use React, Preact, Vue... you name it! Simply plug your rendering function into Peko's SSRRoute data along with a URL for the root module of your app and add the client-side hydration logic to your HTML template.
