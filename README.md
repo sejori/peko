@@ -15,7 +15,7 @@
     Serve around the world effortlessly with Deno Deploy!
 </p>
 
-<a align="center" href="https://doc.deno.land/https://deno.land/x/peko@v0.1.1/mod.ts"><p>API DOCS</p></a>
+<a align="center" href="https://doc.deno.land/https://deno.land/x/peko@v0.1.2/mod.ts"><p>API DOCS</p></a>
 
 <h2>Summary</h2>
 <ul>
