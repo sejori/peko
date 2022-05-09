@@ -7,29 +7,29 @@
     />
 </p>
 <h1 align="center">Peko</h1>
-<p><strong>
+<p align="center"><strong>
     🐔🦕 The Featherweight Deno Library for Modern JS Apps. 🌏
 </strong></p>
 
-<p>
+<p align="center">
     Serve around the world effortlessly with Deno Deploy!
 </p>
 
-<a href="https://doc.deno.land/https://deno.land/x/peko@v0.1.1/mod.ts">API DOCS</a>
+<a align="center" href="https://doc.deno.land/https://deno.land/x/peko@v0.1.1/mod.ts">API DOCS</a>
 
 <h2>Summary</h2>
 <ul>
     <li>
-        <strong>First-class frontend</strong> - server-side render then rapidly hydrate with preloaded JS modules (~10kb Preact example).
+        <strong>First-Class Frontend</strong> - Server-Side Render then rapidly Hydrate with preloaded JS modules.
     </li>
     <li>
-        <strong>Production-ready backend</strong> - reliablility and performance with Typescript and configurable page caching.
+        <strong>Production-Ready Backend</strong> - Reliable and performant with Deno-native Typescript and configurable Response caching.
     </li>
     <li>
-        <strong>Software minimalism</strong> - no build-step, just a sleek runtime using only the Deno std library.
+        <strong>Software Minimalism</strong> - No build-step, just a sleek runtime using only the Deno std library.
     </li>
     <li>
-        <strong>Ease of adoption</strong> - intuitive functions & zero fixed project structure.
+        <strong>Ease of Adoption</strong> - Intuitive API & types with zero enforced directory structure.
     </li>
 </ul>
 <p>
@@ -72,16 +72,16 @@
     Deno http server receives HTTP requests and matches them to your defined app routes. If a route with matching HTTP path and url is found, the route's middleware function is run followed by the handler function. 
 </p> 
 <p>
-    Peko contains premade Server-Side Rendering (SSR) and Static Asset handlers that can be easily accessed using `Peko.addStaticRoute` or `Peko.addSSRRoute`. The Preact example codebase uses <a href="https://preactjs.com">Preact</a> UI components with <a href="https://github.com/preactjs/preact-render-to-string">preact-render-to-string</a> and a simple HTML tagged template for SSR. 
+    Peko contains premade Server-Side Rendering (SSR) and Static Asset handlers that can be easily accessed using <code>Peko.addStaticRoute</code> or <code>Peko.addSSRRoute</code>. The Preact example codebase uses <a href="https://preactjs.com">Preact</a> UI components with <a href="https://github.com/preactjs/preact-render-to-string">preact-render-to-string</a> and a simple HTML Document Template Literal for SSR. 
 </p>
 <p>
-    Advanced templating can be done with <a href="https://github.com/eta-dev/eta">eta</a> - take a look at `/examples/eta-templating`. Or for an example of a custom SSR handler that uses Peko's internal Response caching system have a look at `/examples/custom-ssr`!
+    Advanced templating can be done with <a href="https://github.com/eta-dev/eta">eta</a> - take a look at <code>/examples/eta-templating</code>. Or for an example of a custom SSR handler that implements Peko's internal Response caching system have a look at <code>/examples/custom-ssr</code>!
 </p>
 <p>
-    Caching only enabled if `config.devMode == false`. You can manually edit the config using `Peko.setConfig({ ... })` or keep the default but set `env.ENVIRONMENT = "production"` to test caching locally.
+    Caching only enabled if <code>config.devMode == false</code>. You can manually edit the config using <code>Peko.setConfig({ ... })</code> or keep the default but set <code>env.ENVIRONMENT = "production"</code> to test caching locally.
 </p>
 <p>
-    Note: `Peko.addSSRRoute({ ... })` is the only route function that implements caching by default.
+    Note: <code>Peko.addSSRRoute({ ... })</code> is the only route function that implements caching by default.
 </p>
 <h2>Why is this cool?</h2>
 <p>
