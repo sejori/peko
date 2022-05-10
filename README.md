@@ -11,9 +11,11 @@
     🐔🦕 The Featherweight Deno Library for Modern JS Apps. 🌏
 </strong></p>
 
+<!-- 
 <p align="center">
-    Serve around the world effortlessly with Deno Deploy!
-</p>
+    Serve the world with <a href="" Deno Deploy!
+</p> 
+-->
 
 <a align="center" href="https://doc.deno.land/https://deno.land/x/peko@v0.1.2/mod.ts"><p>API DOCS</p></a>
 
