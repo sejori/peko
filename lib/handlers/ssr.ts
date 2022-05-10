@@ -9,16 +9,9 @@ import { HandlerParams, SSRRoute } from "../types.ts"
  * @returns Promise<Response>
  */
 export const ssrHandler = async (ssrData: SSRRoute, request: Request, params: HandlerParams) => {
-
-    // import the app module
-    const appImport = await import(ssrData.moduleURL.pathname)
-        
-    // app module must export app as default
-    const app = appImport.default
-
     // use provided render and template fcns for HTML generation
-    const HTMLResult = await ssrData.render(app, request, params)    
-    const HTML = await ssrData.template(HTMLResult, request, params)
+    const AppHTML = await ssrData.render(request, params) 
+    const HTML = await ssrData.template(AppHTML, request, params)
 
     return new Response(HTML, {
         headers : new Headers({

@@ -1,12 +1,16 @@
 import * as Peko from "../../mod.ts"
 import { Route, SSRRoute } from "../../lib/types.ts"
+import config from "../config.ts"
 
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
+// import our app page components to pass into SSRRoute.render()
+import Home from "./src/pages/Home.js"
+import About from "./src/pages/About.js"
+
 import htmlTemplate from "../template.ts"
-import config from "../config.ts"
 
 // Configure Peko
 Peko.setConfig(config)
@@ -16,9 +20,8 @@ const ssrRoutes: SSRRoute[] = [
     // must be PekoPageRouteData type (see types.ts)
     {
         route: "/",
-        moduleURL: new URL("./src/pages/Home.js", import.meta.url),
-        middleware: (_request) => ({ "server_time": Date.now() }),
-        render: (app, _request, params) => renderToString(app(params), null, null),
+        middleware: (_request) => ({ "server_time": `${Date.now()}` }),
+        render: (_request, params) => renderToString(Home(params), null, null),
         template: (appHTML, _request, params) => htmlTemplate({
             appHTML,
             title: `<title>Peko</title>`,
@@ -33,8 +36,7 @@ const ssrRoutes: SSRRoute[] = [
     },
     {
         route: "/about",
-        moduleURL: new URL("./src/pages/About.js", import.meta.url),
-        render: (app) => renderToString(app(), null, null),
+        render: () => renderToString(About(), null, null),
         template: (appHTML, _request, _params) => htmlTemplate({
             appHTML,
             title: `<title>Peko | About</title>`,

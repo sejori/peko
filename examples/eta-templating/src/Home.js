@@ -2,7 +2,7 @@ import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact
 
 import Layout from "./Layout.js"
 
-const Home = ({ server_time }) => {
+const Home = (props) => {
     return html`
         <${Layout} navColor="limegreen">
             <h1>Peko</h1>
@@ -11,7 +11,7 @@ const Home = ({ server_time }) => {
             </strong></p>
             <p>No bundling or build process. Server & Browser share all source modules!</p>
             
-            <p>Time of server request: <strong>${server_time}</strong></p>
+            <p>Time of server request: <strong>${props.server_time}</strong></p>
             <p>Time of latest render: <strong>${Date.now()}</strong> ${"<"}- changes with hydration!</p>
 
             <h2>Getting started</h2>
