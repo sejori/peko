@@ -8,12 +8,12 @@
 </p>
 <h1 align="center">Peko</h1>
 <p align="center"><strong>
-    🐔🦕 The Featherweight Deno Library for Modern JS Apps. 🌏
+     🐔 Featherweight & Flexible SSR Toolkit for Modern JS Apps. Built with Deno 🦕 
 </strong></p>
 
 <!-- 
 <p align="center">
-    Serve the world with <a href="" Deno Deploy!
+    Serve the world easily with <a href="https://deno.com/deploy" Deno Deploy></a>! 🌏
 </p> 
 -->
 
