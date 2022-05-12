@@ -7,6 +7,9 @@ import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
 import htmlTemplate from "../template.ts"
 import config from "../config.ts"
 
+// Vue app module
+import App from "./src/app.js"
+
 // VUE FIX
 // Add document.createEvent and navigator.userAgent to global namespace
 declare global {
@@ -32,8 +35,11 @@ const pageRoutes: SSRRoute[] = [
     // must be PekoPageRouteData type (see types.ts)
     {
         route: "/",
-        moduleURL: new URL("./src/app.js", import.meta.url),
-        render: (app) => vueSSR.renderToString(app()),
+        module: {
+            srcURL: new URL("./src/app.js", import.meta.url),
+            app: App
+        },
+        render: () => vueSSR.renderToString(App()),
         template: (appHTML) => htmlTemplate({
             appHTML,
             title: `<title>Peko</title>`,

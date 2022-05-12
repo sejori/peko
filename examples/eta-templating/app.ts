@@ -1,11 +1,12 @@
 import * as Peko from "../../mod.ts"
+import config from "../config.ts"
+
 import { renderFile, configure as configureEta } from "https://deno.land/x/eta@v1.11.0/mod.ts"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
-
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
 
-import config from "../config.ts"
+import Home from "./src/Home.js"
 
 // Configure Peko
 Peko.setConfig(config)
@@ -33,9 +34,12 @@ files.forEach(file => {
 // SSR Route using eta renderFile fcn 
 Peko.addSSRRoute({
   route: "/",
-  moduleURL: new URL("./src/Home.js", import.meta.url),
-  middleware: (_request) => ({ "server_time": Date.now() }),
-  render: (app, _request, params) => renderToString(app(params), null, null),
+  module: {
+    srcURL: new URL(`./src/Home.js`, import.meta.url),
+    app: Home
+  },
+  middleware: (_request) => ({ "server_time": `${Date.now()}` }),
+  render: (_request, params) => renderToString(Home(params), null, null),
   template: (appHTML, _request, params) => renderFile("./template.eta", {
       appHTML,
       title: `<title>Peko</title>`,
