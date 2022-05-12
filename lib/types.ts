@@ -30,9 +30,12 @@ export type StaticRoute = {
     contentType: string | undefined
 }
 
-export type HTMLContent = `<${string}>`
-export type Template = (ssrResult: HTMLContent, request: Request, params: HandlerParams) => string
+// angle bracket HTMLContent type should be moved out of types and into a unit test
+// it is too specific as a type and will break integrations with library types (e.g. eta)
+// export type HTMLContent = `<${string}>`
+export type HTMLContent = string
 export type Render = (app: Function, request: Request, params: HandlerParams) => HTMLContent | Promise<HTMLContent>
+export type Template = (ssrResult: HTMLContent, request: Request, params: HandlerParams) => HTMLContent | Promise<HTMLContent>
 
 export type SSRRoute = { 
     route: string
@@ -41,8 +44,8 @@ export type SSRRoute = {
         app?: Function
     }
     middleware?: Middleware
-    template: Template
     render: Render
+    template: Template
     cacheLifetime?: number
 }
 
