@@ -1,7 +1,7 @@
 import * as Peko from "../../mod.ts"
 import config from "../config.ts"
 
-import { renderFile, configure as configureEta } from "https://deno.land/x/eta@v1.11.0/mod.ts"
+import { renderFile, configure as configureEta } from "https://deno.land/x/eta@v1.12.3/mod.ts"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
@@ -26,7 +26,8 @@ Peko.addSSRRoute({
   },
   middleware: (_request) => ({ "server_time": `${Date.now()}` }),
   render: (app, _request, params) => renderToString(app(params), null, null),
-  template: (appHTML, _request, params) => renderFile("./template.eta", {
+  template: async (appHTML, _request, params) => {
+    const etaResult = await renderFile("./template.eta", {
       appHTML,
       title: `<title>Peko</title>`,
       modulepreload: `<script modulepreload="true" type="module" src="/pages/Home.js"></script>`,
@@ -35,7 +36,9 @@ Peko.addSSRRoute({
           import Home from "/pages/Home.js";
           hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
       </script>`
-  }),
+    })
+    return etaResult ? etaResult : `Eta templating error!`
+  },
   cacheLifetime: 6000
 })
 

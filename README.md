@@ -64,7 +64,14 @@
 </p>
 
 <h2>Deployment</h2>
-<p>Docker & Deno Deploy deployment guides coming soon!</p>
+
+| Example        | Deno Deploy | Docker |
+|   ---          |     ---     |   ---  |
+| Preact         |     ✅      |    ✅   |
+| Custom-ssr     |     ✅      |    ✅   |
+| Eta-templating |     ❌      |    ✅   |
+| Vue            |     ❌      |    ❌   |
+
 <p>
     <strong>This project aims to be ready for production soon but it is not complete with extensive testing yet! Use at your own risk.</strong>
 </p>
