@@ -8,28 +8,28 @@
 </p>
 <h1 align="center">Peko</h1>
 <p align="center"><strong>
-    🐔🦕 The Featherweight Deno Library for Modern JS Apps. 🌏
+     🐔 Featherweight & Flexible SSR Toolkit for Modern JS Apps. Built with Deno 🦕 
 </strong></p>
 
 <p align="center">
-    Serve around the world effortlessly with Deno Deploy!
-</p>
+    Serve the world easily with <a href="https://deno.com/deploy">Deno Deploy</a>! 🌏
+</p> 
 
 <a align="center" href="https://doc.deno.land/https://deno.land/x/peko@v0.1.1/mod.ts">API DOCS</a>
 
 <h2>Summary</h2>
 <ul>
     <li>
-        <strong>First-Class Frontend</strong> - Server-Side Render then rapidly Hydrate with preloaded JS modules.
+        <strong>First-Class Frontend</strong> - Server-Side Render then Hydrate the client with src modules or bundles.
     </li>
     <li>
-        <strong>Production-Ready Backend</strong> - Reliable and performant with Deno-native Typescript and configurable Response caching.
+        <strong>Production-Ready Backend</strong> - Reliable and performant with TypeScript and configurable Response caching.
     </li>
     <li>
         <strong>Software Minimalism</strong> - No build-step, just a sleek runtime using only the Deno std library.
     </li>
     <li>
-        <strong>Ease of Adoption</strong> - Intuitive API & types with zero enforced directory structure.
+        <strong>Ease of Adoption</strong> - Intuitive API & no enforced UI library or directory structure.
     </li>
 </ul>
 <p>
