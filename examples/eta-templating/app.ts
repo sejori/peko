@@ -6,7 +6,7 @@ import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,
 import { lookup } from "https://deno.land/x/media_types/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
 
-import Home from "./src/Home.js"
+import Home from "../preact/src/pages/Home.js"
 
 // Configure Peko
 Peko.setConfig(config)
@@ -17,40 +17,40 @@ configureEta({
   views: `${Deno.cwd()}/examples/eta-templating/views/`
 })
 
+// SSR Route using eta renderFile fcn 
+Peko.addSSRRoute({
+  route: "/",
+  module: {
+    srcURL: new URL(`../preact/src/Home.js`, import.meta.url),
+    app: Home
+  },
+  middleware: (_request) => ({ "server_time": `${Date.now()}` }),
+  render: (app, _request, params) => renderToString(app(params), null, null),
+  template: (appHTML, _request, params) => renderFile("./template.eta", {
+      appHTML,
+      title: `<title>Peko</title>`,
+      modulepreload: `<script modulepreload="true" type="module" src="/pages/Home.js"></script>`,
+      hydrationScript: `<script type="module">
+          import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+          import Home from "/pages/Home.js";
+          hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
+      </script>`
+  }),
+  cacheLifetime: 6000
+})
+
 // Static source routes for client-side loading
-const files: string[] = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
+const files: string[] = await recursiveReaddir(new URL(`../preact/src`, import.meta.url).pathname)
 files.forEach(file => {
-    const rootPath = `${Deno.cwd()}/examples/eta-templating/src`
+    const rootPath = `${Deno.cwd()}/examples/preact/src`
     const fileRoute = file.slice(rootPath.length)
 
     // must be PekoStaticRoute type (see types.ts)
     Peko.addStaticRoute({
         route: fileRoute,
-        fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
+        fileURL: new URL(`../preact/src/${fileRoute}`, import.meta.url),
         contentType: lookup(file)
     })
-})
-
-// SSR Route using eta renderFile fcn 
-Peko.addSSRRoute({
-  route: "/",
-  module: {
-    srcURL: new URL(`./src/Home.js`, import.meta.url),
-    app: Home
-  },
-  middleware: (_request) => ({ "server_time": `${Date.now()}` }),
-  render: (_request, params) => renderToString(Home(params), null, null),
-  template: (appHTML, _request, params) => renderFile("./template.eta", {
-      appHTML,
-      title: `<title>Peko</title>`,
-      modulepreload: `<script modulepreload="true" type="module" src="/Home.js"></script>`,
-      hydrationScript: `<script type="module">
-          import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-          import Home from "/Home.js";
-          hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
-      </script>`
-  }),
-  cacheLifetime: 6000
 })
 
 // Start Peko server :)
