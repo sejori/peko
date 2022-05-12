@@ -5,6 +5,11 @@ import { lookup } from "https://deno.land/x/media_types/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
+// Preact page component imports
+// These are necessary for Deno Deploy support
+import Home from "./src/pages/Home.js"
+import About from "./src/pages/About.js"
+
 import htmlTemplate from "../template.ts"
 import config from "../config.ts"
 
@@ -13,11 +18,16 @@ Peko.setConfig(config)
 
 // SSR'ed app page routes
 const ssrRoutes: SSRRoute[] = [
-    // must be PekoPageRouteData type (see types.ts)
+    // must be SSRRoute type (see types.ts)
     {
         route: "/",
-        moduleURL: new URL("./src/pages/Home.js", import.meta.url),
-        middleware: (_request) => ({ "server_time": Date.now() }),
+        // Note: only srcURL is required in most contexts except Deno Deploy
+        // which doesn't support dynamic imports
+        module: {
+            srcURL: new URL("./src/pages/Home.js", import.meta.url),
+            app: Home
+        },
+        middleware: (_request) => ({ "server_time": `${Date.now()}` }),
         render: (app, _request, params) => renderToString(app(params), null, null),
         template: (appHTML, _request, params) => htmlTemplate({
             appHTML,
@@ -33,7 +43,10 @@ const ssrRoutes: SSRRoute[] = [
     },
     {
         route: "/about",
-        moduleURL: new URL("./src/pages/About.js", import.meta.url),
+        module: {
+            srcURL: new URL("./src/pages/About.js", import.meta.url),
+            app: About
+        },
         render: (app) => renderToString(app(), null, null),
         template: (appHTML, _request, _params) => htmlTemplate({
             appHTML,
@@ -56,7 +69,7 @@ files.forEach(file => {
     const rootPath = `${Deno.cwd()}/examples/preact/src`
     const fileRoute = file.slice(rootPath.length)
 
-    // must be PekoStaticRoute type (see types.ts)
+    // must be StaticRoute type (see types.ts)
     Peko.addStaticRoute({
         route: fileRoute,
         fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
@@ -66,7 +79,7 @@ files.forEach(file => {
 
 // Custom routes (e.g. any server-side API functions)
 const customRoutes: Route[] = [
-    // must be PekoRoute type (see types.ts)
+    // must be Route type (see types.ts)
     {
         route: "/api/parrotFcn",
         method: "POST",
