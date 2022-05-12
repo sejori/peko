@@ -1,7 +1,6 @@
 import { HTMLContent } from "../lib/types.ts"
 
-export default (tags: Record<string, HTMLContent>) => `
-    <!DOCTYPE html>
+export default (tags: Record<string, HTMLContent>) => `<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -54,5 +53,4 @@ export default (tags: Record<string, HTMLContent>) => `
 
         ${tags && tags.hydrationScript}
     </body>
-    </html>
-`
+    </html>`
