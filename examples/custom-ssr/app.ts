@@ -4,7 +4,6 @@ import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,
 import htmlTemplate from "../template.ts"
 import config from "../config.ts"
 
-// importing App component as using custom ssr handler
 import Home from "./src/Home.js"
 
 // Configure Peko
