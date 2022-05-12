@@ -43,12 +43,12 @@ let config: Config = {
 
 /**
  * 
- * @param newConfObj: Config
+ * @param newConfigObj: Config
  */
 export const setConfig = (newConfObj: Partial<Config>) => config = { ...config, ...newConfObj }
 
 /**
  * 
- * @returns Config
+ * @returns configObj: Config
  */
  export const getConfig = () => config
