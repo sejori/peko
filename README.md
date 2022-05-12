@@ -15,7 +15,9 @@
     Serve the world easily with <a href="https://deno.com/deploy">Deno Deploy</a>! 🌏
 </p> 
 
-<a align="center" href="https://doc.deno.land/https://deno.land/x/peko@v0.1.2/mod.ts"><p>API DOCS</p></a>
+<p align="center"><a href="https://doc.deno.land/https://deno.land/x/peko@v0.1.2/mod.ts">
+    API DOCS
+</a></p>
 
 <h2>Summary</h2>
 <ul>
@@ -55,7 +57,7 @@
     </li>
 </ol>
 <h3>Import Peko into your own project:</h3>
-<p><code>import * as peko from "https://deno.land/x/peko/mod.ts"</code></p>
+<p><code>import * as Peko from "https://deno.land/x/peko/mod.ts"</code></p>
 <br />
 <p>
     <strong>Note: <a href="https://marketplace.visualstudio.com/items?itemName=bierner.lit-html">Lit-html</a></strong> VS Code plugin recommended if using HTM & Preact.
