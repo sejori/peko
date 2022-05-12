@@ -32,10 +32,14 @@ export type StaticRoute = {
 
 export type HTMLContent = `<${string}>`
 export type Template = (ssrResult: HTMLContent, request: Request, params: HandlerParams) => string
-export type Render = (request: Request, params: HandlerParams) => HTMLContent | Promise<HTMLContent>
+export type Render = (app: Function, request: Request, params: HandlerParams) => HTMLContent | Promise<HTMLContent>
 
 export type SSRRoute = { 
     route: string
+    module: {
+        srcURL?: URL
+        app?: Function
+    }
     middleware?: Middleware
     template: Template
     render: Render

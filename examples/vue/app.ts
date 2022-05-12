@@ -35,6 +35,10 @@ const pageRoutes: SSRRoute[] = [
     // must be PekoPageRouteData type (see types.ts)
     {
         route: "/",
+        module: {
+            srcURL: new URL("./src/app.js", import.meta.url),
+            app: App
+        },
         render: () => vueSSR.renderToString(App()),
         template: (appHTML) => htmlTemplate({
             appHTML,
