@@ -4,10 +4,20 @@ import { Handler, HandlerParams } from "../types.ts"
 export type CacheItem = { key: string, value: Response, dob: number }
 export type CacheOptions = { lifetime: number }
 
-// should this be a class or of closure?
-// class would be more general-purpose as can access private vars etc
-// but closure is more sleek and inline with project conventions
+/**
+ * Peko's internal Response cache logic. 
+ * 
+ * Lifetime invalidates cache items if they've existed beyond it. In Milliseconds.
+ * Fallsback to config.defaultCacheLifetime if not provided.
+ * 
+ * @param options: { lifetime: number }
+ * @returns memoizeHandler: (handlerFcn) => cachedEnabledHandlerFcn
+ */
 export const createResponseCache = (options?: Partial<CacheOptions>) => {
+  // should this be a class or a closure?
+  // class would be more general-purpose as can access private vars etc
+  // but closure is more sleek and inline with project conventions
+
   const config = getConfig()
 
   let cache: Array<CacheItem> = []
@@ -51,5 +61,5 @@ export const createResponseCache = (options?: Partial<CacheOptions>) => {
     }
   }
 
-  return { memoizeHandler }
+  return memoizeHandler
 }
