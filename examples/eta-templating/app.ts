@@ -34,6 +34,10 @@ files.forEach(file => {
 // SSR Route using eta renderFile fcn 
 Peko.addSSRRoute({
   route: "/",
+  module: {
+    srcURL: new URL(`./src/Home.js`, import.meta.url),
+    app: Home
+  },
   middleware: (_request) => ({ "server_time": `${Date.now()}` }),
   render: (_request, params) => renderToString(Home(params), null, null),
   template: (appHTML, _request, params) => renderFile("./template.eta", {
