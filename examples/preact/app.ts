@@ -21,8 +21,8 @@ const ssrRoutes: SSRRoute[] = [
     // must be SSRRoute type (see types.ts)
     {
         route: "/",
-        // Note: only srcURL is required in most contexts except Deno Deploy
-        // which doesn't support dynamic imports
+        // Note: only srcURL is required in most contexts except 
+        // Deno Deploy which doesn't support dynamic imports
         module: {
             srcURL: new URL("./src/pages/Home.js", import.meta.url),
             app: Home

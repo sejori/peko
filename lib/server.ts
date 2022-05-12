@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.121.0/http/server.ts"
+import { serve } from "https://deno.land/std@0.139.0/http/server.ts"
 import { getConfig } from "./config.ts"
 
 import { staticHandler } from "./handlers/static.ts"
