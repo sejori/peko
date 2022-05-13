@@ -15,7 +15,7 @@
     Serve the world easily with <a href="https://deno.com/deploy">Deno Deploy</a>! 🌏
 </p> 
 
-<p align="center"><a href="https://doc.deno.land/https://deno.land/x/peko@v0.1.2/mod.ts">
+<p align="center"><a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/mod.ts">
     API DOCS
 </a></p>
 
