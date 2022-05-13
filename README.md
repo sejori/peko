@@ -58,6 +58,8 @@
 </ol>
 <h3>Import Peko into your own project:</h3>
 <p><code>import * as Peko from "https://deno.land/x/peko/mod.ts"</code></p>
+<p>And if you want to use Peko's types:</p>
+<p><code>import { ... } from "https://deno.land/x/peko/lib/types.ts"</code></p>
 <br />
 <p>
     <strong>Note: <a href="https://marketplace.visualstudio.com/items?itemName=bierner.lit-html">Lit-html</a></strong> VS Code plugin recommended if using HTM & Preact.
