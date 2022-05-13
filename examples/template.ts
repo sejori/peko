@@ -1,6 +1,4 @@
-import { HTMLContent } from "../lib/types.ts"
-
-export default (tags: Record<string, HTMLContent>) => `<!DOCTYPE html>
+export default (tags: Record<string, string>) => `<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
