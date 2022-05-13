@@ -14,7 +14,10 @@ const Home = (props) => {
                 Serve the world easily with <a href="https://deno.com/deploy">Deno Deploy</a>! 🌏
             </p> 
 
-            <p><a href="https://doc.deno.land/https://deno.land/x/peko@v0.1.2/mod.ts">API DOCS</a></p>
+            <div style="width: 100%; display: flex; justify-content: space-around;">
+                <p><a href="https://github.com/sebringrose/peko">GITHUB REPO</a></p>
+                <p><a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/mod.ts">API DOCS</a></p>
+            </div>
 
             <p>Time of server request: <strong>${props.server_time}</strong></p>
             <p>Time of latest render: <strong>${Date.now()}</strong> ${"<"}- changes with hydration!</p>
