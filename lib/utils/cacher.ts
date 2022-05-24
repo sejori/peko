@@ -43,7 +43,7 @@ export const createResponseCache = (options?: Partial<CacheOptions>) => {
   })
 
   const memoizeHandler = (fcn: Handler) => {
-    return async (request: Request, params: HandlerParams) => {
+    return async (request: Request, params: HandlerParams = {}) => {
       const key = `${request.url}-${JSON.stringify(params)}`
 
       const latest = getLatestCacheItem(key)
@@ -54,7 +54,12 @@ export const createResponseCache = (options?: Partial<CacheOptions>) => {
 
       // calc new value then update cache asynchronously to not block process before return
       const response = await fcn(request, params)
-      updateCache(key, response)
+
+      // set status on cached responses to 304 to utilise browser caching
+      // how to serve 304s only after a client has already requested? 
+      // do we detect code changes and automate this?
+      // will images etc be autocached
+      updateCache(key, new Response(response.body, { status: 304, headers: response.headers }))
 
       // return clone of response - one-use original lives in cache
       return response.clone()
