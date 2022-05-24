@@ -36,9 +36,7 @@ export const addRoute = (routeData: Route) => routes.push(routeData)
 export const addStaticRoute = (staticRouteData: StaticRoute) => {
   const config = getConfig()
 
-  const memoizeHandler = createResponseCache({
-    lifetime: Infinity
-  }) 
+  const memoizeHandler = createResponseCache() 
 
   const cachedStaticHandler = memoizeHandler(() => staticHandler(staticRouteData))
 
