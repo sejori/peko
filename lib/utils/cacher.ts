@@ -1,4 +1,3 @@
-import { getConfig } from "../config.ts"
 import { Handler, HandlerParams } from "../types.ts"
 
 export type CacheItem = { key: string, value: Response, dob: number }
@@ -18,12 +17,10 @@ export const createResponseCache = (options?: Partial<CacheOptions>) => {
   // class would be more general-purpose as can access private vars etc
   // but closure is more sleek and inline with project conventions
 
-  const config = getConfig()
-
   let cache: Array<CacheItem> = []
   const lifetime = options && options.lifetime 
     ? options.lifetime 
-    : config.defaultCacheLifetime
+    : Infinity
 
   const getLatestCacheItem = (key: string) => {
     // return first valid item if found
@@ -43,12 +40,23 @@ export const createResponseCache = (options?: Partial<CacheOptions>) => {
   })
 
   const memoizeHandler = (fcn: Handler) => {
-    return async (request: Request, params: HandlerParams) => {
+    return async (request: Request, params: HandlerParams = {}) => {
       const key = `${request.url}-${JSON.stringify(params)}`
 
       const latest = getLatestCacheItem(key)
       if (latest) {
-        // return clone of response - one-use original lives in cache
+        // if resource ETag present in "if-none-match" request headers
+        // check matches cached resource and respond with 304 if so
+        const ifNoneMatch = request.headers.get("if-none-match")
+        const ETag = latest.value.headers.get("ETag")
+        if (ETag && ifNoneMatch?.includes(ETag)) {
+          return new Response(null, {
+            headers: latest.value.headers,
+            status: 304
+          })
+        }
+
+        // else respond 200 clone of response - one-use original lives in cache
         return latest.value.clone()
       }
 
@@ -56,7 +64,6 @@ export const createResponseCache = (options?: Partial<CacheOptions>) => {
       const response = await fcn(request, params)
       updateCache(key, response)
 
-      // return clone of response - one-use original lives in cache
       return response.clone()
     }
   }

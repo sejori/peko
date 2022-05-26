@@ -1,4 +1,5 @@
 import { HandlerParams, SSRRoute } from "../types.ts"
+import { hasher } from "../utils/hasher.ts"
 
 /**
  * SSR request handler complete with JS app rendering, HTML templating & response caching logic. 
@@ -29,10 +30,17 @@ export const ssrHandler = async (ssrData: SSRRoute, request: Request, params: Ha
     const HTML = await ssrData.template(HTMLResult, request, params)
 
     // TODO: devMode src listeners WASM module graphing 
+    const hashString = hasher(HTML)
 
     return new Response(HTML, {
         headers : new Headers({
-            'Content-Type': 'text/html; charset=utf-8'
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'public, max-age=31536000',
+            // create hash for ETag
+            // this lets browser check if file has changed by returning ETag in "if-none-match" header.
+            // devMode: new ETag in each response so no browser caching
+            // not devMode + memoized: ETag matches "if-none-match" header so 304 (not modified) response given
+            'ETag': hashString
         })
     })
 }
