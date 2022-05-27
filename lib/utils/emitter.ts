@@ -3,7 +3,7 @@ import { logError } from "./logger.ts"
 
 const emitters: Emitter[] = []
 
-export const createEmitter = (id: string, initListeners?: Listener[]) => {
+export const createEmitter = (initListeners?: Listener[]) => {
   const listeners: Listener[] = initListeners ? initListeners : []
   const getListeners = () => listeners
 
@@ -25,16 +25,17 @@ export const createEmitter = (id: string, initListeners?: Listener[]) => {
   // async so won't block process when called without "await"
   const emit = async (data: Record<string, any>) => {
     const date = new Date()
-    const event: Event = { id: `EMIT-${id}-${date.toJSON()}`, type: "emit", date: date, data }
+    const eventId = `EMIT-${JSON.stringify(data)}-${date.toJSON()}`
+    const event: Event = { id: eventId, type: "emit", date: date, data }
     
     try {
       return await Promise.all(listeners.map(async listener => await listener(event)))
     } catch (error) {
-      logError(id, date, error)
+      logError(eventId, error, date)
     }
   }
 
-  const emitter = { id, emit, getListeners, subscribe, unsubscribe }
+  const emitter = { emit, getListeners, subscribe, unsubscribe }
 
   emitters.push(emitter)
   return emitter

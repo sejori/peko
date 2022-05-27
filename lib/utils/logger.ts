@@ -55,6 +55,6 @@ export const logError = async (id: string, error: any, date: Date) => {
   try {
     return await config.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
   } catch (e) {
-    return console.log(e)
+    return console.error(e)
   }
 }
