@@ -1,5 +1,4 @@
 import { Listener, Emitter, Event } from "../types.ts"
-import { getConfig } from "../config.ts"
 import { logError } from "./logger.ts"
 
 const emitters: Emitter[] = []
