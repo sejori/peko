@@ -15,32 +15,28 @@ import { Event } from "../types.ts"
 export const logRequest = async (request: Request, status: number, start: number, responseTime: number) => {
   const config = getConfig()
   const date = new Date(start)
-  const headers: Record<string, string> = {}
-  for (const pair of request.headers.entries()) {
-      headers[pair[0]] = pair[1]
-  }
 
   const requestEvent: Event = {
-      id: `${request.method}-${request.url}-${date.toJSON()}`,
-      type: "request",
-      date: date,
-      data: {
-        status,
-        responseTime: `${responseTime}ms`,
-        request: request
-      }
+    id: `${request.method}-${request.url}-${date.toJSON()}`,
+    type: "request",
+    date: date,
+    data: {
+      status,
+      responseTime: `${responseTime}ms`,
+      request: request
+    }
   }
 
   try {
-      await config.logString(`[${requestEvent.date}] ${status} ${request.method} ${request.url} ${requestEvent.data.responseTime}`)
+    await config.logString(`[${requestEvent.date}] ${status} ${request.method} ${request.url} ${requestEvent.data.responseTime}`)
   } catch (error) {
-      console.log(error)
+    console.log(error)
   }
 
   try {
-      await config.logEvent(requestEvent)
+    await config.logEvent(requestEvent)
   } catch (error) {
-      console.log(error)
+    console.log(error)
   }
 }
 
@@ -54,11 +50,11 @@ export const logRequest = async (request: Request, status: number, start: number
  * @param date: Date
  */
 export const logError = async (id: string, error: any, date: Date) => {
-    const config = getConfig()
+  const config = getConfig()
 
-    try {
-        return await config.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
-    } catch (e) {
-        return console.log(e)
-    }
+  try {
+    return await config.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
+  } catch (e) {
+    return console.log(e)
+  }
 }

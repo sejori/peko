@@ -1,4 +1,4 @@
-import { SSERoute, HandlerParams } from "../types.ts"
+import { SSERoute } from "../types.ts"
 import { getConfig } from "../config.ts"
 
 const encode = new TextEncoder().encode
