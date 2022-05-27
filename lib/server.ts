@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
 import { Route } from "./types.ts"
 import { getConfig } from "./config.ts"
-import { logRequest } from "./utils/logger.ts"
+import { logRequest, logError } from "./utils/logger.ts"
 
 export const routes: Route[] = []
 
@@ -47,7 +47,7 @@ export const start = () => {
             try {
                 mwParams = await route.middleware(request)
             } catch (error) {
-                config.logString(error)
+                logError(request.url, error, new Date())
                 return respond(500, await config.errorHandler(500, request, error))
             }
         }
@@ -57,7 +57,7 @@ export const start = () => {
         try {
             response = await route.handler(request, mwParams)
         } catch(error) {
-            config.logString(error)
+            logError(request.url, error, new Date())
             return respond(500, await config.errorHandler(500, request, error))
         }
 

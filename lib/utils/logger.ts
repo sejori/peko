@@ -2,7 +2,7 @@ import { getConfig } from "../config.ts"
 import { Event } from "../types.ts"
 
 /**
- * Peko's internal logging function.
+ * Peko's internal request logging function.
  * 
  * Returns promise so process isn't blocked when called without "await" keyword.
  * 
@@ -42,4 +42,23 @@ export const logRequest = async (request: Request, status: number, start: number
   } catch (error) {
       console.log(error)
   }
+}
+
+/**
+ * Peko's internal error logging function.
+ * 
+ * Returns promise so process isn't blocked when called without "await" keyword.
+ * 
+ * @param id: string
+ * @param error: any
+ * @param date: Date
+ */
+export const logError = async (id: string, error: any, date: Date) => {
+    const config = getConfig()
+
+    try {
+        return await config.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
+    } catch (e) {
+        return console.log(e)
+    }
 }
