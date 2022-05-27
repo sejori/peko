@@ -15,14 +15,14 @@ const config: Partial<Config> = {
 
     // handle internally-generated log strings (same as default)
     // Note: it is recommended to POST these to a logging service or db record
-    logString: (log) => console.log(log),
+    logString: (s) => console.log(s),
 
     // handle internally-generated event objects
     // Note: it is recommended to POST these to an analytics service or db record
     //
     // Use commented default value below to see event data in console:
     // logEvent: (data) => console.log(JSON.stringify(data)),
-    logEvent: (_data) => {},
+    logEvent: (e) => console.log(e),
 
     // custom error handling function
     // Note: must return a valid Response object

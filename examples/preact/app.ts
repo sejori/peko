@@ -1,5 +1,6 @@
 import * as Peko from "../../mod.ts"
 import { Route, SSRRoute } from "../../lib/types.ts"
+import { createEmitter } from "../../lib/utils/emitter.ts"
 
 import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
@@ -77,13 +78,21 @@ files.forEach(file => {
     })
 })
 
+// create an emitter to test emit functionality
+const testEmitter = createEmitter("test-emitter")
+
 // Custom routes (e.g. any server-side API functions)
 const customRoutes: Route[] = [
     // must be Route type (see types.ts)
     {
-        route: "/api/parrotFcn",
+        route: "/api/parrot",
         method: "POST",
-        handler: (request: Request) => new Response(`Parrot sqwarks: ${JSON.stringify(request.body)}`)
+        handler: async (request: Request) => {
+            // emit event with body as data
+            const body = await request.json()
+            testEmitter.emit(body)
+            return new Response(`Parrot sqwarks: ${JSON.stringify(body)}`)
+        }
     }
 ]
 customRoutes.forEach(route => Peko.addRoute(route))
