@@ -11,12 +11,12 @@ export type LogEvent = (data: Event) => void | Promise<void>
 export type ErrorHandler = (statusCode: number, request?: Request, error?: Error) => Response | Promise<Response>
 
 export type Config = { 
-    devMode: boolean
-    port: number
-    hostname: string
-    logString: LogString
-    logEvent: LogEvent
-    errorHandler: ErrorHandler
+  devMode: boolean
+  port: number
+  hostname: string
+  logString: LogString
+  logEvent: LogEvent
+  errorHandler: ErrorHandler
 }
 
 export type HandlerParams = Record<string, string>
@@ -24,17 +24,17 @@ export type Middleware = (request: Request) => HandlerParams
 export type Handler = (request: Request, params: HandlerParams) => Response | Promise<Response>
 
 export type Route = { 
-    route: string
-    method: string
-    middleware?: Middleware
-    handler: Handler
+  route: string
+  method: string
+  middleware?: Middleware
+  handler: Handler
 }
 
 export type StaticRoute = { 
-    route: string
-    middleware?: Middleware
-    fileURL: URL
-    contentType: string | undefined
+  route: string
+  middleware?: Middleware
+  fileURL: URL
+  contentType: string | undefined
 }
 
 // TODO: angle bracket HTMLContent type should be moved out of types and into a unit test
@@ -45,27 +45,27 @@ export type Render = (app: Function, request: Request, params: HandlerParams) =>
 export type Template = (ssrResult: HTMLContent, request: Request, params: HandlerParams) => HTMLContent | Promise<HTMLContent>
 
 export type SSRRoute = { 
-    route: string
-    module: {
-        srcURL?: URL
-        app?: Function
-    }
-    middleware?: Middleware
-    render: Render
-    template: Template
-    cacheLifetime?: number
+  route: string
+  module: {
+    srcURL?: URL
+    app?: Function
+  }
+  middleware?: Middleware
+  render: Render
+  template: Template
+  cacheLifetime?: number
 }
 
 export type Listener = (e: Event) => void | Promise<void>
 export type Emitter = {
-    id: string,
-    emit: (e: Event) => void | void[] | Promise<void | void[]>
-    subscribe: (cb: Listener) => boolean
-    unsubscribe: (cb: Listener) => boolean
-    getListeners: () => Listener[]
+  id: string,
+  emit: (e: Event) => void | void[] | Promise<void | void[]>
+  subscribe: (cb: Listener) => boolean
+  unsubscribe: (cb: Listener) => boolean
+  getListeners: () => Listener[]
 }
 
 export type SSERoute = {
-    route: string
-    emitter: Emitter
+  route: string
+  emitter: Emitter
 }
