@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.139.0/http/server.ts"
+import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
 import { Route } from "./types.ts"
 import { getConfig } from "./config.ts"
 import { logRequest } from "./utils/logger.ts"

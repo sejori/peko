@@ -1,3 +1,11 @@
+export type Event = {
+    id: string
+    type: "request" | "emit" | "error"
+    date: Date
+    data: Record<string, any>
+    // data: Record<string, string | number | Request | Error | Record<string, string>>
+}
+
 export type LogString = (log: string) => void | Promise<void>
 export type LogEvent = (data: Event) => void | Promise<void>
 export type ErrorHandler = (statusCode: number, request?: Request, error?: Error) => Response | Promise<Response>
@@ -10,13 +18,6 @@ export type Config = {
     logString: LogString
     logEvent: LogEvent
     errorHandler: ErrorHandler
-}
-
-export type Event = {
-    id: string
-    type: "request" | "emit"
-    date: string
-    data: Record<string, string | number | Record<string, string>>
 }
 
 export type HandlerParams = Record<string, string>
@@ -56,9 +57,10 @@ export type SSRRoute = {
     cacheLifetime?: number
 }
 
-export type Listener = (e: Event) => void
+export type Listener = (e: Event) => void | Promise<void>
 export type Emitter = {
-    id: string
+    id: string,
+    emit: (e: Event) => void | Promise<void>
     subscribe: (cb: Listener) => boolean
     unsubscribe: (cb: Listener) => boolean
     getListeners: () => Listener[]

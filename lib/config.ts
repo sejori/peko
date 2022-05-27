@@ -1,4 +1,4 @@
-import { Config, RequestEvent } from "./types.ts"
+import { Config, Event } from "./types.ts"
 
 const env = Deno.env.toObject()
 
@@ -8,7 +8,7 @@ let config: Config = {
     hostname: "0.0.0.0",
     defaultCacheLifetime: 10000, // <- 10 seconds
     logString: (log: string) => console.log(log),
-    logEvent: (data: RequestEvent) => console.log(JSON.stringify(data)),
+    logEvent: (e: Event) => console.log(JSON.stringify(e)),
     errorHandler: (statusCode: number) => {
         let response;
         switch (statusCode) {

@@ -14,27 +14,25 @@ import { Event } from "../types.ts"
  */
 export const logRequest = async (request: Request, status: number, start: number, responseTime: number) => {
   const config = getConfig()
-  const date = new Date(start).toString()
+  const date = new Date(start)
   const headers: Record<string, string> = {}
   for (const pair of request.headers.entries()) {
       headers[pair[0]] = pair[1]
   }
 
   const requestEvent: Event = {
-      id: `${request.method}-${request.url}-${date}`,
+      id: `${request.method}-${request.url}-${date.toJSON()}`,
       type: "request",
-      date,
+      date: date,
       data: {
         status,
-        method: request.method,
-        url: request.url,
         responseTime: `${responseTime}ms`,
-        headers
+        request: request
       }
   }
 
   try {
-      await config.logString(`[${requestEvent.date}] ${requestEvent.data.status} ${requestEvent.data.method} ${requestEvent.data.url} ${requestEvent.data.responseTime}`)
+      await config.logString(`[${requestEvent.date}] ${status} ${request.method} ${request.url} ${requestEvent.data.responseTime}`)
   } catch (error) {
       console.log(error)
   }
