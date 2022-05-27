@@ -58,7 +58,6 @@ export type SSRRoute = {
 
 export type Listener = (e: Event) => void | Promise<void>
 export type Emitter = {
-  id: string,
   emit: (e: Event) => void | void[] | Promise<void | void[]>
   subscribe: (cb: Listener) => boolean
   unsubscribe: (cb: Listener) => boolean

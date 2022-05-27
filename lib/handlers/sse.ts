@@ -1,7 +1,7 @@
 import { SSERoute } from "../types.ts"
 import { getConfig } from "../config.ts"
 
-const encode = new TextEncoder().encode
+const encoder = new TextEncoder()
 
 /**
  * SSE connection handler
@@ -18,14 +18,15 @@ export const sseHandler = (sseData: SSERoute, request: Request) => {
   const body = new ReadableStream({
     start(controller) {
       lexController = controller
+
       sseData.emitter.subscribe(event => 
-        lexController.enqueue(encode(`data: ${JSON.stringify(event.data)}`))
+        lexController.enqueue(encoder.encode(`data: ${JSON.stringify(event.data)}`))
       )
     },
     cancel() {
       config.logString(`Client ${request.headers.get("X-Forwarded-For")} disconnected`)
       sseData.emitter.unsubscribe(event => 
-        lexController.enqueue(encode(`data: ${JSON.stringify(event.data)}`))
+        lexController.enqueue(encoder.encode(`data: ${JSON.stringify(event.data)}`))
       )
     }
   })
