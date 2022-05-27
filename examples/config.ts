@@ -1,5 +1,7 @@
 import { Config } from "../lib/types.ts"
 
+const env = Deno.env.toObject()
+
 // CUSTOM CONFIG FOR EXAMPLES
 // Missing attributes fallback to default values (see lib/config.ts)
 //
@@ -8,10 +10,9 @@ const config: Partial<Config> = {
     port: 7777,
     hostname: "0.0.0.0",
 
-    devMode: false,
-
-    // default ssr cache lifetime (ms - same as default)
-    defaultCacheLifetime: 6000,
+    // devMode true disables catching in addStaticRoute & addSSRRoute fcns
+    // TODO: implement hot-reloading SSE in devMode
+    devMode: env.ENVIRONMENT !== "production",
 
     // handle internally-generated log strings (same as default)
     // Note: it is recommended to POST these to a logging service or db record

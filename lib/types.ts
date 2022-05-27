@@ -14,7 +14,6 @@ export type Config = {
     devMode: boolean
     port: number
     hostname: string
-    defaultCacheLifetime: number
     logString: LogString
     logEvent: LogEvent
     errorHandler: ErrorHandler
@@ -60,7 +59,7 @@ export type SSRRoute = {
 export type Listener = (e: Event) => void | Promise<void>
 export type Emitter = {
     id: string,
-    emit: (e: Event) => void | Promise<void>
+    emit: (e: Event) => void | void[] | Promise<void | void[]>
     subscribe: (cb: Listener) => boolean
     unsubscribe: (cb: Listener) => boolean
     getListeners: () => Listener[]

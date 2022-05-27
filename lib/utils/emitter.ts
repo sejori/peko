@@ -1,5 +1,6 @@
 import { Listener, Emitter, Event } from "../types.ts"
 import { getConfig } from "../config.ts"
+import { logError } from "./logger.ts"
 
 const emitters: Emitter[] = []
 
@@ -28,8 +29,12 @@ export const createEmitter = (id: string, initListeners?: Listener[]) => {
   const emit = async (data: Record<string, any>) => {
     const date = new Date()
     const event: Event = { id: `EMIT-${id}-${date.toJSON()}`, type: "emit", date: date, data }
-    listeners.forEach(listener => listener(event))
-    await config.logEvent(event)
+    
+    try {
+      return await Promise.all(listeners.map(async listener => await listener(event)))
+    } catch (error) {
+      logError(id, date, error)
+    }
   }
 
   const emitter = { id, emit, getListeners, subscribe, unsubscribe }

@@ -40,7 +40,7 @@ const ssrRoutes: SSRRoute[] = [
                 hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
             </script>`
         }),
-        cacheLifetime: 6000
+        cacheLifetime: 6000 // <- even with a specified cacheLifetime this page will never change because it's params are different in each request
     },
     {
         route: "/about",
@@ -59,7 +59,7 @@ const ssrRoutes: SSRRoute[] = [
                 hydrate(About(), document.getElementById("root"))
             </script>`
         }),
-        // cacheLifetime: 3600 <- this can be omitted as it will default to 3600
+        // cacheLifetime: 6000 <- this can be omitted as page content doesn't change and cacher will default to a lifetime of Infinity
     }
 ]
 ssrRoutes.forEach(ssrRoute => Peko.addSSRRoute(ssrRoute))
@@ -78,8 +78,8 @@ files.forEach(file => {
     })
 })
 
-// create an emitter to test emit functionality
-const testEmitter = createEmitter("test-emitter")
+// create an emitter to test emit functionality - pass logEvent as initial listener
+const testEmitter = createEmitter("test-emitter", [Peko.getConfig().logEvent])
 
 // Custom routes (e.g. any server-side API functions)
 const customRoutes: Route[] = [

@@ -1,7 +1,7 @@
 import { Handler, HandlerParams } from "../types.ts"
 
 export type CacheItem = { key: string, value: Response, dob: number }
-export type CacheOptions = { lifetime: number }
+export type CacheOptions = { lifetime: number, debug: boolean }
 
 /**
  * Peko's internal Response cache logic. 
