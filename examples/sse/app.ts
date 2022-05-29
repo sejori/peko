@@ -22,8 +22,7 @@ const ssrRoutes: SSRRoute[] = [
   // must be SSRRoute type (see types.ts)
   {
     route: "/",
-    // Note: only srcURL is required in most contexts except 
-    // Deno Deploy which doesn't support dynamic imports
+    // Note: srcURL used for emitting file change events in devMode
     module: {
       srcURL: new URL("../preact/src/pages/Home.js", import.meta.url),
       app: Home
