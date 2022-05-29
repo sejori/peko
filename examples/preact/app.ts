@@ -78,18 +78,6 @@ files.forEach(file => {
     })
 })
 
-// create an emitter to test emit functionality - pass logEvent as initial listener so we can see it working
-const testEmitter = createEmitter([Peko.getConfig().logEvent])
-
-// SSE route using testEmitter
-Peko.addSSERoute({
-  route: "/sse",
-  emitter: testEmitter
-})
-
-// test sse route with interval
-setInterval(() => testEmitter.emit({ value: Math.random() }), 1000)
-
 // Custom routes (e.g. any server-side API functions)
 const customRoutes: Route[] = [
     // must be Route type (see types.ts)
@@ -99,7 +87,6 @@ const customRoutes: Route[] = [
         handler: async (request: Request) => {
             // emit event with body as data
             const body = await request.json()
-            testEmitter.emit({value: body })
             return new Response(`Parrot sqwarks: ${JSON.stringify(body)}`)
         }
     }
