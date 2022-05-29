@@ -72,8 +72,6 @@ export const addStaticRoute = (staticRouteData: StaticRoute) => {
 export const addSSRRoute = (ssrRouteData: SSRRoute) => {
   const config = getConfig()
 
-  console.log(ssrRouteData.cacheLifetime)
-
   const memoizeHandler = createResponseCache({
     lifetime: ssrRouteData.cacheLifetime
   }) 
