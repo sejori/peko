@@ -15,9 +15,34 @@
     Serve the world with <a href="https://deno.com/deploy">Deno Deploy</a>! 🌏
 </p> 
 
-<p align="center"><a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/mod.ts">
-    API DOCS
-</a></p>
+<p align="center">
+    <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/mod.ts">
+        API docs
+    </a>
+</p>
+
+<p align="center">
+    <span>
+        <a href="#routing">
+            Routing
+        </a>
+    </span>
+        <span>
+        <a href="#events">
+            Events
+        </a>
+    </span>
+        <span>
+        <a href="#request-handling">
+            Request handling
+        </a>
+    </span>
+        <span>
+        <a href="#response-caching">
+            Response caching
+        </a>
+    </span>
+</p>
 
 <h2>Philosophy</h2>
 <ul>
