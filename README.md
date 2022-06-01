@@ -114,26 +114,29 @@
 
 <h2 id="#routing">Routing</h2>
 <p>
-    Peko matches http Request URLs to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Route">Route</a>s. Routes can be added or removed at runtime via the `addRoute()` and `removeRoute()` exports.
+    Http Request URLs are matched to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Route">Routes</a>. Routes can be added or removed at runtime via the <code>addRoute()</code> and <code>removeRoute()</code> exports.
 </p>
 
 <h2 id="#events">Events</h2>
 <p>
-    Realtime app logic can be built with <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Event">Event</a>s. Events in Peko are created by the <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Emitter">Emitter</a> `.emit()` method. Emitters can be subscribed to manually (`Emitter.subscribe(listener: Listener)`) or given to the `sseHandler` to send Event data to connected clients.
+    Realtime app logic can be built with <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Emitter">Emitters</a> vai the <code>.emit()</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe(listener: Listener)</code>, or given to the <code>sseHandler</code> to send Event data to connected clients.
 </p>
 
 
 <h2 id="request-handling">Request handling</h2>
 <p>
-    Library includes handlers for serving static assets, rendering JavaScript apps and streaming server-sent events. There are premade `addStaticRoute()`, `addSSRRoute()` and `addSSERoute()` exports that implement their respective handlers but if you want to create custom handler logic you can import and expand upon the inbuilt handlers (check out the `custom-ssr` example).
+    Handlers for serving static assets, rendering JavaScript apps and streaming server-sent events come prebuilt. There are <code>addStaticRoute()</code>, <code>addSSRRoute()</code> and <code>addSSERoute()</code> exports that implement their respective handlers, if you want to create custom handler logic you can import and expand upon the inbuilt handlers (check out the <code>examples/custom-ssr<code>).
 </p>
 
 <h2 id="response-caching">Response caching</h2>
 <p>
-    Peko is designed for stateless computing, therefore memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The `addSSRRoute()` uses the `createResponseCache()` utility export to memoize the `ssrHandler` so that Requests can be served from the cache and not unecessarily rerendered.
+    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The <code>addSSRRoute()</code> uses the <code>createResponseCache()</code> utility export to memoize the <code>ssrHandler</code> so that Requests can be served from the cache and not unecessarily rerendered.
 </p>
 <p>
-    <strong>Note:</strong> `addSSRRoute(data: SSRRoute)` only uses cache when `config.devMode === false` (which is the default config). It is recommended to use `setConfig` to set devMode from an environment variable (see `examples/config.ts`)
+    Caching Responses from external data services helps keep your app fast and reduce network overhead in serving Requests!
+</p>
+<p>
+    <strong>Note:</strong> <code>addSSRRoute(data: SSRRoute)</code> only utilizes a cache when <code>config.devMode === false</code> (which is the default config). It is recommended to use the <code>setConfig()</code> export to set devMode from an environment variable (see <code>examples/config.ts</code>).
 </p>
 
 <h2 id="cool">This is cool...</h2>
