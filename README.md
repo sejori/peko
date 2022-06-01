@@ -8,30 +8,30 @@
 </p>
 <h1 align="center">Peko</h1>
 <p align="center"><strong>
-     🐔 Featherweight & Flexible SSR Toolkit for Modern JS Apps. Built with Deno 🦕 
+    🪶 Featherweight toolkit for the <a href="https://tinyclouds.org/javascript_containers">modern stateless web</a>. Built with Deno! 🦕 
 </strong></p>
 
 <p align="center">
-    Serve the world easily with <a href="https://deno.com/deploy">Deno Deploy</a>! 🌏
+    Serve the world with <a href="https://deno.com/deploy">Deno Deploy</a>! 🌏
 </p> 
 
 <p align="center"><a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/mod.ts">
     API DOCS
 </a></p>
 
-<h2>Summary</h2>
+<h2>Philosophy</h2>
 <ul>
     <li>
-        <strong>First-Class Frontend</strong> - Server-Side Render then Hydrate the client with src modules or bundles.
+        <strong>First-class frontend</strong> - Server-side render (SSR) and client-side hydrate with the same code. Bundling optional.
     </li>
     <li>
-        <strong>Production-Ready Backend</strong> - Reliable and performant with TypeScript and configurable Response caching.
+        <strong>Production-ready backend</strong> - TypeScript, customizable Response caching and a library of utilities.
     </li>
     <li>
-        <strong>Software Minimalism</strong> - No build-step, just a sleek runtime using only the Deno std library.
+        <strong>Software Minimalism</strong> - No build-step, just a sleek runtime using only the Deno <a href="https://deno.land/std">std</a> library.
     </li>
     <li>
-        <strong>Ease of Adoption</strong> - Intuitive API & no enforced UI library or directory structure.
+        <strong>Ease of Adoption</strong> - Intuitive API, no frontend tool lock-in and no forced project structure.
     </li>
 </ul>
 <p>
