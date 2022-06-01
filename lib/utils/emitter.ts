@@ -25,8 +25,8 @@ export const createEmitter = (initListeners?: Listener[]) => {
   // async so won't block process when called without "await"
   const emit = async (data: Record<string, any>) => {
     const date = new Date()
-    const eventId = `EMIT-${JSON.stringify(data)}-${date.toJSON()}`
-    const event: Event = { id: eventId, type: "emit", date: date, data }
+    const eventId = `EMIT-${JSON.stringify(data)}`
+    const event: Event = { id: `${eventId}-${date.toJSON()}`, type: "emit", date: date, data }
     
     try {
       return await Promise.all(listeners.map(async listener => await listener(event)))
