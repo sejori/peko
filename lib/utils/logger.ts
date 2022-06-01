@@ -1,8 +1,8 @@
 import { getConfig } from "../config.ts"
-import { RequestEvent } from "../types.ts"
+import { Event } from "../types.ts"
 
 /**
- * Peko's internal logging function.
+ * Peko's internal request logging function.
  * 
  * Returns promise so process isn't blocked when called without "await" keyword.
  * 
@@ -14,30 +14,47 @@ import { RequestEvent } from "../types.ts"
  */
 export const logRequest = async (request: Request, status: number, start: number, responseTime: number) => {
   const config = getConfig()
-  
-  const headers: Record<string, string> = {}
-  for (const pair of request.headers.entries()) {
-      headers[pair[0]] = pair[1]
-  }
+  const date = new Date(start)
 
-  const requestEvent: RequestEvent = {
-      date: new Date(start).toString(),
+  const requestEvent: Event = {
+    id: `${request.method}-${request.url}-${date.toJSON()}`,
+    type: "request",
+    date: date,
+    data: {
       status,
-      method: request.method,
-      url: request.url,
       responseTime: `${responseTime}ms`,
-      headers
+      request: request
+    }
   }
 
   try {
-      await config.logString(`[${requestEvent.date}] ${requestEvent.status} ${requestEvent.method} ${requestEvent.url} ${requestEvent.responseTime}`)
+    await config.logString(`[${requestEvent.date}] ${status} ${request.method} ${request.url} ${requestEvent.data.responseTime}`)
   } catch (error) {
-      console.log(error)
+    console.log(error)
   }
 
   try {
-      await config.logEvent(requestEvent)
+    await config.logEvent(requestEvent)
   } catch (error) {
-      console.log(error)
+    console.log(error)
+  }
+}
+
+/**
+ * Peko's internal error logging function.
+ * 
+ * Returns promise so process isn't blocked when called without "await" keyword.
+ * 
+ * @param id: string
+ * @param error: any
+ * @param date: Date
+ */
+export const logError = async (id: string, error: any, date: Date) => {
+  const config = getConfig()
+
+  try {
+    return await config.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
+  } catch (e) {
+    return console.error(e)
   }
 }

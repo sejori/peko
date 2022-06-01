@@ -13,8 +13,8 @@ import Home from "../preact/src/pages/Home.js"
 Peko.setConfig(config)
 
 // create a response cache for our custom SSR 
-// (note: it will use config.defaultCacheLifetime if none provided)
-const memoizeHandler = Peko.createResponseCache()
+// note: setting lifetime of cached responses to one minute (default is Infinity)
+const memoizeHandler = Peko.createResponseCache({ lifetime: 60000 })
 
 // Custom route using ResponseCache & our own ssr logic  - returns JSON data for component instead of HTML
 Peko.addRoute({

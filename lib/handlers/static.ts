@@ -1,8 +1,6 @@
 import { StaticRoute } from "../types.ts"
 import { hasher } from "../utils/hasher.ts"
 
-// I think there is a much more efficient method by streaming the file into the response body?
-
 /**
  * Static asset request handler
  * 
@@ -15,6 +13,7 @@ export const staticHandler = async (staticData: StaticRoute) => {
   // fix annoying windows paths
   if (Deno.build.os === "windows") filePath = filePath.substring(1)
 
+  // Is it more efficient to stream file into response body?
   const body = await Deno.readFile(filePath)
   const hashString = hasher(body.toString())
 

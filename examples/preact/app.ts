@@ -1,5 +1,6 @@
 import * as Peko from "../../mod.ts"
 import { Route, SSRRoute } from "../../lib/types.ts"
+import { createEmitter } from "../../lib/utils/emitter.ts"
 
 import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
@@ -21,8 +22,7 @@ const ssrRoutes: SSRRoute[] = [
     // must be SSRRoute type (see types.ts)
     {
         route: "/",
-        // Note: only srcURL is required in most contexts except 
-        // Deno Deploy which doesn't support dynamic imports
+        // Note: srcURL used for emitting file change events in devMode
         module: {
             srcURL: new URL("./src/pages/Home.js", import.meta.url),
             app: Home
@@ -39,7 +39,7 @@ const ssrRoutes: SSRRoute[] = [
                 hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
             </script>`
         }),
-        cacheLifetime: 6000
+        cacheLifetime: 6000 // <- even with a specified cacheLifetime this page will never change because it's params are different in each request
     },
     {
         route: "/about",
@@ -58,7 +58,7 @@ const ssrRoutes: SSRRoute[] = [
                 hydrate(About(), document.getElementById("root"))
             </script>`
         }),
-        // cacheLifetime: 3600 <- this can be omitted as it will default to 3600
+        // cacheLifetime: 6000 <- this can be omitted as page content doesn't change and cacher will default to a lifetime of Infinity
     }
 ]
 ssrRoutes.forEach(ssrRoute => Peko.addSSRRoute(ssrRoute))
@@ -81,9 +81,13 @@ files.forEach(file => {
 const customRoutes: Route[] = [
     // must be Route type (see types.ts)
     {
-        route: "/api/parrotFcn",
+        route: "/api/parrot",
         method: "POST",
-        handler: (request: Request) => new Response(`Parrot sqwarks: ${JSON.stringify(request.body)}`)
+        handler: async (request: Request) => {
+            // emit event with body as data
+            const body = await request.json()
+            return new Response(`Parrot sqwarks: ${JSON.stringify(body)}`)
+        }
     }
 ]
 customRoutes.forEach(route => Peko.addRoute(route))
