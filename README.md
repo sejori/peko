@@ -112,22 +112,30 @@
     <strong>This project aims to be ready for production soon but it is not complete with extensive testing yet! Use at your own risk.</strong>
 </p>
 
-<h2>How does it work?</h2>
+<h2 id="#routing">Routing</h2>
 <p>
-    Deno http server receives HTTP requests and matches them to your defined app routes. If a route with matching HTTP path and url is found, the route's middleware function is run followed by the handler function. 
-</p> 
+    Peko matches http Request URLs to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Route">Route</a>s. Routes can be added or removed at runtime via the `addRoute()` and `removeRoute()` exports.
+</p>
+
+<h2 id="#events">Events</h2>
 <p>
-    Peko contains premade Server-Side Rendering (SSR) and Static Asset handlers that can be easily accessed using <code>Peko.addStaticRoute</code> or <code>Peko.addSSRRoute</code>. The Preact example codebase uses <a href="https://preactjs.com">Preact</a> UI components with <a href="https://github.com/preactjs/preact-render-to-string">preact-render-to-string</a> and a simple HTML Document Template Literal for SSR. 
+    Realtime app logic can be built with <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Event">Event</a>s. Events in Peko are created by the <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Emitter">Emitter</a> `.emit()` method. Emitters can be subscribed to manually (`Emitter.subscribe(listener: Listener)`) or given to the `sseHandler` to send Event data to connected clients.
+</p>
+
+
+<h2 id="request-handling">Request handling</h2>
+<p>
+    Library includes handlers for serving static assets, rendering JavaScript apps and streaming server-sent events. There are premade `addStaticRoute()`, `addSSRRoute()` and `addSSERoute()` exports that implement their respective handlers but if you want to create custom handler logic you can import and expand upon the inbuilt handlers (check out the `custom-ssr` example).
+</p>
+
+<h2 id="response-caching">Response caching</h2>
+<p>
+    Peko is designed for stateless computing, therefore memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The `addSSRRoute()` uses the `createResponseCache()` utility export to memoize the `ssrHandler` so that Requests can be served from the cache and not unecessarily rerendered.
 </p>
 <p>
-    Advanced templating can be done with <a href="https://github.com/eta-dev/eta">eta</a> - take a look at <code>/examples/eta-templating</code>. Or for an example of a custom SSR handler that implements Peko's internal Response caching system have a look at <code>/examples/custom-ssr</code>!
+    <strong>Note:</strong> `addSSRRoute(data: SSRRoute)` only uses cache when `config.devMode === false` (which is the default config). It is recommended to use `setConfig` to set devMode from an environment variable (see `examples/config.ts`)
 </p>
-<p>
-    Caching enabled when <code>config.devMode == false</code>. You can edit the config using <code>Peko.setConfig({ ... })</code>
-</p>
-<p>
-    <strong>Note:</strong> <code>Peko.addSSRRoute({ ... })</code> is the only route function that implements caching by default.
-</p>
+
 <h2 id="cool">This is cool...</h2>
 <p>
     Because it provides all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling required - the server and browser use the exact same code! This completely eliminates part of the traditional JavaScript SSR toolchain, increasing project maintainability and simplicity.
