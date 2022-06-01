@@ -114,7 +114,7 @@
 
 <h2 id="#routing">Routing</h2>
 <p>
-    Http Request URLs are matched to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Route">Routes</a>. Routes can be added or removed at runtime via the <code>addRoute()</code> and <code>removeRoute()</code> exports.
+    Http Requests are matched to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Route">Routes</a>. Routes can be added or removed at runtime via the <code>addRoute()</code> and <code>removeRoute()</code> exports.
 </p>
 
 <h2 id="#events">Events</h2>
