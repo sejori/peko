@@ -23,24 +23,32 @@
 
 <p align="center">
     <span>
+        &nbsp;
         <a href="#routing">
             Routing
         </a>
+        &nbsp;
     </span>
-        <span>
+    <span>
+        &nbsp;
         <a href="#events">
             Events
         </a>
+        &nbsp;
     </span>
-        <span>
+    <span>
+        &nbsp;
         <a href="#request-handling">
             Request handling
         </a>
+        &nbsp;
     </span>
-        <span>
+    <span>
+        &nbsp;
         <a href="#response-caching">
             Response caching
         </a>
+        &nbsp;
     </span>
 </p>
 
