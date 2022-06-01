@@ -16,8 +16,8 @@
 </p> 
 
 <p align="center">
-    <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/mod.ts">
-        API docs
+    <a href="https://doc.deno.land/https://deno.land/x/peko/mod.ts">
+        API DOCS
     </a>
 </p>
 
