@@ -1,6 +1,5 @@
 import * as Peko from "../../mod.ts"
 import { Route, SSRRoute } from "../../lib/types.ts"
-import { createEmitter } from "../../lib/utils/emitter.ts"
 
 import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
@@ -66,8 +65,8 @@ ssrRoutes.forEach(ssrRoute => Peko.addSSRRoute(ssrRoute))
 // Static src routes for loading into client
 const files: string[] = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
 files.forEach(file => {
-    const rootPath = `${Deno.cwd()}/examples/preact/src`
-    const fileRoute = file.slice(rootPath.length)
+    const rootPath = `${Deno.cwd()}/examples/preact/src/`
+    const fileRoute: `/${string}` = `/${file.slice(rootPath.length)}`
 
     // must be StaticRoute type (see types.ts)
     Peko.addStaticRoute({

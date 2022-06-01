@@ -1,3 +1,14 @@
+export type HandlerParams = Record<string, string>
+export type Middleware = (request: Request) => HandlerParams
+export type Handler = (request: Request, params: HandlerParams) => Response | Promise<Response>
+
+export type Route = { 
+  route: `/${string}`
+  method: string
+  middleware?: Middleware
+  handler: Handler
+}
+
 export type Event = {
     id: string
     type: "request" | "emit" | "error"
@@ -19,19 +30,9 @@ export type Config = {
   errorHandler: ErrorHandler
 }
 
-export type HandlerParams = Record<string, string>
-export type Middleware = (request: Request) => HandlerParams
-export type Handler = (request: Request, params: HandlerParams) => Response | Promise<Response>
-
-export type Route = { 
-  route: string
-  method: string
-  middleware?: Middleware
-  handler: Handler
-}
 
 export type StaticRoute = { 
-  route: string
+  route: `/${string}`
   middleware?: Middleware
   fileURL: URL
   contentType: string | undefined
@@ -45,7 +46,7 @@ export type Render = (app: Function, request: Request, params: HandlerParams) =>
 export type Template = (ssrResult: HTMLContent, request: Request, params: HandlerParams) => HTMLContent | Promise<HTMLContent>
 
 export type SSRRoute = { 
-  route: string
+  route: `/${string}`
   module: {
     srcURL?: URL
     app?: Function
@@ -65,6 +66,6 @@ export type Emitter = {
 }
 
 export type SSERoute = {
-  route: string
+  route: `/${string}`
   emitter: Emitter
 }

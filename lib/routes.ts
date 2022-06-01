@@ -8,7 +8,7 @@ import { ssrHandler } from "./handlers/ssr.ts"
 import { sseHandler } from "./handlers/sse.ts"
 
 /**
- * Add a basic route to your peko web server.
+ * Add a Route to your Peko server.
  * 
  * See "lib/types.ts" for Middleware, Handler & HandlerParams type details
  * 
@@ -23,8 +23,21 @@ import { sseHandler } from "./handlers/sse.ts"
  */
 export const addRoute = (routeData: Route) => routes.push(routeData)
 
+
+
 /**
- * Add a static route
+ * Remove a Route from your Peko server
+ * 
+ * @param route: `/${string}` - path route of Route to be removed
+ * @returns 
+ */
+export const removeRoute = (route: `/${string}`) => {
+  const routeToRemove = routes.find(r => r.route === route)
+  if (routeToRemove) return routes.splice(routes.indexOf(routeToRemove), 1).length
+}
+
+/**
+ * Add a StaticRoute
  * 
  * Uses staticHandler from /lib/handlers/static.ts
  * 
@@ -53,7 +66,7 @@ export const addStaticRoute = (staticRouteData: StaticRoute) => {
 }
 
 /**
- * Add a Server-Side Rendering route
+ * Add an SSRRoute
  * 
  * Uses ssrHandler from /lib/handlers/ssr.ts
  * 
@@ -91,7 +104,7 @@ export const addSSRRoute = (ssrRouteData: SSRRoute) => {
 }
 
 /**
- * Add a Server-Sent Event route
+ * Add an SSERoute
  * 
  * Uses sseHandler from /lib/handlers/sse.ts
  * 
