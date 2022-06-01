@@ -119,9 +119,8 @@
 
 <h2 id="#events">Events</h2>
 <p>
-    Realtime app logic can be built with <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Emitter">Emitters</a> vai the <code>.emit()</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe(listener: Listener)</code>, or given to the <code>sseHandler</code> to send Event data to connected clients.
+    Realtime app logic can be built with <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Emitter">Emitters</a> via the <code>.emit()</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe(listener: Listener)</code>, or given to the <code>sseHandler</code> to send Event data to connected clients (see <code>examples/sse</code>).
 </p>
-
 
 <h2 id="request-handling">Request handling</h2>
 <p>
