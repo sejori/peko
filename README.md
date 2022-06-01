@@ -124,7 +124,7 @@
 
 <h2 id="request-handling">Request handling</h2>
 <p>
-    Handlers for serving static assets, rendering JavaScript apps and streaming server-sent events come prebuilt. There are <code>addStaticRoute()</code>, <code>addSSRRoute()</code> and <code>addSSERoute()</code> exports that implement their respective handlers, if you want to create custom handler logic you can import and expand upon the inbuilt handlers (check out the <code>examples/custom-ssr<code>).
+    Handlers for serving static assets, rendering JavaScript apps and streaming server-sent events come prebuilt. There are <code>addStaticRoute()</code>, <code>addSSRRoute()</code> and <code>addSSERoute()</code> exports that implement their respective handlers, if you want to create custom handler logic you can import and expand upon the inbuilt handlers (see <code>examples/custom-ssr</code>).
 </p>
 
 <h2 id="response-caching">Response caching</h2>
