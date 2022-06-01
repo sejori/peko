@@ -114,22 +114,22 @@
 
 <h2 id="#routing">Routing</h2>
 <p>
-    Http Requests are matched to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Route">Routes</a>. Routes can be added or removed at runtime via the <code>addRoute()</code> and <code>removeRoute()</code> exports.
+    Http Requests are matched to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Route">Routes</a>. Routes can be added or removed at runtime via the <code>addRoute(route: Route)</code> and <code>removeRoute(route: `/${string}`)</code> exports.
 </p>
 
 <h2 id="#events">Events</h2>
 <p>
-    Realtime app logic can be built with <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Emitter">Emitters</a> via the <code>.emit()</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe(listener: Listener)</code>, or given to the <code>sseHandler</code> to send Event data to connected clients (see <code>examples/sse</code>).
+    Realtime app logic can be built with <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Emitter">Emitters</a> via the <code>.emit(event: Event)</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe(listener: Listener)</code>, or given to the <code>sseHandler(data: SSERoute)</code> to send Event data to connected clients (see <code>examples/sse</code>).
 </p>
 
 <h2 id="request-handling">Request handling</h2>
 <p>
-    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> serve static assets, render JavaScript apps and streams server-sent event respectively. There are premade <code>addStaticRoute()</code>, <code>addSSRRoute()</code> and <code>addSSERoute()</code> exports that implement their respective handlers but you can also import the handlers for custom logic if needed (see <code>examples/custom-ssr</code>).
+    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> serve static assets, render JavaScript apps and stream server-sent events respectively. There are premade <code>addStaticRoute(data: StaticRoute)</code>, <code>addSSRRoute(data: SSRRoute)</code> and <code>addSSERoute(data: SSERoute)</code> exports that implement their respective handlers but you can also import the handlers for custom logic if needed (see <code>examples/custom-ssr</code>).
 </p>
 
 <h2 id="response-caching">Response caching</h2>
 <p>
-    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The <code>addSSRRoute()</code> uses the <code>createResponseCache()</code> utility export to memoize the <code>ssrHandler</code> so that Requests can be served from the cache and not unecessarily rerendered.
+    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The <code>addSSRRoute</code> export uses the <code>createResponseCache()</code> utility export to memoize the <code>ssrHandler</code> so that Requests can be served from the cache and not unecessarily rerendered.
 </p>
 <p>
     Caching Responses from external data services helps keep your app fast and reduce network overhead in serving Requests!
