@@ -20,7 +20,7 @@ export const sseHandler = (sseData: SSERoute, request: Request) => {
       lexController = controller
 
       sseData.emitter.subscribe(event => 
-        lexController.enqueue(encoder.encode(`data: ${JSON.stringify(event.data)}`))
+        lexController.enqueue(encoder.encode(`data: ${JSON.stringify(event.data)}\r\n`))
       )
     },
     cancel() {
