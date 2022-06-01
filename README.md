@@ -128,18 +128,18 @@
 <p>
     <strong>Note:</strong> <code>Peko.addSSRRoute({ ... })</code> is the only route function that implements caching by default.
 </p>
-<h2 id="cool">Why is this cool?</h2>
+<h2 id="cool">This is cool...</h2>
 <p>
     Because it provides all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling required - the server and browser use the exact same code! This completely eliminates part of the traditional JavaScript SSR toolchain, increasing project maintainability and simplicity.
 </p>
 <p>
-    Better yet, Peko is not build for any specific frontend framework or library. You can use React, Preact, Vue... you name it! Simply plug your rendering function into an SSRRoute along with the client-side hydration logic to be injected into your HTML template (if you need it).
+    Better yet, Peko is not build for any specific frontend framework or library. You can use React, Preact, Vue... you name it. Simply plug your rendering function into an SSRRoute along with the client-side hydration logic to be injected into your HTML template (if you need it).
 </p>
 <p>
     It is all possible because of the unique combination of powerful new JavaScript tools. Deno, unlike Node.js, is built to the <a href="https://tc39.es/">ECMAScript specification</a>. This makes it compatible with browser JavaScript and vice versa which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like Preact combined with <a href="https://github.com/developit/htm">htm</a> offer lightning fast client-side hydration with an ES6-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and a standard library full of great tools as well as a passionate community supporting it.
 </p>
 
-<h2>Differences between other frameworks like Next.js, etc.</h2>
+<h2>Differences between Next.js, etc.</h2>
 <p>
-    Peko is built with one radical design decision: it isn't built to support the infinite universe of npm packages (as these often require heavy build processes by default). This is a deliberate step away from the inflated state that many modern web applications find themselves in. Just make sure your frontend modules can run directly in the browser and you're golden!
+    Peko is built with one radical design decision: it isn't built to support the infinite universe of npm packages (as these often require heavy build processes). This is a deliberate step away from the inflated state that many modern web applications find themselves in. Just make sure your frontend modules can run in the browser and you're golden!
 </p>
