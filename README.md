@@ -131,7 +131,7 @@
     In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The <code>addSSRRoute</code> export uses the <code>createResponseCache</code> utility export to memoize the <code>ssrHandler</code> so that Requests can be served from the cache and not unecessarily rerendered.
 </p>
 <p>
-    Caching Responses from external data services helps keep your app fast and reduce network overhead in serving Requests!
+    <strong>Tip:</strong> Caching Responses from external data services helps keep your app fast and reduce network overhead in serving Requests!
 </p>
 <p>
     <strong>Note:</strong> <code>addSSRRoute</code> only caches Responses when <code>config.devMode === false</code> (which is the default config). It is recommended to use the <code>setConfig(conf: Partial<Config>)</code> export to set <code>devMode</code> from an environment variable (see <code>examples/config.ts</code>).
