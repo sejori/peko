@@ -77,8 +77,7 @@
 <h3>OR try the examples:</h3>
 <ol>
     <li>
-        <p><a href="#cool"Deno is sick. Install it.</p>
-        <a href="https://deno.land/manual/getting_started/installation">Install Deno</a>
+        <p><a href="#cool">Deno is sick.</a> <a href="https://deno.land/manual/getting_started/installation">Install it.</a></p>
     </li>
     <li>
         <code>$ git clone https://github.com/sebringrose/peko.git</code>
@@ -114,28 +113,28 @@
 
 <h2 id="#routing">Routing</h2>
 <p>
-    Http Requests are matched to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Route">Routes</a>. Routes can be added or removed at runtime via the <code>addRoute(route: Route)</code> and <code>removeRoute(route: `/${string}`)</code> exports.
+    Http Requests are matched to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Route">Routes</a>. Routes can be added or removed at runtime via the <code>addRoute</code> and <code>removeRoute</code> exports.
 </p>
 
 <h2 id="#events">Events</h2>
 <p>
-    Realtime app logic can be built with <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Emitter">Emitters</a> via the <code>.emit(event: Event)</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe(listener: Listener)</code> or given to the <code>sseHandler(data: SSERoute)</code> to send Event data to connected clients (see <code>examples/sse</code>).
+    Realtime app logic can be built with <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Emitter">Emitters</a> via the <code>.emit</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe</code> or given to the <code>sseHandler</code> to stream Event data to connected clients (see <code>examples/sse</code>).
 </p>
 
 <h2 id="request-handling">Request handling</h2>
 <p>
-    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> serve static assets, render JavaScript apps and stream server-sent events respectively. There are premade <code>addStaticRoute(data: StaticRoute)</code>, <code>addSSRRoute(data: SSRRoute)</code> and <code>addSSERoute(data: SSERoute)</code> exports that implement their respective handlers but you can also import the handlers for custom logic if needed (see <code>examples/custom-ssr</code>).
+    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> serve static assets, render JavaScript apps and stream server-sent events respectively. There are premade <code>addStaticRoute</code>, <code>addSSRRoute</code> and <code>addSSERoute</code> exports that implement their respective handlers but you can import the handlers or create your own and plug them into a basic Route (see <code>examples/custom-ssr</code>).
 </p>
 
 <h2 id="response-caching">Response caching</h2>
 <p>
-    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The <code>addSSRRoute</code> export uses the <code>createResponseCache()</code> utility export to memoize the <code>ssrHandler</code> so that Requests can be served from the cache and not unecessarily rerendered.
+    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The <code>addSSRRoute</code> export uses the <code>createResponseCache</code> utility export to memoize the <code>ssrHandler</code> so that Requests can be served from the cache and not unecessarily rerendered.
 </p>
 <p>
     Caching Responses from external data services helps keep your app fast and reduce network overhead in serving Requests!
 </p>
 <p>
-    <strong>Note:</strong> <code>addSSRRoute(data: SSRRoute)</code> only utilizes a cache when <code>config.devMode === false</code> (which is the default config). It is recommended to use the <code>setConfig(conf: Partial<Config>)</code> export to set <code>devMode</code> from an environment variable (see <code>examples/config.ts</code>).
+    <strong>Note:</strong> <code>addSSRRoute</code> only caches Responses when <code>config.devMode === false</code> (which is the default config). It is recommended to use the <code>setConfig(conf: Partial<Config>)</code> export to set <code>devMode</code> from an environment variable (see <code>examples/config.ts</code>).
 </p>
 
 <h2 id="cool">This is cool...</h2>
