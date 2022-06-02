@@ -134,7 +134,7 @@
     <strong>Tip:</strong> Caching Responses from external data services helps keep your app fast and reduce network overhead in serving Requests!
 </p>
 <p>
-    <strong>Note:</strong> <code>addSSRRoute</code> only caches Responses when <code>config.devMode === false</code> (which is the default config). It is recommended to use the <code>setConfig(conf: Partial<Config>)</code> export to set <code>devMode</code> from an environment variable (see <code>examples/config.ts</code>).
+    <strong>Note:</strong> <code>addSSRRoute</code> only caches Responses when <code>config.devMode === false</code> (which is the default config). It is recommended to use the <code>setConfig</code> export to set <code>devMode</code> from an environment variable (see <code>examples/config.ts</code>).
 </p>
 
 <h2 id="cool">This is cool...</h2>
