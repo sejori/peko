@@ -2,7 +2,7 @@ import { getConfig } from "../config.ts"
 import { Event } from "../types.ts"
 
 /**
- * Peko's internal request logging function.
+ * Peko's internal request logging function. Uses config.logString and log.Event underneath.
  * 
  * Returns promise so process isn't blocked when called without "await" keyword.
  * 
@@ -41,7 +41,7 @@ export const logRequest = async (request: Request, status: number, start: number
 }
 
 /**
- * Peko's internal error logging function.
+ * Peko's internal error logging function. Uses config.logEvent underneath.
  * 
  * Returns promise so process isn't blocked when called without "await" keyword.
  * 
