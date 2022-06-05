@@ -3,13 +3,12 @@
  */
 
 // Core functions
-export { start } from "./lib/server.ts"
-export { addRoute, addStaticRoute, addSSRRoute, addSSERoute } from "./lib/routes.ts"
+export { start, addRoute } from "./lib/server.ts"
 export { getConfig, setConfig } from "./lib/config.ts"
 
-// Internals for custom handlers etc...
-export { staticHandler } from "./lib/handlers/static.ts"
-export { ssrHandler } from "./lib/handlers/ssr.ts"
-export { sseHandler } from "./lib/handlers/sse.ts"
+// Custom handlers and utils etc...
+export { staticHandler, addStaticRoute } from "./lib/handlers/static.ts"
+export { ssrHandler, addSSRRoute } from "./lib/handlers/ssr.ts"
+export { sseHandler, addSSERoute } from "./lib/handlers/sse.ts"
 export { logRequest, logError } from "./lib/utils/logger.ts"
 export { createResponseCache } from "./lib/utils/cacher.ts"

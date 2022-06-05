@@ -39,11 +39,10 @@ export type StaticRoute = {
 }
 
 // TODO: angle bracket HTMLContent type should be moved out of types and into a unit test
-// it is too specific as a type and will break integrations with library types (e.g. eta)
+// it is too specific as a type and will break integrations with libraries (e.g. eta)
 // export type HTMLContent = `<${string}>`
 export type HTMLContent = string
 export type Render = (app: Function, request: Request, params: HandlerParams) => HTMLContent | Promise<HTMLContent>
-export type Template = (ssrResult: HTMLContent, request: Request, params: HandlerParams) => HTMLContent | Promise<HTMLContent>
 
 export type SSRRoute = { 
   route: `/${string}`
@@ -53,7 +52,6 @@ export type SSRRoute = {
   }
   middleware?: Middleware
   render: Render
-  template: Template
   cacheLifetime?: number
 }
 

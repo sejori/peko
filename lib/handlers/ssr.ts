@@ -29,8 +29,7 @@ export const ssrHandler = async (ssrData: SSRRoute, request: Request, params: Ha
   }
 
   // use provided render and template fcns for HTML generation
-  const HTMLResult = await ssrData.render(app, request, params)    
-  const HTML = await ssrData.template(HTMLResult, request, params)
+  const HTML = await ssrData.render(app, request, params)    
 
   // TODO: devMode src listeners WASM module graphing 
   const hashString = hasher(HTML)

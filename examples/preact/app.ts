@@ -27,8 +27,9 @@ const ssrRoutes: SSRRoute[] = [
             app: Home
         },
         middleware: (_request) => ({ "server_time": `${Date.now()}` }),
-        render: (app, _request, params) => renderToString(app(params), null, null),
-        template: (appHTML, _request, params) => htmlTemplate({
+        render: (app, _request, params) => {
+          const appHTML = renderToString(app(params), null, null)
+          return htmlTemplate({
             appHTML,
             title: `<title>Peko</title>`,
             modulepreload: `<script modulepreload="true" type="module" src="/pages/Home.js"></script>`,
@@ -37,7 +38,8 @@ const ssrRoutes: SSRRoute[] = [
                 import Home from "/pages/Home.js";
                 hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
             </script>`
-        }),
+          })
+        },
         cacheLifetime: 6000 // <- even with a specified cacheLifetime this page will never change because it's params are different in each request
     },
     {
@@ -46,8 +48,9 @@ const ssrRoutes: SSRRoute[] = [
             srcURL: new URL("./src/pages/About.js", import.meta.url),
             app: About
         },
-        render: (app) => renderToString(app(), null, null),
-        template: (appHTML, _request, _params) => htmlTemplate({
+        render: (app) => {
+          const appHTML = renderToString(app(), null, null)
+          return  htmlTemplate({
             appHTML,
             title: `<title>Peko | About</title>`,
             modulepreload: `<script modulepreload="true" type="module" src="/pages/About.js"></script>`,
@@ -56,7 +59,8 @@ const ssrRoutes: SSRRoute[] = [
                 import About from "/pages/About.js";
                 hydrate(About(), document.getElementById("root"))
             </script>`
-        }),
+          })
+        }
         // cacheLifetime: 6000 <- this can be omitted as page content doesn't change and cacher will default to a lifetime of Infinity
     }
 ]
