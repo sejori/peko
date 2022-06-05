@@ -45,13 +45,10 @@ export const createResponseCache = (options?: Partial<CacheOptions>) => {
 
       const latest = getLatestCacheItem(key)
       if (latest) {
-        // console.log("HIT CACHE")
-        // if resource ETag present in "if-none-match" request headers
-        // check matches cached resource and respond with 304 if so
+        // ETag match triggers 304
         const ifNoneMatch = request.headers.get("if-none-match")
         const ETag = latest.value.headers.get("ETag")
         if (ETag && ifNoneMatch?.includes(ETag)) {
-          // console.log("CACHE ETAG MATCH")
           return new Response(null, {
             headers: latest.value.headers,
             status: 304
