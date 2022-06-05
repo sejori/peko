@@ -1,4 +1,7 @@
+import { addRoute } from "../server.ts"
 import { StaticRoute } from "../types.ts"
+import { getConfig } from "../config.ts"
+import { createResponseCache } from "../utils/cacher.ts"
 import { hasher } from "../utils/hasher.ts"
 
 /**
@@ -27,5 +30,32 @@ export const staticHandler = async (staticData: StaticRoute) => {
       // not devMode + memoized: ETag matches "if-none-match" header so 304 (not modified) response given
       'ETag': hashString
     })
+  })
+}
+
+/**
+ * Add a route that uses the static handler and Response cache.
+ * 
+ * @param staticRouteData { 
+    route: string - e.g. "favicon.png"
+    middleware?: Middleware (optional)
+    fileURL: URL - e.g. new URL("./assets/favicon.png")
+    contentType: string - e.g. "image/png"
+ * }
+ */
+export const addStaticRoute = (staticRouteData: StaticRoute) => {
+  const config = getConfig()
+
+  const memoizeHandler = createResponseCache() 
+
+  const cachedStaticHandler = memoizeHandler(() => staticHandler(staticRouteData))
+
+  return addRoute({
+    route: staticRouteData.route,
+    method: "GET",
+    middleware: staticRouteData.middleware,
+    handler: async (request, _params) => !config.devMode
+      ? await cachedStaticHandler(request)
+      : await staticHandler(staticRouteData)
   })
 }

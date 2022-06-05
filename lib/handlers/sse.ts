@@ -1,3 +1,4 @@
+import { addRoute } from "../server.ts"
 import { SSERoute, Event } from "../types.ts"
 import { getConfig } from "../config.ts"
 
@@ -30,5 +31,21 @@ export const sseHandler = (sseData: SSERoute, request: Request) => {
     headers: {
       "Content-Type": "text/event-stream",
     }
+  })
+}
+
+/**
+ * Add an SSERoute
+ * 
+ * @param sseRouteData { 
+    route: string - e.g. "favicon.png"
+    emitter: Emitter - Peko's internal event subscription interface
+ * }
+ */
+export const addSSERoute = (sseRouteData: SSERoute) => {
+  return addRoute({
+    route: sseRouteData.route,
+    method: "GET",
+    handler: async (request, _params) => await sseHandler(sseRouteData, request)
   })
 }
