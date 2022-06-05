@@ -5,6 +5,44 @@ import { logRequest, logError } from "./utils/logger.ts"
 
 export const routes: Route[] = []
 
+const requestHandler = async (request: Request) => {
+  const start = Date.now()
+  const config = getConfig()
+
+  // locate matching route
+  const requestURL = new URL(request.url)
+  const route = routes.find(route => route.route === requestURL.pathname && route.method === request.method)
+  if (!route) {
+    logRequest(request, 404, start, Date.now() - start)
+    return await config.errorHandler(404, request)
+  }
+  
+  // run middleware function first if provided
+  let mwParams = {}
+  if (route.middleware) {
+    try {
+      mwParams = await route.middleware(request)
+    } catch (error) {
+      logError(request.url, error, new Date())
+      logRequest(request, 500, start, Date.now() - start)
+      return await config.errorHandler(500, request)
+    }
+  }
+
+  // run handler function
+  let response
+  try {
+    response = await route.handler(request, mwParams)
+  } catch(error) {
+    logError(request.url, error, new Date())
+    logRequest(request, 500, start, Date.now() - start)
+    return await config.errorHandler(500, request)
+  }
+
+  logRequest(request, response.status, start, Date.now() - start)
+  return response
+}
+
 /**
  * Begin listening to http requests and serve matching routes.
  * 
@@ -14,55 +52,8 @@ export const routes: Route[] = []
  */
 export const start = () => {
   const config = getConfig()
-
   config.logString(`Starting Peko server on port ${config.port} in ${config.devMode ? "development" : "production"} mode with routes:`)
   routes.forEach(route => config.logString(JSON.stringify(route)))
-
-  // does having respond in lex scope fix this?
-  let lexRequest: Request
-  let lexStart: number
-
-  // general-purpose function used in various positions in the file
-  const respond = (status: number, response: Promise<Response> | Response) => {
-    const responseTime = Date.now() - lexStart
-    logRequest(lexRequest, status, lexStart, responseTime)
-    return response
-  }
-
-  const requestHandler = async (request: Request) => {
-    // store request arg in start() block-scope 
-    // to avoid strange closure bug that doesn't seem to affect "start"...
-    // this bug began when logRequest() was moved to lib/utils/logger.ts
-    lexRequest = request
-    lexStart = Date.now()
-
-    const requestURL = new URL(request.url)
-    const route = routes.find(route => route.route === requestURL.pathname && route.method === request.method)
-
-    if (!route) return respond(404, await config.errorHandler(404, request))
-    
-    // run middleware function first if provided
-    let mwParams = {}
-    if (route.middleware) {
-      try {
-        mwParams = await route.middleware(request)
-      } catch (error) {
-        logError(request.url, error, new Date())
-        return respond(500, await config.errorHandler(500, request, error))
-      }
-    }
-
-    // run handler function
-    let response
-    try {
-      response = await route.handler(request, mwParams)
-    } catch(error) {
-      logError(request.url, error, new Date())
-      return respond(500, await config.errorHandler(500, request, error))
-    }
-
-    return respond(response.status, response)
-  }
 
   serve(requestHandler, { 
     hostname: config.hostname, 
