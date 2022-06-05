@@ -28,17 +28,22 @@ const ssrRoutes: SSRRoute[] = [
       app: Home
     },
     middleware: (_request) => ({ "server_time": `${Date.now()}` }),
-    render: (app, _request, params) => renderToString(app(params), null, null),
-    template: (appHTML, _request, params) => htmlTemplate({
-      appHTML,
-      title: `<title>Peko</title>`,
-      modulepreload: `<script modulepreload="true" type="module" src="/pages/Home.js"></script>`,
-      hydrationScript: `<script type="module">
-        import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-        import Home from "/pages/Home.js";
-        hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
-      </script>`
-    }),
+    render: (app, _request, params) => {
+      const appHTML = renderToString(app(params), null, null)
+      return htmlTemplate({
+        appHTML,
+        title: `<title>Peko</title>`,
+        modulepreload: `<script modulepreload="true" type="module" src="/pages/Home.js"></script>`,
+        hydrationScript: `<script type="module">
+          import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+          import Home from "/pages/Home.js";
+          hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
+
+          const sse = new EventSource("/sse")
+          sse.onmessage = (e) => console.log(e)
+        </script>`
+      })
+    },
     cacheLifetime: 6000 // <- even with a specified cacheLifetime this page will never change because it's params are different in each request
   },
   {
@@ -47,17 +52,19 @@ const ssrRoutes: SSRRoute[] = [
       srcURL: new URL("../preact/src/pages/About.js", import.meta.url),
       app: About
     },
-    render: (app) => renderToString(app(), null, null),
-    template: (appHTML, _request, _params) => htmlTemplate({
-      appHTML,
-      title: `<title>Peko | About</title>`,
-      modulepreload: `<script modulepreload="true" type="module" src="/pages/About.js"></script>`,
-      hydrationScript: `<script type="module">
-        import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-        import About from "/pages/About.js";
-        hydrate(About(), document.getElementById("root"))
-      </script>`
-    }),
+    render: (app) => {
+      const appHTML = renderToString(app(), null, null)
+      return htmlTemplate({
+        appHTML,
+        title: `<title>Peko | About</title>`,
+        modulepreload: `<script modulepreload="true" type="module" src="/pages/About.js"></script>`,
+        hydrationScript: `<script type="module">
+          import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+          import About from "/pages/About.js";
+          hydrate(About(), document.getElementById("root"))
+        </script>`
+      })
+    }
     // cacheLifetime: 6000 <- this can be omitted as page content doesn't change and cacher will default to a lifetime of Infinity
   }
 ]
@@ -66,8 +73,8 @@ ssrRoutes.forEach(ssrRoute => Peko.addSSRRoute(ssrRoute))
 // Static src routes for loading into client
 const files: string[] = await recursiveReaddir(new URL(`../preact/src`, import.meta.url).pathname)
 files.forEach(file => {
-  const rootPath = `${Deno.cwd()}/examples/preact/src`
-  const fileRoute = file.slice(rootPath.length)
+  const rootPath = `${Deno.cwd()}/examples/preact/src/`
+  const fileRoute: `/${string}` = `/${file.slice(rootPath.length)}`
 
   // must be StaticRoute type (see types.ts)
   Peko.addStaticRoute({

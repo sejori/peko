@@ -25,8 +25,8 @@ Peko.addSSRRoute({
     app: Home
   },
   middleware: (_request) => ({ "server_time": `${Date.now()}` }),
-  render: (app, _request, params) => renderToString(app(params), null, null),
-  template: async (appHTML, _request, params) => {
+  render: async (app, _request, params) => {
+    const appHTML = renderToString(app(params), null, null)
     const etaResult = await renderFile("./template.eta", {
       appHTML,
       title: `<title>Peko</title>`,
@@ -45,12 +45,12 @@ Peko.addSSRRoute({
 // Static source routes for client-side loading
 const files: string[] = await recursiveReaddir(new URL(`../preact/src`, import.meta.url).pathname)
 files.forEach(file => {
-    const rootPath = `${Deno.cwd()}/examples/preact/src`
+    const rootPath = `${Deno.cwd()}/examples/preact/src/`
     const fileRoute = file.slice(rootPath.length)
 
     // must be PekoStaticRoute type (see types.ts)
     Peko.addStaticRoute({
-        route: fileRoute,
+        route: `/${fileRoute}`,
         fileURL: new URL(`../preact/src/${fileRoute}`, import.meta.url),
         contentType: lookup(file)
     })

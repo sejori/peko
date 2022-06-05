@@ -39,8 +39,9 @@ const pageRoutes: SSRRoute[] = [
             srcURL: new URL("./src/app.js", import.meta.url),
             app: App
         },
-        render: () => vueSSR.renderToString(App()),
-        template: (appHTML) => htmlTemplate({
+        render: () => {
+          const appHTML = vueSSR.renderToString(App())
+          return htmlTemplate({
             appHTML,
             title: `<title>Peko</title>`,
             modulepreload: `<script modulepreload="true" type="module" src="/app.js"></script>`,
@@ -49,7 +50,8 @@ const pageRoutes: SSRRoute[] = [
 
                 createApp().mount('#app')
             </script>`
-        }),
+          })
+        },
         cacheLifetime: 6000
     }
 ]
@@ -58,12 +60,12 @@ pageRoutes.forEach(pageRoute => Peko.addSSRRoute(pageRoute))
 // Setup src file routes - these use the static middleware
 const files: string[] = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
 files.forEach(file => {
-    const rootPath = `${Deno.cwd()}/examples/vue/src`
+    const rootPath = `${Deno.cwd()}/examples/vue/src/`
     const fileRoute = file.slice(rootPath.length)
 
     // must be PekoStaticRoute type (see types.ts)
     Peko.addStaticRoute({
-        route: fileRoute,
+        route: `/${fileRoute}`,
         fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
         contentType: lookup(file)
     })

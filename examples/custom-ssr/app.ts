@@ -59,12 +59,12 @@ Peko.addRoute({
 // Static source routes for client-side loading
 const files: string[] = await recursiveReaddir(new URL(`../preact/src`, import.meta.url).pathname)
 files.forEach(file => {
-    const rootPath = `${Deno.cwd()}/examples/preact/src`
+    const rootPath = `${Deno.cwd()}/examples/preact/src/`
     const fileRoute = file.slice(rootPath.length)
 
     // must be PekoStaticRoute type (see types.ts)
     Peko.addStaticRoute({
-        route: fileRoute,
+        route: `/${fileRoute}`,
         fileURL: new URL(`../preact/src/${fileRoute}`, import.meta.url),
         contentType: lookup(file)
     })
