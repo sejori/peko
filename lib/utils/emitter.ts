@@ -3,6 +3,12 @@ import { logError } from "./logger.ts"
 
 const emitters: Emitter[] = []
 
+/**
+ * Peko's internal event emitter.
+ * 
+ * @param initListeners: Listener[]
+ * @returns emitter: Emitter
+ */
 export const createEmitter = (initListeners?: Listener[]) => {
   const listeners: Listener[] = initListeners ? initListeners : []
   const getListeners = () => listeners
