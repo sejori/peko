@@ -2,8 +2,9 @@ export type HandlerParams = Record<string, string>
 export type Middleware = (request: Request, params: HandlerParams) => void | string| HandlerParams | Promise<void> | Promise<string> | Promise<HandlerParams>
 export type Handler = (request: Request, params: HandlerParams) => Response | Promise<Response>
 
+// TODO: test route strings for formatting to enforce type `/${string}` in devMode
 export type Route = { 
-  route: `/${string}`
+  route: string
   method: string
   middleware?: Middleware
   handler: Handler
@@ -13,7 +14,7 @@ export type Event = {
     id: string
     type: "request" | "emit" | "error"
     date: Date
-    data: Record<string, any>
+    data: Record<string, string>
     // data: Record<string, string | number | Request | Error | Record<string, string>>
 }
 
@@ -32,7 +33,7 @@ export type Config = {
 
 
 export type StaticRoute = { 
-  route: `/${string}`
+  route: string
   middleware?: Middleware
   fileURL: URL
   contentType: string | undefined
@@ -45,7 +46,7 @@ export type HTMLContent = string
 export type Render = (request: Request, params: HandlerParams) => HTMLContent | Promise<HTMLContent>
 
 export type SSRRoute = { 
-  route: `/${string}`
+  route: string
   srcURL?: URL
   middleware?: Middleware
   render: Render
@@ -61,6 +62,6 @@ export type Emitter = {
 }
 
 export type SSERoute = {
-  route: `/${string}`
+  route: string
   emitter: Emitter
 }

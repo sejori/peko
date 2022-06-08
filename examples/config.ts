@@ -1,4 +1,4 @@
-import { Config } from "../lib/types.ts"
+import { Config } from "https://deno.land/x/peko/lib/types.ts"
 
 const env = Deno.env.toObject()
 
