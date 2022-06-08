@@ -39,11 +39,9 @@ export const ssrHandler = async (ssrData: SSRRoute, request: Request, params: Ha
  * 
  * @param ssrRouteData { 
     route: string - e.g. "/home"
+    srcURL: URL - e.g. new URL("./src/home.js")
     middleware?: Middleware (optional)
-    template: Template - e.g. (ssrResult, customTags, request) => `<!DOCTYPE html><html><head>${customTags.title}</head><body>${ssrResult}</body></html>`
-    render: Render - e.g. (app) => renderToString(app())
-    moduleURL: URL - e.g. new URL("./src/home.js")
-    customTags?: CustomTags - e.g. () => ({ title: <title>Home Page!</title> })
+    render: Render - e.g. (req, params) => renderToString(app())
     cacheLifetime?: number - e.g. 3600000
  * }
 */
