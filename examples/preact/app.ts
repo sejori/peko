@@ -1,5 +1,5 @@
-import * as Peko from "../../mod.ts"
-import { Route, SSRRoute, HandlerParams } from "../../lib/types.ts"
+import * as Peko from "https://deno.land/x/peko/mod.ts"
+import { HandlerParams } from "https://deno.land/x/peko/lib/types.ts"
 
 import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
@@ -17,7 +17,7 @@ import config from "../config.ts"
 Peko.setConfig(config)
 
 // SSR'ed app page routes
-const ssrRoutes: SSRRoute[] = [
+const ssrRoutes = [
     // must be SSRRoute type (see types.ts)
     {
         route: "/",
@@ -61,7 +61,7 @@ const ssrRoutes: SSRRoute[] = [
 ssrRoutes.forEach(ssrRoute => Peko.addSSRRoute(ssrRoute))
 
 // Static src routes for loading into client
-const files: string[] = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
+const files = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
 files.forEach(file => {
     const rootPath = `${Deno.cwd()}/examples/preact/src/`
     const fileRoute: `/${string}` = `/${file.slice(rootPath.length)}`
@@ -75,7 +75,7 @@ files.forEach(file => {
 })
 
 // Custom routes (e.g. any server-side API functions)
-const customRoutes: Route[] = [
+const customRoutes = [
     // must be Route type (see types.ts)
     {
         route: "/api/parrot",
