@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
-import { Route } from "./types.ts"
+import { Route, HandlerParams } from "./types.ts"
 import { getConfig } from "./config.ts"
 import { logRequest, logError } from "./utils/logger.ts"
 
@@ -63,10 +63,10 @@ const requestHandler = async (request: Request) => {
   }
   
   // run middleware function first if provided
-  let mwParams = {}
+  const mwParams = {}
   if (route.middleware) {
     try {
-      mwParams = await route.middleware(request)
+      await route.middleware(request, mwParams)
     } catch (error) {
       logError(request.url, error, new Date())
       logRequest(request, 500, start, Date.now() - start)
