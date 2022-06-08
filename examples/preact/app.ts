@@ -1,5 +1,5 @@
 import * as Peko from "../../mod.ts"
-import { Route, SSRRoute } from "../../lib/types.ts"
+import { Route, SSRRoute, HandlerParams } from "../../lib/types.ts"
 
 import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
@@ -21,14 +21,11 @@ const ssrRoutes: SSRRoute[] = [
     // must be SSRRoute type (see types.ts)
     {
         route: "/",
-        // Note: srcURL used for emitting file change events in devMode
-        module: {
-            srcURL: new URL("./src/pages/Home.js", import.meta.url),
-            app: Home
-        },
-        middleware: (_request) => ({ "server_time": `${Date.now()}` }),
-        render: (app, _request, params) => {
-          const appHTML = renderToString(app(params), null, null)
+        // srcURL used for emitting file change events in devMode
+        srcURL: new URL("./src/pages/Home.js", import.meta.url),
+        middleware: (_request: Request, params: HandlerParams) => params["server_time"] = `${Date.now()}`,
+        render: (_request: Request, params: HandlerParams) => {
+          const appHTML = renderToString(Home(params), null, null)
           return htmlTemplate({
             appHTML,
             title: `<title>Peko</title>`,
@@ -36,7 +33,7 @@ const ssrRoutes: SSRRoute[] = [
             hydrationScript: `<script type="module">
                 import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
                 import Home from "/pages/Home.js";
-                hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
+                hydrate(Home(${JSON.stringify(params)}), document.getElementById("root"))
             </script>`
           })
         },
@@ -44,12 +41,9 @@ const ssrRoutes: SSRRoute[] = [
     },
     {
         route: "/about",
-        module: {
-            srcURL: new URL("./src/pages/About.js", import.meta.url),
-            app: About
-        },
-        render: (app) => {
-          const appHTML = renderToString(app(), null, null)
+        srcURL: new URL("./src/pages/About.js", import.meta.url),
+        render: () => {
+          const appHTML = renderToString(About(), null, null)
           return  htmlTemplate({
             appHTML,
             title: `<title>Peko | About</title>`,

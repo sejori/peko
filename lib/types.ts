@@ -1,5 +1,5 @@
 export type HandlerParams = Record<string, string>
-export type Middleware = (request: Request) => HandlerParams
+export type Middleware = (request: Request, params: HandlerParams) => void | string| HandlerParams | Promise<void> | Promise<string> | Promise<HandlerParams>
 export type Handler = (request: Request, params: HandlerParams) => Response | Promise<Response>
 
 export type Route = { 
@@ -42,14 +42,11 @@ export type StaticRoute = {
 // it is too specific as a type and will break integrations with libraries (e.g. eta)
 // export type HTMLContent = `<${string}>`
 export type HTMLContent = string
-export type Render = (app: Function, request: Request, params: HandlerParams) => HTMLContent | Promise<HTMLContent>
+export type Render = (request: Request, params: HandlerParams) => HTMLContent | Promise<HTMLContent>
 
 export type SSRRoute = { 
   route: `/${string}`
-  module: {
-    srcURL?: URL
-    app?: Function
-  }
+  srcURL?: URL
   middleware?: Middleware
   render: Render
   cacheLifetime?: number
