@@ -13,25 +13,10 @@ import { hasher } from "../utils/hasher.ts"
  * @returns Promise<Response>
  */
 export const ssrHandler = async (ssrData: SSRRoute, request: Request, params: HandlerParams) => {
-  let app: Function
-
-  // prioritise module.app over dynamic import for Deno Deploy support
-  if (ssrData.module.app) {
-    app = ssrData.module.app
-  } else if (ssrData.module.srcURL) {
-    // import the app module
-    const appImport = await import(ssrData.module.srcURL.pathname)
-        
-    // app module must export app as default
-    app = appImport.default
-  } else {
-    throw new Error("Must provide module.app or module.srcURL to ssrHandler.")
-  }
+  // TODO: emit srcURL file change events from watcher worker
 
   // use provided render and template fcns for HTML generation
-  const HTML = await ssrData.render(app, request, params)    
-
-  // TODO: devMode src listeners WASM module graphing 
+  const HTML = await ssrData.render(request, params)    
   const hashString = hasher(HTML)
 
   return new Response(HTML, {
