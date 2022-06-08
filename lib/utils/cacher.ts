@@ -4,10 +4,10 @@ export type CacheItem = { key: string, value: Response, dob: number }
 export type CacheOptions = { lifetime: number, debug: boolean }
 
 /**
- * Peko's internal Response cache logic. 
+ * Peko's internal Response cacher. 
  * 
  * Lifetime invalidates cache items if they've existed beyond it. In Milliseconds.
- * Fallsback to config.defaultCacheLifetime if not provided.
+ * Fallsback to Infinity if not provided.
  * 
  * @param options: { lifetime: number }
  * @returns memoizeHandler: (handlerFcn) => cachedEnabledHandlerFcn
