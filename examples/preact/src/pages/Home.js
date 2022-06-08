@@ -24,44 +24,19 @@ const Home = (props) => {
 
             <h2>Summary</h2>
             <ul>
-                <li>
-                    <strong>First-Class Frontend</strong> - Server-Side Render then Hydrate the client with src modules or bundles.
-                </li>
-                <li>
-                    <strong>Production-Ready Backend</strong> - Reliable and performant with TypeScript and configurable Response caching.
-                </li>
-                <li>
-                    <strong>Software Minimalism</strong> - No build-step, just a sleek runtime using only the Deno std library.
-                </li>
-                <li>
-                    <strong>Ease of Adoption</strong> - Intuitive API & no enforced UI library or directory structure.
-                </li>
+              <li>
+                <strong>First-class frontend</strong> - Server-side render then client-side hydrate with the same code. Bundling optional. 
+              </li>
+              <li>
+                  <strong>Production-ready backend</strong> - TypeScript, Response caching (and security checks in devMove coming soon).
+              </li>
+              <li>
+                  <strong>Software Minimalism</strong> - Sleek runtime using only the Deno <a href="https://deno.land/std">std</a> library.
+              </li>
+              <li>
+                  <strong>Ease of Adoption</strong> - Intuitive API with no enforced front-end tooling or project structure.
+              </li>
             </ul>
-
-            <h2>Getting started</h2>
-            <ol>
-                <li>
-                    <a href="https://deno.land/manual/getting_started/installation">Install Deno</a>
-                </li>
-                <li>
-                    <code>$ git clone https://github.com/sebringrose/peko.git</code>
-                </li>
-                <li>
-                    <code>$ cd peko</code>
-                </li>
-                <li>
-                    <code>$ deno run --allow-net --allow-env --allow-read --watch examples/preact/app.ts</code>
-                </li>
-                <li>
-                    Edit <code>./examples/preact/src</code> for frontend changes and play with <code>./examples/preact/app.ts</code> for app server logic.
-                </li>
-            </ol>
-            <h3>Import Peko into your own project:</h3>
-            <p><code>import * as peko from "https://deno.land/x/peko/mod.ts"</code></p>
-            <br />
-            <p>
-                <strong>Note: <a href="https://marketplace.visualstudio.com/items?itemName=bierner.lit-html">Lit-html</a></strong> VS Code plugin recommended if using HTM & Preact.
-            </p>
         </${Layout}>
     `
 }

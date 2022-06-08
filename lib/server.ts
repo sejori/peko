@@ -63,7 +63,7 @@ const requestHandler = async (request: Request) => {
   }
   
   // run middleware function first if provided
-  const mwParams = {}
+  const mwParams: HandlerParams = {}
   if (route.middleware) {
     try {
       await route.middleware(request, mwParams)

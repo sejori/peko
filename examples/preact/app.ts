@@ -16,6 +16,8 @@ import config from "../config.ts"
 // Configure Peko
 Peko.setConfig(config)
 
+console.log(Peko.getConfig())
+
 // SSR'ed app page routes
 const ssrRoutes = [
     // must be SSRRoute type (see types.ts)
