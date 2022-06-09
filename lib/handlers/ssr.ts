@@ -65,3 +65,5 @@ export const addSSRRoute = (ssrRouteData: SSRRoute) => {
       : await ssrHandler(ssrRouteData, request, params)
   })
 }
+
+// TODO: test angle bracket HTMLContent returned from render
