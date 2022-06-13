@@ -49,4 +49,4 @@ export type Config = {
 }
 export type LogString = (log: string) => void | Promise<void>
 export type LogEvent = (data: Event) => void | Promise<void>
-export type ErrorHandler = (ctx: RequestContext, statusCode?: number, error?: Error) => Response | Promise<Response>
+export type ErrorHandler = (ctx: RequestContext, statusCode?: number, error?: Error | string | undefined) => Response | Promise<Response>

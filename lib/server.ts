@@ -15,6 +15,7 @@ import { logRequest, logError } from "./utils/logger.ts"
   })
 }
 
+export type RequestContext = Record<string, Request | Response | number | string | boolean>
 const requestHandler = async (request: Request) => {
   const ctx: RequestContext = { request }
   const start = Date.now()
@@ -28,21 +29,22 @@ const requestHandler = async (request: Request) => {
   }
   
   // run middleware stack and handler function
-  for (const fcn in [...route.middleware, route.handler]) {
+  const callerArray = [...route.middleware, route.handler]
+  for (const fcn in callerArray) {
     try {
-      const response = await fcn.call(ctx, ctx)
+      const response = await callerArray[fcn].call(ctx, ctx)
       logRequest(ctx, 200, start, Date.now() - start)
       if (response) return response
     } catch (error) {
       logError(request.url, error, new Date())
       logRequest(ctx, 500, start, Date.now() - start)
-      tryHandleError(ctx, 500)
     }
   }
+
+  return tryHandleError(ctx, 500)
 }
 
 const tryHandleError = async (ctx: RequestContext, code?: number, error?: string) => {
-  const config = getConfig()
   try {
     return await config.errorHandler(ctx, code, error)
   } catch (e) {
@@ -51,17 +53,16 @@ const tryHandleError = async (ctx: RequestContext, code?: number, error?: string
   }
 }
 
-export const routes: Route[] = []
+export type MiddlewareFcn = (ctx: RequestContext) => Promise<Response | void> | Response | void
+export type Middleware = MiddlewareFcn[]
+export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 export type Route = { 
   route: string
   method: string
   middleware: Middleware
   handler: Handler
 }
-export type MiddlewareFcn = (ctx: RequestContext) => Promise<Response | void> | Response | void
-export type Middleware = MiddlewareFcn[]
-export type Handler = (ctx: RequestContext) => Promise<Response> | Response
-export type RequestContext = Record<string, Request | Response | number | string | boolean>
+export const routes: Route[] = []
 
 /**
  * Add a Route to your Peko server.
