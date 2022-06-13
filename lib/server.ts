@@ -1,11 +1,28 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
-import { config } from "./config.ts"
 import { logRequest, logError } from "./utils/logger.ts"
+import { config } from "./config.ts"
+
+interface SafeRoute extends Route {
+  middleware: Middleware[]
+}
+const routes: SafeRoute[] = []
+
+export type Route = { 
+  route: string
+  method: string
+  middleware: Middleware[] | Middleware
+  handler: Handler
+}
+export type Middleware = (ctx: RequestContext) => Promise<Response | void> | Response | void
+export type Handler = (ctx: RequestContext) => Promise<Response> | Response
+
+export type RequestContext = Record<string, Request | Response | number | string | boolean>
+
 
 /**
- * Begin listening and responding to http requests with user config and routes.
+ * Respond to http requests with config and routes.
  */
- export const start = () => {
+export const start = () => {
   config.logString(`Starting Peko server on port ${config.port} in ${config.devMode ? "development" : "production"} mode with routes:`)
   routes.forEach(route => config.logString(JSON.stringify(route)))
 
@@ -15,7 +32,6 @@ import { logRequest, logError } from "./utils/logger.ts"
   })
 }
 
-export type RequestContext = Record<string, Request | Response | number | string | boolean>
 const requestHandler = async (request: Request) => {
   const ctx: RequestContext = { request }
   const start = Date.now()
@@ -49,62 +65,44 @@ const tryHandleError = async (ctx: RequestContext, code?: number, error?: string
     return await config.errorHandler(ctx, code, error)
   } catch (e) {
     console.log(e)
-    return new Response("Something went very wrong...")
+    return new Response("Configured errorHandler ...")
   }
 }
 
-export type MiddlewareFcn = (ctx: RequestContext) => Promise<Response | void> | Response | void
-export type Middleware = MiddlewareFcn[]
-export type Handler = (ctx: RequestContext) => Promise<Response> | Response
-export type Route = { 
-  route: string
-  method: string
-  middleware: Middleware
-  handler: Handler
-}
-export const routes: Route[] = []
-
 /**
- * Add a Route to your Peko server.
- * 
- * See "lib/types.ts" for Middleware, Handler & HandlerParams type details
- * 
- * Note: "handlerParams" argument of Middleware and Handler is used to pass data from middleware logic to handler logic.
- * 
- * @param routeData { 
-    route: string - e.g. "/"
-    method: string - e.g. "GET"
-    middleware?: Middleware (optional) - e.g. (_request, handlerParams) => handlerParams["time_of_request"] = Date.now()
-    handler: Handler - e.g. (_request, handlerParams) => new Response(`${handlerParams["time_of_request"]}`)
- * }
+ * Add Route to Peko server 
+ * @param route: Route - middleware can be Middlewares or Middleware 
+ * @returns number - routes.length
  */
-export const addRoute = (routeData: Route) => {
-  const middleware: MiddlewareFcn[] = []
+export const addRoute = (route: Route) => {
+  const m: Middleware[] = []
 
-  // users can supply array of middleware fcns or single fcn
-  if (routeData.middleware) {
-    if (routeData.middleware instanceof Array) {
-      routeData.middleware.forEach(mWare => middleware.push(mWare))
+  // consolidate singular or null middleware to Middleware[]
+  if (route.middleware) {
+    if (route.middleware instanceof Array) {
+      route.middleware.forEach(middle => m.push(middle))
     } else {
-      middleware.push(routeData.middleware)
+      m.push(route.middleware)
     }
-  } else middleware.push(() => {})
+  } else m.push(() => {})
 
   return routes.push({ 
-    ...routeData,
-    middleware
+    ...route,
+    middleware: m
   })
 }
 
 /**
- * Remove a Route from your Peko server
- * 
- * @param route: `/${string}` - path route of Route to be removed
+ * Remove Route from Peko server
+ * @param route: string - route id of Route to remove
  * @returns 
  */
 export const removeRoute = (route: string) => {
   const routeToRemove = routes.find(r => r.route === route)
-  if (routeToRemove) return routes.splice(routes.indexOf(routeToRemove), 1).length
+  if (!routeToRemove) return routes.length
+
+  routes.splice(routes.indexOf(routeToRemove), 1)
+  return routes.length
 }
 
   // TODO: test route strings for formatting to enforce type `/${string}` in devMode
