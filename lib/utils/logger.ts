@@ -1,4 +1,4 @@
-import { getConfig } from "../config.ts"
+import { config } from "../config.ts"
 import { Event } from "../types.ts"
 
 import { RequestContext } from "../server.ts"
@@ -15,8 +15,10 @@ import { RequestContext } from "../server.ts"
  * @returns Promise<void>
  */
 export const logRequest = async (ctx: RequestContext, status: number, start: number, responseTime: number) => {
-  const config = getConfig()
   const date = new Date(start)
+
+  // can I define order of properties of object?
+  const request: Request = ctx.request
 
   const requestEvent: Event = {
     id: `${ctx.request.method}-${request.url}-${date.toJSON()}`,
