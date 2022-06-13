@@ -1,6 +1,8 @@
 import { getConfig } from "../config.ts"
 import { Event } from "../types.ts"
 
+import { RequestContext } from "../server.ts"
+
 /**
  * Peko's internal request logging function. Uses config.logString and log.Event underneath.
  * 
@@ -12,12 +14,12 @@ import { Event } from "../types.ts"
  * @param responseTime: number
  * @returns Promise<void>
  */
-export const logRequest = async (request: Request, status: number, start: number, responseTime: number) => {
+export const logRequest = async (ctx: RequestContext, status: number, start: number, responseTime: number) => {
   const config = getConfig()
   const date = new Date(start)
 
   const requestEvent: Event = {
-    id: `${request.method}-${request.url}-${date.toJSON()}`,
+    id: `${ctx.request.method}-${request.url}-${date.toJSON()}`,
     type: "request",
     date: date,
     data: {
@@ -49,7 +51,7 @@ export const logRequest = async (request: Request, status: number, start: number
  * @param error: any
  * @param date: Date
  */
-export const logError = async (id: string, error: any, date: Date) => {
+export const logError = async (id: string, error: string, date: Date) => {
   const config = getConfig()
 
   try {
