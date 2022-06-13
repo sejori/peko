@@ -1,11 +1,20 @@
 import { RequestContext } from "./server.ts"
 
+export type Config = { 
+  devMode: boolean
+  port: number
+  hostname: string
+  stringLogger: (log: string) => Promise<void> | void
+  eventLogger: (data: Event) => Promise<void> | void
+  errorHandler: (ctx: RequestContext, statusCode?: number, error?: Error | string | undefined) => Response | Promise<Response>
+}
+
 export const config: Config = {
   devMode: false,
   port: 7777,
   hostname: "0.0.0.0",
-  logString: (log: string) => console.log(log),
-  logEvent: (e: Event) => console.log(e),
+  stringLogger: (log: string) => console.log(log),
+  eventLogger: (e: Event) => console.log(e),
   errorHandler: (_ctx: RequestContext, statusCode?: number) => {
     let response;
     switch (statusCode) {
@@ -27,7 +36,7 @@ export const config: Config = {
 }
 
 /**
- * Update Peko internal config object
+ * Update Peko config
  * 
  * @param newConfigObj: Config
  */
@@ -38,15 +47,3 @@ export const setConfig = (newConfObj: Partial<Config>) => {
     })
   }
 }
-
-export type Config = { 
-  devMode: boolean
-  port: number
-  hostname: string
-  logString: LogString
-  logEvent: LogEvent
-  errorHandler: ErrorHandler
-}
-export type LogString = (log: string) => void | Promise<void>
-export type LogEvent = (data: Event) => void | Promise<void>
-export type ErrorHandler = (ctx: RequestContext, statusCode?: number, error?: Error | string | undefined) => Response | Promise<Response>
