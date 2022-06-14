@@ -1,18 +1,18 @@
 /**
- * Featherweight & Flexible Toolkit for Modern JS Apps. Built with Deno.
+ * Featherweight toolkit for the modern stateless web. Built with Deno.
  */
 
-// Core functions
-export { start, addRoute, removeRoute } from "./lib/server.ts"
-export { getConfig, setConfig } from "./lib/config.ts"
+// Core classes, functions & types
+export * from "./lib/server.ts"
+export * from "./lib/config.ts"
 
-// Custom handlers and route adders
-export { staticHandler, addStaticRoute } from "./lib/handlers/static.ts"
-export { ssrHandler, addSSRRoute } from "./lib/handlers/ssr.ts"
-export { sseHandler, addSSERoute } from "./lib/handlers/sse.ts"
+// Handlers
+export * from "./lib/handlers/static.ts"
+export * from "./lib/handlers/ssr.ts"
+export * from "./lib/handlers/sse.ts"
 
 // Utils
-export { logRequest, logError } from "./lib/utils/logger.ts"
-export { createResponseCache } from "./lib/utils/cacher.ts"
-export { createEmitter } from "./lib/utils/emitter.ts"
-export { hasher } from "./lib/utils/hasher.ts"
+export * from "./lib/utils/logger.ts"
+export * from "./lib/utils/cacher.ts"
+export * from "./lib/utils/emitter.ts"
+export * from "./lib/utils/hasher.ts"

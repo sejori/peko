@@ -4,17 +4,17 @@ import About from "./src/pages/About.js"
 import htmlTemplate from "../template.ts"
 
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
-import { RequestContext } from "https://deno.land/x/peko/lib/types.ts"
+import { RequestContext } from "../../mod.ts"
 
-const ssrRoutes = [
-  // must be SSRRoute type (see types.ts)
+const pages = [
+  // must be SSRRoute type (see lib/handlers/ssr.ts)
   {
       route: "/",
       // srcURL used for emitting file change events in devMode
       srcURL: new URL("./src/pages/Home.js", import.meta.url),
-      middleware: (ctx: RequestContext) => ctx.server_time = `${Date.now()}`,
+      middleware: (ctx: RequestContext) => { ctx.data.server_time = `${Date.now()}` },
       render: (ctx: RequestContext) => {
-        const appHTML = renderToString(Home(params), null, null)
+        const appHTML = renderToString(Home(ctx.data), null, null)
         return htmlTemplate({
           appHTML,
           title: `<title>Peko</title>`,
@@ -22,11 +22,11 @@ const ssrRoutes = [
           hydrationScript: `<script type="module">
               import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
               import Home from "/pages/Home.js";
-              hydrate(Home(${JSON.stringify(params)}), document.getElementById("root"))
+              hydrate(Home(${JSON.stringify(ctx.data)}), document.getElementById("root"))
           </script>`
         })
       },
-      cacheLifetime: 6000 // <- even with a specified cacheLifetime this page will never change because it's params are different in each request
+      // cacheLifetime: 6000 <- unnecessary, page will never cache as ctx.data is different in each render (handler call)
   },
   {
       route: "/about",
@@ -43,9 +43,9 @@ const ssrRoutes = [
               hydrate(About(), document.getElementById("root"))
           </script>`
         })
-      }
-      // cacheLifetime: 6000 <- this can be omitted as page content doesn't change and cacher will default to a lifetime of Infinity
+      },
+      cacheLifetime: Infinity // <- unnecessary, cacher will default lifetime to Infinity
   }
 ]
 
-export { ssrRoutes }
+export default pages
