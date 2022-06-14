@@ -1,7 +1,19 @@
-import { Listener, Emitter, Event } from "../types.ts"
 import { logError } from "./logger.ts"
 
 const emitters: Emitter[] = []
+export type Emitter = {
+  emit: (e: Event) => void | void[] | Promise<void | void[]>
+  subscribe: (cb: Listener) => boolean
+  unsubscribe: (cb: Listener) => boolean
+  getListeners: () => Listener[]
+}
+export type Listener = (e: Event) => void | Promise<void>
+export type Event = {
+  id: string
+  type: "request" | "emit" | "error"
+  date: Date
+  data: Record<string, any>
+}
 
 /**
  * Peko's internal event emitter.

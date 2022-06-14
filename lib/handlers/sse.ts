@@ -1,8 +1,14 @@
-import { addRoute } from "../server.ts"
-import { SSERoute, Event } from "../types.ts"
-import { getConfig } from "../config.ts"
+import { addRoute, RequestContext, Middleware } from "../server.ts"
+import { Event, Emitter } from "../utils/emitter.ts"
+import { config } from "../config.ts"
 
 const encoder = new TextEncoder()
+
+export type SSERoute = {
+  route: string
+  middleware?: Middleware[] | Middleware
+  emitter: Emitter
+}
 
 /**
  * SSE connection handler
@@ -10,19 +16,18 @@ const encoder = new TextEncoder()
  * @param sseData: SSERoute
  * @returns Promise<Response>
  */
-export const sseHandler = (sseData: SSERoute, request: Request) => {
-  const config = getConfig()
+export const sseHandler = (ctx: RequestContext, sseData: SSERoute) => {
   let lexController: ReadableStreamDefaultController<any>
   const lexEnqueue = (event: Event) => lexController.enqueue(encoder.encode(`data: ${JSON.stringify(event.data)}\n\n`))
 
   const body = new ReadableStream({
     start(controller) {
-      config.logString(`Client ${request.headers.get("X-Forwarded-For")} connected`)
+      config.logString(`Client ${ctx.request.headers.get("X-Forwarded-For")} connected`)
       lexController = controller
       sseData.emitter.subscribe(lexEnqueue)
     },
     cancel() {
-      config.logString(`Client ${request.headers.get("X-Forwarded-For")} disconnected`)
+      config.logString(`Client ${ctx.request.headers.get("X-Forwarded-For")} disconnected`)
       sseData.emitter.unsubscribe(lexEnqueue)
     }
   })
@@ -42,10 +47,11 @@ export const sseHandler = (sseData: SSERoute, request: Request) => {
     emitter: Emitter - Peko's internal event subscription interface
  * }
  */
-export const addSSERoute = (sseRouteData: SSERoute) => {
+export const addSSERoute = (sseData: SSERoute) => {
   return addRoute({
-    route: sseRouteData.route,
+    route: sseData.route,
     method: "GET",
-    handler: async (request, _params) => await sseHandler(sseRouteData, request)
+    middleware: sseData.middleware,
+    handler: async (ctx) => await sseHandler(ctx, sseData)
   })
 }

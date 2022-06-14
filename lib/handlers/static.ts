@@ -1,8 +1,14 @@
-import { addRoute } from "../server.ts"
-import { StaticRoute } from "../types.ts"
-import { getConfig } from "../config.ts"
+import { addRoute, RequestContext, Middleware } from "../server.ts"
+import { config } from "../config.ts"
 import { createResponseCache } from "../utils/cacher.ts"
 import { hasher } from "../utils/hasher.ts"
+
+export type StaticRoute = { 
+  route: string
+  middleware?: Middleware[] | Middleware
+  fileURL: URL
+  contentType: string | undefined
+}
 
 /**
  * Static asset request handler
@@ -10,7 +16,7 @@ import { hasher } from "../utils/hasher.ts"
  * @param staticData: StaticRoute
  * @returns Promise<Response>
  */
-export const staticHandler = async (staticData: StaticRoute) => {
+export const staticHandler = async (_ctx: RequestContext, staticData: StaticRoute) => {
   let filePath = decodeURI(staticData.fileURL.pathname)
   
   // fix annoying windows paths
@@ -43,19 +49,17 @@ export const staticHandler = async (staticData: StaticRoute) => {
     contentType: string - e.g. "image/png"
  * }
  */
-export const addStaticRoute = (staticRouteData: StaticRoute) => {
-  const config = getConfig()
-
+export const addStaticRoute = (staticData: StaticRoute) => {
   const memoizeHandler = createResponseCache() 
 
-  const cachedStaticHandler = memoizeHandler(() => staticHandler(staticRouteData))
+  const cachedStaticHandler = memoizeHandler((ctx) => staticHandler(ctx, staticData))
 
   return addRoute({
-    route: staticRouteData.route,
+    route: staticData.route,
     method: "GET",
-    middleware: staticRouteData.middleware,
-    handler: async (request, _params) => !config.devMode
-      ? await cachedStaticHandler(request)
-      : await staticHandler(staticRouteData)
+    middleware: staticData.middleware,
+    handler: async (ctx) => !config.devMode
+      ? await cachedStaticHandler(ctx)
+      : await staticHandler(ctx, staticData)
   })
 }
