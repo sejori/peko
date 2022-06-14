@@ -1,12 +1,14 @@
+import { RequestContext, SSRRoute, StaticRoute, Route } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
+import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
+import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
+
 // Preact page component & template imports
 import Home from "./src/pages/Home.js"
 import About from "./src/pages/About.js"
-import htmlTemplate from "../template.ts"
+import htmlTemplate from "./template.ts"
 
-import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
-import { RequestContext } from "../../mod.ts"
-
-const pages = [
+export const pages: SSRRoute[] = [
   // must be SSRRoute type (see lib/handlers/ssr.ts)
   {
       route: "/",
@@ -33,7 +35,7 @@ const pages = [
       srcURL: new URL("./src/pages/About.js", import.meta.url),
       render: () => {
         const appHTML = renderToString(About(), null, null)
-        return  htmlTemplate({
+        return htmlTemplate({
           appHTML,
           title: `<title>Peko | About</title>`,
           modulepreload: `<script modulepreload="true" type="module" src="/pages/About.js"></script>`,
@@ -48,4 +50,28 @@ const pages = [
   }
 ]
 
-export default pages
+const srcFiles = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
+export const assets: StaticRoute[] = srcFiles.map(file => {
+    const rootPath = `${Deno.cwd()}/examples/preact/src/`
+    const fileRoute: `/${string}` = `/${file.slice(rootPath.length)}`
+
+    // must be StaticRoute type (see types.ts)
+    return {
+        route: fileRoute,
+        fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
+        contentType: lookup(file)
+    }
+})
+
+export const APIs: Route[] = [
+    // must be Route type (see types.ts)
+    {
+        route: "/api/parrot",
+        method: "POST",
+        handler: async (ctx: RequestContext) => {
+            // emit event with body as data
+            const body = await ctx.request.json()
+            return new Response(`Parrot sqwarks: ${JSON.stringify(body)}`)
+        }
+    }
+]

@@ -1,15 +1,11 @@
-import * as Peko from "../../mod.ts"
-import config from "../config.ts"
-
-import { renderFile, configure as configureEta } from "https://deno.land/x/eta@v1.12.3/mod.ts"
+import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
-import { lookup } from "https://deno.land/x/media_types/mod.ts"
-import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
+import { renderFile, configure as configureEta } from "https://deno.land/x/eta@v1.12.3/mod.ts"
 
+import config from "../config.ts"
+import { pages, assets, APIs } from "../preact/routes.ts"
 import Home from "../preact/src/pages/Home.js"
-
-// Configure Peko
-Peko.setConfig(config)
+import About from "../preact/src/pages/About.js"
 
 // Configure eta
 configureEta({
@@ -17,44 +13,31 @@ configureEta({
   views: `${Deno.cwd()}/examples/eta-templating/views/`
 })
 
-// SSR Route using eta renderFile fcn 
-Peko.addSSRRoute({
-  route: "/",
-  module: {
-    srcURL: new URL(`../preact/src/Home.js`, import.meta.url),
-    app: Home
-  },
-  middleware: (_request) => ({ "server_time": `${Date.now()}` }),
-  render: async (app, _request, params) => {
-    const appHTML = renderToString(app(params), null, null)
-    const etaResult = await renderFile("./template.eta", {
-      appHTML,
-      title: `<title>Peko</title>`,
-      modulepreload: `<script modulepreload="true" type="module" src="/pages/Home.js"></script>`,
-      hydrationScript: `<script type="module">
-          import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-          import Home from "/pages/Home.js";
-          hydrate(Home({ server_time: ${params && params.server_time} }), document.getElementById("root"))
-      </script>`
-    })
-    return etaResult ? etaResult : `Eta templating error!`
-  },
-  cacheLifetime: 6000
+// adjust premade preact page render fcns to use eta
+pages.forEach(page => page.render = async (ctx) => {
+  const appHTML = renderToString(page.route === "/" ? Home(ctx.data) : About(), null, null)
+  const etaResult = await renderFile("./template.eta", {
+    appHTML,
+    title: page.route === "/" ? `<title>Peko</title>` : `<title>Peko | About</title>`,
+    modulepreload: `<script modulepreload="true" type="module" src="/pages/${page.route === "/" ? "Home.js" : "About.js"}"></script>`,
+    hydrationScript: `<script type="module">
+        import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+        import App from ${page.route === "/" ? "/pages/Home.js" : "/pages/About.js"};
+        hydrate(App(${JSON.stringify(ctx.data)}), document.getElementById("root"))
+    </script>`
+  })
+
+  return etaResult ? etaResult : "Eta templating error!"
 })
 
-// Static source routes for client-side loading
-const files: string[] = await recursiveReaddir(new URL(`../preact/src`, import.meta.url).pathname)
-files.forEach(file => {
-    const rootPath = `${Deno.cwd()}/examples/preact/src/`
-    const fileRoute = file.slice(rootPath.length)
-
-    // must be PekoStaticRoute type (see types.ts)
-    Peko.addStaticRoute({
-        route: `/${fileRoute}`,
-        fileURL: new URL(`../preact/src/${fileRoute}`, import.meta.url),
-        contentType: lookup(file)
-    })
-})
+// Configure Peko
+Peko.setConfig(config)
+// SSR'ed app page routes
+pages.forEach(page => Peko.addSSRRoute(page))
+// Static assets
+assets.forEach(asset => Peko.addStaticRoute(asset))
+// Custom API functions
+APIs.forEach(API => Peko.addRoute(API))
 
 // Start Peko server :)
 Peko.start()

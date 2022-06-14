@@ -1,9 +1,8 @@
-import { Config } from "https://deno.land/x/peko/lib/types.ts"
+import { Config } from "../mod.ts" // <- https://deno.land/x/peko/mod.ts
 
 const env = Deno.env.toObject()
 
-// CUSTOM CONFIG FOR EXAMPLES
-// Missing attributes fallback to default values (see lib/config.ts)
+// EXAMPLE CONFIG
 //
 const config: Partial<Config> = {
   // host set-up (same as default)
@@ -11,20 +10,16 @@ const config: Partial<Config> = {
   hostname: "0.0.0.0",
 
   // devMode true disables catching in addStaticRoute & addSSRRoute fcns
-  // TODO: implement hot-reloading SSE in devMode
   devMode: env.ENVIRONMENT !== "production",
 
   // handle internally-generated log strings (same as default)
-  // Note: it is recommended to POST these to a logging service or db record
   logString: (s) => console.log(s),
 
   // handle internally-generated event objects
-  // Note: it is recommended to POST these to an analytics service or db record
   logEvent: (e) => console.log(e),
 
-  // custom error handling function
-  // Note: must return a valid Response object
-  errorHandler: (statusCode, _request, _error) => {
+  // handle errors thrown by Peko internals
+  handleError: (_ctx, statusCode) => {
     let response;
     switch (statusCode) {
       case 404: 
