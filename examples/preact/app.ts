@@ -1,16 +1,15 @@
-import * as Peko from "https://deno.land/x/peko/mod.ts"
+import * as Peko from "../../mod.ts"
 import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
 import config from "../config.ts"
 
+import pages from "./routes.ts"
+
 // Configure Peko
 Peko.setConfig(config)
 
-console.log(Peko.getConfig())
-
 // SSR'ed app page routes
-
-ssrRoutes.forEach(ssrRoute => Peko.addSSRRoute(ssrRoute))
+pages.forEach(page => Peko.addSSRRoute(page))
 
 // Static src routes for loading into client
 const files = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
@@ -32,9 +31,9 @@ const customRoutes = [
     {
         route: "/api/parrot",
         method: "POST",
-        handler: async (request: Request) => {
+        handler: async (ctx: Peko.RequestContext) => {
             // emit event with body as data
-            const body = await request.json()
+            const body = await ctx.request.json()
             return new Response(`Parrot sqwarks: ${JSON.stringify(body)}`)
         }
     }

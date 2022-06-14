@@ -7,7 +7,7 @@ interface SafeRoute extends Route {
   middleware: Middleware[]
 }
 
-export type Route = { 
+export interface Route { 
   route: string
   method: string
   middleware?: Middleware[] | Middleware
@@ -22,7 +22,7 @@ export type Handler = (ctx: RequestContext) => Promise<Response> | Response
  */
 export const start = () => {
   config.logString(`Starting Peko server on port ${config.port} in ${config.devMode ? "development" : "production"} mode with routes:`)
-  routes.forEach(route => config.logString(JSON.stringify(route)))
+  routes.forEach(route => config.logString(JSON.stringify({ ...route })))
 
   serve(requestHandler, { 
     hostname: config.hostname, 
