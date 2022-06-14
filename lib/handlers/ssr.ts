@@ -1,8 +1,18 @@
-import { addRoute } from "../server.ts"
-import { getConfig } from "../config.ts"
+import { addRoute, RequestContext, Middleware } from "../server.ts"
+import { config } from "../config.ts"
 import { createResponseCache } from "../utils/cacher.ts"
-import { HandlerParams, SSRRoute } from "../types.ts"
 import { hasher } from "../utils/hasher.ts"
+
+export type HTMLContent = string
+export type Render = (ctx: RequestContext) => HTMLContent | Promise<HTMLContent>
+
+export type SSRRoute = { 
+  route: string
+  srcURL?: URL
+  middleware?: Middleware[] | Middleware
+  render: Render
+  cacheLifetime?: number
+}
 
 /**
  * SSR request handler complete with JS app rendering, HTML templating & response caching logic. 
@@ -12,11 +22,11 @@ import { hasher } from "../utils/hasher.ts"
  * @param ssrData: SSRRoute
  * @returns Promise<Response>
  */
-export const ssrHandler = async (ssrData: SSRRoute, request: Request, params: HandlerParams) => {
+export const ssrHandler = async (ctx: RequestContext, ssrData: SSRRoute) => {
   // TODO: emit srcURL file change events from watcher worker
 
   // use provided render and template fcns for HTML generation
-  const HTML = await ssrData.render(request, params)    
+  const HTML = await ssrData.render(ctx)   
   const hashString = hasher(HTML)
 
   return new Response(HTML, {
@@ -45,24 +55,22 @@ export const ssrHandler = async (ssrData: SSRRoute, request: Request, params: Ha
     cacheLifetime?: number - e.g. 3600000
  * }
 */
-export const addSSRRoute = (ssrRouteData: SSRRoute) => {
-  const config = getConfig()
-
+export const addSSRRoute = (ssrData: SSRRoute) => {
   const memoizeHandler = createResponseCache({
-    lifetime: ssrRouteData.cacheLifetime
+    lifetime: ssrData.cacheLifetime
   }) 
 
-  const cachedSSRHandler = memoizeHandler((request, params) => ssrHandler(ssrRouteData, request, params))
+  const cachedSSRHandler = memoizeHandler((ctx) => ssrHandler(ctx, ssrData))
 
   return addRoute({
-    route: ssrRouteData.route,
+    route: ssrData.route,
     method: "GET",
-    middleware: ssrRouteData.middleware,
-    handler: async (request, params) => !config.devMode
+    middleware: ssrData.middleware,
+    handler: async (ctx) => !config.devMode
       // use cache-enabled fcn if not in prod env and pass in params 
       // so we cache renders by params as well as SSRRoute data
-      ? await cachedSSRHandler(request, params)
-      : await ssrHandler(ssrRouteData, request, params)
+      ? await cachedSSRHandler(ctx)
+      : await ssrHandler(ctx, ssrData)
   })
 }
 

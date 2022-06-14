@@ -1,21 +1,22 @@
 import { RequestContext } from "./server.ts"
+import { Event } from "./utils/emitter.ts"
 
-export type Config = { 
+export interface Config { 
   devMode: boolean
   port: number
   hostname: string
-  stringLogger: (log: string) => Promise<void> | void
-  eventLogger: (data: Event) => Promise<void> | void
-  errorHandler: (ctx: RequestContext, statusCode?: number, error?: Error | string | undefined) => Response | Promise<Response>
+  logString: (log: string) => Promise<void> | void
+  logEvent: (data: Event) => Promise<void> | void
+  handleError: (ctx: RequestContext, statusCode?: number, error?: Error | string | undefined) => Response | Promise<Response>
 }
 
 export const config: Config = {
   devMode: false,
   port: 7777,
   hostname: "0.0.0.0",
-  stringLogger: (log: string) => console.log(log),
-  eventLogger: (e: Event) => console.log(e),
-  errorHandler: (_ctx: RequestContext, statusCode?: number) => {
+  logString: (log: string) => console.log(log),
+  logEvent: (e: Event) => console.log(e),
+  handleError: (_ctx: RequestContext, statusCode?: number) => {
     let response;
     switch (statusCode) {
       case 404: 

@@ -2,22 +2,20 @@ import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
 import { logRequest, logError } from "./utils/logger.ts"
 import { config } from "./config.ts"
 
+const routes: SafeRoute[] = []
 interface SafeRoute extends Route {
   middleware: Middleware[]
 }
-const routes: SafeRoute[] = []
 
 export type Route = { 
   route: string
   method: string
-  middleware: Middleware[] | Middleware
+  middleware?: Middleware[] | Middleware
   handler: Handler
 }
+
 export type Middleware = (ctx: RequestContext) => Promise<Response | void> | Response | void
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
-
-export type RequestContext = Record<string, Request | Response | number | string | boolean>
-
 
 /**
  * Respond to http requests with config and routes.
@@ -33,7 +31,7 @@ export const start = () => {
 }
 
 const requestHandler = async (request: Request) => {
-  const ctx: RequestContext = { request }
+  const ctx: RequestContext = new RequestContext(request)
   const start = Date.now()
 
   // locate matching route
@@ -60,9 +58,19 @@ const requestHandler = async (request: Request) => {
   return tryHandleError(ctx, 500)
 }
 
+export class RequestContext {
+  request: Request
+  data: Record<string, Response | number | string | boolean>
+
+  constructor(request: Request) {
+    this.request = request
+    this.data = {}
+  }
+}
+
 const tryHandleError = async (ctx: RequestContext, code?: number, error?: string) => {
   try {
-    return await config.errorHandler(ctx, code, error)
+    return await config.handleError(ctx, code, error)
   } catch (e) {
     console.log(e)
     return new Response("Configured errorHandler ...")
@@ -105,5 +113,5 @@ export const removeRoute = (route: string) => {
   return routes.length
 }
 
-  // TODO: test route strings for formatting to enforce type `/${string}` in devMode
-  // TODO: test middleware and handlers for cookie and rendering bear traps
+// TODO: test route strings for formatting to enforce type `/${string}` in devMode
+// TODO: test middleware and handlers for cookie and rendering bear traps
