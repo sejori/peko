@@ -3,7 +3,7 @@ import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
-// Preact page component & template imports
+// Preact page components and HTML template
 import Home from "./src/pages/Home.js"
 import About from "./src/pages/About.js"
 import htmlTemplate from "./template.ts"
