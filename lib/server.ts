@@ -21,7 +21,7 @@ export type Handler = (ctx: RequestContext) => Promise<Response> | Response
  * Respond to http requests with config and routes.
  */
 export const start = () => {
-  config.logString(`Starting Peko server on port ${config.port} in ${config.devMode ? "development" : "production"} mode with routes:`)
+  config.logString(`Starting Peko server ${config.devMode ? "in devMode" : ""} on port ${config.port} with routes:`)
   routes.forEach(route => config.logString(JSON.stringify({ ...route })))
 
   serve(requestHandler, { 
