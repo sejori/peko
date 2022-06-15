@@ -113,12 +113,12 @@
 
 <h2 id="#routing">Routing</h2>
 <p>
-    Http Requests are matched to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Route">Routes</a>. Routes can be added or removed at runtime via the <code>addRoute</code> and <code>removeRoute</code> exports.
+    Http Requests are matched to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/Route">Routes</a>. Routes can be added or removed at runtime via the <code>addRoute</code> and <code>removeRoute</code> exports.
 </p>
 
 <h2 id="#events">Events</h2>
 <p>
-    Realtime app logic can be built with <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko@v0.2.0/lib/types.ts/~/Emitter">Emitters</a> via the <code>.emit</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe</code> or given to the <code>sseHandler</code> to stream Event data to connected clients (see <code>examples/sse</code>).
+    Realtime app logic can be built with <a href="https://doc.deno.land/https://deno.land/x/peko/lib/utils/emitter.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko/lib/utils/emitter.ts/~/Emitter">Emitters</a> via the <code>.emit</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe</code> or given to the <code>sseHandler</code> to stream Event data to connected clients (see <code>examples/sse</code>).
 </p>
 
 <h2 id="request-handling">Request handling</h2>
