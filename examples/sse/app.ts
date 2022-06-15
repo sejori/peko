@@ -18,7 +18,7 @@ Peko.addSSERoute({
   emitter: testEmitter
 })
 
-// adjust home page render to include EventSource connection logic
+// adjust examples/Preact/routes.ts home page render to include EventSource connection logic
 pages[0].render = (ctx: Peko.RequestContext) => {
   const appHTML = renderToString(Home(ctx.data), null, null)
   return htmlTemplate({
