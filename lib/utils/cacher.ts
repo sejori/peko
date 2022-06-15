@@ -1,22 +1,14 @@
-import { Handler, HandlerParams } from "../types.ts"
+import { RequestContext, Handler } from "../server.ts"
 
 export type CacheItem = { key: string, value: Response, dob: number }
 export type CacheOptions = { lifetime: number, debug: boolean }
 
 /**
  * Peko's internal Response cacher. 
- * 
- * Lifetime invalidates cache items if they've existed beyond it. In Milliseconds.
- * Fallsback to Infinity if not provided.
- * 
- * @param options: { lifetime: number }
- * @returns memoizeHandler: (handlerFcn) => cachedEnabledHandlerFcn
+ * @param options: { lifetime: number } - lifetime defaults to Infinity
+ * @returns memoizeHandler: (handler: Handler) => memoizedHandler
  */
 export const createResponseCache = (options?: Partial<CacheOptions>) => {
-  // should this be a class or a closure?
-  // class would be more general-purpose as can access private vars etc
-  // but closure is more sleek and inline with project conventions
-
   let cache: Array<CacheItem> = []
   const lifetime = options && options.lifetime 
     ? options.lifetime 
@@ -30,23 +22,21 @@ export const createResponseCache = (options?: Partial<CacheOptions>) => {
   }
 
   const updateCache = async (key: string, value: Response) => await new Promise((resolve: (value: void) => void) => {
-    // remove matching items from cache if present
+    // remove matching then push new
     cache = cache.filter((item) => item.key !== key)
-
-    // add new item into cache
     cache.push({ key, value, dob: Date.now() })
 
     return resolve()
   })
 
   const memoizeHandler = (fcn: Handler) => {
-    return async (request: Request, params: HandlerParams = {}) => {
-      const key = `${request.url}-${JSON.stringify(params)}`
+    return async (ctx: RequestContext) => {
+      const key = `${ctx.request.url}-${JSON.stringify(ctx.data)}`
 
       const latest = getLatestCacheItem(key)
       if (latest) {
         // ETag match triggers 304
-        const ifNoneMatch = request.headers.get("if-none-match")
+        const ifNoneMatch = ctx.request.headers.get("if-none-match")
         const ETag = latest.value.headers.get("ETag")
         if (ETag && ifNoneMatch?.includes(ETag)) {
           return new Response(null, {
@@ -60,7 +50,7 @@ export const createResponseCache = (options?: Partial<CacheOptions>) => {
       }
 
       // calc new value then update cache asynchronously to not block process before return
-      const response = await fcn(request, params)
+      const response = await fcn(ctx)
       updateCache(key, response)
 
       return response.clone()

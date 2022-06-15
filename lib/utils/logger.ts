@@ -1,23 +1,25 @@
-import { getConfig } from "../config.ts"
-import { Event } from "../types.ts"
+import { RequestContext } from "../server.ts"
+import { config } from "../config.ts"
+import { Event } from "./emitter.ts"
+
 
 /**
  * Peko's internal request logging function. Uses config.logString and log.Event underneath.
  * 
  * Returns promise so process isn't blocked when called without "await" keyword.
  * 
- * @param request: Request
+ * @param ctx: RequestContext
  * @param status: number
  * @param start: number
  * @param responseTime: number
  * @returns Promise<void>
  */
-export const logRequest = async (request: Request, status: number, start: number, responseTime: number) => {
-  const config = getConfig()
+export const logRequest = async (ctx: RequestContext, status: number, start: number, responseTime: number) => {
   const date = new Date(start)
 
+  const request: Request = ctx.request
   const requestEvent: Event = {
-    id: `${request.method}-${request.url}-${date.toJSON()}`,
+    id: `${ctx.request.method}-${request.url}-${date.toJSON()}`,
     type: "request",
     date: date,
     data: {
@@ -41,7 +43,7 @@ export const logRequest = async (request: Request, status: number, start: number
 }
 
 /**
- * Peko's internal error logging function. Uses config.logEvent underneath.
+ * Peko's internal error logging function. Uses config.eventLogger underneath.
  * 
  * Returns promise so process isn't blocked when called without "await" keyword.
  * 
@@ -49,9 +51,7 @@ export const logRequest = async (request: Request, status: number, start: number
  * @param error: any
  * @param date: Date
  */
-export const logError = async (id: string, error: any, date: Date) => {
-  const config = getConfig()
-
+export const logError = async (id: string, error: string, date: Date) => {
   try {
     return await config.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
   } catch (e) {
