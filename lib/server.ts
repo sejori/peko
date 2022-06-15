@@ -3,6 +3,7 @@ import { logRequest, logError } from "./utils/logger.ts"
 import { config } from "./config.ts"
 
 const routes: SafeRoute[] = []
+
 interface SafeRoute extends Route {
   middleware: Middleware[]
 }
@@ -16,6 +17,16 @@ export interface Route {
 
 export type Middleware = (ctx: RequestContext) => Promise<Response | void> | Response | void
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
+
+export class RequestContext {
+  request: Request
+  data: Record<string, Response | number | string | boolean>
+
+  constructor(request: Request) {
+    this.request = request
+    this.data = {}
+  }
+}
 
 /**
  * Respond to http requests with config and routes.
@@ -56,16 +67,6 @@ const requestHandler = async (request: Request) => {
   }
 
   return tryHandleError(ctx, 500)
-}
-
-export class RequestContext {
-  request: Request
-  data: Record<string, Response | number | string | boolean>
-
-  constructor(request: Request) {
-    this.request = request
-    this.data = {}
-  }
 }
 
 const tryHandleError = async (ctx: RequestContext, code?: number, error?: string) => {

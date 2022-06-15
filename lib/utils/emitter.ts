@@ -1,13 +1,16 @@
 import { logError } from "./logger.ts"
 
 const emitters: Emitter[] = []
+
 export type Emitter = {
   emit: (e: Event) => void | void[] | Promise<void | void[]>
   subscribe: (cb: Listener) => boolean
   unsubscribe: (cb: Listener) => boolean
   listeners: Listener[]
 }
+
 export type Listener = (e: Event) => void | Promise<void>
+
 export type Event = {
   id: string
   type: "request" | "emit" | "error"
