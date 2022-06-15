@@ -1,17 +1,32 @@
-import { Listener, Emitter, Event } from "../types.ts"
 import { logError } from "./logger.ts"
 
 const emitters: Emitter[] = []
 
+export type Emitter = {
+  emit: (e: Event) => void | void[] | Promise<void | void[]>
+  subscribe: (cb: Listener) => boolean
+  unsubscribe: (cb: Listener) => boolean
+  listeners: Listener[]
+}
+
+export type Listener = (e: Event) => void | Promise<void>
+
+export type Event = {
+  id: string
+  type: "request" | "emit" | "error"
+  date: Date
+  data: Record<string, any>
+}
+
 /**
  * Peko's internal event emitter.
- * 
  * @param initListeners: Listener[]
  * @returns emitter: Emitter
  */
-export const createEmitter = (initListeners?: Listener[]) => {
-  const listeners: Listener[] = initListeners ? initListeners : []
-  const getListeners = () => listeners
+export const createEmitter = (initListeners?: Listener[] | Listener) => {
+  const listeners: Listener[] = initListeners && initListeners instanceof Array
+    ? initListeners 
+    : initListeners ? [initListeners] : []
 
   const subscribe = (listener: Listener) => {
     listeners.push(listener)
@@ -41,7 +56,7 @@ export const createEmitter = (initListeners?: Listener[]) => {
     }
   }
 
-  const emitter = { emit, getListeners, subscribe, unsubscribe }
+  const emitter = { emit, listeners, subscribe, unsubscribe }
 
   emitters.push(emitter)
   return emitter

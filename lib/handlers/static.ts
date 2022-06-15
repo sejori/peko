@@ -1,8 +1,14 @@
-import { addRoute } from "../server.ts"
-import { StaticRoute } from "../types.ts"
-import { getConfig } from "../config.ts"
+import { addRoute, RequestContext, Middleware } from "../server.ts"
+import { config } from "../config.ts"
 import { createResponseCache } from "../utils/cacher.ts"
 import { hasher } from "../utils/hasher.ts"
+
+export type StaticRoute = { 
+  route: string
+  middleware?: Middleware[] | Middleware
+  fileURL: URL
+  contentType: string | undefined
+}
 
 /**
  * Static asset request handler
@@ -10,7 +16,7 @@ import { hasher } from "../utils/hasher.ts"
  * @param staticData: StaticRoute
  * @returns Promise<Response>
  */
-export const staticHandler = async (staticData: StaticRoute) => {
+export const staticHandler = async (_ctx: RequestContext, staticData: StaticRoute) => {
   let filePath = decodeURI(staticData.fileURL.pathname)
   
   // fix annoying windows paths
@@ -23,11 +29,11 @@ export const staticHandler = async (staticData: StaticRoute) => {
   return new Response(body, {
     headers: new Headers({
       'Content-Type': staticData.contentType ? staticData.contentType : 'text/plain',
-      'Cache-Control': 'public, max-age=31536000',
-      // create hash for ETag
-      // this lets browser check if file has changed by returning ETag in "if-none-match" header.
-      // devMode: new ETag in each response so no browser caching
-      // not devMode + memoized: ETag matches "if-none-match" header so 304 (not modified) response given
+      // tell browser not to cache if in devMode
+      'Cache-Control': config.devMode
+        ? 'no-store'
+        : 'max-age=604800, stale-while-revalidate=86400',
+      // create ETag hash so 304 (not modified) response can be given from cacher
       'ETag': hashString
     })
   })
@@ -43,19 +49,17 @@ export const staticHandler = async (staticData: StaticRoute) => {
     contentType: string - e.g. "image/png"
  * }
  */
-export const addStaticRoute = (staticRouteData: StaticRoute) => {
-  const config = getConfig()
-
+export const addStaticRoute = (staticData: StaticRoute) => {
   const memoizeHandler = createResponseCache() 
 
-  const cachedStaticHandler = memoizeHandler(() => staticHandler(staticRouteData))
+  const cachedStaticHandler = memoizeHandler((ctx) => staticHandler(ctx, staticData))
 
   return addRoute({
-    route: staticRouteData.route,
+    route: staticData.route,
     method: "GET",
-    middleware: staticRouteData.middleware,
-    handler: async (request, _params) => !config.devMode
-      ? await cachedStaticHandler(request)
-      : await staticHandler(staticRouteData)
+    middleware: staticData.middleware,
+    handler: async (ctx) => !config.devMode
+      ? await cachedStaticHandler(ctx)
+      : await staticHandler(ctx, staticData)
   })
 }

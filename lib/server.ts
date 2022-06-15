@@ -1,48 +1,39 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
-import { Route, HandlerParams } from "./types.ts"
-import { getConfig } from "./config.ts"
 import { logRequest, logError } from "./utils/logger.ts"
+import { config } from "./config.ts"
 
-export const routes: Route[] = []
+const routes: SafeRoute[] = []
 
-/**
- * Add a Route to your Peko server.
- * 
- * See "lib/types.ts" for Middleware, Handler & HandlerParams type details
- * 
- * Note: "handlerParams" argument of Middleware and Handler is used to pass data from middleware logic to handler logic.
- * 
- * @param routeData { 
-    route: string - e.g. "/"
-    method: string - e.g. "GET"
-    middleware?: Middleware (optional) - e.g. (_request, handlerParams) => handlerParams["time_of_request"] = Date.now()
-    handler: Handler - e.g. (_request, handlerParams) => new Response(`${handlerParams["time_of_request"]}`)
- * }
- */
-export const addRoute = (routeData: Route) => routes.push(routeData)
+interface SafeRoute extends Route {
+  middleware: Middleware[]
+}
 
-/**
- * Remove a Route from your Peko server
- * 
- * @param route: `/${string}` - path route of Route to be removed
- * @returns 
- */
-export const removeRoute = (route: `/${string}`) => {
-  const routeToRemove = routes.find(r => r.route === route)
-  if (routeToRemove) return routes.splice(routes.indexOf(routeToRemove), 1).length
+export interface Route { 
+  route: string
+  method: string
+  middleware?: Middleware[] | Middleware
+  handler: Handler
+}
+
+export type Middleware = (ctx: RequestContext) => Promise<Response | void> | Response | void
+export type Handler = (ctx: RequestContext) => Promise<Response> | Response
+
+export class RequestContext {
+  request: Request
+  data: Record<string, Response | number | string | boolean>
+
+  constructor(request: Request) {
+    this.request = request
+    this.data = {}
+  }
 }
 
 /**
- * Begin listening to http requests and serve matching routes.
- * 
- * See "lib/types.ts" for Config type details.
- * 
- * Note: Config changes will not take effect after start is called. 
+ * Respond to http requests with config and routes.
  */
- export const start = () => {
-  const config = getConfig()
-  config.logString(`Starting Peko server on port ${config.port} in ${config.devMode ? "development" : "production"} mode with routes:`)
-  routes.forEach(route => config.logString(JSON.stringify(route)))
+export const start = () => {
+  config.logString(`Starting Peko server ${config.devMode ? "in devMode" : ""} on port ${config.port} with routes:`)
+  routes.forEach(route => config.logString(JSON.stringify({ ...route })))
 
   serve(requestHandler, { 
     hostname: config.hostname, 
@@ -51,39 +42,77 @@ export const removeRoute = (route: `/${string}`) => {
 }
 
 const requestHandler = async (request: Request) => {
+  const ctx: RequestContext = new RequestContext(request)
   const start = Date.now()
-  const config = getConfig()
 
   // locate matching route
   const requestURL = new URL(request.url)
   const route = routes.find(route => route.route === requestURL.pathname && route.method === request.method)
   if (!route) {
-    logRequest(request, 404, start, Date.now() - start)
-    return await config.errorHandler(404, request)
+    logRequest(ctx, 404, start, Date.now() - start)
+    return tryHandleError(ctx, 404)
   }
   
-  // run middleware function first if provided
-  const mwParams: HandlerParams = {}
-  if (route.middleware) {
+  // run middleware stack and handler function
+  const callerArray = [...route.middleware, route.handler]
+  for (const fcn in callerArray) {
     try {
-      await route.middleware(request, mwParams)
+      const response = await callerArray[fcn].call(ctx, ctx)
+      logRequest(ctx, 200, start, Date.now() - start)
+      if (response) return response
     } catch (error) {
       logError(request.url, error, new Date())
-      logRequest(request, 500, start, Date.now() - start)
-      return await config.errorHandler(500, request)
+      logRequest(ctx, 500, start, Date.now() - start)
     }
   }
 
-  // run handler function
-  let response
-  try {
-    response = await route.handler(request, mwParams)
-  } catch(error) {
-    logError(request.url, error, new Date())
-    logRequest(request, 500, start, Date.now() - start)
-    return await config.errorHandler(500, request)
-  }
-
-  logRequest(request, response.status, start, Date.now() - start)
-  return response
+  return tryHandleError(ctx, 500)
 }
+
+const tryHandleError = async (ctx: RequestContext, code?: number, error?: string) => {
+  try {
+    return await config.handleError(ctx, code, error)
+  } catch (e) {
+    console.log(e)
+    return new Response("Configured errorHandler ...")
+  }
+}
+
+/**
+ * Add Route to Peko server 
+ * @param route: Route - middleware can be Middlewares or Middleware 
+ * @returns number - routes.length
+ */
+export const addRoute = (route: Route) => {
+  const m: Middleware[] = []
+
+  // consolidate singular or null middleware to Middleware[]
+  if (route.middleware) {
+    if (route.middleware instanceof Array) {
+      route.middleware.forEach(middle => m.push(middle))
+    } else {
+      m.push(route.middleware)
+    }
+  } else m.push(() => {})
+
+  return routes.push({ 
+    ...route,
+    middleware: m
+  })
+}
+
+/**
+ * Remove Route from Peko server
+ * @param route: string - route id of Route to remove
+ * @returns 
+ */
+export const removeRoute = (route: string) => {
+  const routeToRemove = routes.find(r => r.route === route)
+  if (!routeToRemove) return routes.length
+
+  routes.splice(routes.indexOf(routeToRemove), 1)
+  return routes.length
+}
+
+// TODO: test route strings for formatting to enforce type `/${string}` in devMode
+// TODO: test middleware and handlers for cookie and rendering bear traps

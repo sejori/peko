@@ -1,12 +1,22 @@
-import { Config, Event } from "./types.ts"
+import { RequestContext } from "./server.ts"
+import { Event } from "./utils/emitter.ts"
 
-let config: Config = {
+export interface Config { 
+  devMode: boolean
+  port: number
+  hostname: string
+  logString: (log: string) => Promise<void> | void
+  logEvent: (data: Event) => Promise<void> | void
+  handleError: (ctx: RequestContext, statusCode?: number, error?: Error | string | undefined) => Response | Promise<Response>
+}
+
+export const config: Config = {
   devMode: false,
   port: 7777,
   hostname: "0.0.0.0",
   logString: (log: string) => console.log(log),
   logEvent: (e: Event) => console.log(e),
-  errorHandler: (statusCode: number) => {
+  handleError: (_ctx: RequestContext, statusCode?: number) => {
     let response;
     switch (statusCode) {
       case 404: 
@@ -27,13 +37,14 @@ let config: Config = {
 }
 
 /**
+ * Update Peko config
  * 
  * @param newConfigObj: Config
  */
-export const setConfig = (newConfObj: Partial<Config>) => config = { ...config, ...newConfObj }
-
-/**
- * 
- * @returns configObj: Config
- */
- export const getConfig = () => config
+export const setConfig = (newConfObj: Partial<Config>) => {
+  for (const key in newConfObj) {
+    Object.defineProperty(config, key, {
+      value: newConfObj[key as keyof typeof config]
+    })
+  }
+}

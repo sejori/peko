@@ -1,28 +1,28 @@
-import * as Peko from "../../mod.ts"
+import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
-import { lookup } from "https://deno.land/x/media_types/mod.ts"
-import { recursiveReaddir } from "https://deno.land/x/recursive_readdir/mod.ts"
-
-import htmlTemplate from "../template.ts"
 import config from "../config.ts"
-
+import { assets, APIs } from "../preact/routes.ts"
 import Home from "../preact/src/pages/Home.js"
+import htmlTemplate from "../preact/template.ts"
 
 // Configure Peko
 Peko.setConfig(config)
+// Static assets
+assets.forEach(asset => Peko.addStaticRoute(asset))
+// Custom API functions
+APIs.forEach(API => Peko.addRoute(API))
 
-// create a response cache for our custom SSR 
-// note: setting lifetime of cached responses to one minute (default is Infinity)
-const memoizeHandler = Peko.createResponseCache({ lifetime: 60000 })
+// create a response cache for our custom handler
+const memoizeHandler = Peko.createResponseCache()
 
-// Custom route using ResponseCache & our own ssr logic  - returns JSON data for component instead of HTML
+// Route with cached custom handler - returns preact component JSON data instead of HTML
 Peko.addRoute({
   route: "/",
   method: "GET",
   // memoize our custom handler so responses are cached until lifetime expires
   // and not re-rendered for every request
-  handler: memoizeHandler(async (_request: Request) => {
+  handler: memoizeHandler(async () => {
     const decoder = new TextDecoder();
 
     // load the contents of the JS file
@@ -54,20 +54,6 @@ Peko.addRoute({
       headers: new Headers({ 'Content-Type': 'application/json' })
     })
   })
-})
-
-// Static source routes for client-side loading
-const files: string[] = await recursiveReaddir(new URL(`../preact/src`, import.meta.url).pathname)
-files.forEach(file => {
-    const rootPath = `${Deno.cwd()}/examples/preact/src/`
-    const fileRoute = file.slice(rootPath.length)
-
-    // must be PekoStaticRoute type (see types.ts)
-    Peko.addStaticRoute({
-        route: `/${fileRoute}`,
-        fileURL: new URL(`../preact/src/${fileRoute}`, import.meta.url),
-        contentType: lookup(file)
-    })
 })
 
 // Start Peko server :)
