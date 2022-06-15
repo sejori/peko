@@ -103,7 +103,7 @@
 | Example        | Deno Deploy | Docker |
 |   ---          |     ---     |   ---  |
 | Preact         |     ✅      |    ✅   |
-| Custom-ssr     |     ✅      |    ✅   |
+| Custom-handler |     ✅      |    ✅   |
 | Eta-templating |     ❌      |    ✅   |
 | Vue            |     ❌      |    ❌   |
 
