@@ -55,16 +55,16 @@
 <h2>Philosophy</h2>
 <ul>
     <li>
-        <strong>First-class frontend</strong> - Server-side render then client-side hydrate with the same code. Bundling optional. 
+        <strong>First-class frontend</strong> - Server-side render, client-side hydrate with the same code (compiling coming soon). 
     </li>
     <li>
-        <strong>Production-ready backend</strong> - TypeScript, Response caching (and security checks in devMove coming soon).
+        <strong>Production-ready backend</strong> - TypeScript, Response caching (Route security checks coming soon).
     </li>
     <li>
         <strong>Software Minimalism</strong> - Sleek runtime, no build step, uses only the Deno <a href="https://deno.land/std">std</a> library.
     </li>
     <li>
-        <strong>Ease of Adoption</strong> - Intuitive API and no enforced front-end tooling or project structure.
+        <strong>Ease of Adoption</strong> - Intuitive API, no fixed project structure or front-end lib/framework lock-in.
     </li>
 </ul>
 <p>
