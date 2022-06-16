@@ -95,8 +95,6 @@
 
 <h3>OR Import Peko into your own project:</h3>
 <p><code>import * as Peko from "https://deno.land/x/peko/mod.ts"</code></p>
-<p>And if you want to use Peko's types:</p>
-<p><code>import { ... } from "https://deno.land/x/peko/lib/types.ts"</code></p>
 
 <h2>Deployment</h2>
 
