@@ -55,24 +55,24 @@
 <h2>Philosophy</h2>
 <ul>
     <li>
-        <strong>First-class frontend</strong> - Server-side render, client-side hydrate with the same code (compiling coming soon). 
+        <strong>First-class frontend</strong> - Server-side render and client-side hydrate with the same code, no enforced tooling. 
     </li>
     <li>
-        <strong>Production-ready backend</strong> - TypeScript, Response caching (Route security checks coming soon).
+        <strong>Production-ready backend</strong> - TypeScript, Response caching (+ <a href="https://github.com/sebringrose/peko/issues">more soon</a>).
     </li>
     <li>
-        <strong>Software Minimalism</strong> - Sleek runtime, no build step, uses only the Deno <a href="https://deno.land/std">std</a> library.
+        <strong>Software Minimalism</strong> - Sleek runtime with no build step. Uses only the Deno <a href="https://deno.land/std">std</a> library.
     </li>
     <li>
-        <strong>Ease of Adoption</strong> - Intuitive API, no fixed project structure or front-end lib/framework lock-in.
+        <strong>Ease of Adoption</strong> - Intuitive API, lots of examples and no fixed project structure.
     </li>
 </ul>
 <p>
-    Read on, star/fork/clone away and feel free to contribute any ideas!
+    Read on, star/fork/clone, any suggestions/code reviews very welcome!
 </p>
 
 <h2>Get started</h2>
-<h3>Build and launch a secure and feature-rich webapp in one file.</h3>
+<h3>Build and launch a secure and scalable webapp from one file.</h3>
 
 <h3>OR try the examples:</h3>
 <ol>
