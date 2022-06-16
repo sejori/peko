@@ -61,10 +61,10 @@
         <strong>Production-ready backend</strong> - TypeScript, Response caching (and security checks in devMove coming soon).
     </li>
     <li>
-        <strong>Software Minimalism</strong> - Sleek runtime using only the Deno <a href="https://deno.land/std">std</a> library.
+        <strong>Software Minimalism</strong> - Sleek runtime, no build step, uses only the Deno <a href="https://deno.land/std">std</a> library.
     </li>
     <li>
-        <strong>Ease of Adoption</strong> - Intuitive API with no enforced front-end tooling or project structure.
+        <strong>Ease of Adoption</strong> - Intuitive API and no enforced front-end tooling or project structure.
     </li>
 </ul>
 <p>
