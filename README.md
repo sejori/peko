@@ -142,7 +142,7 @@
     Because it provides all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling required - the server and browser use the exact same code! This completely eliminates part of the traditional JavaScript SSR toolchain, increasing project maintainability and simplicity.
 </p>
 <p>
-    Better yet, Peko is not build for any specific frontend framework or library. You can use React, Preact, Vue... you name it. Simply plug your rendering function into an SSRRoute along with the client-side hydration logic to be injected into your HTML template (if you need it).
+    Better yet, Peko is not build for any specific frontend framework or library. You can use React, Preact, Vue... you name it (if you do set up a React/Vue project please consider adding it to the examples!). Simply plug your rendering function into an SSRRoute along with the client-side hydration logic to be injected into your HTML template (if you need it).
 </p>
 <p>
     It is all possible because of the unique combination of powerful new JavaScript tools. Deno, unlike Node.js, is built to the <a href="https://tc39.es/">ECMAScript specification</a>. This makes it compatible with browser JavaScript and vice versa which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like Preact combined with <a href="https://github.com/developit/htm">htm</a> offer lightning fast client-side hydration with an ES6-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and a standard library full of great tools as well as a passionate community supporting it.
