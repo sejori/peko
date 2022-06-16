@@ -123,7 +123,7 @@
 
 <h2 id="request-handling">Request handling</h2>
 <p>
-    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> serve static assets, render JavaScript apps and stream server-sent events respectively. There are premade <code>addStaticRoute</code>, <code>addSSRRoute</code> and <code>addSSERoute</code> exports that implement their respective handlers but you can import the handlers or create your own and plug them into a basic Route (see <code>examples/custom-ssr</code>).
+    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> serve static assets, render JavaScript apps and stream server-sent events respectively. There are premade <code>addStaticRoute</code>, <code>addSSRRoute</code> and <code>addSSERoute</code> exports that implement their respective handlers but you can import the handlers or create your own and plug them into a basic Route (see <code>examples/custom-handler</code>).
 </p>
 
 <h2 id="response-caching">Response caching</h2>
