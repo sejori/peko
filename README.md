@@ -68,7 +68,7 @@
     </li>
 </ul>
 <p>
-    Read on, star/fork/clone, any suggestions/code reviews very welcome!
+    Read on, please star/fork/clone, and any feature suggestions or code reviews are very welcome!
 </p>
 
 <h2>Get started</h2>
