@@ -8,7 +8,7 @@
 </p>
 <h1 align="center">Peko</h1>
 <p align="center"><strong>
-    🪶 Featherweight toolkit for the modern <a href="https://deno.com/deploy">stateless web</a> 🦕 
+    🪶 Featherweight server toolkit for the <a href="https://deno.com/deploy">modern stateless web</a> 🦕 
 </strong></p>
 
 <p align="center">
