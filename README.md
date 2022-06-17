@@ -70,7 +70,7 @@
 <h2>Get started</h2>
 <h3>Build and launch a secure and scalable webapp from one file.</h3>
 
-<h3>OR try the examples:</h3>
+<h3>Try the example apps</h3>
 <ol>
     <li>
         <p><a href="#cool">Deno is sick.</a> <a href="https://deno.land/manual/getting_started/installation">Install it.</a></p>
@@ -89,8 +89,7 @@
     <strong>Note: <a href="https://marketplace.visualstudio.com/items?itemName=bierner.lit-html">Lit-html</a></strong> VS Code plugin recommended if using HTM & Preact.
 </p>
 
-<h3>OR Import Peko into your own project:</h3>
-<p><code>import * as Peko from "https://deno.land/x/peko/mod.ts"</code></p>
+<h3>Otherwise: <code>import * as Peko from "https://deno.land/x/peko/mod.ts"</code></h3>
 
 <h2>Deployment</h2>
 
