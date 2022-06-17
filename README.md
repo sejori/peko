@@ -8,7 +8,7 @@
 </p>
 <h1 align="center">Peko</h1>
 <p align="center"><strong>
-    🪶 Featherweight toolkit for the <a href="https://tinyclouds.org/javascript_containers">modern stateless web</a>. Built with Deno. 🦕 
+    🪶 Featherweight toolkit for the <a href="https://tinyclouds.org/javascript_containers">stateless web</a>. Built with <a href="https://deno.land/">Deno</a>. 🦕 
 </strong></p>
 
 <p align="center">
