@@ -12,12 +12,6 @@
 </strong></p>
 
 <p align="center">
-    <a href="https://doc.deno.land/https://deno.land/x/peko/mod.ts">
-        API DOCS
-    </a>
-</p>
-
-<p align="center">
     <span>
         &nbsp;
         <a href="#routing">
@@ -46,6 +40,12 @@
         </a>
         &nbsp;
     </span>
+</p>
+
+<p align="center">
+    <a href="https://doc.deno.land/https://deno.land/x/peko/mod.ts">
+        API DOCS
+    </a>
 </p>
 
 <h2>Philosophy</h2>
