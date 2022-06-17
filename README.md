@@ -68,7 +68,7 @@
 </p>
 
 <h2>Get started</h2>
-<h3>Build and launch a secure and scalable webapp from one file 🔥</h3>
+<h3>Build and launch a secure and scalable webapp from one file 🌠</h3>
 
 <h3>Try the example apps:</h3>
 <ol>
