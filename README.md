@@ -57,10 +57,10 @@
         <strong>Production-ready backend</strong> - TypeScript, Response caching (+ <a href="https://github.com/sebringrose/peko/issues">more soon</a>).
     </li>
     <li>
-        <strong>Software Minimalism</strong> - Sleek runtime with no build step. Uses only the Deno <a href="https://deno.land/std">std</a> library.
+        <strong>Software minimalism</strong> - Sleek runtime with no build step. Uses only the Deno <a href="https://deno.land/std">std</a> library.
     </li>
     <li>
-        <strong>Ease of Adoption</strong> - Intuitive API, lots of examples and no fixed project structure.
+        <strong>Ease of adoption</strong> - Intuitive API, lots of examples and no fixed project structure.
     </li>
 </ul>
 <p>
