@@ -143,10 +143,10 @@
     Better yet, Peko is not build for any specific frontend framework or library. You can use React, Preact, Vue... you name it (if you do set up a React or Vue project please consider adding it to the examples ❤️). Simply plug your app-rendering and HTML-templating logic into the <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts/~/Render">Render</a> function of an <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts/~/SSRRoute">SSRRoute</a>.
 </p>
 <p>
-    Peko is made possible by powerful new JavaScript tools. Deno, unlike Node.js, is built to the <a href="https://tc39.es/">ECMAScript specification</a>. This makes it compatible with browser JavaScript which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like Preact combined with <a href="https://github.com/developit/htm">htm</a> offer lightning fast client-side hydration with a browser-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and community tools for your back-end needs.
+    Peko is made possible by powerful new JavaScript tools. Deno is built to the <a href="https://tc39.es/">ECMAScript specification</a>. This makes it compatible with browser JavaScript which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like Preact combined with <a href="https://github.com/developit/htm">htm</a> offer lightning fast client-side hydration with a browser-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and loads of community tools for your back-end needs.
 </p>
 
 <h2>Differences between Next.js, etc.</h2>
 <p>
-    Peko is built with one radical design decision: it doesn't support the infinite universe of npm packages because they often require a build process. This is a deliberate step away from the inflated state that many web applications find themselves in. Just make sure your frontend modules can run in the browser!
+    Peko is built with one radical design decision: no build-step (i.e. no Webpack, no Babel). That means frontend modules must run in the server and browser as source if you want to utilize server-side rendering. You can still use component libraries and other node packages if you import their compiled module distributions. This is all a deliberate step away from the inflated state that many web applications find themselves in... it’s 2022.
 </p>
