@@ -111,22 +111,22 @@
 
 <h2 id="#routing">Routing</h2>
 <p>
-    Http Requests are matched to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/Route">Routes</a>. Routes can be added or removed at runtime via the <code>addRoute</code> and <code>removeRoute</code> exports.
+    Requests are matched to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/Route">Routes</a>. Routes can be added or removed at runtime via the <code>addRoute</code> and <code>removeRoute</code> exports.
 </p>
 
 <h2 id="#events">Events</h2>
 <p>
-    Realtime app logic can be built with <a href="https://doc.deno.land/https://deno.land/x/peko/lib/utils/emitter.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko/lib/utils/emitter.ts/~/Emitter">Emitters</a> via the <code>.emit</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe</code> or given to the <code>sseHandler</code> to stream Event data to connected clients (see <code>examples/sse</code>).
+    Realtime apps can be built with <a href="https://doc.deno.land/https://deno.land/x/peko/lib/utils/emitter.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko/lib/utils/emitter.ts/~/Emitter">Emitters</a> via the <code>.emit</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe</code> or given to the <code>sseHandler</code> to stream Event data to connected clients (see <code>examples/sse</code>).
 </p>
 
 <h2 id="request-handling">Request handling</h2>
 <p>
-    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> serve static assets, render JavaScript apps and stream server-sent events respectively. There are premade <code>addStaticRoute</code>, <code>addSSRRoute</code> and <code>addSSERoute</code> exports that implement their respective handlers but you can import the handlers or create your own and plug them into a basic Route (see <code>examples/custom-handler</code>).
+    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> serve static assets, render JavaScript apps and stream server-sent events respectively. There are also premade <code>addStaticRoute</code>, <code>addSSRRoute</code> and <code>addSSERoute</code> exports that implement their respective handlers. Of course, you can also create your own handlers plug them into a basic Route (see <code>examples/custom-handler</code>).
 </p>
 
 <h2 id="response-caching">Response caching</h2>
 <p>
-    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The <code>addSSRRoute</code> export uses the <code>createResponseCache</code> utility export to memoize the <code>ssrHandler</code> so that Requests can be served from the cache and not unecessarily rerendered.
+    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. Peko provides a <code>createResponseCache</code> utility export to create caches and memoize functions to them. The <code>addSSRRoute</code> export does this with the <code>ssrHandler</code> so that Requests can be served from the cache and not unecessarily rerendered (Response cache is indexed by serialized <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/Render">RequestContext</a>).
 </p>
 <p>
     <strong>Tip:</strong> Caching Responses from external data services helps keep your app fast and reduce network overhead in serving Requests!
@@ -137,16 +137,16 @@
 
 <h2 id="cool">This is cool...</h2>
 <p>
-    Because it provides all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling required - the server and browser can use the exact same code! This completely eliminates part of the traditional JavaScript SSR toolchain, increasing project maintainability and simplicity.
+    Because it provides all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling required - the server and browser can use the exact same code. This completely eliminates part of the traditional JavaScript SSR toolchain, increasing project maintainability and simplicity.
 </p>
 <p>
-    Better yet, Peko is not build for any specific frontend framework or library. You can use React, Preact, Vue... you name it (if you do set up a React/Vue project please consider adding it to the examples). Simply plug your app-rendering and HTML-templating logic into the <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts/~/Render">Render</a> function of an <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts/~/SSRRoute">SSRRoute</a>.
+    Better yet, Peko is not build for any specific frontend framework or library. You can use React, Preact, Vue... you name it (if you do set up a React or Vue project please consider adding it to the examples ❤️). Simply plug your app-rendering and HTML-templating logic into the <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts/~/Render">Render</a> function of an <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts/~/SSRRoute">SSRRoute</a>.
 </p>
 <p>
-    Peko is made possible by powerful new JavaScript tools. Deno, unlike Node.js, is built to the <a href="https://tc39.es/">ECMAScript specification</a>. This makes it compatible with browser JavaScript and vice versa which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like Preact combined with <a href="https://github.com/developit/htm">htm</a> offer lightning fast client-side hydration with a browser-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and a standard library full of great tools as well as a passionate community supporting it.
+    Peko is made possible by powerful new JavaScript tools. Deno, unlike Node.js, is built to the <a href="https://tc39.es/">ECMAScript specification</a>. This makes it compatible with browser JavaScript which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like Preact combined with <a href="https://github.com/developit/htm">htm</a> offer lightning fast client-side hydration with a browser-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and community tools for your back-end needs.
 </p>
 
 <h2>Differences between Next.js, etc.</h2>
 <p>
-    Peko is built with one radical design decision: it doesn't support the infinite universe of npm packages, as they often require a build process. This is a deliberate step away from the inflated state that many modern web applications find themselves in. Just make sure your frontend modules can run in the browser and you're golden!
+    Peko is built with one radical design decision: it doesn't support the infinite universe of npm packages because they often require a build process. This is a deliberate step away from the inflated state that many web applications find themselves in. Just make sure your frontend modules can run in the browser!
 </p>
