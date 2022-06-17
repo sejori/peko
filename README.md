@@ -70,7 +70,7 @@
 <h2>Get started</h2>
 <h3>Build and launch a secure and scalable webapp from one file.</h3>
 
-<h3>Try the example apps</h3>
+<h3>Try the example apps:</h3>
 <ol>
     <li>
         <p><a href="#cool">Deno is sick.</a> <a href="https://deno.land/manual/getting_started/installation">Install it.</a></p>
