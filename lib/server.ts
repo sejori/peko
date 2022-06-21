@@ -59,7 +59,7 @@ const requestHandler = async (request: Request) => {
     try {
       const response = await callerArray[fcn].call(ctx, ctx)
       logRequest(ctx, 200, start, Date.now() - start)
-      if (response) return response
+      if (response instanceof Response) return response
     } catch (error) {
       logError(request.url, error, new Date())
       logRequest(ctx, 500, start, Date.now() - start)
