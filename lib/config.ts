@@ -19,6 +19,12 @@ export const config: Config = {
   handleError: (_ctx: RequestContext, statusCode?: number) => {
     let response;
     switch (statusCode) {
+      case 401: 
+      response = new Response("401: Unauthorized!", {
+        headers: new Headers(),
+        status: 401
+      })
+      break
       case 404: 
         response = new Response("404: Nothing found here!", {
           headers: new Headers(),
