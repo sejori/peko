@@ -8,11 +8,11 @@ Peko.setConfig(config)
 Peko.addRoute({
   route: "/login",
   method: "GET",
-  handler: () => {
+  handler: async () => {
     const exp = new Date()
     exp.setMonth(exp.getMonth() + 1)
 
-    const jwt = Peko.generateJWT({
+    const jwt = await Peko.generateJWT({
       exp
     })
 
@@ -41,10 +41,10 @@ Peko.addRoute({
     <head>
       <title>Peko auth example</title>
     </head>
-    <body style="width: 100vw; height: 100vh;">
+    <body style="width: 100vw; height: 100vh; margin: 0;">
       <div style="border: 1px solid grey; margin: auto; padding: 1rem;">
-        <button onclick="login">Login</button>
-        <button onclick="testAuth">Test Auth</button>
+        <button onclick="login()">Login</button>
+        <button onclick="testAuth()">Test Auth</button>
       </div>
 
       <script>
@@ -53,12 +53,21 @@ Peko.addRoute({
         async function login() {
           const response = await fetch("/login")
           const json = await response.json()
-          console.log(json)
+          jwt = json.jwt
+        }
+
+        async function testAuth() {
+          const response = await fetch("/authTest", {
+            headers: new Headers({
+              "Authorization": "Bearer " + jwt
+            })
+          })
+          console.log(response)
         }
       </script>
     </body>
     </html>
-  `)
+  `, { headers: new Headers({ "Content-Type": "text/html; charset=UTF-8" }) })
 })
 
 // Start your Peko server :)
