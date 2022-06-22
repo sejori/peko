@@ -24,7 +24,7 @@ export const ssrHandler = async (ctx: RequestContext, ssrData: SSRRoute) => {
 
   // use provided render and template fcns for HTML generation
   const HTML = await ssrData.render(ctx)   
-  const hashString = hasher(HTML)
+  const hashString = await hasher(HTML)
 
   return new Response(HTML, {
     headers : new Headers({
