@@ -43,18 +43,34 @@ Peko.addRoute({
     </head>
     <body style="width: 100vw; height: 100vh; margin: 0; background-color: steelblue">
       <div style="border: 1px solid black; margin: auto; padding: 1rem;">
-        <button onclick="login()">Login</button>
+        <button id="login">Login</button>
         <button onclick="testAuth()">Test Auth</button>
       </div>
 
       <script>
+        const loginBtn = document.querySelector("#login")
         let jwt
 
         async function login() {
           const response = await fetch("/login")
+          console.log(response)
+
           const json = await response.json()
           jwt = json.jwt
-          console.log(jwt)
+          console.log("jwt: " + jwt)
+
+          loginBtn.textContent = "Logout"
+          loginBtn.removeEventListener("click", login)
+          loginBtn.addEventListener("click", logout)
+        }
+
+        function logout() { 
+          jwt = undefined 
+          console.log("jwt: " + jwt)
+
+          loginBtn.textContent = "Login"
+          loginBtn.removeEventListener("click", logout)
+          loginBtn.addEventListener("click", login)
         }
 
         async function testAuth() {
@@ -65,6 +81,8 @@ Peko.addRoute({
           })
           console.log(response)
         }
+
+        document.querySelector("#login").addEventListener("click", login)
       </script>
     </body>
     </html>

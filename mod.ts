@@ -15,8 +15,8 @@ export * from "./lib/handlers/sse.ts"
 export * from "./lib/middlewares/auth.ts"
 
 // Utils
-export * from "./lib/utils/logger.ts"
-export * from "./lib/utils/cacher.ts"
-export * from "./lib/utils/emitter.ts"
-export * from "./lib/utils/hasher.ts"
+export * from "./lib/utils/log.ts"
+export * from "./lib/utils/cache.ts"
+export * from "./lib/utils/event.ts"
+export * from "./lib/utils/hash.ts"
 export * from "./lib/utils/jwt.ts"

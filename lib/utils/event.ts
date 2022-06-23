@@ -1,4 +1,4 @@
-import { logError } from "./logger.ts"
+import { logError } from "./log.ts"
 
 const emitters: Emitter[] = []
 

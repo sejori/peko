@@ -1,5 +1,5 @@
 import { crypto } from "https://deno.land/std@0.144.0/crypto/mod.ts"
-import { logError } from "./logger.ts"
+import { logError } from "./log.ts"
 
 // const KEY = await crypto.subtle.generateKey({
 //   name: "HMAC",

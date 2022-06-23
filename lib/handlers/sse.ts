@@ -1,5 +1,5 @@
 import { addRoute, RequestContext, Middleware } from "../server.ts"
-import { Event, Emitter } from "../utils/emitter.ts"
+import { Event, Emitter } from "../utils/event.ts"
 import { config } from "../config.ts"
 
 const encoder = new TextEncoder()
