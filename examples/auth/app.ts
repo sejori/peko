@@ -13,7 +13,7 @@ Peko.addRoute({
     exp.setMonth(exp.getMonth() + 1)
 
     const jwt = await Peko.generateJWT({
-      exp
+      exp: exp.valueOf()
     })
 
     return new Response(JSON.stringify({ jwt}), {
@@ -41,8 +41,8 @@ Peko.addRoute({
     <head>
       <title>Peko auth example</title>
     </head>
-    <body style="width: 100vw; height: 100vh; margin: 0;">
-      <div style="border: 1px solid grey; margin: auto; padding: 1rem;">
+    <body style="width: 100vw; height: 100vh; margin: 0; background-color: steelblue">
+      <div style="border: 1px solid black; margin: auto; padding: 1rem;">
         <button onclick="login()">Login</button>
         <button onclick="testAuth()">Test Auth</button>
       </div>
@@ -54,6 +54,7 @@ Peko.addRoute({
           const response = await fetch("/login")
           const json = await response.json()
           jwt = json.jwt
+          console.log(jwt)
         }
 
         async function testAuth() {

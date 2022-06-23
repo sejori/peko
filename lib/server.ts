@@ -48,33 +48,35 @@ const requestHandler = async (request: Request) => {
   // locate matching route
   const requestURL = new URL(request.url)
   const route = routes.find(route => route.route === requestURL.pathname && route.method === request.method)
-  if (!route) {
-    logRequest(ctx, 404, start, Date.now() - start)
-    return tryHandleError(ctx, 404)
-  }
   
-  // run middleware stack and handler function
-  const callerArray = [...route.middleware, route.handler]
-  for (const fcn in callerArray) {
-    try {
-      const response = await callerArray[fcn].call(ctx, ctx)
-      logRequest(ctx, 200, start, Date.now() - start)
-      if (response instanceof Response) return response
-    } catch (error) {
-      logError(request.url, error, new Date())
-      logRequest(ctx, 500, start, Date.now() - start)
+  if (route) {
+    // run middleware stack and handler function
+    const callerArray = [...route.middleware, route.handler]
+    for (const fcn in callerArray) {
+      try {
+        const response = await callerArray[fcn].call(ctx, ctx)
+        if (response instanceof Response) {
+          logRequest(ctx, response.status, start, Date.now() - start)
+          return response
+        }
+      } catch (error) {
+        logError(request.url, error, new Date())
+        logRequest(ctx, 500, start, Date.now() - start)
+        return tryHandleError(ctx, 500)
+      }
     }
   }
 
-  return tryHandleError(ctx, 500)
+  logRequest(ctx, 404, start, Date.now() - start)
+  return tryHandleError(ctx, 404)
 }
 
 const tryHandleError = async (ctx: RequestContext, code?: number, error?: string) => {
   try {
     return await config.handleError(ctx, code, error)
-  } catch (e) {
-    console.log(e)
-    return new Response("Configured errorHandler ...")
+  } catch (error) {
+    console.log(error)
+    return new Response("Error:", error)
   }
 }
 
