@@ -33,8 +33,8 @@ export class RequestContext {
  */
 export const start = () => {
   config.logString(`Starting Peko server ${config.devMode ? "in devMode" : ""} on port ${config.port} with routes:`)
-  routes.forEach(route => config.logString(JSON.stringify({ ...route })))
-
+  routes.forEach(route => console.log(route))
+  
   serve(requestHandler, { 
     hostname: config.hostname, 
     port: config.port 
@@ -87,6 +87,7 @@ const tryHandleError = async (ctx: RequestContext, code?: number, error?: string
  */
 export const addRoute = (route: Route) => {
   const m: Middleware[] = []
+  const none = () => {}
 
   // consolidate singular or null middleware to Middleware[]
   if (route.middleware) {
@@ -95,7 +96,7 @@ export const addRoute = (route: Route) => {
     } else {
       m.push(route.middleware)
     }
-  } else m.push(() => {})
+  } else m.push(none)
 
   return routes.push({ 
     ...route,
