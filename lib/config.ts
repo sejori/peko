@@ -1,5 +1,5 @@
 import { RequestContext } from "./server.ts"
-import { Event } from "./utils/emitter.ts"
+import { Event } from "./utils/event.ts"
 
 export interface Config { 
   devMode: boolean

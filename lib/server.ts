@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
-import { logRequest, logError } from "./utils/logger.ts"
+import { logRequest, logError } from "./utils/log.ts"
 import { config } from "./config.ts"
 
 const routes: SafeRoute[] = []
@@ -32,8 +32,8 @@ export class RequestContext {
  * Respond to http requests with config and routes.
  */
 export const start = () => {
-  config.logString(`Starting Peko server ${config.devMode ? "in devMode" : ""} on port ${config.port} with routes:`)
-  routes.forEach(route => console.log(route))
+  config.logString(`Peko server ${config.devMode ? "(devMode)" : ""} started with routes:`)
+  routes.forEach((route, i) => config.logString(`${route.method} ${route.route} ${i===routes.length-1 ? "\n" : ""}`))
   
   serve(requestHandler, { 
     hostname: config.hostname, 

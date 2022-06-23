@@ -1,7 +1,7 @@
 import { addRoute, RequestContext, Middleware } from "../server.ts"
 import { config } from "../config.ts"
-import { createResponseCache } from "../utils/cacher.ts"
-import { hasher } from "../utils/hasher.ts"
+import { createResponseCache } from "../utils/cache.ts"
+import { hasher } from "../utils/hash.ts"
 
 export type SSRRoute = { 
   route: string

@@ -1,7 +1,6 @@
 import { RequestContext } from "../server.ts"
 import { config } from "../config.ts"
-import { Event } from "./emitter.ts"
-
+import { Event } from "./event.ts"
 
 /**
  * Peko's internal request logging function. Uses config.logString and log.Event underneath.
