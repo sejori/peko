@@ -10,7 +10,7 @@ interface SafeRoute extends Route {
 
 export interface Route { 
   route: string
-  method: string
+  method?: string
   middleware?: Middleware[] | Middleware
   handler: Handler
 }
@@ -85,6 +85,8 @@ const tryHandleError = async (ctx: RequestContext, code?: number, error?: string
  */
 export const addRoute = (route: Route) => {
   const m: Middleware[] = []
+
+  if (!route.method) route.method = "GET"
 
   // consolidate singular or null middleware to Middleware[]
   if (route.middleware) {
