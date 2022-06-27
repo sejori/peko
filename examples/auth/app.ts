@@ -28,11 +28,11 @@ Peko.addRoute({
 Peko.addRoute({
   route: "/authTest",
   method: "GET",
-  middleware: Peko.authMiddleware,
+  middleware: Peko.authenticator,
   handler: () => new Response("You are authenticated!")
 })
 
-// basic HTML page to test
+// basic HTML page with buttons to call auth routes
 Peko.addRoute({
   route: "/",
   method: "GET",

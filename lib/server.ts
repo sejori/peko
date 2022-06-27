@@ -15,12 +15,13 @@ export interface Route {
   handler: Handler
 }
 
-export type Middleware = (ctx: RequestContext) => Promise<Response | void> | Response | void
+export type Middleware = (ctx: RequestContext, next?: Middleware) => Promise<Response | void> | Response | void
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 
 export class RequestContext {
   request: Request
   data: Record<string, Response | number | string | boolean>
+  next: Middleware = () => new Response()
 
   constructor(request: Request) {
     this.request = request
@@ -50,20 +51,29 @@ const requestHandler = async (request: Request) => {
   const route = routes.find(route => route.route === requestURL.pathname && route.method === request.method)
   
   if (route) {
-    // run middleware stack and handler function
-    const callerArray = [...route.middleware, route.handler]
-    for (const fcn in callerArray) {
+    let called = 0;
+
+    const run = async (fcn: Middleware) => {
+      called++
+      ctx.next = called < route.middleware.length
+        ? () => run(route.middleware[called])
+        : () => run(route.handler)
+
       try {
-        const response = await callerArray[fcn].call(ctx, ctx)
-        if (response instanceof Response) {
-          logRequest(ctx, response.status, start, Date.now() - start)
-          return response
-        }
+        const response = await fcn.call(ctx, ctx)
+        if (response) logRequest(ctx, response.status, start, Date.now() - start)
+        return response
       } catch (error) {
         logError(request.url, error, new Date())
         logRequest(ctx, 500, start, Date.now() - start)
         return tryHandleError(ctx, 500)
       }
+    }
+
+    const toCall = [ ...route.middleware, route.handler ]
+    while (called < toCall.length) {
+      const response = await run(toCall[called])
+      if (response instanceof Response && called === toCall.length) return response
     }
   }
 

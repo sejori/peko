@@ -2,7 +2,7 @@ import { RequestContext } from "../server.ts"
 import { config } from "../config.ts"
 import { decodeJWT } from "../utils/jwt.ts"
 
-export const authMiddleware = async (ctx: RequestContext) => {
+export const authenticator = async (ctx: RequestContext) => {
   const authHeader = ctx.request.headers.get("Authorization")
 
   if (authHeader && authHeader.slice(0,7) === "Bearer ") {
