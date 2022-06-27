@@ -14,7 +14,10 @@ export const pages: SSRRoute[] = [
       route: "/",
       // srcURL used for emitting file change events in devMode
       srcURL: new URL("./src/pages/Home.js", import.meta.url),
-      middleware: (ctx: RequestContext) => { ctx.data.server_time = `${Date.now()}` },
+      middleware: async (ctx: RequestContext, next) => { 
+        ctx.data.server_time = `${Date.now()}`
+        return await next()
+      },
       render: (ctx: RequestContext) => {
         const appHTML = renderToString(Home(ctx.data), null, null)
         return htmlTemplate({
