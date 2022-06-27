@@ -12,7 +12,7 @@ export * from "./lib/handlers/ssr.ts"
 export * from "./lib/handlers/sse.ts"
 
 // Middlewares
-export * from "./lib/middlewares/auth.ts"
+export * from "./lib/middlewares/authenticator.ts"
 
 // Utils
 export * from "./lib/utils/log.ts"
