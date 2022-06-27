@@ -13,7 +13,7 @@ const config: Partial<Config> = {
   devMode: env.ENVIRONMENT !== "production",
 
   // handle internally-generated log strings and events 
-  // logString: (s) => console.log(s), <-- default
+  // logString: (s) => console.log(s), // <-- default
   logEvent: () => {}, // <-- ingore event logs for clean shell
 
   // Set custom responses for errors thrown by Peko internals
