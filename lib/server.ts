@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
-import { logRequest, logError } from "./utils/log.ts"
+import { logError } from "./utils/log.ts"
 import { config } from "./config.ts"
 
 const routes: SafeRoute[] = []
@@ -21,13 +21,13 @@ export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 
 export class RequestContext {
   request: Request
-  status: number
-  data: Record<string, unknown>
+  state: Record<string, unknown>
 
   constructor(request: Request) {
     this.request = request
-    this.status = 200
-    this.data = {}
+    this.state = {
+      status: 404
+    }
   }
 }
 
@@ -46,27 +46,18 @@ export const start = () => {
 
 const requestHandler = async (request: Request) => {
   const ctx: RequestContext = new RequestContext(request)
-  // const start = Date.now()
-
-  // locate matching route
   const requestURL = new URL(request.url)
   const route = routes.find(route => route.route === requestURL.pathname && route.method === request.method)
-  
-  if (!route) {
-    // logRequest(ctx, 404, start, Date.now() - start)
-    ctx.status = 404
-    return tryHandleError(ctx)
+
+  let called = 0
+  let result: MiddlewareResult
+  let toCall: Middleware[] = [ ...config.globalMiddleware, tryHandleError ]
+  if (route) {
+    ctx.state.status = 200
+    toCall = [ ...config.globalMiddleware, ...route.middleware, route.handler ]
   }
 
-  const toCall = [ ...route.middleware, route.handler ]
-  let called = 0
-  
-  let result: MiddlewareResult
-
   const run: (m: Middleware) => MiddlewareResult = (fcn: Middleware) => {
-    // this code is confusing but I'm trying to resolve the run promise on next call
-    // so that the request handling can continue to the next mware on next()
-    // and we don't need to wait for every mware to resolve before returning response
     return new Promise((resolve, reject) => {
       called += called < toCall.length-1 ? 1 : 0
       const next = async () => {
@@ -88,8 +79,7 @@ const requestHandler = async (request: Request) => {
         }
       } catch (error) {
         logError(request.url, error, new Date())
-        // logRequest(ctx, 500, start, Date.now() - start)
-        ctx.status = 500
+        ctx.state.status = 500
         tryHandleError(ctx)
         reject()
       }
@@ -97,11 +87,10 @@ const requestHandler = async (request: Request) => {
   }
 
   while (!(result instanceof Response)) await run(toCall[called])
-  // logRequest(ctx, result.status, start, Date.now() - start)
   return result 
 }
 
-const tryHandleError = async (ctx: RequestContext) => {
+const tryHandleError: Handler = async (ctx: RequestContext) => {
   try {
     return await config.handleError(ctx)
   } catch (error) {

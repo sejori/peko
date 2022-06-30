@@ -1,5 +1,4 @@
 import { RequestContext, SSRRoute, StaticRoute, Route } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
-import { logger } from "../../lib/middlewares/logger.ts"
 import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
@@ -15,14 +14,11 @@ export const pages: SSRRoute[] = [
       route: "/",
       // srcURL used for emitting file change events in devMode
       srcURL: new URL("./src/pages/Home.js", import.meta.url),
-      middleware: [
-        logger, 
-        (ctx: RequestContext) => { 
-          ctx.data.server_time = `${Date.now()}`
-        }
-      ],
+      middleware: (ctx: RequestContext) => { 
+        ctx.state.server_time = `${Date.now()}`
+      },
       render: (ctx: RequestContext) => {
-        const appHTML = renderToString(Home(ctx.data), null, null)
+        const appHTML = renderToString(Home(ctx.state), null, null)
         return htmlTemplate({
           appHTML,
           title: `<title>Peko</title>`,
@@ -30,7 +26,7 @@ export const pages: SSRRoute[] = [
           hydrationScript: `<script type="module">
               import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
               import Home from "/pages/Home.js";
-              hydrate(Home(${JSON.stringify(ctx.data)}), document.getElementById("root"))
+              hydrate(Home(${JSON.stringify(ctx.state)}), document.getElementById("root"))
           </script>`
         })
       },

@@ -13,6 +13,7 @@ export * from "./lib/handlers/sse.ts"
 
 // Middlewares
 export * from "./lib/middlewares/authenticator.ts"
+export * from "./lib/middlewares/logger.ts"
 
 // Utils
 export * from "./lib/utils/log.ts"

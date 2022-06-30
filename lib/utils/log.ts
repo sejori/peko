@@ -13,9 +13,9 @@ import { Event } from "./event.ts"
  * @param responseTime: number
  * @returns Promise<void>
  */
-export const logRequest = async (ctx: RequestContext, status: number, start: number, responseTime: number) => {
+export const logRequest = async (ctx: RequestContext, start: number, responseTime: number) => {
   const date = new Date(start)
-
+  const status = ctx.state.status
   const request: Request = ctx.request
   const requestEvent: Event = {
     id: `${ctx.request.method}-${request.url}-${date.toJSON()}`,
@@ -24,7 +24,8 @@ export const logRequest = async (ctx: RequestContext, status: number, start: num
     data: {
       status,
       responseTime: `${responseTime}ms`,
-      request: request
+      request: request,
+      ctx
     }
   }
 
@@ -42,13 +43,12 @@ export const logRequest = async (ctx: RequestContext, status: number, start: num
 }
 
 /**
- * Peko's internal error logging function. Uses config.eventLogger underneath.
- * 
- * Returns promise so process isn't blocked when called without "await" keyword.
- * 
+ * Peko's internal error logging function.
+ * Returns Promise so process isn't blocked when called without "await" keyword.
  * @param id: string
  * @param error: any
  * @param date: Date
+ * @returns Promise<void>
  */
 export const logError = async (id: string, error: string, date: Date) => {
   try {

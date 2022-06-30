@@ -1,4 +1,4 @@
-import { Config } from "../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import { Config, logger } from "../mod.ts" // <- https://deno.land/x/peko/mod.ts
 
 const env = Deno.env.toObject()
 
@@ -9,15 +9,20 @@ const config: Partial<Config> = {
   port: 7777,
   hostname: "0.0.0.0",
 
-  // devMode true enables hot-reload events in ssrHandler and disables cacher middleware
+  // devMode true enables hot-reload events in ssrHandler
+  // 
   devMode: env.ENVIRONMENT !== "production",
+
+  globalMiddleware: [
+    logger
+  ],
 
   // handle internally-generated log strings and events 
   // logString: (s) => console.log(s), // <-- default
   logEvent: () => {}, // <-- ingore event logs for clean shell
 
   // Set custom responses for errors thrown by Peko internals
-  // handleError: (_ctx, _status) => new Response("Uh-oh! Something went wrong...")
+  // handleError: (ctx) => new Response("Uh-oh! Something went wrong...")
 }
 
 export default config
