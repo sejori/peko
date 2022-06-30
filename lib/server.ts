@@ -15,16 +15,18 @@ export interface Route {
   handler: Handler
 }
 
-type MiddlewareResult = Promise<Response | void> | Response | void
+export type MiddlewareResult = Promise<Response | void> | Response | void
 export type Middleware = (ctx: RequestContext, next: () => MiddlewareResult) => MiddlewareResult
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 
 export class RequestContext {
   request: Request
-  data: Record<string, Response | number | string | boolean>
+  status: number
+  data: Record<string, unknown>
 
   constructor(request: Request) {
     this.request = request
+    this.status = 200
     this.data = {}
   }
 }
@@ -44,47 +46,64 @@ export const start = () => {
 
 const requestHandler = async (request: Request) => {
   const ctx: RequestContext = new RequestContext(request)
-  const start = Date.now()
+  // const start = Date.now()
 
   // locate matching route
   const requestURL = new URL(request.url)
   const route = routes.find(route => route.route === requestURL.pathname && route.method === request.method)
   
-  if (route) {
-    const toCall = [ ...route.middleware, route.handler ]
-    let called = 0
-    let result: MiddlewareResult
-    let next: () => MiddlewareResult
-
-    const run: (m: Middleware) => MiddlewareResult = async (fcn: Middleware) => {
-      called++
-      if (called < toCall.length) next = async () => await run(toCall[called])
-
-      try {
-        return result = await fcn.call(ctx, ctx, next)
-      } catch (error) {
-        logError(request.url, error, new Date())
-        logRequest(ctx, 500, start, Date.now() - start)
-        return tryHandleError(ctx, 500)
-      }
-    }
-
-    while (called < toCall.length) result = await run(toCall[called])
-
-    if (result instanceof Response) {
-      const response = result
-      logRequest(ctx, response.status, start, Date.now() - start)
-      return response
-    }
+  if (!route) {
+    // logRequest(ctx, 404, start, Date.now() - start)
+    ctx.status = 404
+    return tryHandleError(ctx)
   }
 
-  logRequest(ctx, 404, start, Date.now() - start)
-  return tryHandleError(ctx, 404)
+  const toCall = [ ...route.middleware, route.handler ]
+  let called = 0
+  
+  let result: MiddlewareResult
+
+  const run: (m: Middleware) => MiddlewareResult = (fcn: Middleware) => {
+    // this code is confusing but I'm trying to resolve the run promise on next call
+    // so that the request handling can continue to the next mware on next()
+    // and we don't need to wait for every mware to resolve before returning response
+    return new Promise((resolve, reject) => {
+      called += called < toCall.length-1 ? 1 : 0
+      const next = async () => {
+        resolve()
+        await run(toCall[called])
+      }
+
+      try {
+        const x = fcn.call(ctx, ctx, next)
+
+        if (x instanceof Promise) {
+          x.then((res) => {
+            result = res
+            resolve()
+          })
+        } else {
+          result = x
+          resolve()
+        }
+      } catch (error) {
+        logError(request.url, error, new Date())
+        // logRequest(ctx, 500, start, Date.now() - start)
+        ctx.status = 500
+        tryHandleError(ctx)
+        reject()
+      }
+    })
+  }
+
+  while (!(result instanceof Response)) await run(toCall[called])
+  // logRequest(ctx, result.status, start, Date.now() - start)
+  return result 
 }
 
-const tryHandleError = async (ctx: RequestContext, code?: number, error?: string) => {
+const tryHandleError = async (ctx: RequestContext) => {
   try {
-    return await config.handleError(ctx, code, error)
+    return await config.handleError(ctx)
   } catch (error) {
     console.log(error)
     return new Response("Error:", error)

@@ -1,11 +1,6 @@
 import { crypto } from "https://deno.land/std@0.144.0/crypto/mod.ts"
 import { logError } from "./log.ts"
 
-// const KEY = await crypto.subtle.generateKey({
-//   name: "HMAC",
-//   hash: {name: "SHA-512"}
-// }, true, ["sign", "verify"])
-
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 

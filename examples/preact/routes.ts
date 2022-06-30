@@ -1,4 +1,5 @@
 import { RequestContext, SSRRoute, StaticRoute, Route } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import { logger } from "../../lib/middlewares/logger.ts"
 import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
@@ -14,10 +15,12 @@ export const pages: SSRRoute[] = [
       route: "/",
       // srcURL used for emitting file change events in devMode
       srcURL: new URL("./src/pages/Home.js", import.meta.url),
-      middleware: async (ctx: RequestContext, next) => { 
-        ctx.data.server_time = `${Date.now()}`
-        return await next()
-      },
+      middleware: [
+        logger, 
+        (ctx: RequestContext) => { 
+          ctx.data.server_time = `${Date.now()}`
+        }
+      ],
       render: (ctx: RequestContext) => {
         const appHTML = renderToString(Home(ctx.data), null, null)
         return htmlTemplate({
