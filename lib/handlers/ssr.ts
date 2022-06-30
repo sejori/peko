@@ -13,8 +13,7 @@ export type SSRRoute = {
 export type Render = (ctx: RequestContext) => string | Promise<string>
 
 /**
- * SSR request handler complete with JS app rendering, HTML templating & response caching logic. 
- * 
+ * Peko Server-Side Rendering handler. Generates "Cache-Control" and "ETAG" headers.
  * @param ctx: RequestContext
  * @param ssrData: SSRRoute
  * @returns Promise<Response>
@@ -57,7 +56,10 @@ export const addSSRRoute = (ssrData: SSRRoute) => {
     lifetime: ssrData.cacheLifetime
   }) 
 
-  const cachedSSRHandler = memoizeHandler((ctx) => ssrHandler(ctx, ssrData))
+  const cachedSSRHandler = memoizeHandler((ctx) => {
+    console.log("poop")
+    return ssrHandler(ctx, ssrData)
+  })
 
   return addRoute({
     route: ssrData.route,

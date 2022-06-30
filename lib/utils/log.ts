@@ -14,8 +14,11 @@ import { Event } from "./event.ts"
  * @returns Promise<void>
  */
 export const logRequest = async (ctx: RequestContext, start: number, responseTime: number) => {
+  console.log(ctx)
+
   const date = new Date(start)
   const status = ctx.state.status
+  const cached = ctx.state.cached
   const request: Request = ctx.request
   const requestEvent: Event = {
     id: `${ctx.request.method}-${request.url}-${date.toJSON()}`,
@@ -30,7 +33,7 @@ export const logRequest = async (ctx: RequestContext, start: number, responseTim
   }
 
   try {
-    await config.logString(`[${requestEvent.date}] ${status} ${request.method} ${request.url} ${requestEvent.data.responseTime}`)
+    await config.logString(`[${requestEvent.date}] ${status} ${request.method} ${request.url} ${requestEvent.data.responseTime}${cached ? " (CACHED)" : ""}`)
   } catch (error) {
     console.log(error)
   }

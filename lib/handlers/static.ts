@@ -11,8 +11,7 @@ export type StaticRoute = {
 }
 
 /**
- * Static asset request handler
- * 
+ * Peko static asset handler. Generates "Cache-Control" and "ETAG" headers.
  * @param staticData: StaticRoute
  * @returns Promise<Response>
  */
