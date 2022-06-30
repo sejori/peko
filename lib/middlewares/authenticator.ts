@@ -8,11 +8,9 @@ export const authenticator = async (ctx: RequestContext) => {
   if (authHeader && authHeader.slice(0,7) === "Bearer ") {
     const jwt = authHeader.slice(7)
     const payload = await decodeJWT(jwt)
-    if (payload && (!payload.exp || payload.exp > Date.now())) {
-      ctx.data.authPayload = payload
-      return
-    }
+    if (payload && (!payload.exp || payload.exp > Date.now())) return ctx.data.authPayload = payload
   }
   
-  return await config.handleError(ctx, 401)
+  ctx.status = 401
+  return await config.handleError(ctx)
 }

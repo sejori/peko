@@ -7,7 +7,7 @@ export interface Config {
   hostname: string
   logString: (log: string) => Promise<void> | void
   logEvent: (data: Event) => Promise<void> | void
-  handleError: (ctx: RequestContext, statusCode?: number, error?: Error | string | undefined) => Response | Promise<Response>
+  handleError: (ctx: RequestContext, error?: Error | string) => Response | Promise<Response>
 }
 
 export const config: Config = {
@@ -16,9 +16,9 @@ export const config: Config = {
   hostname: "0.0.0.0",
   logString: (log: string) => console.log(log),
   logEvent: (e: Event) => console.log(e),
-  handleError: (_ctx: RequestContext, statusCode?: number) => {
+  handleError: (ctx: RequestContext) => {
     let response;
-    switch (statusCode) {
+    switch (ctx.status) {
       case 401: 
       response = new Response("401: Unauthorized!", {
         headers: new Headers(),
