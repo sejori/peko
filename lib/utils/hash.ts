@@ -2,7 +2,6 @@ import { crypto } from "https://deno.land/std@0.142.0/crypto/mod.ts";
 
 /**
  * Peko's internal hashing function for generating ETags etc.
- * 
  * @param contents: string
  * @returns hashString: string
  */
