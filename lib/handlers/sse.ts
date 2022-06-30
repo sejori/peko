@@ -1,22 +1,15 @@
-import { addRoute, RequestContext, Middleware } from "../server.ts"
+import { RequestContext } from "../server.ts"
 import { Event, Emitter } from "../utils/event.ts"
 import { config } from "../config.ts"
 
 const encoder = new TextEncoder()
 
-export type SSERoute = {
-  route: string
-  middleware?: Middleware[] | Middleware
-  emitter: Emitter
-}
-
 /**
- * SSE connection handler
- * 
+ * Peko Server-Sent Events handler. Streams Event data from provided Emitter to Response body.
  * @param sseData: SSERoute
  * @returns Promise<Response>
  */
-export const sseHandler = (ctx: RequestContext, sseData: SSERoute) => {
+export const sseHandler = (ctx: RequestContext, emitter: Emitter) => {
   let lexController: ReadableStreamDefaultController<any>
   const lexEnqueue = (event: Event) => lexController.enqueue(encoder.encode(`data: ${JSON.stringify(event.data)}\n\n`))
 
@@ -24,11 +17,11 @@ export const sseHandler = (ctx: RequestContext, sseData: SSERoute) => {
     start(controller) {
       config.logString(`Client ${ctx.request.headers.get("X-Forwarded-For")} connected`)
       lexController = controller
-      sseData.emitter.subscribe(lexEnqueue)
+      emitter.subscribe(lexEnqueue)
     },
     cancel() {
       config.logString(`Client ${ctx.request.headers.get("X-Forwarded-For")} disconnected`)
-      sseData.emitter.unsubscribe(lexEnqueue)
+      emitter.unsubscribe(lexEnqueue)
     }
   })
 
@@ -36,22 +29,5 @@ export const sseHandler = (ctx: RequestContext, sseData: SSERoute) => {
     headers: {
       "Content-Type": "text/event-stream",
     }
-  })
-}
-
-/**
- * Add an SSERoute
- * 
- * @param sseRouteData { 
-    route: string - e.g. "favicon.png"
-    emitter: Emitter - Peko's internal event subscription interface
- * }
- */
-export const addSSERoute = (sseData: SSERoute) => {
-  return addRoute({
-    route: sseData.route,
-    method: "GET",
-    middleware: sseData.middleware,
-    handler: async (ctx) => await sseHandler(ctx, sseData)
   })
 }

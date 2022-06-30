@@ -10,8 +10,8 @@ const config: Partial<Config> = {
   hostname: "0.0.0.0",
 
   // devMode true enables hot-reload events in ssrHandler
-  // 
-  devMode: env.ENVIRONMENT !== "production",
+  // devMode: env.ENVIRONMENT !== "production",
+  devMode: false,
 
   globalMiddleware: [
     logger

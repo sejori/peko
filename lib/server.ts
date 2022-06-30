@@ -32,7 +32,7 @@ export class RequestContext {
 }
 
 /**
- * Respond to http requests with config and routes.
+ * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
  */
 export const start = () => {
   config.logString(`Peko server ${config.devMode ? "(devMode)" : ""} started with routes:`)
