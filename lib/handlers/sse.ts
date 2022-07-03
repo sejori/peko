@@ -10,7 +10,7 @@ const encoder = new TextEncoder()
  * @returns Promise<Response>
  */
 export const sseHandler = (ctx: RequestContext, emitter: Emitter) => {
-  let lexController: ReadableStreamDefaultController<any>
+  let lexController: ReadableStreamDefaultController<unknown>
   const lexEnqueue = (event: Event) => lexController.enqueue(encoder.encode(`data: ${JSON.stringify(event.data)}\n\n`))
 
   const body = new ReadableStream({
