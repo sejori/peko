@@ -16,8 +16,8 @@ export interface Route {
   handler: Handler
 }
 
-export type MiddlewareResult = Promise<Response | void> | Response | void
 export type Middleware = (ctx: RequestContext, next: () => MiddlewareResult) => MiddlewareResult
+export type MiddlewareResult = Promise<Response | void> | Response | void
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 
 export class RequestContext {
@@ -50,36 +50,47 @@ const requestHandler = async (request: Request) => {
   const requestURL = new URL(request.url)
   const route = routes.find(route => route.route === requestURL.pathname && route.method === request.method)
 
-  let called = 0
-  let result: MiddlewareResult
   let toCall: Middleware[] = [ ...config.globalMiddleware, tryHandleError ]
   if (route) {
     ctx.state.status = 200
     toCall = [ ...config.globalMiddleware, ...route.middleware, route.handler ]
   }
 
+  const response = await runMiddleware(ctx, toCall)
+  return response
+}
+
+const runMiddleware = async (ctx: RequestContext, toCall: Middleware[]) => {
+  let called = 0
+  let result: MiddlewareResult
+
+  // quite a funky Promise-based recursive middleware executor
   const run: (m: Middleware) => MiddlewareResult = (fcn: Middleware) => {
     return new Promise((resolve, reject) => {
+      // track how many middleware we've called to know which is next across stack frames
       called += called < toCall.length-1 ? 1 : 0
+
+      // passed into middleware to resolve current Promise to move onto next middleware
+      // will resolve when next middleware resolves (by returning or calling next)
       const next = async () => {
         resolve()
         await run(toCall[called])
       }
-
+  
       try {
-        const x = fcn.call(ctx, ctx, next)
-
-        if (x instanceof Promise) {
-          x.then((res) => {
+        console.log("calling ", fcn)
+        const mResult = fcn.call(ctx, ctx, next)
+        if (mResult instanceof Promise) {
+          mResult.then((res) => {
             result = res
             resolve()
           })
         } else {
-          result = x
+          result = mResult
           resolve()
         }
       } catch (error) {
-        logError(request.url, error, new Date())
+        logError(ctx.request.url, error, new Date())
         ctx.state.status = 500
         tryHandleError(ctx)
         reject()

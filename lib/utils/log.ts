@@ -8,14 +8,11 @@ import { Event } from "./event.ts"
  * Returns promise so process isn't blocked when called without "await" keyword.
  * 
  * @param ctx: RequestContext
- * @param status: number
  * @param start: number
  * @param responseTime: number
  * @returns Promise<void>
  */
 export const logRequest = async (ctx: RequestContext, start: number, responseTime: number) => {
-  console.log(ctx)
-
   const date = new Date(start)
   const status = ctx.state.status
   const cached = ctx.state.cached

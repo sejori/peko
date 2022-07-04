@@ -17,14 +17,16 @@ import htmlTemplate from "./template.ts"
 const memoize = createResponseCache()
 
 export const pages: Route[] = [
-  // must be SSRRoute type (see lib/handlers/ssr.ts)
   {
     route: "/",
     middleware: [
       async (_ctx, next) => {
+        console.log("here")
+        throw("poop")
+        console.log(await next())
+        console.log("waiting a second")
         await new Promise(res => setTimeout(res, 1000))
         console.log("its been a second")
-        console.log(await next())
       },
       (ctx) => { 
         ctx.state.server_time = `${Date.now()}`
@@ -41,7 +43,7 @@ export const pages: Route[] = [
           hydrationScript: `<script type="module">
             import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
             import Home from "/pages/Home.js";
-            hydrate(Home(${JSON.stringify(ctx.state)}), document.getElementById("root"))
+            hydrate(Home(${JSON.stringify(ctx.state)}), document.getElementById("root"));
           </script>`
         })
       }
@@ -70,25 +72,25 @@ export const pages: Route[] = [
 
 const srcFiles = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
 export const assets: Route[] = srcFiles.map(file => {
-    const rootPath = `${Deno.cwd()}/examples/preact/src/`
-    const fileRoute: `/${string}` = `/${file.slice(rootPath.length)}`
+  const rootPath = `${Deno.cwd()}/examples/preact/src/`
+  const fileRoute: `/${string}` = `/${file.slice(rootPath.length)}`
 
-    return {
-      route: fileRoute,
-      handler: (ctx) => staticHandler(ctx, {
-        fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
-        contentType: lookup(file)
-      })
-    }
+  return {
+    route: fileRoute,
+    handler: (ctx) => staticHandler(ctx, {
+      fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
+      contentType: lookup(file)
+    })
+  }
 })
 
 export const APIs: Route[] = [
-    {
-        route: "/api/parrot",
-        method: "POST",
-        handler: async (ctx: RequestContext) => {
-            const body = await ctx.request.json()
-            return new Response(`Parrot sqwarks: ${JSON.stringify(body)}`)
-        }
+  {
+    route: "/api/parrot",
+    method: "POST",
+    handler: async (ctx: RequestContext) => {
+      const body = await ctx.request.json()
+      return new Response(`Parrot sqwarks: ${JSON.stringify(body)}`)
     }
+  }
 ]
