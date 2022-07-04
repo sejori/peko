@@ -1,7 +1,6 @@
 import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
-import config from "../config.ts"
 import { pages, assets, APIs } from "../preact/routes.ts"
 import Home from "../preact/src/pages/Home.js"
 import htmlTemplate from "../preact/template.ts"
@@ -41,7 +40,7 @@ pages[0].handler = (ctx) => Peko.ssrHandler(ctx, {
   }
 })
 
-// SSR'ed app page routes
+// SSR'ed page routes
 pages.forEach(page => Peko.addRoute(page))
 // Static assets
 assets.forEach(asset => Peko.addRoute(asset))
