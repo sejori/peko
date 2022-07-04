@@ -21,10 +21,12 @@ export const pages: Route[] = [
     route: "/",
     middleware: [
       async (_ctx, next) => {
+        console.log("here")
+        throw("poop")
+        console.log(await next())
         console.log("waiting a second")
         await new Promise(res => setTimeout(res, 1000))
         console.log("its been a second")
-        console.log(await next())
       },
       (ctx) => { 
         ctx.state.server_time = `${Date.now()}`
