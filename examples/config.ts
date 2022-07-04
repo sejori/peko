@@ -11,6 +11,7 @@ const config: Partial<Config> = {
 
   // devMode true enables hot-reload events in ssrHandler
   devMode: env.ENVIRONMENT !== "production",
+  // devMode: false,
 
   globalMiddleware: [
     logger

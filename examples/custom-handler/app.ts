@@ -9,7 +9,7 @@ import htmlTemplate from "../preact/template.ts"
 // Configure Peko
 Peko.setConfig(config)
 // Static assets
-assets.forEach(asset => Peko.addStaticRoute(asset))
+assets.forEach(asset => Peko.addRoute(asset))
 // Custom API functions
 APIs.forEach(API => Peko.addRoute(API))
 
