@@ -16,8 +16,8 @@ export interface Route {
   handler: Handler
 }
 
-export type MiddlewareResult = Promise<Response | void> | Response | void
 export type Middleware = (ctx: RequestContext, next: () => MiddlewareResult) => MiddlewareResult
+export type MiddlewareResult = Promise<Response | void> | Response | void
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 
 export class RequestContext {
