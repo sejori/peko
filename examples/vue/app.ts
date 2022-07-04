@@ -8,9 +8,9 @@ import { pages, assets, APIs } from "./routes.ts"
 // Configure Peko
 Peko.setConfig(config)
 // SSR'ed app page routes
-pages.forEach(page => Peko.addSSRRoute(page))
+pages.forEach(page => Peko.addRoute(page))
 // Static assets
-assets.forEach(asset => Peko.addStaticRoute(asset))
+assets.forEach(asset => Peko.addRoute(asset))
 // Custom API functions
 APIs.forEach(API => Peko.addRoute(API))
 

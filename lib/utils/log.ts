@@ -1,7 +1,6 @@
 import { RequestContext } from "../server.ts"
 import { config } from "../config.ts"
-import { Event } from "./emitter.ts"
-
+import { Event } from "./event.ts"
 
 /**
  * Peko's internal request logging function. Uses config.logString and log.Event underneath.
@@ -14,9 +13,12 @@ import { Event } from "./emitter.ts"
  * @param responseTime: number
  * @returns Promise<void>
  */
-export const logRequest = async (ctx: RequestContext, status: number, start: number, responseTime: number) => {
-  const date = new Date(start)
+export const logRequest = async (ctx: RequestContext, start: number, responseTime: number) => {
+  console.log(ctx)
 
+  const date = new Date(start)
+  const status = ctx.state.status
+  const cached = ctx.state.cached
   const request: Request = ctx.request
   const requestEvent: Event = {
     id: `${ctx.request.method}-${request.url}-${date.toJSON()}`,
@@ -25,12 +27,13 @@ export const logRequest = async (ctx: RequestContext, status: number, start: num
     data: {
       status,
       responseTime: `${responseTime}ms`,
-      request: request
+      request: request,
+      ctx
     }
   }
 
   try {
-    await config.logString(`[${requestEvent.date}] ${status} ${request.method} ${request.url} ${requestEvent.data.responseTime}`)
+    await config.logString(`[${requestEvent.date}] ${status} ${request.method} ${request.url} ${requestEvent.data.responseTime}${cached ? " (CACHED)" : ""}`)
   } catch (error) {
     console.log(error)
   }
@@ -43,13 +46,12 @@ export const logRequest = async (ctx: RequestContext, status: number, start: num
 }
 
 /**
- * Peko's internal error logging function. Uses config.eventLogger underneath.
- * 
- * Returns promise so process isn't blocked when called without "await" keyword.
- * 
+ * Peko's internal error logging function.
+ * Returns Promise so process isn't blocked when called without "await" keyword.
  * @param id: string
  * @param error: any
  * @param date: Date
+ * @returns Promise<void>
  */
 export const logError = async (id: string, error: string, date: Date) => {
   try {

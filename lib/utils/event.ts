@@ -1,4 +1,4 @@
-import { logError } from "./logger.ts"
+import { logError } from "./log.ts"
 
 const emitters: Emitter[] = []
 
@@ -15,7 +15,7 @@ export type Event = {
   id: string
   type: "request" | "emit" | "error"
   date: Date
-  data: Record<string, any>
+  data: Record<string, unknown>
 }
 
 /**
@@ -44,7 +44,7 @@ export const createEmitter = (initListeners?: Listener[] | Listener) => {
   }
 
   // async so won't block process when called without "await"
-  const emit = async (data: Record<string, any>) => {
+  const emit = async (data: Record<string, unknown>) => {
     const date = new Date()
     const eventId = `EMIT-${JSON.stringify(data)}`
     const event: Event = { id: `${eventId}-${date.toJSON()}`, type: "emit", date: date, data }

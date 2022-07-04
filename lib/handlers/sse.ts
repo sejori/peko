@@ -1,23 +1,19 @@
-import { addRoute, RequestContext, Middleware } from "../server.ts"
-import { Event, Emitter } from "../utils/emitter.ts"
+import { RequestContext } from "../server.ts"
+import { Event, Emitter } from "../utils/event.ts"
 import { config } from "../config.ts"
 
-const encoder = new TextEncoder()
-
-export type SSERoute = {
-  route: string
-  middleware?: Middleware[] | Middleware
+export type SSEData = {
   emitter: Emitter
 }
+const encoder = new TextEncoder()
 
 /**
- * SSE connection handler
- * 
- * @param sseData: SSERoute
+ * Peko Server-Sent Events handler. Streams Event data from provided Emitter to Response body.
+ * @param ctx: 
  * @returns Promise<Response>
  */
-export const sseHandler = (ctx: RequestContext, sseData: SSERoute) => {
-  let lexController: ReadableStreamDefaultController<any>
+export const sseHandler = (ctx: RequestContext, sseData: SSEData) => {
+  let lexController: ReadableStreamDefaultController<unknown>
   const lexEnqueue = (event: Event) => lexController.enqueue(encoder.encode(`data: ${JSON.stringify(event.data)}\n\n`))
 
   const body = new ReadableStream({
@@ -36,22 +32,5 @@ export const sseHandler = (ctx: RequestContext, sseData: SSERoute) => {
     headers: {
       "Content-Type": "text/event-stream",
     }
-  })
-}
-
-/**
- * Add an SSERoute
- * 
- * @param sseRouteData { 
-    route: string - e.g. "favicon.png"
-    emitter: Emitter - Peko's internal event subscription interface
- * }
- */
-export const addSSERoute = (sseData: SSERoute) => {
-  return addRoute({
-    route: sseData.route,
-    method: "GET",
-    middleware: sseData.middleware,
-    handler: async (ctx) => await sseHandler(ctx, sseData)
   })
 }

@@ -1,4 +1,4 @@
-import { Config } from "../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import { Config, logger } from "../mod.ts" // <- https://deno.land/x/peko/mod.ts
 
 const env = Deno.env.toObject()
 
@@ -9,34 +9,20 @@ const config: Partial<Config> = {
   port: 7777,
   hostname: "0.0.0.0",
 
-  // devMode true disables catching in addStaticRoute & addSSRRoute fcns
+  // devMode true enables hot-reload events in ssrHandler
   devMode: env.ENVIRONMENT !== "production",
+  // devMode: false,
 
-  // handle internally-generated log strings (same as default)
-  logString: (s) => console.log(s),
+  globalMiddleware: [
+    logger
+  ],
 
-  // handle internally-generated event objects
-  logEvent: (e) => console.log(e),
+  // handle internally-generated log strings and events 
+  // logString: (s) => console.log(s), // <-- default
+  logEvent: () => {}, // <-- ingore event logs for clean shell
 
-  // handle errors thrown by Peko internals
-  handleError: (_ctx, statusCode) => {
-    let response;
-    switch (statusCode) {
-      case 404: 
-        response = new Response("404: Nothing found here!", {
-          headers: new Headers(),
-          status: 404
-        })
-        break
-      default:
-        response = new Response("500: Internal Server Error!", {
-          headers: new Headers(),
-          status: 500
-        })
-        break
-    }
-    return response
-  }
+  // Set custom responses for errors thrown by Peko internals
+  // handleError: (ctx) => new Response("Uh-oh! Something went wrong...")
 }
 
 export default config
