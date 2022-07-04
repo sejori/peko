@@ -6,6 +6,7 @@ const routes: SafeRoute[] = []
 
 interface SafeRoute extends Route {
   middleware: Middleware[]
+  method: string
 }
 
 export interface Route { 
@@ -105,10 +106,9 @@ const tryHandleError: Handler = async (ctx: RequestContext) => {
  * @returns number - routes.length
  */
 export const addRoute = (route: Route) => {
+  const method = route.method ? route.method : "GET"
   const m: Middleware[] = []
   const none = () => {}
-
-  if (!route.method) route.method = "GET"
 
   // consolidate singular or null middleware to Middleware[]
   if (route.middleware) {
@@ -121,6 +121,7 @@ export const addRoute = (route: Route) => {
 
   return routes.push({ 
     ...route,
+    method,
     middleware: m
   })
 }

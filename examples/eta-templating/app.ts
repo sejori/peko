@@ -14,28 +14,34 @@ configureEta({
 })
 
 // adjust premade preact page render fcns to use eta
-pages.forEach(page => page.render = async (ctx) => {
-  const appHTML = renderToString(page.route === "/" ? Home(ctx.data) : About(), null, null)
-  const etaResult = await renderFile("./template.eta", {
-    appHTML,
-    title: page.route === "/" ? `<title>Peko</title>` : `<title>Peko | About</title>`,
-    modulepreload: `<script modulepreload="true" type="module" src="/pages/${page.route === "/" ? "Home.js" : "About.js"}"></script>`,
-    hydrationScript: `<script type="module">
-        import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-        import App from ${page.route === "/" ? "/pages/Home.js" : "/pages/About.js"};
-        hydrate(App(${JSON.stringify(ctx.data)}), document.getElementById("root"))
-    </script>`
-  })
+// parege.route ternary operator used to return Home & About page specifics
+pages.forEach(page => page.handler = (ctx) => Peko.ssrHandler(ctx, {
+  srcURL: page.route === "/" 
+    ? new URL("../preact.src/pages/Home.js", import.meta.url)
+    : new URL("../preact/src/pages/Src.js", import.meta.url), 
+  render: async (ctx) => {
+    const appHTML = renderToString(page.route === "/" ? Home(ctx.state) : About(), null, null)
+    const etaResult = await renderFile("./template.eta", {
+      appHTML,
+      title: page.route === "/" ? `<title>Peko</title>` : `<title>Peko | About</title>`,
+      modulepreload: `<script modulepreload="true" type="module" src="/pages/${page.route === "/" ? "Home.js" : "About.js"}"></script>`,
+      hydrationScript: `<script type="module">
+          import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+          import App from ${page.route === "/" ? "/pages/Home.js" : "/pages/About.js"};
+          hydrate(App(${JSON.stringify(ctx.state)}), document.getElementById("root"))
+      </script>`
+    })
 
-  return etaResult ? etaResult : "Eta templating error!"
-})
+    return etaResult ? etaResult : "Eta templating error!"
+  }
+}))
 
 // Configure Peko
 Peko.setConfig(config)
 // SSR'ed app page routes
-pages.forEach(page => Peko.addSSRRoute(page))
+pages.forEach(page => Peko.addRoute(page))
 // Static assets
-assets.forEach(asset => Peko.addStaticRoute(asset))
+assets.forEach(asset => Peko.addRoute(asset))
 // Custom API functions
 APIs.forEach(API => Peko.addRoute(API))
 

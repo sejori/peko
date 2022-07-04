@@ -27,7 +27,7 @@ export const createResponseCache = (options?: Partial<CacheOptions>) => {
     return resolve()
   })
 
-  const memoizeHandler = (fcn: Handler) => {
+  const memoize = (fcn: Handler) => {
     return async (ctx: RequestContext) => {
       const key = `${ctx.request.url}-${JSON.stringify(ctx.state)}`
 
@@ -38,6 +38,7 @@ export const createResponseCache = (options?: Partial<CacheOptions>) => {
         const ETag = latest.value.headers.get("ETag")
 
         if (ETag && ifNoneMatch?.includes(ETag)) {
+          ctx.state.cached = true
           return new Response(null, {
             headers: latest.value.headers,
             status: 304
@@ -58,5 +59,5 @@ export const createResponseCache = (options?: Partial<CacheOptions>) => {
     }
   }
 
-  return memoizeHandler
+  return memoize
 }
