@@ -1,20 +1,23 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
-import { logError } from "./utils/log.ts"
 import { logger } from "./middlewares/logger.ts"
 
 export class RequestContext {
+  peko: PekoServer
   request: Request
   state: Record<string, unknown>
 
-  constructor(request: Request) {
-    this.request = request
+  constructor(peko: PekoServer, request?: Request) {
+    this.peko = peko
+    this.request = request 
+      ? request
+      : new Request("http://localhost")
     this.state = {
       status: 404
     }
   }
 }
 
-export class Peko {
+export class PekoServer {
   config = {
     devMode: false,
     port: 7777,
@@ -25,14 +28,14 @@ export class Peko {
     logString: (log: string) => console.log(log),
     logEvent: (e: Event) => console.log(e),
     handleError: (ctx: RequestContext) => {
-      let response;
+      let response
       switch (ctx.state.status) {
         case 401: 
-        response = new Response("401: Unauthorized!", {
-          headers: new Headers(),
-          status: 401
-        })
-        break
+          response = new Response("401: Unauthorized!", {
+            headers: new Headers(),
+            status: 401
+          })
+          break
         case 404: 
           response = new Response("404: Nothing found here!", {
             headers: new Headers(),
@@ -50,11 +53,65 @@ export class Peko {
     }
   }
 
-  setConfig = (newConfObj: Partial<Peko["config"]>) => {
+  setConfig = (newConfObj: Partial<PekoServer["config"]>) => {
     for (const key in newConfObj) {
       Object.defineProperty(this.config, key, {
         value: newConfObj[key as keyof typeof this.config]
       })
+    }
+  }
+
+  /**
+   * Peko's internal request logging function. Uses this.config.logString and this.config.logEvent.
+   * Returns promise so process isn't blocked when called without "await" keyword.
+   * @param ctx: RequestContext
+   * @param start: number
+   * @param responseTime: number
+   * @returns Promise<void>
+   */
+  async logRequest(ctx: RequestContext, start: number, responseTime: number) {
+    const date = new Date(start)
+    const status = ctx.state.status
+    const cached = ctx.state.cached
+    const request: Request | undefined = ctx.request
+    const requestEvent: Event = {
+      id: `${ctx.request?.method}-${request?.url}-${date.toJSON()}`,
+      type: "request",
+      date: date,
+      data: {
+        status,
+        responseTime: `${responseTime}ms`,
+        request: request,
+        ctx
+      }
+    }
+
+    try {
+      await this.config.logString(`[${requestEvent.date}] ${status} ${request?.method} ${request?.url} ${requestEvent.data.responseTime}${cached ? " (CACHED)" : ""}`)
+    } catch (error) {
+      console.log(error)
+    }
+
+    try {
+      await this.config.logEvent(requestEvent)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  /**
+   * Peko's internal error logging function. Uses this.config.logEvent
+   * Returns Promise so process isn't blocked when called without "await" keyword.
+   * @param id: string
+   * @param error: any
+   * @param date: Date
+   * @returns Promise<void>
+   */
+  async logError(id: string, error: string, date: Date) {
+    try {
+      return await this.config.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
+    } catch (e) {
+      return console.error(e)
     }
   }
 
@@ -65,7 +122,7 @@ export class Peko {
    * @param route: Route - middleware can be Middlewares or Middleware 
    * @returns number - routes.length
    */
-  addRoute = (route: Route) => {
+  addRoute(route: Route) {
     const method = route.method ? route.method : "GET"
     const m: Middleware[] = []
     const none = () => {}
@@ -93,7 +150,7 @@ export class Peko {
    * @param route: string - route id of Route to remove
    * @returns 
    */
-  removeRoute = (route: string) => {
+  removeRoute(route: string) {
     const routeToRemove = this.routes.find(r => r.route === route)
     if (!routeToRemove) return this.routes.length
   
@@ -104,18 +161,31 @@ export class Peko {
   /**
    * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
    */
-  start = () => {
+  listen(port?: number, cb?: (params: { hostname: string; port: number; }) => void) {
     this.config.logString(`Peko server ${this.config.devMode ? "(devMode)" : ""} started with routes:`)
     this.routes.forEach((route, i) => this.config.logString(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
     
     serve(this.#requestHandler, { 
       hostname: this.config.hostname, 
-      port: this.config.port 
+      port: port ? port : this.config.port,
+      onError: (error) => {
+        try {
+          if (error) this.logError(`${error}`, `${error}`, new Date())
+        } catch(e) {
+          console.log(e)
+          console.log(error)
+        }
+
+        const ctx = new RequestContext(this)
+        ctx.state.status = 500
+        return this.#tryHandleError(ctx)
+      },
+      onListen: cb ? cb : () => {}
     })
   }
 
-  #requestHandler = async (request: Request) => {
-    const ctx: RequestContext = new RequestContext(request)
+  async #requestHandler(request: Request) {
+    const ctx: RequestContext = new RequestContext(this, request)
     const requestURL = new URL(request.url)
     const route = this.routes.find(route => route.route === requestURL.pathname && route.method === request.method)
   
@@ -129,7 +199,7 @@ export class Peko {
     return response
   }
   
-  #runMiddleware = async (ctx: RequestContext, toCall: Middleware[]) => {
+  async #runMiddleware (ctx: RequestContext, toCall: Middleware[]) {
     let called = 0
     let result: MiddlewareResult
   
@@ -159,10 +229,11 @@ export class Peko {
             resolve()
           }
         } catch (error) {
-          logError(ctx.request.url, error, new Date())
-          ctx.state.status = 500
-          this.#tryHandleError(ctx)
           reject()
+          throw(error)
+          // this.logError(ctx.request.url, error, new Date())
+          // ctx.state.status = 500
+          // this.#tryHandleError(ctx)
         }
       })
     }
@@ -171,7 +242,7 @@ export class Peko {
     return result 
   }
   
-  #tryHandleError: Handler = async (ctx: RequestContext) => {
+  async #tryHandleError(ctx: RequestContext) {
     try {
       return await this.config.handleError(ctx)
     } catch (error) {
@@ -196,6 +267,13 @@ export interface Route {
 export type Middleware = (ctx: RequestContext, next: () => MiddlewareResult) => MiddlewareResult
 export type MiddlewareResult = Promise<Response | void> | Response | void
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
+
+export type Event = {
+  id: string
+  type: "request" | "emit" | "error"
+  date: Date
+  data: Record<string, unknown>
+}
 
 // TODO: test route strings for formatting to enforce type `/${string}` in devMode
 // TODO: test middleware and handlers for cookie and rendering bear traps

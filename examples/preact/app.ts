@@ -3,14 +3,16 @@ import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import config from "../config.ts"
 import { pages, assets, APIs } from "./routes.ts"
 
+const app = new Peko.PekoServer()
+
 // Configure Peko
-Peko.setConfig(config)
+app.setConfig(config)
 // SSR'ed app page routes
-pages.forEach(page => Peko.addRoute(page))
+pages.forEach(page => app.addRoute(page))
 // Static assets
-assets.forEach(asset => Peko.addRoute(asset))
+assets.forEach(asset => app.addRoute(asset))
 // Custom API functions
-APIs.forEach(API => Peko.addRoute(API))
+APIs.forEach(API => app.addRoute(API))
 
 // Start Peko server :)
-Peko.start()
+app.listen()

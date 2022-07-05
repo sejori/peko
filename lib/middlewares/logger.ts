@@ -1,5 +1,4 @@
 import { RequestContext, MiddlewareResult } from "../server.ts"
-import { logRequest } from "../utils/log.ts"
 
 /**
  * Peko logging middleware
@@ -9,5 +8,5 @@ import { logRequest } from "../utils/log.ts"
 export const logger = async (ctx: RequestContext, next: () => MiddlewareResult) => {
   const start = Date.now()
   await next()
-  logRequest(ctx, start, Date.now() - start)
+  ctx.peko.logRequest(ctx, start, Date.now() - start)
 }

@@ -1,5 +1,4 @@
 import { RequestContext } from "../server.ts"
-import { config } from "../config.ts"
 import { hasher } from "../utils/hash.ts"
 
 export type StaticData = { 
@@ -12,7 +11,7 @@ export type StaticData = {
  * @param staticData: StaticData
  * @returns Promise<Response>
  */
-export const staticHandler = async (_ctx: RequestContext, staticData: StaticData) => {
+export const staticHandler = async (ctx: RequestContext, staticData: StaticData) => {
   let filePath = decodeURI(staticData.fileURL.pathname)
   
   // fix annoying windows paths
@@ -26,7 +25,7 @@ export const staticHandler = async (_ctx: RequestContext, staticData: StaticData
     headers: new Headers({
       'Content-Type': staticData.contentType ? staticData.contentType : 'text/plain',
       // tell browser not to cache if in devMode
-      'Cache-Control': config.devMode
+      'Cache-Control': ctx.peko.config.devMode
         ? 'no-store'
         : 'max-age=604800, stale-while-revalidate=86400',
       // create ETag hash so 304 (not modified) response can be given from cacher

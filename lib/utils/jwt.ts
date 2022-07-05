@@ -1,5 +1,4 @@
 import { crypto } from "https://deno.land/std@0.144.0/crypto/mod.ts"
-import { logError } from "./log.ts"
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
@@ -22,8 +21,7 @@ export const decodeJWT = async (jwt: string) => {
     const payload = JSON.parse(atob(b64Payload))
     return payload
   } catch(error) {
-    logError("PARSE-JWT", error, new Date())
-    return undefined
+    throw(error)
   }
 }
 
