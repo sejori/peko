@@ -1,10 +1,10 @@
-import { Config, logger } from "../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import { PekoServer, logger } from "../mod.ts" // <- https://deno.land/x/peko/mod.ts
 
 const env = Deno.env.toObject()
 
 // EXAMPLE CONFIG
 //
-const config: Partial<Config> = {
+const config: Partial<PekoServer["config"]> = {
   // host set-up (same as default)
   port: 7777,
   hostname: "0.0.0.0",

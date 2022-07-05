@@ -1,5 +1,4 @@
 import { RequestContext } from "../server.ts"
-import { config } from "../config.ts"
 import { decodeJWT } from "../utils/jwt.ts"
 
 /**
@@ -17,5 +16,5 @@ export const authenticator = async (ctx: RequestContext) => {
   }
   
   ctx.state.status = 401
-  return await config.handleError(ctx)
+  return await ctx.peko.config.handleError(ctx)
 }
