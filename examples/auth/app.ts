@@ -1,11 +1,13 @@
-import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import PekoServer, * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import config from "../config.ts"
 
+const server = new PekoServer()
+
 // Configure Peko
-Peko.setConfig(config)
+server.setConfig(config)
 
 // generate JWT
-Peko.addRoute({
+server.addRoute({
   route: "/login",
   method: "GET",
   handler: async () => {
@@ -25,7 +27,7 @@ Peko.addRoute({
 })
 
 // verify JWT in auth middleware
-Peko.addRoute({
+server.addRoute({
   route: "/authTest",
   method: "GET",
   middleware: Peko.authenticator,
@@ -33,7 +35,7 @@ Peko.addRoute({
 })
 
 // basic HTML page with buttons to call auth routes
-Peko.addRoute({
+server.addRoute({
   route: "/",
   method: "GET",
   handler: () => new Response(`<!doctype html>
@@ -90,4 +92,4 @@ Peko.addRoute({
 })
 
 // Start your Peko server :)
-Peko.start()
+server.listen()
