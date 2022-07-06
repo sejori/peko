@@ -16,7 +16,7 @@ export class RequestContext {
   }
 }
 
-export class PekoServer {
+export default class PekoServer {
   config = {
     devMode: false,
     port: 7777,
@@ -107,6 +107,8 @@ export class PekoServer {
   
   /**
    * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
+   * @param port: number
+   * @param cb: callback function
    */
   listen(port?: number, cb?: (params: { hostname: string; port: number; }) => void) {
     this.config.logString(`Peko server ${this.config.devMode ? "(devMode)" : ""} started with routes:`)
@@ -234,6 +236,16 @@ export class PekoServer {
   }
 }
 
+interface SafeRoute {
+  route: string,
+  method: string,
+  middleware: SafeMiddleware[],
+  handler: SafeHandler
+}
+
+export type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void>
+export type SafeHandler = (ctx: RequestContext) => Promise<Response>
+
 export interface Route { 
   route: string
   method?: string
@@ -244,16 +256,6 @@ export interface Route {
 export type Middleware = (ctx: RequestContext, next: () => Promise<Response>) => MiddlewareResult
 export type MiddlewareResult = Promise<Response | void> | Response | void
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
-
-interface SafeRoute {
-  route: string,
-  method: string,
-  middleware: SafeMiddleware[],
-  handler: SafeHandler
-}
-
-export type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void>
-export type SafeHandler = (ctx: RequestContext) => Promise<Response>
 
 export type Event = {
   id: string

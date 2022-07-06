@@ -1,24 +1,26 @@
-import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import PekoServer, { createEmitter, sseHandler, ssrHandler } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 import { pages, assets, APIs } from "../preact/routes.ts"
 import Home from "../preact/src/pages/Home.js"
 import htmlTemplate from "../preact/template.ts"
 
+const server = new PekoServer()
+
 // create Emitter - pass logEvent as initial listener so we can see it working
-const testEmitter = Peko.createEmitter([Peko.config.logEvent])
+const testEmitter = createEmitter([server.config.logEvent])
 
 // emit random value every second
 setInterval(() => testEmitter.emit({ value: Math.random() }), 1000)
 
 // SSE route streams data from testEmitter
-Peko.addRoute({
+server.addRoute({
   route: "/sse",
-  handler: (ctx) => Peko.sseHandler(ctx, { emitter: testEmitter })
+  handler: (ctx) => sseHandler(ctx, { emitter: testEmitter })
 })
 
 // adjust home page handler templating to include EventSource connection logic
-pages[0].handler = (ctx) => Peko.ssrHandler(ctx, {
+pages[0].handler = (ctx) => ssrHandler(ctx, {
   render: (ctx) => {
     const appHTML = renderToString(Home(ctx.state), null, null)
     return htmlTemplate({
@@ -41,11 +43,11 @@ pages[0].handler = (ctx) => Peko.ssrHandler(ctx, {
 })
 
 // SSR'ed page routes
-pages.forEach(page => Peko.addRoute(page))
+pages.forEach(page => server.addRoute(page))
 // Static assets
-assets.forEach(asset => Peko.addRoute(asset))
+assets.forEach(asset => server.addRoute(asset))
 // Custom API functions
-APIs.forEach(API => Peko.addRoute(API))
+APIs.forEach(API => server.addRoute(API))
 
 // Start Peko server :)
-Peko.start()
+server.listen()
