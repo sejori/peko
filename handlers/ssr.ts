@@ -8,7 +8,8 @@ export type SSRData = {
 export type Render = (ctx: RequestContext) => string | Promise<string>
 
 /**
- * Peko Server-Side Rendering handler. Generates "Cache-Control" and "ETAG" headers.
+ * Generates Response with SSRData.render result in body
+ * Sets modifiable "Cache-Control" header and hashes render output for "ETAG" header.
  * @param ctx: RequestContext
  * @param ssrData: SSRRoute
  * @returns Promise<Response>

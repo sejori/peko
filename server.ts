@@ -69,7 +69,7 @@ export default class PekoServer {
   routes: SafeRoute[] = []
 
   /**
-   * Add Route to Peko server 
+   * Add Route
    * @param route: Route - middleware can be Middlewares or Middleware 
    * @returns number - routes.length
    */
@@ -172,7 +172,7 @@ export default class PekoServer {
   }
   
   /**
-   * Peko's safe error handler. Uses config.handleError wrapped in try catch.
+   * Safe error handler. Uses config.handleError wrapped in try catch.
    * @param ctx 
    * @param status 
    * @returns Response
@@ -187,7 +187,7 @@ export default class PekoServer {
   }
 
   /**
-   * Peko's safe string logger. Uses config.stringLogger wrapped in try catch.
+   * Safe string logger. Uses config.stringLogger wrapped in try catch.
    * @param string: string
    * @returns void
    */
@@ -200,8 +200,8 @@ export default class PekoServer {
     }
   }
 
-    /**
-   * Peko's safe string logger. Uses config.stringLogger wrapped in try catch.
+   /**
+   * Safe string logger. Uses config.stringLogger wrapped in try catch.
    * @param event: Event 
    * @returns void
    */
@@ -215,8 +215,7 @@ export default class PekoServer {
     }
 
   /**
-   * Peko's internal request logging function. Uses this.config.logString and this.config.logEvent.
-   * Returns promise so process isn't blocked when called without "await" keyword.
+   * Uses Peko.config.logString and Peko.config.logEvent. Returns promise to not block process
    * @param ctx: RequestContext
    * @param start: number
    * @param responseTime: number
@@ -254,8 +253,7 @@ export default class PekoServer {
   }
   
   /**
-   * Peko's internal error logging function. Uses this.config.logEvent
-   * Returns Promise so process isn't blocked when called without "await" keyword.
+   * Uses this.config.logEvent. Returns promise to not block process
    * @param id: string
    * @param error: any
    * @param date: Date

@@ -4,7 +4,7 @@ const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
 /**
- * Peko's internal JWT verifier and decoder
+ * JWT verifier and payload decoder
  * @param jwt: string
  * @returns payload | undefined
  */
@@ -26,7 +26,7 @@ export const decodeJWT = async (jwt: string) => {
 }
 
 /**
- * Peko's internal JWT generator
+ * JWT generator for stateless authentication
  * @param payload: Record<string, unknown>
  * @returns JWT: string
  */

@@ -4,7 +4,7 @@ export type CacheItem = { key: string, value: Response, dob: number }
 export type CacheOptions = { lifetime: number, debug: boolean }
 
 /**
- * Peko's internal Response cacher. 
+ * Response cacher, returns memoize functin to be used on handler
  * @param options: { lifetime: number } - lifetime defaults to Infinity
  * @returns memoizeHandler: (handler: Handler) => memoizedHandler
  */
