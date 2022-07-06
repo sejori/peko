@@ -8,8 +8,8 @@ export type StaticData = {
 }
 
 /**
- * Generates Response with body from file URL
- * Sets modifiable "Cache-Control" header and hashes file contents for "ETAG" header.
+ * Generates Response with body from file URL, sets modifiable
+ * "Cache-Control" header and hashes file contents for "ETAG" header.
  * @param staticData: StaticData
  * @returns Promise<Response>
  */

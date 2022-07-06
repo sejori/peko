@@ -16,7 +16,7 @@ export class RequestContext {
   }
 }
 
-export default class PekoServer {
+export class PekoServer {
   config: Config = {
     devMode: false,
     port: 7777,
@@ -305,6 +305,8 @@ export type Event = {
   date: Date
   data: Record<string, unknown>
 }
+
+export default PekoServer
 
 // TODO: test route strings for formatting to enforce type `/${string}` in devMode
 // TODO: test middleware and handlers for cookie and rendering bear traps
