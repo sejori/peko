@@ -12,7 +12,7 @@ export type Emitter = {
 export type Listener = (e: Event) => unknown | Promise<unknown>
 
 /**
- * Peko's internal event emitter.
+ * Event emitter, designed to be used with the sseHandler
  * @param initListeners: Listener[]
  * @returns emitter: Emitter
  */

@@ -2,7 +2,7 @@ import { RequestContext } from "../server.ts"
 import { decodeJWT } from "../utils/jwt.ts"
 
 /**
- * Peko JWT auth middleware
+ * JWT auth middleware, uses decodeJWT utility
  * @param ctx: RequestContext
  * @returns MiddlewareResponse
  */

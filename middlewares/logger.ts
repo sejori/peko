@@ -1,7 +1,7 @@
 import { RequestContext } from "../server.ts"
 
 /**
- * Peko logging middleware
+ * Logging middleware, uses cascading middleware to call Peko.logRequest after request is handled
  * @param ctx: RequestContext
  * @param next: () => MiddlewareResult (for cascading middleware)
  */

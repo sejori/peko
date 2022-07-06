@@ -4,10 +4,12 @@ import { hasher } from "../utils/hash.ts"
 export type StaticData = { 
   fileURL: URL
   contentType: string | undefined
+  cacheControl?: string
 }
 
 /**
- * Peko static asset handler. Generates "Cache-Control" and "ETAG" headers.
+ * Generates Response with body from file URL
+ * Sets modifiable "Cache-Control" header and hashes file contents for "ETAG" header.
  * @param staticData: StaticData
  * @returns Promise<Response>
  */
@@ -27,7 +29,7 @@ export const staticHandler = async (ctx: RequestContext, staticData: StaticData)
       // tell browser not to cache if in devMode
       'Cache-Control': ctx.peko.config.devMode
         ? 'no-store'
-        : 'max-age=604800, stale-while-revalidate=86400',
+        : staticData.cacheControl ? staticData.cacheControl : 'max-age=604800, stale-while-revalidate=86400',
       // create ETag hash so 304 (not modified) response can be given from cacher
       'ETag': hashString
     })

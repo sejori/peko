@@ -7,7 +7,7 @@ export type SSEData = {
 const encoder = new TextEncoder()
 
 /**
- * Peko Server-Sent Events handler. Streams Event data from provided Emitter to Response body.
+ * Streams Event data from provided Emitter to Response body.
  * @param ctx: 
  * @returns Promise<Response>
  */
