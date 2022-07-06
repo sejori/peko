@@ -58,7 +58,7 @@ export class PekoServer {
     }
   }
 
-  setConfig = (newConfObj: Partial<Config>) => {
+  setConfig: (c: Partial<Config>) => void = (newConfObj) => {
     for (const key in newConfObj) {
       Object.defineProperty(this.config, key, {
         value: newConfObj[key as keyof typeof this.config]
