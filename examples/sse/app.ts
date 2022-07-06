@@ -8,7 +8,7 @@ import htmlTemplate from "../preact/template.ts"
 const server = new PekoServer()
 
 // create Emitter - pass logEvent as initial listener so we can see it working
-const testEmitter = createEmitter([server.config.logEvent])
+const testEmitter = createEmitter([server.logEvent])
 
 // emit random value every second
 setInterval(() => testEmitter.emit({ value: Math.random() }), 1000)

@@ -24,7 +24,7 @@ export const run: (
       })
       .catch(async e => {
         ctx.peko.logError(ctx.request.url, e, new Date())
-        resolve(await ctx.peko.tryHandleError(ctx, 500))
+        resolve(await ctx.peko.handleError(ctx, 500))
       })
   })
 }
