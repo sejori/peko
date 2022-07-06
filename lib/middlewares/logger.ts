@@ -1,12 +1,12 @@
-import { RequestContext, MiddlewareResult } from "../server.ts"
+import { RequestContext } from "../server.ts"
 
 /**
  * Peko logging middleware
  * @param ctx: RequestContext
  * @param next: () => MiddlewareResult (for cascading middleware)
  */
-export const logger = async (ctx: RequestContext, next: () => MiddlewareResult) => {
+export const logger = async (ctx: RequestContext, next: () => Promise<Response>) => {
   const start = Date.now()
-  await next()
-  ctx.peko.logRequest(ctx, start, Date.now() - start)
+  const response = await next()
+  ctx.peko.logRequest(ctx, response, start, Date.now() - start)
 }
