@@ -23,8 +23,8 @@ export const run: (
         resolve(result)
       })
       .catch(async e => {
-        ctx.peko.logError(ctx.request.url, e, new Date())
-        resolve(await ctx.peko.handleError(ctx, 500))
+        ctx.server.logError(ctx.request.url, e, new Date())
+        resolve(await ctx.server.handleError(ctx, 500))
       })
   })
 }

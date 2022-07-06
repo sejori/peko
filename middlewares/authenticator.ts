@@ -15,5 +15,5 @@ export const authenticator = async (ctx: RequestContext) => {
     if (payload && (!payload.exp || payload.exp > Date.now())) return ctx.state.authPayload = payload
   }
   
-  return await ctx.peko.handleError(ctx, 401)
+  return await ctx.server.handleError(ctx, 401)
 }
