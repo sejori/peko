@@ -17,7 +17,7 @@ export class RequestContext {
 }
 
 export default class PekoServer {
-  config = {
+  config: Config = {
     devMode: false,
     port: 7777,
     hostname: "0.0.0.0",
@@ -26,7 +26,7 @@ export default class PekoServer {
     ],
     stringLogger: (log: string) => console.log(log),
     eventLogger: (e: Event) => console.log(e),
-    errorhandler: (_ctx: RequestContext, status: number) => {
+    errorHandler: (_ctx: RequestContext, status: number) => {
       let response
       switch (status) {
         case 400: 
@@ -58,7 +58,7 @@ export default class PekoServer {
     }
   }
 
-  setConfig = (newConfObj: Partial<PekoServer["config"]>) => {
+  setConfig = (newConfObj: Partial<Config>) => {
     for (const key in newConfObj) {
       Object.defineProperty(this.config, key, {
         value: newConfObj[key as keyof typeof this.config]
@@ -179,7 +179,7 @@ export default class PekoServer {
    */
   async handleError(ctx: RequestContext, status: number) {
     try {
-      return await this.config.errorhandler(ctx, status)
+      return await this.config.errorHandler(ctx, status)
     } catch (error) {
       console.log(error)
       return new Response("Error:", error)
@@ -268,6 +268,16 @@ export default class PekoServer {
       return console.error(e)
     }
   }
+}
+
+export interface Config { 
+  devMode: boolean
+  port: number
+  hostname: string
+  globalMiddleware: SafeMiddleware[]
+  stringLogger: (log: string) => Promise<void> | void
+  eventLogger: (data: Event) => Promise<void> | void
+  errorHandler: (ctx: RequestContext, statusCode: number) => Response | Promise<Response>
 }
 
 interface SafeRoute {
