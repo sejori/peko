@@ -1,22 +1,15 @@
-import { logError } from "./log.ts"
+import { Event } from "../server.ts"
 
 const emitters: Emitter[] = []
 
 export type Emitter = {
-  emit: (e: Event) => void | void[] | Promise<void | void[]>
+  emit: (e: Event) => Promise<unknown[]> | undefined
   subscribe: (cb: Listener) => boolean
   unsubscribe: (cb: Listener) => boolean
   listeners: Listener[]
 }
 
-export type Listener = (e: Event) => void | Promise<void>
-
-export type Event = {
-  id: string
-  type: "request" | "emit" | "error"
-  date: Date
-  data: Record<string, unknown>
-}
+export type Listener = (e: Event) => unknown | Promise<unknown>
 
 /**
  * Peko's internal event emitter.
@@ -47,12 +40,17 @@ export const createEmitter = (initListeners?: Listener[] | Listener) => {
   const emit = async (data: Record<string, unknown>) => {
     const date = new Date()
     const eventId = `EMIT-${JSON.stringify(data)}`
-    const event: Event = { id: `${eventId}-${date.toJSON()}`, type: "emit", date: date, data }
+    const event: Event = { 
+      id: `${eventId}-${date.toJSON()}`, 
+      type: "emit", 
+      date: date, 
+      data 
+    }
     
     try {
       return await Promise.all(listeners.map(async listener => await listener(event)))
     } catch (error) {
-      logError(eventId, error, date)
+      throw(error)
     }
   }
 

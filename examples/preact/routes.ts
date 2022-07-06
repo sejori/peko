@@ -21,12 +21,12 @@ export const pages: Route[] = [
     route: "/",
     middleware: [
       async (_ctx, next) => {
-        console.log("here")
-        throw("poop")
-        console.log(await next())
-        console.log("waiting a second")
+        // throw("poop") // <- throwing before await next() will stop middleware chain and respond with 500
+        await next()
+        // throw("poop") // <- throwing after await next() will let middleware run but log the error as an event
+        console.log("sync code executes before resolving prev middleware")
         await new Promise(res => setTimeout(res, 1000))
-        console.log("its been a second")
+        console.log("async code executes after resolving prev middleware")
       },
       (ctx) => { 
         ctx.state.server_time = `${Date.now()}`
