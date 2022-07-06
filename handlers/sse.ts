@@ -19,7 +19,7 @@ export const sseHandler = (ctx: RequestContext, sseData: SSEData) => {
     start(controller) {
       lexController = controller
       sseData.emitter.subscribe(lexEnqueue)
-      ctx.peko.logEvent({
+      ctx.server.logEvent({
         id: "SSE-CONNECT",
         type: "request",
         data: { ipAddress: ctx.request.headers.get("X-Forwarded-For") },
@@ -28,7 +28,7 @@ export const sseHandler = (ctx: RequestContext, sseData: SSEData) => {
     },
     cancel() {
       sseData.emitter.unsubscribe(lexEnqueue)
-      ctx.peko.logEvent({
+      ctx.server.logEvent({
         id: "SSE-DISCONNECT",
         type: "request",
         data: { ipAddress: ctx.request.headers.get("X-Forwarded-For") },

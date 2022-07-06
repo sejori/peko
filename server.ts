@@ -4,12 +4,12 @@ import { promisifyMiddleware, promisifyHandler } from "./utils/promise.ts"
 import { run, cascadeResolve } from "./utils/cascade.ts"
 
 export class RequestContext {
-  peko: PekoServer
+  server: PekoServer
   request: Request
   state: Record<string, unknown> = {}
 
-  constructor(peko: PekoServer, request?: Request) {
-    this.peko = peko
+  constructor(server: PekoServer, request?: Request) {
+    this.server = server
     this.request = request 
       ? request
       : new Request("http://localhost")
@@ -215,7 +215,7 @@ export class PekoServer {
     }
 
   /**
-   * Uses Peko.config.logString and Peko.config.logEvent. Returns promise to not block process
+   * Uses PekoServer.config.logString and PekoServer.config.logEvent. Returns promise to not block process
    * @param ctx: RequestContext
    * @param start: number
    * @param responseTime: number
