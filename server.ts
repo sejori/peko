@@ -24,25 +24,31 @@ export default class PekoServer {
     globalMiddleware: [
       logger
     ],
-    logString: (log: string) => console.log(log),
-    logEvent: (e: Event) => console.log(e),
-    handleError: (_ctx: RequestContext, status: number) => {
+    stringLogger: (log: string) => console.log(log),
+    eventLogger: (e: Event) => console.log(e),
+    errorhandler: (_ctx: RequestContext, status: number) => {
       let response
       switch (status) {
+        case 400: 
+          response = new Response("400: Bad request", {
+            headers: new Headers(),
+            status: 400
+          })
+          break
         case 401: 
-          response = new Response("401: Unauthorized!", {
+          response = new Response("401: Unauthorized", {
             headers: new Headers(),
             status: 401
           })
           break
         case 404: 
-          response = new Response("404: Nothing found here!", {
+          response = new Response("404: Nothing found here", {
             headers: new Headers(),
             status: 404
           })
           break
         default:
-          response = new Response("500: Internal Server Error!", {
+          response = new Response("500: Internal Server Error", {
             headers: new Headers(),
             status: 500
           })
@@ -111,8 +117,8 @@ export default class PekoServer {
    * @param cb: callback function
    */
   listen(port?: number, cb?: (params: { hostname: string; port: number; }) => void) {
-    this.config.logString(`Peko server ${this.config.devMode ? "(devMode)" : ""} started with routes:`)
-    this.routes.forEach((route, i) => this.config.logString(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
+    this.logString(`Peko server ${this.config.devMode ? "(devMode)" : ""} started with routes:`)
+    this.routes.forEach((route, i) => this.logString(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
 
     serve((request) => this.#requestHandler.call(this, request), { 
       hostname: this.config.hostname, 
@@ -126,7 +132,7 @@ export default class PekoServer {
         }
 
         const ctx = new RequestContext(this)
-        return this.tryHandleError(ctx, 500)
+        return this.handleError(ctx, 500)
       },
       onListen: cb ? cb : () => {}
     })
@@ -139,7 +145,7 @@ export default class PekoServer {
 
     const toCall: SafeMiddleware[] = route 
       ? [ ...this.config.globalMiddleware, ...route.middleware, route.handler ]
-      : [ ...this.config.globalMiddleware, (ctx) => this.tryHandleError(ctx, 404) ]
+      : [ ...this.config.globalMiddleware, (ctx) => this.handleError(ctx, 404) ]
   
     const response = await this.#cascadeMiddleware(ctx, toCall)
     return response
@@ -171,14 +177,42 @@ export default class PekoServer {
    * @param status 
    * @returns Response
    */
-  async tryHandleError(ctx: RequestContext, status: number) {
+  async handleError(ctx: RequestContext, status: number) {
     try {
-      return await this.config.handleError(ctx, status)
+      return await this.config.errorhandler(ctx, status)
     } catch (error) {
       console.log(error)
       return new Response("Error:", error)
     }
   }
+
+  /**
+   * Peko's safe string logger. Uses config.stringLogger wrapped in try catch.
+   * @param string: string
+   * @returns void
+   */
+  async logString(string: string) {
+    try {
+      return await this.config.stringLogger(string)
+    } catch (error) {
+      console.log(string)
+      console.log(error)
+    }
+  }
+
+    /**
+   * Peko's safe string logger. Uses config.stringLogger wrapped in try catch.
+   * @param event: Event 
+   * @returns void
+   */
+     async logEvent(event: Event) {
+      try {
+        return await this.config.eventLogger(event)
+      } catch (error) {
+        console.log(event)
+        console.log(error)
+      }
+    }
 
   /**
    * Peko's internal request logging function. Uses this.config.logString and this.config.logEvent.
@@ -207,13 +241,13 @@ export default class PekoServer {
     }
 
     try {
-      await this.config.logString(`[${requestEvent.date}] ${status} ${request?.method} ${request?.url} ${requestEvent.data.responseTime}${cached ? " (CACHED)" : ""}`)
+      await this.logString(`[${requestEvent.date}] ${status} ${request?.method} ${request?.url} ${requestEvent.data.responseTime}${cached ? " (CACHED)" : ""}`)
     } catch (error) {
       console.log(error)
     }
 
     try {
-      await this.config.logEvent(requestEvent)
+      await this.logEvent(requestEvent)
     } catch (error) {
       console.log(error)
     }
@@ -229,7 +263,7 @@ export default class PekoServer {
    */
   async logError(id: string, error: string, date: Date) {
     try {
-      return await this.config.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
+      return await this.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
     } catch (e) {
       return console.error(e)
     }
