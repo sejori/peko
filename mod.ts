@@ -18,8 +18,8 @@ export * from "./middlewares/logger.ts"
 
 // Utils
 export * from "./utils/cache.ts"
-export * from "./utils/cascade.ts"
+// export * from "./utils/cascade.ts" // <-- not likely to be needed by users & clutters docs
 export * from "./utils/event.ts"
 export * from "./utils/hash.ts"
 export * from "./utils/jwt.ts"
-export * from "./utils/promise.ts"
+// export * from "./utils/promise.ts" // <-- not likely to be needed by users & clutters docs
