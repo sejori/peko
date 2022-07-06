@@ -1,5 +1,4 @@
 import { RequestContext } from "../server.ts"
-import { config } from "../config.ts"
 import { decodeJWT } from "../utils/jwt.ts"
 
 /**
@@ -16,6 +15,5 @@ export const authenticator = async (ctx: RequestContext) => {
     if (payload && (!payload.exp || payload.exp > Date.now())) return ctx.state.authPayload = payload
   }
   
-  ctx.state.status = 401
-  return await config.handleError(ctx)
+  return await ctx.peko.handleError(ctx, 401)
 }

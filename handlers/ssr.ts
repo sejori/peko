@@ -1,5 +1,4 @@
 import { RequestContext } from "../server.ts"
-import { config } from "../config.ts"
 import { hasher } from "../utils/hash.ts"
 
 export type SSRData = { 
@@ -25,7 +24,7 @@ export const ssrHandler = async (ctx: RequestContext, ssrData: SSRData) => {
     headers : new Headers({
       'Content-Type': 'text/html; charset=utf-8',
       // tell browser not to cache if in devMode
-      'Cache-Control': config.devMode
+      'Cache-Control': ctx.peko.config.devMode
         ? 'no-store'
         : 'max-age=604800, stale-while-revalidate=86400',
       // create ETag hash so 304 (not modified) response can be given from cacher

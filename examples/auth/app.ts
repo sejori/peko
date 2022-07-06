@@ -1,14 +1,28 @@
-import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import PekoServer, * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import config from "../config.ts"
 
+const server = new PekoServer()
+
+const user = {
+  username: "test-user",
+  password: await Peko.hasher("test-password")
+}
+
 // Configure Peko
-Peko.setConfig(config)
+server.setConfig(config)
 
 // generate JWT
-Peko.addRoute({
+server.addRoute({
   route: "/login",
-  method: "GET",
-  handler: async () => {
+  method: "POST",
+  handler: async (ctx) => {
+    const { username, password } = await ctx.request.json()
+
+    if (!username || !password || username !== user.username || await Peko.hasher(password) !== user.password) {
+      return await server.handleError(ctx, 400)
+    }
+
+
     const exp = new Date()
     exp.setMonth(exp.getMonth() + 1)
 
@@ -25,17 +39,15 @@ Peko.addRoute({
 })
 
 // verify JWT in auth middleware
-Peko.addRoute({
+server.addRoute({
   route: "/authTest",
-  method: "GET",
   middleware: Peko.authenticator,
   handler: () => new Response("You are authenticated!")
 })
 
 // basic HTML page with buttons to call auth routes
-Peko.addRoute({
+server.addRoute({
   route: "/",
-  method: "GET",
   handler: () => new Response(`<!doctype html>
     <html lang="en">
     <head>
@@ -52,7 +64,10 @@ Peko.addRoute({
         let jwt
 
         async function login() {
-          const response = await fetch("/login")
+          const response = await fetch("/login", {
+            method: "POST",
+            body: JSON.stringify({ username: "test-user", password: "test-password" })
+          })
           console.log(response)
 
           const json = await response.json()
@@ -90,4 +105,4 @@ Peko.addRoute({
 })
 
 // Start your Peko server :)
-Peko.start()
+server.listen()

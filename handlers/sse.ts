@@ -1,6 +1,5 @@
-import { RequestContext } from "../server.ts"
-import { Event, Emitter } from "../utils/event.ts"
-import { config } from "../config.ts"
+import { Event, RequestContext } from "../server.ts"
+import { Emitter } from "../utils/event.ts"
 
 export type SSEData = {
   emitter: Emitter
@@ -18,13 +17,23 @@ export const sseHandler = (ctx: RequestContext, sseData: SSEData) => {
 
   const body = new ReadableStream({
     start(controller) {
-      config.logString(`Client ${ctx.request.headers.get("X-Forwarded-For")} connected`)
       lexController = controller
       sseData.emitter.subscribe(lexEnqueue)
+      ctx.peko.logEvent({
+        id: "SSE-CONNECT",
+        type: "request",
+        data: { ipAddress: ctx.request.headers.get("X-Forwarded-For") },
+        date: new Date()
+      })
     },
     cancel() {
-      config.logString(`Client ${ctx.request.headers.get("X-Forwarded-For")} disconnected`)
       sseData.emitter.unsubscribe(lexEnqueue)
+      ctx.peko.logEvent({
+        id: "SSE-DISCONNECT",
+        type: "request",
+        data: { ipAddress: ctx.request.headers.get("X-Forwarded-For") },
+        date: new Date()
+      })
     }
   })
 

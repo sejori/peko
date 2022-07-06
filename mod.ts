@@ -3,21 +3,23 @@
  */
 
 // Core classes, functions & types
-export * from "./lib/server.ts"
-export * from "./lib/config.ts"
+import PekoServer from "./server.ts"
+export default PekoServer
+export * from "./server.ts"
 
 // Handlers
-export * from "./lib/handlers/static.ts"
-export * from "./lib/handlers/ssr.ts"
-export * from "./lib/handlers/sse.ts"
+export * from "./handlers/static.ts"
+export * from "./handlers/ssr.ts"
+export * from "./handlers/sse.ts"
 
 // Middlewares
-export * from "./lib/middlewares/authenticator.ts"
-export * from "./lib/middlewares/logger.ts"
+export * from "./middlewares/authenticator.ts"
+export * from "./middlewares/logger.ts"
 
 // Utils
-export * from "./lib/utils/log.ts"
-export * from "./lib/utils/cache.ts"
-export * from "./lib/utils/event.ts"
-export * from "./lib/utils/hash.ts"
-export * from "./lib/utils/jwt.ts"
+export * from "./utils/cache.ts"
+export * from "./utils/cascade.ts"
+export * from "./utils/event.ts"
+export * from "./utils/hash.ts"
+export * from "./utils/jwt.ts"
+export * from "./utils/promise.ts"
