@@ -188,19 +188,19 @@ export class PekoServer {
     }
   }
 
-   /**
+  /**
    * Safe string logger. Uses config.stringLogger wrapped in try catch.
    * @param event: Event 
    * @returns void
    */
-     async logEvent(event: Event) {
-      try {
-        return await this.config.eventLogger(event)
-      } catch (error) {
-        console.log(event)
-        console.log(error)
-      }
+  async logEvent(event: Event) {
+    try {
+      return await this.config.eventLogger(event)
+    } catch (error) {
+      console.log(event)
+      console.log(error)
     }
+  }
 
   /**
    * Uses PekoServer.config.logString and PekoServer.config.logEvent. Returns promise to not block process
@@ -209,7 +209,7 @@ export class PekoServer {
    * @param responseTime: number
    * @returns Promise<void>
    */
-    async logRequest(ctx: RequestContext, response: Response, start: number, responseTime: number) {
+  async logRequest(ctx: RequestContext, response: Response, start: number, responseTime: number) {
     const date = new Date(start)
     const status = response.status
     const cached = ctx.state.responseFromCache
