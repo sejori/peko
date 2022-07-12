@@ -20,14 +20,14 @@ export const pages: Route[] = [
   {
     route: "/",
     middleware: [
-      async (_ctx, next) => {
-        // throw("some exception") // <- throwing before await next() will stop middleware chain and respond with 500
-        await next()
-        // throw("another exception") // <- throwing after await next() will let middleware run but log the error as an event
-        console.log("sync code executes before resolving prev middleware")
-        await new Promise(res => setTimeout(res, 1000))
-        console.log("async code executes after resolving prev middleware")
-      },
+      // async (_ctx, next) => {
+      //   // throw("some exception") // <- throwing before await next() will stop middleware chain and respond with 500
+      //   await next()
+      //   // throw("another exception") // <- throwing after await next() will let middleware run but log the error as an event
+      //   // console.log("sync code executes before resolving prev middleware")
+      //   // await new Promise(res => setTimeout(res, 1000))
+      //   // console.log("async code executes after resolving prev middleware")
+      // },
       (ctx) => { 
         ctx.state.server_time = `${Date.now()}`
       }

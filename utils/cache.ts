@@ -49,6 +49,7 @@ export class ResponseCache {
         }
 
         // else respond 200 clone of response - one-use original lives in cache
+        ctx.state.responseFromCache = true
         return latest.value.clone()
       }
 
@@ -56,7 +57,6 @@ export class ResponseCache {
       const response = await fcn(ctx)
       this.set(key, response)
 
-      ctx.state.cached = true
       return response.clone()
     }
   }

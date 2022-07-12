@@ -1,7 +1,38 @@
 import { MiddlewareResult, RequestContext, SafeMiddleware } from "../server.ts"
 
+export const cascadeMiddleware = async (ctx: RequestContext, toCall: SafeMiddleware[]) => {
+  let result: MiddlewareResult
+  let called = 0
+
+  const toResolve: { 
+    resolve: (value: Response | PromiseLike<Response>) => void, 
+    reject: (reason?: unknown) => void
+  }[] = []
+
+  while (!(result instanceof Response)) {
+    result = await run(ctx, toCall[called], toResolve)
+    called += called < toCall.length-1 ? 1 : 0
+  }
+
+  const response: Response = result
+
+  return { response, toResolve }
+}
+
+export const cascadeResolve = (
+  response: Response,
+  toResolve: { 
+    resolve: (value: Response | PromiseLike<Response>) => void, 
+    reject: (reason?: unknown) => void; 
+  }[]
+) => {
+  for (let i = toResolve.length-1; i >= 0; i--) {
+    toResolve[i].resolve(response)
+  }
+}
+
 // quite a funky Promise-based middleware executor
-export const cascadeRun: (
+const run: (
   ctx: RequestContext,
   fcn: SafeMiddleware, 
   toResolve: { 
@@ -27,16 +58,4 @@ export const cascadeRun: (
         resolve(await ctx.server.handleError(ctx, 500))
       })
   })
-}
-
-export const cascadeResolve = (
-  toResolve: { 
-    resolve: (value: Response | PromiseLike<Response>) => void, 
-    reject: (reason?: unknown) => void; 
-  }[], 
-  result: Response
-) => {
-  for (let i = toResolve.length-1; i >= 0; i--) {
-    toResolve[i].resolve(result)
-  }
 }

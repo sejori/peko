@@ -1,7 +1,7 @@
 import { assert } from "https://deno.land/std@0.147.0/testing/asserts.ts"
-import { PekoServer, RequestContext } from "../../../server.ts"
-import { ResponseCache } from "../../../utils/cache.ts"
-import { testHandler } from "../server_test.ts"
+import { PekoServer, RequestContext } from "../../server.ts"
+import { testHandler } from "../../tests/mock_data.ts"
+import { ResponseCache } from "../cache.ts"
 
 Deno.test("UTIL: CACHE", async (t) => {
   const testServer = new PekoServer()
@@ -42,8 +42,12 @@ Deno.test("UTIL: CACHE", async (t) => {
   })
 
   await t.step("memoize - return previous response", async () => {
+    // use new contexts as prev have been modified with responseFromCache property
+    const testContext = new RequestContext(testServer, undefined, { foo: "bar" })
+    const testContext2 = new RequestContext(testServer, undefined, { foo: "bar" })
+
     const memRes = await memHandler(testContext)
-    const memRes2 = await memHandler(testContext)
+    const memRes2 = await memHandler(testContext2)
     const resJSON = await memRes.json()
     const resJSON2 = await memRes2.json()
     assert(resJSON.createdAt === resJSON2.createdAt)
