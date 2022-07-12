@@ -1,0 +1,65 @@
+{
+  "scriptId": "78",
+  "url": "file:///Users/sebr/Projects/peko/utils/cache.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 6622, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "<instance_members_initializer>",
+      "ranges": [{ "startOffset": 7, "endOffset": 1471, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "ResponseCache",
+      "ranges": [
+        { "startOffset": 63, "endOffset": 186, "count": 1 },
+        { "startOffset": 112, "endOffset": 128, "count": 0 },
+        { "startOffset": 141, "endOffset": 156, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "get",
+      "ranges": [
+        { "startOffset": 197, "endOffset": 436, "count": 3 },
+        { "startOffset": 363, "endOffset": 404, "count": 1 },
+        { "startOffset": 404, "endOffset": 435, "count": 2 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        { "startOffset": 253, "endOffset": 317, "count": 4 },
+        { "startOffset": 277, "endOffset": 317, "count": 1 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "set",
+      "ranges": [{ "startOffset": 448, "endOffset": 654, "count": 3 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 562, "endOffset": 588, "count": 3 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "memoize",
+      "ranges": [{ "startOffset": 670, "endOffset": 1468, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        { "startOffset": 696, "endOffset": 1461, "count": 2 },
+        { "startOffset": 854, "endOffset": 1295, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    }
+  ]
+}

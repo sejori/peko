@@ -3,7 +3,7 @@ import {
   Route, 
   ssrHandler, 
   staticHandler,
-  createResponseCache
+  ResponseCache
 } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
@@ -14,7 +14,7 @@ import Home from "./src/pages/Home.js"
 import About from "./src/pages/About.js"
 import htmlTemplate from "./template.ts"
 
-const memoize = createResponseCache()
+const { memoize } = new ResponseCache()
 
 export const pages: Route[] = [
   {

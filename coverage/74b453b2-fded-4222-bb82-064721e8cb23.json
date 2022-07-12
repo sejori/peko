@@ -1,0 +1,66 @@
+{
+  "scriptId": "69",
+  "url": "deno:runtime/js/40_testing.js",
+  "functions": [
+    {
+      "functionName": "handleOpSanitizerDelayMacrotask",
+      "ranges": [
+        { "startOffset": 1860, "endOffset": 2021, "count": 1 },
+        { "startOffset": 1958, "endOffset": 1962, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "createTestFilter",
+      "ranges": [
+        { "startOffset": 31322, "endOffset": 32163, "count": 1 },
+        { "startOffset": 31407, "endOffset": 31501, "count": 0 },
+        { "startOffset": 31502, "endOffset": 31549, "count": 0 },
+        { "startOffset": 31558, "endOffset": 31622, "count": 0 },
+        { "startOffset": 31631, "endOffset": 31642, "count": 0 },
+        { "startOffset": 31687, "endOffset": 31716, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 31390, "endOffset": 31400, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 31730, "endOffset": 32158, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "getTestOrigin",
+      "ranges": [{ "startOffset": 37596, "endOffset": 37672, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "reportTestPlan",
+      "ranges": [{ "startOffset": 37758, "endOffset": 37857, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "runTests",
+      "ranges": [
+        { "startOffset": 39005, "endOffset": 40413, "count": 1 },
+        { "startOffset": 39316, "endOffset": 39322, "count": 0 },
+        { "startOffset": 39556, "endOffset": 40033, "count": 0 },
+        { "startOffset": 40068, "endOffset": 40409, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 39229, "endOffset": 39248, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 39649, "endOffset": 39858, "count": 0 }],
+      "isBlockCoverage": true
+    }
+  ]
+}
