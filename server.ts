@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
 import { logger } from "./middlewares/logger.ts"
 import { promisifyMiddleware, promisifyHandler } from "./utils/promise.ts"
-import { cascadeRun, cascadeResolve } from "./utils/cascade.ts"
+import { cascadeMiddleware, cascadeResolve } from "./utils/cascade.ts"
 
 export class RequestContext {
   server: PekoServer
@@ -121,7 +121,7 @@ export class PekoServer {
    * @param cb: callback function
    */
   listen(port?: number, cb?: (params: { hostname: string; port: number; }) => void) {
-    this.logString(`Peko server ${this.config.devMode ? "(devMode)" : ""} started with routes:`)
+    this.logString(`Peko server ${this.config.devMode ? "(devMode) " : ""}started with routes:`)
     this.routes.forEach((route, i) => this.logString(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
 
     serve((request) => this.#requestHandler.call(this, request), { 
@@ -151,28 +151,12 @@ export class PekoServer {
       ? [ ...this.config.globalMiddleware, ...route.middleware, route.handler ]
       : [ ...this.config.globalMiddleware, (ctx) => this.handleError(ctx, 404) ]
   
-    const response = await this.#cascadeMiddleware(ctx, toCall)
-    return response
-  }
-
-  async #cascadeMiddleware (ctx: RequestContext, toCall: SafeMiddleware[]) {
-    let result: MiddlewareResult
-    let called = 0
-
-    const toResolve: { 
-      resolve: (value: Response | PromiseLike<Response>) => void, 
-      reject: (reason?: unknown) => void; 
-    }[] = []
-  
-    while (!(result instanceof Response)) {
-      result = await cascadeRun(ctx, toCall[called], toResolve)
-      called += called < toCall.length-1 ? 1 : 0
-    }
+    const { response, toResolve } = await cascadeMiddleware(ctx, toCall)
 
     // called without await to not block process
-    cascadeResolve(toResolve, result)
+    cascadeResolve(response, toResolve)
 
-    return result 
+    return response
   }
   
   /**
@@ -228,7 +212,7 @@ export class PekoServer {
     async logRequest(ctx: RequestContext, response: Response, start: number, responseTime: number) {
     const date = new Date(start)
     const status = response.status
-    const cached = ctx.state.cached
+    const cached = ctx.state.responseFromCache
     const request: Request | undefined = ctx.request
     const requestEvent: Event = {
       id: `${ctx.request?.method}-${request?.url}-${date.toJSON()}`,
