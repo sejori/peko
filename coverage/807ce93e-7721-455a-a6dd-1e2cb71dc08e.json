@@ -1,0 +1,19 @@
+{
+  "scriptId": "17",
+  "url": "deno:ext/web/03_abort_signal.js",
+  "functions": [
+    {
+      "functionName": "AbortSignal",
+      "ranges": [
+        { "startOffset": 2621, "endOffset": 2907, "count": 1 },
+        { "startOffset": 2687, "endOffset": 2749, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "newSignal",
+      "ranges": [{ "startOffset": 4856, "endOffset": 4933, "count": 1 }],
+      "isBlockCoverage": true
+    }
+  ]
+}

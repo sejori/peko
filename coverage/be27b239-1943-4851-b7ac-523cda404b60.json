@@ -1,0 +1,39 @@
+{
+  "scriptId": "11",
+  "url": "deno:ext/web/00_infra.js",
+  "functions": [
+    {
+      "functionName": "byteLowerCase",
+      "ranges": [{ "startOffset": 4529, "endOffset": 4740, "count": 2 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "isHttpWhitespace",
+      "ranges": [
+        { "startOffset": 6610, "endOffset": 6815, "count": 2 },
+        { "startOffset": 6670, "endOffset": 6684, "count": 0 },
+        { "startOffset": 6691, "endOffset": 6705, "count": 0 },
+        { "startOffset": 6712, "endOffset": 6726, "count": 0 },
+        { "startOffset": 6733, "endOffset": 6768, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "httpTrim",
+      "ranges": [
+        { "startOffset": 6877, "endOffset": 7070, "count": 1 },
+        { "startOffset": 6994, "endOffset": 7059, "count": 0 },
+        { "startOffset": 7060, "endOffset": 7065, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "assert",
+      "ranges": [
+        { "startOffset": 7295, "endOffset": 7409, "count": 8 },
+        { "startOffset": 7361, "endOffset": 7405, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    }
+  ]
+}

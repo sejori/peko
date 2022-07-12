@@ -1,18 +1,22 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
 import { logger } from "./middlewares/logger.ts"
 import { promisifyMiddleware, promisifyHandler } from "./utils/promise.ts"
-import { run, cascadeResolve } from "./utils/cascade.ts"
+import { cascadeRun, cascadeResolve } from "./utils/cascade.ts"
 
 export class RequestContext {
   server: PekoServer
   request: Request
-  state: Record<string, unknown> = {}
+  state: Record<string, unknown>
 
-  constructor(server: PekoServer, request?: Request) {
+  constructor(server: PekoServer, request?: Request, state?: Record<string, unknown>) {
     this.server = server
     this.request = request 
       ? request
       : new Request("http://localhost")
+
+    this.state = state
+      ? state 
+      : {}
   }
 }
 
@@ -161,7 +165,7 @@ export class PekoServer {
     }[] = []
   
     while (!(result instanceof Response)) {
-      result = await run(ctx, toCall[called], toResolve)
+      result = await cascadeRun(ctx, toCall[called], toResolve)
       called += called < toCall.length-1 ? 1 : 0
     }
 

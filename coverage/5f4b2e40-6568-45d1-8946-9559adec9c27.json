@@ -1,0 +1,44 @@
+{
+  "scriptId": "76",
+  "url": "file:///Users/sebr/Projects/peko/tests/utils/utils_test.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 6971, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 238, "endOffset": 1458, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 424, "endOffset": 518, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        { "startOffset": 554, "endOffset": 758, "count": 1 },
+        { "startOffset": 724, "endOffset": 750, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 801, "endOffset": 994, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 1050, "endOffset": 1244, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 1302, "endOffset": 1454, "count": 1 }],
+      "isBlockCoverage": true
+    }
+  ]
+}

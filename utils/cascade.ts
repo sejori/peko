@@ -1,7 +1,7 @@
 import { MiddlewareResult, RequestContext, SafeMiddleware } from "../server.ts"
 
 // quite a funky Promise-based middleware executor
-export const run: (
+export const cascadeRun: (
   ctx: RequestContext,
   fcn: SafeMiddleware, 
   toResolve: { 

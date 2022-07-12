@@ -1,0 +1,31 @@
+{
+  "scriptId": "84",
+  "url": "https://deno.land/std@0.140.0/async/abortable.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 6581, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "abortable",
+      "ranges": [{ "startOffset": 49, "endOffset": 231, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "abortablePromise",
+      "ranges": [{ "startOffset": 239, "endOffset": 683, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "abortableAsyncIterable",
+      "ranges": [{ "startOffset": 691, "endOffset": 1254, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "createAbortError",
+      "ranges": [{ "startOffset": 1255, "endOffset": 1378, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

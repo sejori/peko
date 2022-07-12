@@ -1,0 +1,420 @@
+{
+  "scriptId": "69",
+  "url": "deno:runtime/js/40_testing.js",
+  "functions": [
+    {
+      "functionName": "opSanitizerDelay",
+      "ranges": [{ "startOffset": 1672, "endOffset": 1856, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 1725, "endOffset": 1850, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 1757, "endOffset": 1839, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "handleOpSanitizerDelayMacrotask",
+      "ranges": [
+        { "startOffset": 1860, "endOffset": 2021, "count": 18 },
+        { "startOffset": 1958, "endOffset": 1962, "count": 6 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "assertOps",
+      "ranges": [{ "startOffset": 9568, "endOffset": 12993, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "asyncOpSanitizer",
+      "ranges": [
+        { "startOffset": 9638, "endOffset": 12988, "count": 6 },
+        { "startOffset": 10134, "endOffset": 10141, "count": 0 },
+        { "startOffset": 10583, "endOffset": 12987, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "assertResources",
+      "ranges": [{ "startOffset": 19285, "endOffset": 20853, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "resourceSanitizer",
+      "ranges": [
+        { "startOffset": 19370, "endOffset": 20848, "count": 6 },
+        { "startOffset": 19507, "endOffset": 19532, "count": 0 },
+        { "startOffset": 19792, "endOffset": 20642, "count": 18 },
+        { "startOffset": 19933, "endOffset": 20634, "count": 0 },
+        { "startOffset": 20746, "endOffset": 20750, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "assertExit",
+      "ranges": [{ "startOffset": 20985, "endOffset": 21452, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "exitSanitizer",
+      "ranges": [
+        { "startOffset": 21030, "endOffset": 21447, "count": 6 },
+        { "startOffset": 21353, "endOffset": 21393, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 21093, "endOffset": 21277, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "assertTestStepScopes",
+      "ranges": [{ "startOffset": 21456, "endOffset": 23915, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "testStepSanitizer",
+      "ranges": [{ "startOffset": 21537, "endOffset": 23910, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "preValidation",
+      "ranges": [
+        { "startOffset": 21797, "endOffset": 23205, "count": 6 },
+        { "startOffset": 22078, "endOffset": 22345, "count": 0 },
+        { "startOffset": 22406, "endOffset": 22625, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 21991, "endOffset": 22013, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 22262, "endOffset": 22292, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 22559, "endOffset": 22589, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "getPotentialConflictingRunningSteps",
+      "ranges": [
+        { "startOffset": 22635, "endOffset": 23197, "count": 6 },
+        { "startOffset": 22834, "endOffset": 23161, "count": 5 },
+        { "startOffset": 22893, "endOffset": 23115, "count": 15 },
+        { "startOffset": 22940, "endOffset": 22983, "count": 5 },
+        { "startOffset": 22983, "endOffset": 23026, "count": 10 },
+        { "startOffset": 23026, "endOffset": 23101, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "postValidation",
+      "ranges": [
+        { "startOffset": 23213, "endOffset": 23904, "count": 6 },
+        { "startOffset": 23317, "endOffset": 23538, "count": 0 },
+        { "startOffset": 23639, "endOffset": 23896, "count": 5 },
+        { "startOffset": 23675, "endOffset": 23886, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "test",
+      "ranges": [
+        { "startOffset": 24552, "endOffset": 27898, "count": 1 },
+        { "startOffset": 24900, "endOffset": 24970, "count": 0 },
+        { "startOffset": 25102, "endOffset": 25784, "count": 0 },
+        { "startOffset": 25790, "endOffset": 27186, "count": 0 },
+        { "startOffset": 27282, "endOffset": 27383, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "createTestFilter",
+      "ranges": [
+        { "startOffset": 31322, "endOffset": 32163, "count": 1 },
+        { "startOffset": 31407, "endOffset": 31501, "count": 0 },
+        { "startOffset": 31502, "endOffset": 31549, "count": 0 },
+        { "startOffset": 31558, "endOffset": 31622, "count": 0 },
+        { "startOffset": 31631, "endOffset": 31642, "count": 0 },
+        { "startOffset": 31687, "endOffset": 31716, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 31390, "endOffset": 31400, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 31730, "endOffset": 32158, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "runTest",
+      "ranges": [
+        { "startOffset": 32167, "endOffset": 33130, "count": 1 },
+        { "startOffset": 32232, "endOffset": 32263, "count": 0 },
+        { "startOffset": 32678, "endOffset": 32850, "count": 0 },
+        { "startOffset": 32858, "endOffset": 32952, "count": 0 },
+        { "startOffset": 33081, "endOffset": 33120, "count": 5 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "getTestOrigin",
+      "ranges": [{ "startOffset": 37596, "endOffset": 37672, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "reportTestPlan",
+      "ranges": [{ "startOffset": 37758, "endOffset": 37857, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "reportTestWait",
+      "ranges": [{ "startOffset": 37861, "endOffset": 37966, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "reportTestResult",
+      "ranges": [{ "startOffset": 37970, "endOffset": 38115, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "reportTestStepWait",
+      "ranges": [{ "startOffset": 38119, "endOffset": 38254, "count": 5 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "reportTestStepResult",
+      "ranges": [{ "startOffset": 38258, "endOffset": 38433, "count": 5 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "runTests",
+      "ranges": [
+        { "startOffset": 39005, "endOffset": 40413, "count": 1 },
+        { "startOffset": 39316, "endOffset": 39322, "count": 0 },
+        { "startOffset": 39556, "endOffset": 40033, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 39229, "endOffset": 39248, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 39649, "endOffset": 39858, "count": 0 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "<instance_members_initializer>",
+      "ranges": [{ "startOffset": 42320, "endOffset": 46244, "count": 6 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "TestStep",
+      "ranges": [{ "startOffset": 42679, "endOffset": 42735, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "get name",
+      "ranges": [{ "startOffset": 42741, "endOffset": 42791, "count": 16 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "get parent",
+      "ranges": [{ "startOffset": 42797, "endOffset": 42851, "count": 96 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "get parentContext",
+      "ranges": [{ "startOffset": 42857, "endOffset": 42925, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "get rootTestDescription",
+      "ranges": [{ "startOffset": 42931, "endOffset": 43011, "count": 21 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "get sanitizerOptions",
+      "ranges": [{ "startOffset": 43017, "endOffset": 43226, "count": 20 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "get usesSanitizer",
+      "ranges": [
+        { "startOffset": 43232, "endOffset": 43377, "count": 47 },
+        { "startOffset": 43298, "endOffset": 43333, "count": 0 },
+        { "startOffset": 43334, "endOffset": 43370, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "get shouldSkipSanitizers",
+      "ranges": [
+        { "startOffset": 43525, "endOffset": 43623, "count": 12 },
+        { "startOffset": 43605, "endOffset": 43616, "count": 10 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "get hasRunningChildren",
+      "ranges": [{ "startOffset": 43629, "endOffset": 43809, "count": 18 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 43758, "endOffset": 43793, "count": 15 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "failedChildStepsCount",
+      "ranges": [{ "startOffset": 43815, "endOffset": 44002, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 43945, "endOffset": 43979, "count": 5 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "canStreamReporting",
+      "ranges": [{ "startOffset": 44008, "endOffset": 44308, "count": 16 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [
+        { "startOffset": 44263, "endOffset": 44300, "count": 15 },
+        { "startOffset": 44286, "endOffset": 44300, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "selfAndAllAncestorsUseSanitizer",
+      "ranges": [
+        { "startOffset": 44314, "endOffset": 44569, "count": 16 },
+        { "startOffset": 44381, "endOffset": 44412, "count": 0 },
+        { "startOffset": 44461, "endOffset": 44543, "count": 10 },
+        { "startOffset": 44500, "endOffset": 44535, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "ancestors",
+      "ranges": [
+        { "startOffset": 44575, "endOffset": 44722, "count": 38 },
+        { "startOffset": 44647, "endOffset": 44716, "count": 30 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "getFullName",
+      "ranges": [{ "startOffset": 44728, "endOffset": 44885, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "reportWait",
+      "ranges": [
+        { "startOffset": 44891, "endOffset": 45074, "count": 11 },
+        { "startOffset": 44934, "endOffset": 44949, "count": 6 },
+        { "startOffset": 44951, "endOffset": 44976, "count": 6 },
+        { "startOffset": 44976, "endOffset": 45073, "count": 5 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "reportResult",
+      "ranges": [
+        { "startOffset": 45080, "endOffset": 45451, "count": 25 },
+        { "startOffset": 45128, "endOffset": 45143, "count": 5 },
+        { "startOffset": 45145, "endOffset": 45170, "count": 20 },
+        { "startOffset": 45170, "endOffset": 45239, "count": 5 },
+        { "startOffset": 45239, "endOffset": 45278, "count": 0 },
+        { "startOffset": 45278, "endOffset": 45450, "count": 5 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "#getStepResult",
+      "ranges": [
+        { "startOffset": 45457, "endOffset": 45946, "count": 5 },
+        { "startOffset": 45555, "endOffset": 45598, "count": 0 },
+        { "startOffset": 45607, "endOffset": 45726, "count": 0 },
+        { "startOffset": 45735, "endOffset": 45852, "count": 0 },
+        { "startOffset": 45861, "endOffset": 45932, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "#getTestStepDescription",
+      "ranges": [{ "startOffset": 45952, "endOffset": 46107, "count": 10 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "#getLevel",
+      "ranges": [{ "startOffset": 46113, "endOffset": 46240, "count": 10 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "createTestContext",
+      "ranges": [
+        { "startOffset": 46648, "endOffset": 50408, "count": 6 },
+        { "startOffset": 46914, "endOffset": 46926, "count": 1 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "step",
+      "ranges": [
+        { "startOffset": 47192, "endOffset": 50396, "count": 5 },
+        { "startOffset": 47265, "endOffset": 47504, "count": 0 },
+        { "startOffset": 48303, "endOffset": 48520, "count": 0 },
+        { "startOffset": 48792, "endOffset": 48848, "count": 0 },
+        { "startOffset": 48919, "endOffset": 49020, "count": 0 },
+        { "startOffset": 49111, "endOffset": 49280, "count": 0 },
+        { "startOffset": 49648, "endOffset": 49705, "count": 15 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "getDefinition",
+      "ranges": [
+        { "startOffset": 49782, "endOffset": 50388, "count": 5 },
+        { "startOffset": 49939, "endOffset": 50031, "count": 0 },
+        { "startOffset": 50139, "endOffset": 50378, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "wrapTestFnWithSanitizers",
+      "ranges": [{ "startOffset": 50615, "endOffset": 50955, "count": 6 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "getOrDefault",
+      "ranges": [
+        { "startOffset": 51067, "endOffset": 51164, "count": 15 },
+        { "startOffset": 51152, "endOffset": 51159, "count": 0 }
+      ],
+      "isBlockCoverage": true
+    }
+  ]
+}

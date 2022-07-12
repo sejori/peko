@@ -1,0 +1,11 @@
+{
+  "scriptId": "94",
+  "url": "[deno:cli/tools/test.rs:739:33]",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 34, "count": 1 }],
+      "isBlockCoverage": true
+    }
+  ]
+}
