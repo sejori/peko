@@ -17,9 +17,8 @@ export * from "./middlewares/authenticator.ts"
 export * from "./middlewares/logger.ts"
 
 // Utils
-export * from "./utils/cache.ts"
-// export * from "./utils/cascade.ts" // <-- not likely to be needed by users & clutters docs
-export * from "./utils/event.ts"
-export * from "./utils/hash.ts"
-export * from "./utils/jwt.ts"
-// export * from "./utils/promise.ts" // <-- not likely to be needed by users & clutters docs
+export * from "./utils/ResponseCache.ts"
+// export * from "./utils/Cascade.ts" // <-- not likely to be needed by users & clutters docs
+export * from "./utils/Emitter.ts"
+export * from "./utils/Crypto.ts"
+// export * from "./utils/Promisify.ts" // <-- not likely to be needed by users & clutters docs

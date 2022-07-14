@@ -1,7 +1,8 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
 import { logger } from "./middlewares/logger.ts"
-import { promisifyMiddleware, promisifyHandler } from "./utils/promise.ts"
-import { cascadeMiddleware, cascadeResolve } from "./utils/cascade.ts"
+import { Promisify } from "./utils/Promisify.ts"
+import { Cascade } from "./utils/Cascade.ts"
+import { Crypto } from "./utils/Crypto.ts"
 
 export class RequestContext {
   server: PekoServer
@@ -21,6 +22,7 @@ export class RequestContext {
 }
 
 export class PekoServer {
+  // define default config values
   config: Config = {
     devMode: false,
     port: 7777,
@@ -28,6 +30,7 @@ export class PekoServer {
     globalMiddleware: [
       logger
     ],
+    cryptoSecretKey: "REPLACE_ME_AND_DONT_STORE_IN_GIT!",
     stringLogger: (log: string) => console.log(log),
     eventLogger: (e: Event) => console.log(e),
     errorHandler: (_ctx: RequestContext, status: number) => {
@@ -62,6 +65,11 @@ export class PekoServer {
     }
   }
 
+  /**
+   * Update config with partial config object
+   * @param c: Partial<Config>
+   * @returns void
+   */
   setConfig: (c: Partial<Config>) => void = (newConfObj) => {
     for (const key in newConfObj) {
       Object.defineProperty(this.config, key, {
@@ -70,6 +78,14 @@ export class PekoServer {
     }
   }
 
+  // attach default instance of each utility class
+  cache = new ResponseCache()
+  cascade = new Cascade()
+  crypto = new Crypto()
+  emitter = new Emitter()
+  promisify = new Promisify()
+
+  // route array for request routing
   routes: SafeRoute[] = []
 
   /**
@@ -97,8 +113,8 @@ export class PekoServer {
     return this.routes.push({ 
       ...route,
       method,
-      middleware: m.map(mware => promisifyMiddleware(mware)),
-      handler: promisifyHandler(route.handler)
+      middleware: m.map(mware => this.promisify.middleware(mware)),
+      handler: this.promisify.handler(route.handler)
     })
   }
     
@@ -151,10 +167,10 @@ export class PekoServer {
       ? [ ...this.config.globalMiddleware, ...route.middleware, route.handler ]
       : [ ...this.config.globalMiddleware, (ctx) => this.handleError(ctx, 404) ]
   
-    const { response, toResolve } = await cascadeMiddleware(ctx, toCall)
+    const { response, toResolve } = await this.cascade.forward(ctx, toCall)
 
     // called without await to not block process
-    cascadeResolve(response, toResolve)
+    this.cascade.resolve(response, toResolve)
 
     return response
   }
@@ -261,6 +277,7 @@ export interface Config {
   port: number
   hostname: string
   globalMiddleware: SafeMiddleware[]
+  cryptoSecretKey: string
   stringLogger: (log: string) => Promise<void> | void
   eventLogger: (data: Event) => Promise<void> | void
   errorHandler: (ctx: RequestContext, statusCode: number) => Response | Promise<Response>
@@ -298,16 +315,3 @@ export default PekoServer
 
 // TODO: test route strings for formatting to enforce type `/${string}` in devMode
 // TODO: test middleware and handlers for cookie and rendering bear traps
-
-// /**
-//  * LEGACY Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
-//  */
-// export const start = () => {
-//   config.logString(`Peko server ${config.devMode ? "(devMode)" : ""} started with routes:`)
-//   routes.forEach((route, i) => config.logString(`${route.method} ${route.route} ${i===routes.length-1 ? "\n" : ""}`))
-  
-//   serve(requestHandler, { 
-//     hostname: config.hostname, 
-//     port: config.port 
-//   })
-// }

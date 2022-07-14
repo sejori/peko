@@ -1,5 +1,4 @@
 import { RequestContext } from "../server.ts"
-import { hasher } from "../utils/hash.ts"
 
 export type SSRData = { 
   srcURL?: URL
@@ -19,7 +18,7 @@ export const ssrHandler = async (ctx: RequestContext, ssrData: SSRData) => {
 
   // use provided render and template fcns for HTML generation
   const HTML = await ssrData.render(ctx)   
-  const hashString = await hasher(HTML)
+  const hashString = await ctx.server.crypto.hash(HTML)
 
   return new Response(HTML, {
     headers : new Headers({

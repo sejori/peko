@@ -1,6 +1,6 @@
 import { assert } from "https://deno.land/std@0.147.0/testing/asserts.ts"
 import { PekoServer, RequestContext } from "../../server.ts"
-import { cascadeMiddleware, cascadeResolve } from "../cascade.ts"
+import { Cascade } from "../Cascade.ts"
 import { 
   testMiddleware1,
   testMiddleware2,
@@ -9,6 +9,7 @@ import {
 } from "../../tests/mock_data.ts"
 
 Deno.test("UTIL: CASCADE", async (t) => {
+  const cascade = new Cascade()
   const testServer = new PekoServer()
   const testContext = new RequestContext(testServer, undefined, { foo: "bar" })
   const toCall = [ testMiddleware1, testMiddleware2, testMiddleware3, testHandler]
@@ -19,7 +20,7 @@ Deno.test("UTIL: CASCADE", async (t) => {
   }[] = []
 
   await t.step("cascade run as expected", async () => {
-    const { response, toResolve } = await cascadeMiddleware(testContext, toCall)
+    const { response, toResolve } = await cascade.forward(testContext, toCall)
     lex_response = response
     lex_toResolve = toResolve
 
@@ -38,7 +39,7 @@ Deno.test("UTIL: CASCADE", async (t) => {
   })
 
   await t.step("cascade resolve as expected", async () => {
-    cascadeResolve(lex_response, lex_toResolve)
+    cascade.resolve(lex_response, lex_toResolve)
 
     // ensure process finished in each middleware post await next()
     await new Promise(res => setTimeout(res, 25))
