@@ -1,5 +1,5 @@
 import { Event, RequestContext } from "../server.ts"
-import { Emitter } from "../utils/event.ts"
+import { Emitter } from "../utils/Emitter.ts"
 
 export type SSEData = {
   emitter: Emitter

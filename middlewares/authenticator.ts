@@ -1,5 +1,4 @@
 import { RequestContext } from "../server.ts"
-import { decodeJWT } from "../utils/jwt.ts"
 
 /**
  * JWT auth middleware, uses decodeJWT utility
@@ -11,7 +10,7 @@ export const authenticator = async (ctx: RequestContext) => {
 
   if (authHeader && authHeader.slice(0,7) === "Bearer ") {
     const jwt = authHeader.slice(7)
-    const payload = await decodeJWT(jwt)
+    const payload = await this.crypto.verify(jwt)
     if (payload && (!payload.exp || payload.exp > Date.now())) return ctx.state.authPayload = payload
   }
   
