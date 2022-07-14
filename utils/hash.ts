@@ -1,5 +1,7 @@
 import { crypto } from "https://deno.land/std@0.142.0/crypto/mod.ts";
 
+const encoder = new TextEncoder()
+
 /**
  * Asynchronous hashing function for generating password hashes etc
  * @param contents: string
@@ -8,7 +10,7 @@ import { crypto } from "https://deno.land/std@0.142.0/crypto/mod.ts";
 export const hasher = async (contents: string) => {
   const hashBuffer = await crypto.subtle.digest(
     "BLAKE3",
-    new TextEncoder().encode(contents),
+    encoder.encode(contents),
   )
 
   const hashArray = Array.from(new Uint8Array(hashBuffer))
