@@ -1,7 +1,7 @@
 import { assert } from "https://deno.land/std@0.147.0/testing/asserts.ts"
 import { PekoServer, RequestContext } from "../../server.ts"
 import { testHandler } from "../../tests/mock_data.ts"
-import { ResponseCache } from "../ResponseCache.ts"
+import { ResponseCache } from "../../utils/ResponseCache.ts"
 
 Deno.test("UTIL: CACHE", async (t) => {
   const testServer = new PekoServer()

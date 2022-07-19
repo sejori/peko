@@ -1,6 +1,6 @@
 import { assert } from "https://deno.land/std@0.147.0/testing/asserts.ts"
 import { PekoServer, RequestContext } from "../../server.ts"
-import { Cascade } from "../Cascade.ts"
+import { Cascade } from "../../utils/Cascade.ts"
 import { 
   testMiddleware1,
   testMiddleware2,
