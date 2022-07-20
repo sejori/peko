@@ -5,7 +5,7 @@ const config = {
   devMode: env.ENVIRONMENT !== "production",
   // devMode: false,
 
-  eventLogger: () => {}, // <-- ingore event logs for clean shell
+  // eventLogger: () => {}, // <-- ingore event logs for clean shell
 }
 
 export default config
