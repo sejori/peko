@@ -1,7 +1,10 @@
 import { crypto } from "https://deno.land/std@0.144.0/crypto/mod.ts"
+import { DigestAlgorithm } from "https://deno.land/std@0.144.0/_wasm_crypto/mod.ts";
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
+
+type JWT = `${string}.${string}.${string}`
 
 /**
  * Crypto class, designed to generate hashes and sign and verify JWTs.
@@ -9,16 +12,28 @@ const decoder = new TextDecoder()
  * @returns jwt: JWT
  */
 export class Crypto {
-  key: string
-  algorithm: string
+  rawKey: string
+  algorithm: DigestAlgorithm
+  key: CryptoKey | undefined
 
-  constructor(key?: string, alg?: string) {
+  constructor(rawKey: string, alg?: DigestAlgorithm) {
     // if no key provided use prototype chain to get key from 
     // parent instance (PekoServer)
-    this.key = key ? key : this.config.cryptoSecretKey
+    this.rawKey = rawKey
     this.algorithm = alg ? alg : "BLAKE3"
+  }
 
-    console.log(this.config.cryptoSecretKey)
+  /**
+   * Create CryptoKey from rawKey string to be used in crypto methods
+   */
+  async createCryptoKey(): Promise<void> {
+    this.key = await crypto.subtle.importKey(
+      "raw",
+      encoder.encode(this.rawKey),
+      { name: "HMAC", hash: "SHA-256" },
+      false, //extractable
+      ["encrypt", "decrypt"]
+    )
   }
 
   /**
@@ -26,7 +41,7 @@ export class Crypto {
    * @param contents: string
    * @returns hashHex: string
    */
-  async hash (contents: string) {
+  async hash(contents: string): Promise<string> {
     const hashBuffer = await crypto.subtle.digest(
       this.algorithm,
       encoder.encode(contents),
@@ -43,14 +58,16 @@ export class Crypto {
    * @param payload: Record<string, unknown>
    * @returns jwt: string
    */
-  async sign (payload: Record<string, unknown>) {
+  async sign (payload: Record<string, unknown>): Promise<JWT> {
+    if (!this.key) await this.createCryptoKey()
+
     const b64Header = btoa(JSON.stringify({
       alg: this.algorithm,
       typ: "JWT"
     }))
     const b64Payload = btoa(JSON.stringify(payload))
 
-    const signatureBuffer = await crypto.subtle.encrypt(this.algorithm, this.key, encoder.encode(`${b64Header}.${b64Payload}`))
+    const signatureBuffer = await crypto.subtle.encrypt(this.algorithm, this.key as CryptoKey, encoder.encode(`${b64Header}.${b64Payload}`))
     const signatureString = decoder.decode(signatureBuffer)
     const signature = btoa(encodeURIComponent(signatureString))
 
@@ -62,10 +79,10 @@ export class Crypto {
    * @param jwt: string
    * @returns payload: Record<string, unknown>
    */
-  async verify (jwt: string) {
+  async verify (jwt: string): Promise<Record<string, unknown> | undefined> {
     const [ b64Header, b64Payload, b64Signature ] = jwt.split(".")
 
-    const freshSigBuffer = await crypto.subtle.decrypt(this.algorithm, this.key, encoder.encode(`${b64Header}.${b64Payload}`))
+    const freshSigBuffer = await crypto.subtle.decrypt(this.algorithm, this.key as CryptoKey, encoder.encode(`${b64Header}.${b64Payload}`))
     const freshSigString = decoder.decode(freshSigBuffer)
     const b64SigFresh = btoa(encodeURIComponent(freshSigString))
   

@@ -2,7 +2,6 @@ import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
 import { logger } from "./middlewares/logger.ts"
 import { Promisify } from "./utils/Promisify.ts"
 import { Cascade } from "./utils/Cascade.ts"
-import { Crypto } from "./utils/Crypto.ts"
 
 export class RequestContext {
   server: PekoServer
@@ -78,11 +77,8 @@ export class PekoServer {
     }
   }
 
-  // attach default instance of each utility class
-  cache = new ResponseCache()
+  // default instances of utility classes for server logic
   cascade = new Cascade()
-  crypto = new Crypto()
-  emitter = new Emitter()
   promisify = new Promisify()
 
   // route array for request routing
@@ -170,7 +166,7 @@ export class PekoServer {
     const { response, toResolve } = await this.cascade.forward(ctx, toCall)
 
     // called without await to not block process
-    this.cascade.resolve(response, toResolve)
+    this.cascade.backward(response, toResolve)
 
     return response
   }

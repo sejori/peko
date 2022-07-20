@@ -18,20 +18,20 @@ export class ResponseCache {
     : Infinity
   }
 
-  get = (key: string) => {
+  get(key: string): CacheItem | undefined {
     const validItems = this.items.filter(item => item.key == key && Date.now() < item.dob + this.lifetime)
     if (validItems.length) return validItems[validItems.length - 1]
     return undefined
   }
 
-  set = (key: string, value: Response) => {
+  set(key: string, value: Response): CacheItem {
     const newItem: CacheItem = { key, value, dob: Date.now() }
     this.items = this.items.filter((item) => item.key !== key)
     this.items.push(newItem)
     return newItem
   }
 
-  memoize = (fcn: Handler) => {
+  memoize(fcn: Handler): Handler {
     return async (ctx: RequestContext) => {
       const key = `${ctx.request.url}-${JSON.stringify(ctx.state)}`
 
