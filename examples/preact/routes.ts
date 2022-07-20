@@ -77,10 +77,10 @@ export const assets: Route[] = srcFiles.map(file => {
 
   return {
     route: fileRoute,
-    handler: (ctx) => staticHandler(ctx, {
+    handler: memoize((ctx) => staticHandler(ctx, {
       fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
       contentType: lookup(file)
-    })
+    }))
   }
 })
 
