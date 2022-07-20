@@ -12,7 +12,7 @@ Deno.test("UTIL: CASCADE", async (t) => {
   const cascade = new Cascade()
   const testServer = new PekoServer()
   const testContext = new RequestContext(testServer, undefined, { foo: "bar" })
-  const toCall = [ testMiddleware1, testMiddleware2, testMiddleware3, testHandler]
+  const toCall = [testMiddleware1, testMiddleware2, testMiddleware3, testHandler]
   let lex_response: Response
   let lex_toResolve: {
     resolve: (value: Response | PromiseLike<Response>) => void, 
