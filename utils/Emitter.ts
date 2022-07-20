@@ -16,12 +16,12 @@ export class Emitter {
       : initListeners ? [initListeners] : []
   }
 
-  subscribe(listener: Listener) {
+  subscribe(listener: Listener): boolean {
     this.listeners.push(listener)
     return true
   }
 
-  unsubscribe(listener: Listener) {
+  unsubscribe(listener: Listener): boolean {
     // convert listener function bodies to strings for comparison
     const emListener = this.listeners.find(li => li.toString() === listener.toString())
     if (emListener) {
@@ -32,7 +32,7 @@ export class Emitter {
   }
 
   // async so won't block process when called without "await"
-  async emit (data: Record<string, unknown>) {
+  async emit(data: Record<string, unknown>): Promise<unknown[]> {
     const date = new Date()
     const eventId = `EMIT-${JSON.stringify(data)}`
     const event: Event = { 

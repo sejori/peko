@@ -9,24 +9,24 @@ Deno.test("UTIL: EMITTER", async (t) => {
   const emitter = new Emitter()
   const emitterPrepop = new Emitter(testFcn)
   
-  await t.step("test emitter is created as expected", async () => {
+  await t.step("test emitter is created as expected", () => {
     assert(!emitter.listeners[0])
     assert(emitterPrepop.listeners[0] === testFcn)
   })
 
-  await t.step("test emit", async () => {
+  await t.step("test emit", () => {
     emitterPrepop.emit(testData)
     assert(eventArray.find(e => e.data === testData))
   })
 
-  await t.step("test listener subscribe", async () => {
+  await t.step("test listener subscribe", () => {
     eventArray.splice(0,1)
     emitter.subscribe(testFcn)
     emitter.emit(testData)
     assert(eventArray.find(e => e.data === testData))
   })
 
-  await t.step("test listener unsubscribe", async () => {
+  await t.step("test listener unsubscribe", () => {
     eventArray.splice(0,1)
     emitter.unsubscribe(testFcn)
     emitter.emit(testData)

@@ -39,7 +39,7 @@ Deno.test("UTIL: CASCADE", async (t) => {
   })
 
   await t.step("cascade resolve as expected", async () => {
-    cascade.resolve(lex_response, lex_toResolve)
+    cascade.backward(lex_response, lex_toResolve)
 
     // ensure process finished in each middleware post await next()
     await new Promise(res => setTimeout(res, 25))

@@ -27,9 +27,9 @@ Deno.test("UTIL: CACHE", async (t) => {
   await t.step("retrieve from cache", () => {
     const result = cache.get(key)
     assert(result)
-    assert(result.key === key)
-    assert(result.value === value)
-    assert(result.dob < Date.now())
+    assert(result?.key === key)
+    assert(result?.value === value)
+    assert(result?.dob && result?.dob < Date.now())
   })
 
   await t.step("memoize - preserve handler logic", async () => {

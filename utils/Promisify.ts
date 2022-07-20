@@ -7,7 +7,7 @@ import {
 } from "../server.ts"
 
 export class Promisify {
-  middleware (fcn): (fcn: Middleware) => SafeMiddleware {
+  middleware (fcn: Middleware): SafeMiddleware {
     if (fcn.constructor.name === "AsyncFunction") return fcn as SafeMiddleware
     return (ctx: RequestContext, next: () => Promise<Response>) => new Promise((res) => {
       const result = fcn(ctx, next)
@@ -15,7 +15,7 @@ export class Promisify {
     })
   }
   
-  handler (fcn): (fcn: Handler) => SafeHandler {
+  handler (fcn: Handler): SafeHandler {
     if (fcn.constructor.name === "AsyncFunction") return fcn as SafeHandler
     return (ctx: RequestContext) => new Promise((res) => {
       const result = fcn(ctx)
