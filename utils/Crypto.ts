@@ -5,6 +5,11 @@ const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
 type JWT = `${string}.${string}.${string}`
+type Payload = {
+  exp: number,
+  iat: number,
+  data: Record<string, unknown>
+}
 
 /**
  * Crypto class, designed to generate hashes and sign and verify JWTs.
@@ -34,6 +39,8 @@ export class Crypto {
       false, //extractable
       ["encrypt", "decrypt"]
     )
+
+    console.log(this.key)
   }
 
   /**
@@ -58,7 +65,7 @@ export class Crypto {
    * @param payload: Record<string, unknown>
    * @returns jwt: string
    */
-  async sign (payload: Record<string, unknown>): Promise<JWT> {
+  async sign (payload: Payload): Promise<JWT> {
     if (!this.key) await this.createCryptoKey()
 
     const b64Header = btoa(JSON.stringify({
@@ -79,7 +86,9 @@ export class Crypto {
    * @param jwt: string
    * @returns payload: Record<string, unknown>
    */
-  async verify (jwt: string): Promise<Record<string, unknown> | undefined> {
+  async verify (jwt: string): Promise<Payload | undefined> {
+    if (!this.key) await this.createCryptoKey()
+    
     const [ b64Header, b64Payload, b64Signature ] = jwt.split(".")
 
     const freshSigBuffer = await crypto.subtle.decrypt(this.algorithm, this.key as CryptoKey, encoder.encode(`${b64Header}.${b64Payload}`))

@@ -10,7 +10,7 @@ export const authenticator = async (ctx: RequestContext) => {
 
   if (authHeader && authHeader.slice(0,7) === "Bearer ") {
     const jwt = authHeader.slice(7)
-    const payload = await this.crypto.verify(jwt)
+    const payload = await ctx.server.crypto.verify(jwt)
     if (payload && (!payload.exp || payload.exp > Date.now())) return ctx.state.authPayload = payload
   }
   
