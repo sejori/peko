@@ -4,7 +4,7 @@ import { Crypto } from "../../utils/Crypto.ts"
 Deno.test("UTIL: CRYPTO", async (t) => {
   const crypto = new Crypto("SUPER_SECRET_KEY_123", "BLAKE3")
   const str = "test-string-1234567890"
-  const payload = { test: str }
+  const payload = {exp:{ test: str }
   
   await t.step("hash creates repeatable hash", async () => {
     const hash1 = await crypto.hash(str)
