@@ -301,8 +301,7 @@ export interface Route {
   handler: Handler
 }
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
-export type Middleware = (ctx: RequestContext, next: () => Promise<Response>) => MiddlewareResult
-export type MiddlewareResult = Promise<Response | void> | Response | void
+export type Middleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void> | Response | void
 
 export type Event = {
   id: string

@@ -1,11 +1,11 @@
-import { MiddlewareResult, RequestContext } from "../server.ts"
+import { RequestContext } from "../server.ts"
 
 /**
  * JWT auth middleware, uses decodeJWT utility
  * @param ctx: RequestContext
  * @returns MiddlewareResponse
  */
-export const authenticator = async (ctx: RequestContext): Promise<MiddlewareResult>=> {
+export const authenticator = async (ctx: RequestContext): Promise<Response | void>=> {
   const authHeader = ctx.request.headers.get("Authorization")
 
   if (authHeader && authHeader.slice(0,7) === "Bearer ") {
