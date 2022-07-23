@@ -14,6 +14,7 @@ export * from "./handlers/sse.ts"
 
 // Middlewares
 export * from "./middlewares/authenticator.ts"
+export * from "./middlewares/cacher.ts"
 export * from "./middlewares/logger.ts"
 
 // Utils
