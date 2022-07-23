@@ -1,4 +1,4 @@
-import { RequestContext, Handler } from "../server.ts"
+import { Handler, RequestContext, SafeHandler } from "../server.ts"
 
 export type CacheItem = { key: string, value: Response, dob: number }
 export type CacheOptions = { lifetime: number}
@@ -31,7 +31,7 @@ export class ResponseCache {
     return newItem
   }
 
-  memoize(fcn: Handler): Handler {
+  memoize(fcn: Handler): SafeHandler {
     return async (ctx: RequestContext) => {
       const key = `${ctx.request.url}-${JSON.stringify(ctx.state)}`
 

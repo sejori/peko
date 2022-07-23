@@ -291,9 +291,8 @@ interface SafeRoute {
   middleware: SafeMiddleware[],
   handler: SafeHandler
 }
-
-export type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void>
 export type SafeHandler = (ctx: RequestContext) => Promise<Response>
+export type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void>
 
 export interface Route { 
   route: string
@@ -301,10 +300,9 @@ export interface Route {
   middleware?: Middleware[] | Middleware
   handler: Handler
 }
-
+export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 export type Middleware = (ctx: RequestContext, next: () => Promise<Response>) => MiddlewareResult
 export type MiddlewareResult = Promise<Response | void> | Response | void
-export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 
 export type Event = {
   id: string
