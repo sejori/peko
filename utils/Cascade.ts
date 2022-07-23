@@ -1,4 +1,4 @@
-import { Middleware, MiddlewareResult, RequestContext, SafeMiddleware } from "../server.ts"
+import { RequestContext, SafeMiddleware } from "../server.ts"
 
 type ResolvePromise = { 
   resolve: (value: Response | PromiseLike<Response>) => void, 
@@ -7,7 +7,7 @@ type ResolvePromise = {
 
 export class Cascade {
   async forward(ctx: RequestContext, toCall: SafeMiddleware[]) {
-    let result: MiddlewareResult
+    let result: Response | void
     let called = 0
   
     const toResolve: ResolvePromise[]  = []
@@ -40,7 +40,7 @@ export class Cascade {
       }
   
       fcn(ctx, next)
-        .then((result: MiddlewareResult) => {
+        .then((result: Response | void) => {
           resolve(result)
         })
         .catch(async e => {
