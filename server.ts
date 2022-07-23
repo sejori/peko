@@ -174,7 +174,8 @@ export class PekoServer {
     // called without await to not block process
     this.cascade.backward(response, toResolve)
 
-    return response
+    // clone so cache middleware can store original
+    return response.clone()
   }
   
   /**

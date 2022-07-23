@@ -1,7 +1,7 @@
 import { RequestContext } from "../server.ts"
 import { ResponseCache } from "../utils/ResponseCache.ts";
 
-const { memoize } = new ResponseCache()
+const cache = new ResponseCache()
 
 /**
  * Caching middleware, uses ResponseCache utility
@@ -9,5 +9,5 @@ const { memoize } = new ResponseCache()
  * @returns MiddlewareResponse
  */
 export const cacher = async (ctx: RequestContext, next: () => Promise<Response>): Promise<Response> => {
-  return await memoize(next)(ctx)
+  return await cache.memoize(next)(ctx)
 }

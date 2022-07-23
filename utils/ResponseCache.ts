@@ -19,15 +19,14 @@ export class ResponseCache {
   }
 
   get(key: string): CacheItem | undefined {
-    const validItems = this.items.filter(item => item.key == key && Date.now() < item.dob + this.lifetime)
-    if (validItems.length) return validItems[validItems.length - 1]
+    const item = this.items.find(item => item.key == key && Date.now() < item.dob + this.lifetime)
+    if (item) return item
     return undefined
   }
 
   set(key: string, value: Response): CacheItem {
     const newItem: CacheItem = { key, value, dob: Date.now() }
-    this.items = this.items.filter((item) => item.key !== key)
-    this.items.push(newItem)
+    this.items = [ ...this.items.filter((item) => item.key !== key), newItem ]
     return newItem
   }
 
@@ -35,22 +34,22 @@ export class ResponseCache {
     return async (ctx: RequestContext) => {
       const key = `${ctx.request.url}-${JSON.stringify(ctx.state)}`
 
-      const latest = this.get(key)
-      if (latest) {
+      const cacheItem = this.get(key)
+      if (cacheItem) {
         // ETag match triggers 304
         const ifNoneMatch = ctx.request.headers.get("if-none-match")
-        const ETag = latest.value.headers.get("ETag")
+        const ETag = cacheItem.value.headers.get("ETag")
 
         if (ETag && ifNoneMatch?.includes(ETag)) {
           return new Response(null, {
-            headers: latest.value.headers,
+            headers: cacheItem.value.headers,
             status: 304
           })
         }
 
         // else respond 200 clone of response - one-use original lives in cache
         ctx.state.responseFromCache = true
-        return latest.value.clone()
+        return cacheItem.value.clone()
       }
 
       // update cache asynchronously to not block process before return
