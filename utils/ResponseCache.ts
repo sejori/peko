@@ -15,7 +15,7 @@ export class ResponseCache {
   constructor(opts?: Partial<ResponseCache>) {
     this.lifetime = opts && opts.lifetime 
     ? opts.lifetime 
-    : Infinity
+    : Infinity // <- this should not be infinity - calc value f
   }
 
   get(key: string): CacheItem | undefined {

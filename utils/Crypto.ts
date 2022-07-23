@@ -17,14 +17,16 @@ type Payload = {
  * @returns jwt: JWT
  */
 export class Crypto {
-  rawKey: string
   algorithm: DigestAlgorithm
   key: CryptoKey | undefined
+  rawKey: string | undefined
 
-  constructor(rawKey: string, alg?: DigestAlgorithm) {
+  constructor(key: CryptoKey | string, alg?: DigestAlgorithm) {
     // if no key provided use prototype chain to get key from 
     // parent instance (PekoServer)
-    this.rawKey = rawKey
+    if (typeof key === "string") {
+      this.rawKey = key
+    } else this.key = key
     this.algorithm = alg ? alg : "BLAKE3"
   }
 
@@ -82,7 +84,7 @@ export class Crypto {
   }
 
   /**
-   * Verify JWT
+   * Verify JWT and extract payload
    * @param jwt: string
    * @returns payload: Record<string, unknown>
    */
