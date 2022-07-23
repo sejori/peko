@@ -24,7 +24,7 @@ export interface CacheOptions {
 }
 
 /**
- * Response cacher, returns memoize function to be used on handler
+ * Response caching class, provides memoize method to be used on handlers or next() in middleware
  * @param options: { lifetime: number } - cache item lifetime in ms (defaults to Infinity)
  * @returns memoizeHandler: (handler: Handler) => memoizedHandler
  */
