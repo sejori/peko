@@ -5,10 +5,11 @@ const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
 type JWT = `${string}.${string}.${string}`
-type Payload = {
-  exp: number,
-  iat: number,
-  data: Record<string, unknown>
+
+interface CryptoOptions {
+  key: CryptoKey | string,
+  alg?: DigestAlgorithm,
+  lifetime?: number
 }
 
 /**
@@ -20,14 +21,15 @@ export class Crypto {
   algorithm: DigestAlgorithm
   key: CryptoKey | undefined
   rawKey: string | undefined
+  lifetime: number
 
-  constructor(key: CryptoKey | string, alg?: DigestAlgorithm) {
-    // if no key provided use prototype chain to get key from 
-    // parent instance (PekoServer)
-    if (typeof key === "string") {
-      this.rawKey = key
-    } else this.key = key
-    this.algorithm = alg ? alg : "BLAKE3"
+  constructor(opts: CryptoOptions) {
+    if (typeof opts.key === "string") {
+      this.rawKey = opts.key
+    } else this.key = opts.key
+
+    this.lifetime = opts.lifetime ? opts.lifetime : 2592000000 // 1 month
+    this.algorithm = opts.alg ? opts.alg : "BLAKE3"
   }
 
   /**
@@ -67,13 +69,14 @@ export class Crypto {
    * @param payload: Record<string, unknown>
    * @returns jwt: string
    */
-  async sign (payload: Payload): Promise<JWT> {
+  async sign(payload: Record<string, unknown>): Promise<JWT> {
     if (!this.key) await this.createCryptoKey()
 
     const b64Header = btoa(JSON.stringify({
       alg: this.algorithm,
       typ: "JWT"
     }))
+
     const b64Payload = btoa(JSON.stringify(payload))
 
     const signatureBuffer = await crypto.subtle.encrypt(this.algorithm, this.key as CryptoKey, encoder.encode(`${b64Header}.${b64Payload}`))
@@ -88,7 +91,7 @@ export class Crypto {
    * @param jwt: string
    * @returns payload: Record<string, unknown>
    */
-  async verify (jwt: string): Promise<Payload | undefined> {
+  async verify(jwt: string): Promise<Record<string, unknown> | undefined> {
     if (!this.key) await this.createCryptoKey()
     
     const [ b64Header, b64Payload, b64Signature ] = jwt.split(".")

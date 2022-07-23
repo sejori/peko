@@ -1,4 +1,7 @@
 import { RequestContext } from "../server.ts"
+import { Crypto } from "../utils/Crypto.ts"
+
+const crypto = new Crypto({ key: "SUPER_SECRET_KEY_123" }) // <-- should come from env
 
 export type SSRData = { 
   srcURL?: URL
@@ -18,7 +21,7 @@ export const ssrHandler = async (ctx: RequestContext, ssrData: SSRData) => {
 
   // use provided render and template fcns for HTML generation
   const HTML = await ssrData.render(ctx)   
-  const hashString = await ctx.server.crypto.hash(HTML)
+  const hashString = await crypto.hash(HTML)
 
   return new Response(HTML, {
     headers : new Headers({
