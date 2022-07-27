@@ -5,6 +5,9 @@ type ResolvePromise = {
   reject: (reason?: unknown) => void
 }
 
+/**
+ * Utility class for running middleware functions as a cascade
+ */
 export class Cascade {
   async forward(ctx: RequestContext, toCall: SafeMiddleware[]) {
     let result: Response | void

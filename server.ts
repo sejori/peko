@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
-import { logger } from "./middlewares/logger.ts"
+import { logger } from "./middleware/logger.ts"
 import { Promisify } from "./utils/Promisify.ts"
 import { Cascade } from "./utils/Cascade.ts"
 
@@ -29,7 +29,6 @@ export class PekoServer {
     globalMiddleware: [
       logger
     ],
-    cryptoSecretKey: "REPLACE_ME_AND_DONT_STORE_IN_GIT!",
     stringLogger: (log: string) => console.log(log),
     eventLogger: (e: Event) => console.log(e),
     errorHandler: (_ctx: RequestContext, status: number) => {
@@ -278,7 +277,6 @@ export interface Config {
   port: number
   hostname: string
   globalMiddleware: SafeMiddleware[]
-  cryptoSecretKey: string
   stringLogger: (log: string) => Promise<void> | void
   eventLogger: (data: Event) => Promise<void> | void
   errorHandler: (ctx: RequestContext, statusCode: number) => Response | Promise<Response>
