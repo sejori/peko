@@ -8,6 +8,6 @@ const cache = new ResponseCache()
  * @param ctx: RequestContext
  * @returns MiddlewareResponse
  */
-export const cacher = async (ctx: RequestContext, next: () => Promise<Response>): Promise<Response> => {
-  return await cache.memoize(next)(ctx)
+export const cacher = (ctx: RequestContext, next: () => Promise<Response>): Promise<Response> => {
+  return cache.memoize(next)(ctx)
 }
