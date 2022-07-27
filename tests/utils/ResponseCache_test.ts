@@ -62,4 +62,8 @@ Deno.test("UTIL: RESPONSE CACHE", async (t) => {
     const resJSON2 = await memRes2.json()
     assert(resJSON.createdAt !== resJSON2.createdAt)
   })
+
+  await t.step("memoize - cleans cache at memory limit", () => {
+    assert(false)
+  })
 })
