@@ -1,0 +1,16 @@
+{
+  "scriptId": "79",
+  "url": "file:///Users/sebr/Projects/peko/tests/mock_data/server.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 1587, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "testHandler",
+      "ranges": [{ "startOffset": 287, "endOffset": 335, "count": 3 }],
+      "isBlockCoverage": true
+    }
+  ]
+}

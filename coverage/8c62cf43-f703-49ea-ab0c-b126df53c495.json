@@ -1,0 +1,21 @@
+{
+  "scriptId": "80",
+  "url": "file:///Users/sebr/Projects/peko/utils/promise.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 2439, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "promisifyMiddleware",
+      "ranges": [{ "startOffset": 35, "endOffset": 234, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "promisifyHandler",
+      "ranges": [{ "startOffset": 268, "endOffset": 455, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

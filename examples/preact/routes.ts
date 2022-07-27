@@ -3,8 +3,9 @@ import {
   Route, 
   ssrHandler, 
   staticHandler,
-  createResponseCache
+  cacher
 } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+
 import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
@@ -14,25 +15,23 @@ import Home from "./src/pages/Home.js"
 import About from "./src/pages/About.js"
 import htmlTemplate from "./template.ts"
 
-const memoize = createResponseCache()
-
 export const pages: Route[] = [
   {
     route: "/",
     middleware: [
-      async (_ctx, next) => {
-        // throw("some exception") // <- throwing before await next() will stop middleware chain and respond with 500
-        await next()
-        // throw("another exception") // <- throwing after await next() will let middleware run but log the error as an event
-        console.log("sync code executes before resolving prev middleware")
-        await new Promise(res => setTimeout(res, 1000))
-        console.log("async code executes after resolving prev middleware")
-      },
+      // async (_ctx, next) => {
+      //   // throw("some exception") // <- throwing before await next() will stop middleware chain and respond with 500
+      //   await next()
+      //   // throw("another exception") // <- throwing after await next() will let middleware run but log the error as an event
+      //   // console.log("sync code executes before resolving prev middleware")
+      //   // await new Promise(res => setTimeout(res, 1000))
+      //   // console.log("async code executes after resolving prev middleware")
+      // },
       (ctx) => { 
         ctx.state.server_time = `${Date.now()}`
       }
     ],
-    handler: memoize((ctx) => ssrHandler(ctx, {
+    handler: (ctx) => ssrHandler(ctx, {
       srcURL: new URL("./src/pages/Home.js", import.meta.url),
       render: (ctx) => {
         const appHTML = renderToString(Home(ctx.state), null, null)
@@ -47,11 +46,12 @@ export const pages: Route[] = [
           </script>`
         })
       }
-    }))
+    })
   },
   {
     route: "/about",
-    handler: memoize((ctx) => ssrHandler(ctx, {
+    middleware: cacher,
+    handler: (ctx) => ssrHandler(ctx, {
       srcURL: new URL("./src/pages/About.js", import.meta.url),
       render: () => {
         const appHTML = renderToString(About(), null, null)
@@ -66,7 +66,7 @@ export const pages: Route[] = [
           </script>`
         })
       }
-    }))
+    })
   }
 ]
 
@@ -77,6 +77,7 @@ export const assets: Route[] = srcFiles.map(file => {
 
   return {
     route: fileRoute,
+    middleware: cacher,
     handler: (ctx) => staticHandler(ctx, {
       fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
       contentType: lookup(file)

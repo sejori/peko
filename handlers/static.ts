@@ -1,5 +1,4 @@
 import { RequestContext } from "../server.ts"
-import { hasher } from "../utils/hash.ts"
 
 export type StaticData = { 
   fileURL: URL
@@ -21,7 +20,7 @@ export const staticHandler = async (ctx: RequestContext, staticData: StaticData)
 
   // Is it more efficient to stream file into response body?
   const body = await Deno.readFile(filePath)
-  const hashString = await hasher(body.toString())
+  const hashString = await ctx.server.crypto.hash(body.toString())
 
   return new Response(body, {
     headers: new Headers({

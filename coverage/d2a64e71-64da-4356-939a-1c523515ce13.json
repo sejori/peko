@@ -1,0 +1,16 @@
+{
+  "scriptId": "94",
+  "url": "https://deno.land/std@0.140.0/async/mux_async_iterator.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 6193, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "<instance_members_initializer>",
+      "ranges": [{ "startOffset": 49, "endOffset": 1314, "count": 0 }],
+      "isBlockCoverage": true
+    }
+  ]
+}

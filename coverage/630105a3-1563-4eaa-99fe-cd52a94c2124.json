@@ -1,0 +1,11 @@
+{
+  "scriptId": "76",
+  "url": "file:///Users/sebr/Projects/peko/tests/unit/utils/promise_test.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 384, "count": 1 }],
+      "isBlockCoverage": true
+    }
+  ]
+}
