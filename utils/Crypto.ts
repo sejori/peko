@@ -1,9 +1,9 @@
 import { crypto } from "https://deno.land/std@0.144.0/crypto/mod.ts"
+import { DigestAlgorithm } from "https://deno.land/std@0.144.0/_wasm_crypto/mod.ts";
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
-type JWT = `${string}.${string}.${string}`
 type Payload = {
   exp: number,
   iat: number,
@@ -18,7 +18,7 @@ type Payload = {
 export class Crypto {
   key: CryptoKey | undefined
   rawKey: string | undefined
-  algorithm = "AES-CBC"
+  algorithm: { name: string, hash: DigestAlgorithm } = { name: "HMAC", hash: "SHA-256" }
 
   constructor(key: CryptoKey | string) {
     if (typeof key === "string") {
@@ -35,7 +35,7 @@ export class Crypto {
       encoder.encode(await this.hash(this.rawKey as string)).buffer.slice(32),
       this.algorithm,
       false, //extractable
-      ["encrypt", "decrypt"]
+      ["sign"]
     )
   }
 
@@ -46,7 +46,7 @@ export class Crypto {
    */
   async hash(contents: string): Promise<string> {
     const hashBuffer = await crypto.subtle.digest(
-      "BLAKE3",
+      this.algorithm.hash,
       encoder.encode(contents),
     )
   
@@ -61,7 +61,7 @@ export class Crypto {
    * @param payload: Record<string, unknown>
    * @returns jwt: string
    */
-  async sign (payload: Payload): Promise<JWT> {
+  async sign (payload: Payload): Promise<string> {
     if (!this.key) await this.createCryptoKey()
 
     const b64Header = btoa(JSON.stringify({
@@ -70,12 +70,14 @@ export class Crypto {
     }))
     const b64Payload = btoa(JSON.stringify(payload))
 
-    const signatureBuffer = await crypto.subtle.encrypt(
-      { name: this.algorithm, iv: new Uint8Array(16) }, 
+    const signatureBuffer = await crypto.subtle.sign(
+      this.algorithm, 
       this.key as CryptoKey, 
       encoder.encode(`${b64Header}.${b64Payload}`)
     )
+    console.log(signatureBuffer)
     const signatureString = decoder.decode(signatureBuffer)
+    console.log(signatureString)
     const signature = btoa(encodeURIComponent(signatureString))
 
     return `${b64Header}.${b64Payload}.${signature}`
@@ -88,18 +90,21 @@ export class Crypto {
    */
   async verify (jwt: string): Promise<Payload | undefined> {
     if (!this.key) await this.createCryptoKey()
+    if (jwt.split(".").length != 3) return undefined
     
     const [ b64Header, b64Payload, b64Signature ] = jwt.split(".")
 
-    const freshSigBuffer = await crypto.subtle.decrypt(
-      { name: this.algorithm, iv: new Uint8Array(16) },
+    const sigStr = decodeURIComponent(atob(b64Signature))
+    const sigBuff = encoder.encode(sigStr).buffer
+
+    const freshSigBuff = await crypto.subtle.sign(
+      this.algorithm, 
       this.key as CryptoKey, 
       encoder.encode(`${b64Header}.${b64Payload}`)
     )
-    const freshSigString = decoder.decode(freshSigBuffer)
-    const b64SigFresh = btoa(encodeURIComponent(freshSigString))
-  
-    if (b64Signature != b64SigFresh) return undefined
+
+    const verified = decoder.decode(sigBuff) === decoder.decode(freshSigBuff)
+    if (!verified) return undefined
   
     try {
       const payload = JSON.parse(atob(b64Payload))
