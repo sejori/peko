@@ -6,6 +6,9 @@ import {
   SafeMiddleware
 } from "../server.ts"
 
+/**
+ * Utility class for converting middleware and handler functions to promises
+ */
 export class Promisify {
   middleware (fcn: Middleware): SafeMiddleware {
     if (fcn.constructor.name === "AsyncFunction") return fcn as SafeMiddleware
