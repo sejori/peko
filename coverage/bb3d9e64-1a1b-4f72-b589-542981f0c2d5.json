@@ -1,0 +1,16 @@
+{
+  "scriptId": "85",
+  "url": "file:///Users/sebr/Projects/peko/middlewares/logger.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 1400, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "logger",
+      "ranges": [{ "startOffset": 22, "endOffset": 180, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

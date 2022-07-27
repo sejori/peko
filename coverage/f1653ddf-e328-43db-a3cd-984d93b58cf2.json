@@ -1,0 +1,21 @@
+{
+  "scriptId": "87",
+  "url": "file:///Users/sebr/Projects/peko/utils/cascade.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 3961, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "cascadeRun",
+      "ranges": [{ "startOffset": 26, "endOffset": 569, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "cascadeResolve",
+      "ranges": [{ "startOffset": 601, "endOffset": 725, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

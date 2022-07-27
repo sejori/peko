@@ -1,0 +1,91 @@
+{
+  "scriptId": "77",
+  "url": "file:///Users/sebr/Projects/peko/server.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 29713, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "<instance_members_initializer>",
+      "ranges": [{ "startOffset": 268, "endOffset": 571, "count": 0 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "<instance_members_initializer>",
+      "ranges": [{ "startOffset": 579, "endOffset": 6859, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "stringLogger",
+      "ranges": [{ "startOffset": 766, "endOffset": 791, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "eventLogger",
+      "ranges": [{ "startOffset": 814, "endOffset": 835, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "errorHandler",
+      "ranges": [{ "startOffset": 859, "endOffset": 1912, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "setConfig",
+      "ranges": [{ "startOffset": 1936, "endOffset": 2118, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "addRoute",
+      "ranges": [{ "startOffset": 2141, "endOffset": 2835, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "removeRoute",
+      "ranges": [{ "startOffset": 2840, "endOffset": 3107, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "listen",
+      "ranges": [{ "startOffset": 3112, "endOffset": 4016, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "#requestHandler",
+      "ranges": [{ "startOffset": 4021, "endOffset": 4577, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "#cascadeMiddleware",
+      "ranges": [{ "startOffset": 4582, "endOffset": 4954, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "handleError",
+      "ranges": [{ "startOffset": 4959, "endOffset": 5201, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "logString",
+      "ranges": [{ "startOffset": 5206, "endOffset": 5419, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "logEvent",
+      "ranges": [{ "startOffset": 5424, "endOffset": 5632, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "logRequest",
+      "ranges": [{ "startOffset": 5637, "endOffset": 6598, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "logError",
+      "ranges": [{ "startOffset": 6603, "endOffset": 6857, "count": 0 }],
+      "isBlockCoverage": false
+    }
+  ]
+}

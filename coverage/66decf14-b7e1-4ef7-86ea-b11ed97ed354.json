@@ -1,0 +1,49 @@
+{
+  "scriptId": "78",
+  "url": "file:///Users/sebr/Projects/peko/utils/cascade.ts",
+  "functions": [
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 0, "endOffset": 3961, "count": 1 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "cascadeRun",
+      "ranges": [{ "startOffset": 26, "endOffset": 569, "count": 4 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 76, "endOffset": 565, "count": 4 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "next",
+      "ranges": [{ "startOffset": 112, "endOffset": 291, "count": 3 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 189, "endOffset": 245, "count": 3 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 334, "endOffset": 386, "count": 4 }],
+      "isBlockCoverage": true
+    },
+    {
+      "functionName": "",
+      "ranges": [{ "startOffset": 407, "endOffset": 557, "count": 0 }],
+      "isBlockCoverage": false
+    },
+    {
+      "functionName": "cascadeResolve",
+      "ranges": [
+        { "startOffset": 601, "endOffset": 725, "count": 1 },
+        { "startOffset": 678, "endOffset": 723, "count": 3 }
+      ],
+      "isBlockCoverage": true
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import PekoServer, { createEmitter, sseHandler, ssrHandler } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import PekoServer, { Emitter, sseHandler, ssrHandler } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 import { pages, assets, APIs } from "../preact/routes.ts"
@@ -8,7 +8,9 @@ import htmlTemplate from "../preact/template.ts"
 const server = new PekoServer()
 
 // create Emitter - pass logEvent as initial listener so we can see it working
-const testEmitter = createEmitter([server.logEvent])
+const testEmitter = new Emitter([(e) => server.logEvent(e)])
+
+console.log(testEmitter)
 
 // emit random value every second
 setInterval(() => testEmitter.emit({ value: Math.random() }), 1000)
