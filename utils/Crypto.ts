@@ -12,7 +12,7 @@ type Payload = {
 }
 
 /**
- * Crypto class, designed to generate hashes and sign and verify JWTs.
+ * Crypto class, generates hashes and signs and verifies JWTs using provided key.
  * @param alg: string
  * @returns jwt: JWT
  */
@@ -41,8 +41,6 @@ export class Crypto {
       false, //extractable
       ["encrypt", "decrypt"]
     )
-
-    console.log(this.key)
   }
 
   /**
