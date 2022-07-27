@@ -2,7 +2,6 @@ import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
 import { logger } from "./middlewares/logger.ts"
 import { Promisify } from "./utils/Promisify.ts"
 import { Cascade } from "./utils/Cascade.ts"
-import { Crypto } from "./utils/Crypto.ts"
 
 export class RequestContext {
   server: PekoServer
@@ -69,10 +68,9 @@ export class PekoServer {
     if (config) this.setConfig(config)
   }
 
-    // default instances of utility classes for server logic
+    // utility classes for server logic
     cascade = new Cascade()
     promisify = new Promisify()
-    crypto = new Crypto(this.config.cryptoSecretKey)
   
     // route array for request routing
     routes: SafeRoute[] = []
