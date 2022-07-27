@@ -74,10 +74,8 @@ server.addRoute({
             method: "POST",
             body: JSON.stringify({ username: "test-user", password: "test-password" })
           })
-          console.log(response)
 
-          const json = await response.json()
-          jwt = json.jwt
+          jwt = await response.text()
           console.log("jwt: " + jwt)
 
           loginBtn.textContent = "Logout"
