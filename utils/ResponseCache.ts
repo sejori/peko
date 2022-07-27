@@ -19,8 +19,8 @@ export class CacheItem {
 }
 
 export interface CacheOptions { 
-  lifetime: number
-  memoryLimit: number
+  lifetime?: number
+  memoryLimit?: number
 }
 
 /**
