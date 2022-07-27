@@ -33,7 +33,7 @@ export class ResponseCache {
   lifetime: number
   MEMORY_LIMIT: number
 
-  constructor(opts?: Partial<CacheOptions>) {
+  constructor(opts?: CacheOptions) {
     this.lifetime = opts && opts.lifetime 
       ? opts.lifetime 
       : Infinity

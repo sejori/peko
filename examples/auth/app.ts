@@ -2,10 +2,11 @@ import PekoServer, * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/
 import config from "../config.ts"
 
 const server = new PekoServer()
+const crypto = new Peko.Crypto({ key: "SUPER_SECRET_KEY_123" })
 
 const user = {
   username: "test-user",
-  password: await Peko.hasher("test-password")
+  password: await crypto.hash("test-password")
 }
 
 // Configure Peko
@@ -18,17 +19,14 @@ server.addRoute({
   handler: async (ctx) => {
     const { username, password } = await ctx.request.json()
 
-    if (!username || !password || username !== user.username || await Peko.hasher(password) !== user.password) {
+    if (!username || !password || username !== user.username || await crypto.hash(password) !== user.password) {
       return await server.handleError(ctx, 400)
     }
-
 
     const exp = new Date()
     exp.setMonth(exp.getMonth() + 1)
 
-    const jwt = await Peko.generateJWT({
-      exp: exp.valueOf()
-    })
+    const jwt = await crypto.sign({ username: user.username })
 
     return new Response(JSON.stringify({ jwt}), {
       headers: new Headers({
