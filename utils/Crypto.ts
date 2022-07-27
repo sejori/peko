@@ -1,5 +1,4 @@
 import { crypto } from "https://deno.land/std@0.144.0/crypto/mod.ts"
-import { DigestAlgorithm } from "https://deno.land/std@0.144.0/_wasm_crypto/mod.ts";
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
@@ -17,17 +16,14 @@ type Payload = {
  * @returns jwt: JWT
  */
 export class Crypto {
-  algorithm: DigestAlgorithm
   key: CryptoKey | undefined
   rawKey: string | undefined
+  algorithm = "AES-CBC"
 
-  constructor(key: CryptoKey | string, alg?: DigestAlgorithm) {
-    // if no key provided use prototype chain to get key from 
-    // parent instance (PekoServer)
+  constructor(key: CryptoKey | string) {
     if (typeof key === "string") {
       this.rawKey = key
     } else this.key = key
-    this.algorithm = alg ? alg : "BLAKE3"
   }
 
   /**
@@ -36,8 +32,8 @@ export class Crypto {
   async createCryptoKey(): Promise<void> {
     this.key = await crypto.subtle.importKey(
       "raw",
-      encoder.encode(this.rawKey),
-      { name: "HMAC", hash: "SHA-256" },
+      encoder.encode(await this.hash(this.rawKey as string)).buffer.slice(32),
+      this.algorithm,
       false, //extractable
       ["encrypt", "decrypt"]
     )
@@ -50,7 +46,7 @@ export class Crypto {
    */
   async hash(contents: string): Promise<string> {
     const hashBuffer = await crypto.subtle.digest(
-      this.algorithm,
+      "BLAKE3",
       encoder.encode(contents),
     )
   
@@ -74,7 +70,11 @@ export class Crypto {
     }))
     const b64Payload = btoa(JSON.stringify(payload))
 
-    const signatureBuffer = await crypto.subtle.encrypt(this.algorithm, this.key as CryptoKey, encoder.encode(`${b64Header}.${b64Payload}`))
+    const signatureBuffer = await crypto.subtle.encrypt(
+      { name: this.algorithm, iv: new Uint8Array(16) }, 
+      this.key as CryptoKey, 
+      encoder.encode(`${b64Header}.${b64Payload}`)
+    )
     const signatureString = decoder.decode(signatureBuffer)
     const signature = btoa(encodeURIComponent(signatureString))
 
@@ -91,7 +91,11 @@ export class Crypto {
     
     const [ b64Header, b64Payload, b64Signature ] = jwt.split(".")
 
-    const freshSigBuffer = await crypto.subtle.decrypt(this.algorithm, this.key as CryptoKey, encoder.encode(`${b64Header}.${b64Payload}`))
+    const freshSigBuffer = await crypto.subtle.decrypt(
+      { name: this.algorithm, iv: new Uint8Array(16) },
+      this.key as CryptoKey, 
+      encoder.encode(`${b64Header}.${b64Payload}`)
+    )
     const freshSigString = decoder.decode(freshSigBuffer)
     const b64SigFresh = btoa(encodeURIComponent(freshSigString))
   

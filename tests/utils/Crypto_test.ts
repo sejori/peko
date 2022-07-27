@@ -2,7 +2,7 @@ import { assert } from "https://deno.land/std@0.147.0/testing/asserts.ts"
 import { Crypto } from "../../utils/Crypto.ts"
 
 Deno.test("UTIL: CRYPTO", async (t) => {
-  const crypto = new Crypto("SUPER_SECRET_KEY_123", "BLAKE3")
+  const crypto = new Crypto("SUPER_SECRET_KEY_123")
   const str = "test-string-1234567890"
 
   const date = new Date()
