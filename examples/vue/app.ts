@@ -1,11 +1,11 @@
 import "./globals.ts" // <- extends window global for @vue/server-renderer
 
-import PekoServer from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import Server from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 
 import config from "../config.ts"
 import { pages, assets, APIs } from "./routes.ts"
 
-const server = new PekoServer()
+const server = new Server()
 
 // Configure Peko
 server.setConfig(config)

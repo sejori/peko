@@ -1,10 +1,17 @@
-import { assert } from "https://deno.land/std@0.147.0/testing/asserts.ts"
+import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
 import { Crypto } from "../../utils/Crypto.ts"
 
 Deno.test("UTIL: CRYPTO", async (t) => {
-  const crypto = new Crypto("SUPER_SECRET_KEY_123", "BLAKE3")
+  const crypto = new Crypto("SUPER_SECRET_KEY_123")
   const str = "test-string-1234567890"
-  const payload = {exp:{ test: str }
+
+  const date = new Date()
+  date.setMonth(date.getMonth() + 1)
+  const payload = { 
+    iat: Date.now(), 
+    exp: date.valueOf(), 
+    data: { test: str } 
+  }
   
   await t.step("hash creates repeatable hash", async () => {
     const hash1 = await crypto.hash(str)
@@ -22,8 +29,7 @@ Deno.test("UTIL: CRYPTO", async (t) => {
   await t.step("sign creates valid jwt", async () => {
     const token = await crypto.sign(payload)
 
-    console.log(token)
-
+    // valiate that boi
     assert(token)
   })
 })
