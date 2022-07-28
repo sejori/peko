@@ -29,8 +29,7 @@ Deno.test("UTIL: CRYPTO", async (t) => {
   await t.step("sign creates valid jwt", async () => {
     const token = await crypto.sign(payload)
 
-    console.log(token)
-
+    // valiate that boi
     assert(token)
   })
 })
