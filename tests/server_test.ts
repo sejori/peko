@@ -1,4 +1,4 @@
-import { PekoServer, SafeMiddleware, SafeHandler } from "../server.ts"
+// import { PekoServer, SafeMiddleware, SafeHandler } from "../server.ts"
 
 
 
@@ -15,10 +15,10 @@ import { PekoServer, SafeMiddleware, SafeHandler } from "../server.ts"
 // server.listen()
 
 // CREATE SERVER INSTANCE
-Deno.test("SERVER", async (t) => {
+// Deno.test("SERVER", async (t) => {
 
-  // await t.step()
-})
+//   // await t.step()
+// })
 
 // test routes added
 

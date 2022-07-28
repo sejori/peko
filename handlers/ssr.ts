@@ -1,7 +1,7 @@
 import { RequestContext } from "../server.ts"
 import { Crypto } from "../utils/Crypto.ts"
 
-const crypto = new Crypto({ key: "SUPER_SECRET_KEY_123" }) // <-- should come from env
+const crypto = new Crypto("SUPER_SECRET_KEY_123") // <-- should come from env
 
 export type SSRData = { 
   srcURL?: URL

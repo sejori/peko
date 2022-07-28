@@ -1,4 +1,4 @@
-import PekoServer, * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 import config from "../config.ts"
@@ -6,7 +6,10 @@ import { assets, APIs } from "../preact/routes.ts"
 import Home from "../preact/src/pages/Home.js"
 import htmlTemplate from "../preact/template.ts"
 
-const server = new PekoServer()
+const server = new Peko.Server()
+
+// create a response cache for our custom handler
+const cache = new Peko.ResponseCache()
 
 // Configure Peko
 server.setConfig(config)
@@ -15,16 +18,13 @@ assets.forEach(asset => server.addRoute(asset))
 // Custom API functions
 APIs.forEach(API => server.addRoute(API))
 
-// create a response cache for our custom handler
-const memoizeHandler = Peko.createResponseCache()
-
 // Route with cached custom handler - returns preact component JSON data instead of HTML
 server.addRoute({
   route: "/",
   method: "GET",
   // memoize our custom handler so responses are cached until lifetime expires
   // and not re-rendered for every request
-  handler: memoizeHandler(async () => {
+  handler: cache.memoize(async () => {
     const decoder = new TextDecoder();
 
     // load the contents of the JS file

@@ -1,10 +1,10 @@
-import { assert } from "https://deno.land/std@0.147.0/testing/asserts.ts"
-import { PekoServer, RequestContext } from "../../server.ts"
+import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
+import { Server, RequestContext } from "../../server.ts"
 import { testHandler } from "../../tests/mock_data.ts"
 import { ResponseCache } from "../../utils/ResponseCache.ts"
 
-Deno.test("UTIL: CACHE", async (t) => {
-  const testServer = new PekoServer()
+Deno.test("UTIL: RESPONSE CACHE", async (t) => {
+  const testServer = new Server()
   const testContext = new RequestContext(testServer, undefined, { foo: "bar" })
 
   const CACHE_LIFETIME = 200
@@ -17,8 +17,8 @@ Deno.test("UTIL: CACHE", async (t) => {
     assert(!cache.items[0])
   })
 
-  await t.step("update cache", () => {
-    const result = cache.set(key, value)
+  await t.step("update cache", async () => {
+    const result = await cache.set(key, value)
     assert(result.key === key)
     assert(result.value === value)
     assert(result.dob == Date.now() || result.dob < Date.now())
@@ -62,4 +62,8 @@ Deno.test("UTIL: CACHE", async (t) => {
     const resJSON2 = await memRes2.json()
     assert(resJSON.createdAt !== resJSON2.createdAt)
   })
+
+  // await t.step("memoize - cleans cache at memory limit", () => {
+  //   assert(false)
+  // })
 })

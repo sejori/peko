@@ -1,14 +1,14 @@
-import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
+import { serve } from "https://deno.land/std@0.150.0/http/server.ts"
 import { logger } from "./middleware/logger.ts"
 import { Promisify } from "./utils/Promisify.ts"
 import { Cascade } from "./utils/Cascade.ts"
 
 export class RequestContext {
-  server: PekoServer
+  server: Server
   request: Request
   state: Record<string, unknown>
 
-  constructor(server: PekoServer, request?: Request, state?: Record<string, unknown>) {
+  constructor(server: Server, request?: Request, state?: Record<string, unknown>) {
     this.server = server
     this.request = request 
       ? request
@@ -20,7 +20,7 @@ export class RequestContext {
   }
 }
 
-export class PekoServer {
+export class Server {
   // define default config values
   config: Config = {
     devMode: false,
@@ -219,7 +219,7 @@ export class PekoServer {
   }
 
   /**
-   * Uses PekoServer.config.logString and PekoServer.config.logEvent. Returns promise to not block process
+   * Uses Server.config.logString and Server.config.logEvent. Returns promise to not block process
    * @param ctx: RequestContext
    * @param start: number
    * @param responseTime: number
@@ -307,7 +307,7 @@ export type Event = {
   data: Record<string, unknown>
 }
 
-export default PekoServer
+export default Server
 
 // TODO: test route strings for formatting to enforce type `/${string}` in devMode
 // TODO: test middleware and handlers for cookie and rendering bear traps

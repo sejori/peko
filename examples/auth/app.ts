@@ -1,8 +1,8 @@
-import PekoServer, * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import config from "../config.ts"
 
-const server = new PekoServer()
-const crypto = new Peko.Crypto({ key: "SUPER_SECRET_KEY_123" })
+const server = new Peko.Server()
+const crypto = new Peko.Crypto("SUPER_SECRET_KEY_123") // <-- should come from env
 
 const user = {
   username: "test-user",
@@ -19,16 +19,24 @@ server.addRoute({
   handler: async (ctx) => {
     const { username, password } = await ctx.request.json()
 
-    if (!username || !password || username !== user.username || await crypto.hash(password) !== user.password) {
+    if (
+      !username || !password 
+      || username !== user.username 
+      || await crypto.hash(password) !== user.password
+    ) {
       return await server.handleError(ctx, 400)
     }
 
     const exp = new Date()
     exp.setMonth(exp.getMonth() + 1)
 
-    const jwt = await crypto.sign({ username: user.username })
+    const jwt = await crypto.sign({
+      iat: Date.now(),
+      exp: exp.valueOf(),
+      data: { user: user.username }
+    })
 
-    return new Response(JSON.stringify({ jwt}), {
+    return new Response(jwt, {
       headers: new Headers({
         "Content-Type": "application/json"
       })
@@ -39,7 +47,7 @@ server.addRoute({
 // verify JWT in auth middleware
 server.addRoute({
   route: "/authTest",
-  middleware: Peko.authenticator,
+  middleware: Peko.authenticator(crypto),
   handler: () => new Response("You are authenticated!")
 })
 
@@ -66,10 +74,8 @@ server.addRoute({
             method: "POST",
             body: JSON.stringify({ username: "test-user", password: "test-password" })
           })
-          console.log(response)
 
-          const json = await response.json()
-          jwt = json.jwt
+          jwt = await response.text()
           console.log("jwt: " + jwt)
 
           loginBtn.textContent = "Logout"
