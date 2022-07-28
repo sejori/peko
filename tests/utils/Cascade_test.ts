@@ -1,5 +1,5 @@
-import { assert } from "https://deno.land/std@0.147.0/testing/asserts.ts"
-import { PekoServer, RequestContext } from "../../server.ts"
+import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
+import { Server, RequestContext } from "../../server.ts"
 import { Cascade } from "../../utils/Cascade.ts"
 import { 
   testMiddleware1,
@@ -10,7 +10,7 @@ import {
 
 Deno.test("UTIL: CASCADE", async (t) => {
   const cascade = new Cascade()
-  const testServer = new PekoServer()
+  const testServer = new Server()
   const testContext = new RequestContext(testServer, undefined, { foo: "bar" })
   const toCall = [testMiddleware1, testMiddleware2, testMiddleware3, testHandler]
   let lex_response: Response
