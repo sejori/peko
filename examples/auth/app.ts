@@ -1,7 +1,7 @@
 import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import config from "../config.ts"
 
-const server = new Peko.PekoServer()
+const server = new Peko.Server()
 const crypto = new Peko.Crypto("SUPER_SECRET_KEY_123") // <-- should come from env
 
 const user = {

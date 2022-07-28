@@ -1,10 +1,10 @@
-import PekoServer from "../../mod.ts" // <- https://deno.land/x/peko/server.ts 
+import Server from "../../mod.ts" // <- https://deno.land/x/peko/server.ts 
 
 import config from "../config.ts"
 import { pages, assets, APIs } from "./routes.ts"
 
 // initialize server app
-const server = new PekoServer()
+const server = new Server()
 
 // custom config to 
 server.setConfig(config)

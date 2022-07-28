@@ -1,4 +1,4 @@
-import { assert } from "https://deno.land/std@0.147.0/testing/asserts.ts"
+import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
 import { Crypto } from "../../utils/Crypto.ts"
 
 Deno.test("UTIL: CRYPTO", async (t) => {

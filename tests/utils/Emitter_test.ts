@@ -1,4 +1,4 @@
-import { assert } from "https://deno.land/std@0.147.0/testing/asserts.ts"
+import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
 import { Event, Emitter } from "../../mod.ts"
 
 Deno.test("UTIL: EMITTER", async (t) => {
