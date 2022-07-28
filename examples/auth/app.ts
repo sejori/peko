@@ -47,7 +47,7 @@ server.addRoute({
 // verify JWT in auth middleware
 server.addRoute({
   route: "/authTest",
-  middleware: Peko.authenticator,
+  middleware: Peko.authenticator(crypto),
   handler: () => new Response("You are authenticated!")
 })
 

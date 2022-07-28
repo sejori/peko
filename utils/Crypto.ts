@@ -48,7 +48,6 @@ export class Crypto {
       this.algorithm.hash,
       encoder.encode(contents),
     )
-
     return encodeB64(hashBuffer)
   }
 
@@ -82,8 +81,8 @@ export class Crypto {
    * @returns payload: Record<string, unknown>
    */
   async verify (jwt: string): Promise<Payload | undefined> {
-    if (!this.key) await this.createCryptoKey()
     if (jwt.split(".").length != 3) return undefined
+    if (!this.key) await this.createCryptoKey()
     
     const [ b64Header, b64Payload, b64Signature ] = jwt.split(".")
 
@@ -93,7 +92,6 @@ export class Crypto {
       decodeB64(b64Signature),
       encoder.encode(`${b64Header}.${b64Payload}`)
     )
-    console.log(verified)
     if (!verified) return undefined
   
     try {
