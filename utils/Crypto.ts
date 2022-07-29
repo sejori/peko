@@ -11,8 +11,7 @@ type Payload = {
 
 /**
  * Crypto class, generates hashes and signs and verifies JWTs using provided key.
- * @param alg: string
- * @returns jwt: JWT
+ * @param key: CryptoKey | string
  */
 export class Crypto {
   key: CryptoKey | undefined
@@ -53,7 +52,11 @@ export class Crypto {
 
   /**
    * Sign (create) JWT from payload
-   * @param payload: Record<string, unknown>
+   * @param payload: {
+   *   exp: number,
+   *   iat: number,
+   *   data: Record<string, unknown>
+   * }
    * @returns jwt: string
    */
   async sign (payload: Payload): Promise<string> {
@@ -78,7 +81,11 @@ export class Crypto {
   /**
    * Verify JWT and extract payload
    * @param jwt: string
-   * @returns payload: Record<string, unknown>
+   * @returns payload: {
+   *   exp: number,
+   *   iat: number,
+   *   data: Record<string, unknown>
+   * }
    */
   async verify (jwt: string): Promise<Payload | undefined> {
     if (jwt.split(".").length != 3) return undefined
