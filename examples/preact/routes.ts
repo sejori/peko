@@ -34,7 +34,7 @@ export const pages: Route[] = [
         ctx.state.server_time = `${Date.now()}`
       }
     ],
-    handler: (ctx) => ssrHandler(ctx, {
+    handler: ssrHandler({
       srcURL: new URL("./src/pages/Home.js", import.meta.url),
       render: (ctx) => {
         const appHTML = renderToString(Home(ctx.state), null, null)
@@ -54,7 +54,7 @@ export const pages: Route[] = [
   {
     route: "/about",
     middleware: cacher(cache),
-    handler: (ctx) => ssrHandler(ctx, {
+    handler: ssrHandler({
       srcURL: new URL("./src/pages/About.js", import.meta.url),
       render: () => {
         const appHTML = renderToString(About(), null, null)
@@ -81,7 +81,7 @@ export const assets: Route[] = srcFiles.map(file => {
   return {
     route: fileRoute,
     middleware: cacher(cache),
-    handler: (ctx) => staticHandler(ctx, {
+    handler: staticHandler({
       fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
       contentType: lookup(file)
     })

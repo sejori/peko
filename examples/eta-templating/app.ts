@@ -15,7 +15,7 @@ configureEta({
 
 // adjust premade preact page render fcns to use eta
 // parege.route ternary operator used to return Home & About page specifics
-pages.forEach(page => page.handler = (ctx) => Peko.ssrHandler(ctx, {
+pages.forEach(page => page.handler = Peko.ssrHandler({
   srcURL: page.route === "/" 
     ? new URL("../preact.src/pages/Home.js", import.meta.url)
     : new URL("../preact/src/pages/Src.js", import.meta.url), 

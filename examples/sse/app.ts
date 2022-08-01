@@ -10,19 +10,17 @@ const server = new Server()
 // create Emitter - pass logEvent as initial listener so we can see it working
 const testEmitter = new Emitter([(e) => server.logEvent(e)])
 
-console.log(testEmitter)
-
 // emit random value every second
 setInterval(() => testEmitter.emit({ value: Math.random() }), 1000)
 
 // SSE route streams data from testEmitter
 server.addRoute({
   route: "/sse",
-  handler: (ctx) => sseHandler(ctx, { emitter: testEmitter })
+  handler: sseHandler(testEmitter)
 })
 
 // adjust home page handler templating to include EventSource connection logic
-pages[0].handler = (ctx) => ssrHandler(ctx, {
+pages[0].handler = ssrHandler({
   render: (ctx) => {
     const appHTML = renderToString(Home(ctx.state), null, null)
     return htmlTemplate({
