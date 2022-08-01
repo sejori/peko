@@ -3,8 +3,8 @@
  */
 
 // Core classes, functions & types
-import PekoServer from "./server.ts"
-export default PekoServer
+import Server from "./server.ts"
+export default Server
 export * from "./server.ts"
 
 // Handlers

@@ -1,11 +1,11 @@
-import PekoServer, { Emitter, sseHandler, ssrHandler } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import Server, { Emitter, sseHandler, ssrHandler } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 import { pages, assets, APIs } from "../preact/routes.ts"
 import Home from "../preact/src/pages/Home.js"
 import htmlTemplate from "../preact/template.ts"
 
-const server = new PekoServer()
+const server = new Server()
 
 // create Emitter - pass logEvent as initial listener so we can see it working
 const testEmitter = new Emitter([(e) => server.logEvent(e)])

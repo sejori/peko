@@ -1,13 +1,19 @@
 import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import config from "../config.ts"
 
-const server = new Peko.PekoServer()
-const crypto = new Peko.Crypto("SUPER_SECRET_KEY_123") // <-- should come from env
+const server = new Peko.Server()
+const crypto = new Peko.Crypto("SUPER_SECRET_KEY_123") // <-- replace from env
 
-const user = {
+const user = { // <-- replace with db / auth provider query
   username: "test-user",
   password: await crypto.hash("test-password")
 }
+
+const validateUser = async (username: string, password: string) =>
+  !username || !password 
+  || username !== user.username // <-- replace with db / auth provider query
+  || await crypto.hash(password) !== user.password 
+
 
 // Configure Peko
 server.setConfig(config)
@@ -19,22 +25,21 @@ server.addRoute({
   handler: async (ctx) => {
     const { username, password } = await ctx.request.json()
 
-    if (
-      !username || !password 
-      || username !== user.username 
-      || await crypto.hash(password) !== user.password
-    ) {
+    if (!await validateUser(username, password)) {
       return await server.handleError(ctx, 400)
     }
 
     const exp = new Date()
     exp.setMonth(exp.getMonth() + 1)
 
-    const jwt = await crypto.sign({
-      iat: Date.now(),
-      exp: exp.valueOf(),
-      data: { user: user.username }
-    })
+    const jwt = await crypto.sign(
+      // Payload: { iat: number, exp: number, data: Record<string, undefined> }
+      {
+        iat: Date.now(),
+        exp: exp.valueOf(),
+        data: { user: user.username }
+      }
+    )
 
     return new Response(jwt, {
       headers: new Headers({
@@ -47,7 +52,7 @@ server.addRoute({
 // verify JWT in auth middleware
 server.addRoute({
   route: "/authTest",
-  middleware: Peko.authenticator,
+  middleware: Peko.authenticator(crypto),
   handler: () => new Response("You are authenticated!")
 })
 
