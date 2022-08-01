@@ -3,7 +3,8 @@ import {
   Route, 
   ssrHandler, 
   staticHandler,
-  cacher
+  cacher,
+  ResponseCache
 } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 
 import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
@@ -14,6 +15,8 @@ import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,
 import Home from "./src/pages/Home.js"
 import About from "./src/pages/About.js"
 import htmlTemplate from "./template.ts"
+
+const cache = new ResponseCache()
 
 export const pages: Route[] = [
   {
@@ -50,7 +53,7 @@ export const pages: Route[] = [
   },
   {
     route: "/about",
-    middleware: cacher,
+    middleware: cacher(cache),
     handler: (ctx) => ssrHandler(ctx, {
       srcURL: new URL("./src/pages/About.js", import.meta.url),
       render: () => {
@@ -77,7 +80,7 @@ export const assets: Route[] = srcFiles.map(file => {
 
   return {
     route: fileRoute,
-    middleware: cacher,
+    middleware: cacher(cache),
     handler: (ctx) => staticHandler(ctx, {
       fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
       contentType: lookup(file)

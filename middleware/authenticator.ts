@@ -1,14 +1,12 @@
-import { RequestContext } from "../server.ts"
+import { RequestContext, Middleware } from "../server.ts"
 import { Crypto } from "../utils/Crypto.ts"
-
-const crypto = new Crypto("SUPER_SECRET_KEY_123") // <-- should come from env
 
 /**
  * Auth middleware, uses Crypto utility class to verify JWTs
- * @param ctx: RequestContext
+ * @param crypto: Crypto instance to be used
  * @returns MiddlewareResponse
  */
-export const authenticator = async (ctx: RequestContext): Promise<Response | void>=> {
+export const authenticator = (crypto: Crypto): Middleware => async (ctx: RequestContext): Promise<Response | void>=> {
   const authHeader = ctx.request.headers.get("Authorization")
 
   // check JWT from cookies
@@ -19,10 +17,7 @@ export const authenticator = async (ctx: RequestContext): Promise<Response | voi
       ctx.state.auth = payload
       return
     }
-  }
-
-  // otherwise create anonymous session
-  
+  }  
   
   return await ctx.server.handleError(ctx, 401)
 }

@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.140.0/http/server.ts"
+import { serve } from "https://deno.land/std@0.150.0/http/server.ts"
 import { logger } from "./middleware/logger.ts"
 import { Promisify } from "./utils/Promisify.ts"
 import { Cascade } from "./utils/Cascade.ts"
@@ -219,7 +219,7 @@ export class Server {
   }
 
   /**
-   * Uses PekoServer.config.logString and PekoServer.config.logEvent. Returns promise to not block process
+   * Uses Server.config.logString and Server.config.logEvent. Returns promise to not block process
    * @param ctx: RequestContext
    * @param start: number
    * @param responseTime: number
