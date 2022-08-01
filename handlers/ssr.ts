@@ -1,22 +1,22 @@
 import { RequestContext } from "../server.ts"
 import { Crypto } from "../utils/Crypto.ts"
 
-const crypto = new Crypto("SUPER_SECRET_KEY_123") // <-- should come from env
+const crypto = new Crypto(Array.from({length: 10}, () => Math.floor(Math.random() * 9)).toString())
 
 export type SSRData = { 
   srcURL?: URL
   render: Render
+  cacheControl?: string
 }
 export type Render = (ctx: RequestContext) => string | Promise<string>
 
 /**
  * Generates Response with SSRData.render result in body, sets modifiable 
  * "Cache-Control" header and hashes render output for "ETAG" header
- * @param ctx: RequestContext
- * @param ssrData: SSRRoute
+ * @param ssrData: SSRData
  * @returns Promise<Response>
  */
-export const ssrHandler = async (ctx: RequestContext, ssrData: SSRData) => {
+export const ssrHandler = (ssrData: SSRData) => async (ctx: RequestContext) => {
   // TODO: emit srcURL file change events from watcher worker (in devMode)
 
   // use provided render and template fcns for HTML generation
@@ -29,7 +29,7 @@ export const ssrHandler = async (ctx: RequestContext, ssrData: SSRData) => {
       // tell browser not to cache if in devMode
       'Cache-Control': ctx.server.config.devMode
         ? 'no-store'
-        : 'max-age=604800, stale-while-revalidate=86400',
+        : ssrData.cacheControl ? ssrData.cacheControl : 'max-age=604800, stale-while-revalidate=86400',
       // create ETag hash so 304 (not modified) response can be given from cacher
       'ETag': hashString
     })
