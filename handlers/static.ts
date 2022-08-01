@@ -15,7 +15,7 @@ export type StaticData = {
  * @param staticData: StaticData
  * @returns Promise<Response>
  */
-export const staticHandler = async (ctx: RequestContext, staticData: StaticData) => {
+export const staticHandler = (staticData: StaticData) => async (ctx: RequestContext) => {
   let filePath = decodeURI(staticData.fileURL.pathname)
   
   // fix annoying windows paths

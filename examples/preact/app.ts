@@ -3,11 +3,8 @@ import Server from "../../mod.ts" // <- https://deno.land/x/peko/server.ts
 import config from "../config.ts"
 import { pages, assets, APIs } from "./routes.ts"
 
-// initialize server app
-const server = new Server()
-
-// custom config to 
-server.setConfig(config)
+// initialize server with config
+const server = new Server(config)
 
 // SSR'ed app page routes
 pages.forEach(page => server.addRoute(page))
