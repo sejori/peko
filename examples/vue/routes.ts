@@ -11,7 +11,7 @@ export const pages: Route[] = [
   // must be PekoPageRouteData type (see types.ts)
   {
     route: "/",
-    handler: (ctx) => ssrHandler(ctx, {
+    handler: ssrHandler({
       srcURL: new URL("./src/app.js", import.meta.url),
       render: () => {
         const appHTML = renderToString(App())
@@ -38,7 +38,7 @@ export const assets: Route[] = srcFiles.map(file => {
   // must be StaticRoute type (see types.ts)
   return {
     route: fileRoute,
-    handler: (ctx) => staticHandler(ctx, {
+    handler: staticHandler({
       fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
       contentType: lookup(file)
     })
