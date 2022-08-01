@@ -4,11 +4,11 @@ import { Promisify } from "./utils/Promisify.ts"
 import { Cascade } from "./utils/Cascade.ts"
 
 export class RequestContext {
-  server: PekoServer
+  server: Server
   request: Request
   state: Record<string, unknown>
 
-  constructor(server: PekoServer, request?: Request, state?: Record<string, unknown>) {
+  constructor(server: Server, request?: Request, state?: Record<string, unknown>) {
     this.server = server
     this.request = request 
       ? request
@@ -20,7 +20,7 @@ export class RequestContext {
   }
 }
 
-export class PekoServer {
+export class Server {
   // define default config values
   config: Config = {
     devMode: false,
@@ -307,7 +307,7 @@ export type Event = {
   data: Record<string, unknown>
 }
 
-export default PekoServer
+export default Server
 
 // TODO: test route strings for formatting to enforce type `/${string}` in devMode
 // TODO: test middleware and handlers for cookie and rendering bear traps
