@@ -64,11 +64,11 @@ export class Crypto {
   async sign (payload: Payload): Promise<string> {
     if (!this.key) await this.createCryptoKey()
 
-    const b64Header = btoa(JSON.stringify({
+    const b64Header = encodeB64(JSON.stringify({
       alg: this.algorithm,
       typ: "JWT"
     }))
-    const b64Payload = btoa(JSON.stringify(payload))
+    const b64Payload = encodeB64(JSON.stringify(payload))
 
     const signatureBuffer = await crypto.subtle.sign(
       this.algorithm, 
@@ -108,6 +108,7 @@ export class Crypto {
   
     try {
       const payload = JSON.parse(atob(b64Payload))
+      if (payload.exp < Date.now()) return undefined
       return payload
     } catch(error) {
       throw(error)
