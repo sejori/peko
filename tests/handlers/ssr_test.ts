@@ -2,7 +2,7 @@ import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
 import { Server, RequestContext } from "../../server.ts"
 import { ssrHandler } from "../../handlers/ssr.ts"
 
-Deno.test("HANDLER: SSR", async (t) => {
+Deno.test("HANDLER: Server-side render", async (t) => {
   const server = new Server({
     eventLogger: () => {},
     stringLogger: () => {}

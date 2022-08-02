@@ -1,7 +1,7 @@
 import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
 import { Event, Emitter } from "../../mod.ts"
 
-Deno.test("UTIL: EMITTER", async (t) => {
+Deno.test("UTIL: Emitter", async (t) => {
   const eventArray: Event[] = []
   const testFcn = (e: Event) => eventArray.push(e)
   const testData = { test: "test" }

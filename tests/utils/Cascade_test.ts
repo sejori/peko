@@ -8,7 +8,7 @@ import {
   testHandler
 } from "../../tests/mock_data.ts"
 
-Deno.test("UTIL: CASCADE", async (t) => {
+Deno.test("UTIL: Cascade", async (t) => {
   const cascade = new Cascade()
   const testServer = new Server()
   const testContext = new RequestContext(testServer, undefined, { foo: "bar" })
