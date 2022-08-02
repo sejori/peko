@@ -2,7 +2,7 @@ import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
 import { Server, RequestContext } from "../../server.ts"
 import { Promisify } from "../../utils/Promisify.ts"
 
-Deno.test("UTIL: PROMISIFY", async (t) => {
+Deno.test("UTIL: Promisify", async (t) => {
   const server = new Server()
   const ctx = new RequestContext(server)
 

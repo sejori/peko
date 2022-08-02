@@ -2,7 +2,7 @@ import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
 import { Server, RequestContext } from "../../server.ts"
 import { staticHandler } from "../../handlers/static.ts"
 
-Deno.test("HANDLER: STATIC", async (t) => {
+Deno.test("HANDLER: Static", async (t) => {
   const server = new Server({
     eventLogger: () => {},
     stringLogger: () => {}

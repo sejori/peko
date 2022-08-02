@@ -3,7 +3,7 @@ import { Server, RequestContext } from "../../server.ts"
 import { sseHandler } from "../../handlers/sse.ts"
 import { Emitter } from "../../utils/Emitter.ts"
 
-Deno.test("HANDLER: Server-sent events", async (t) => {
+Deno.test("MIDDLEWARE: Logger", async (t) => {
   const server = new Server({
     eventLogger: () => {},
     stringLogger: () => {}
