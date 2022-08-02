@@ -26,9 +26,7 @@ export class Server {
     devMode: false,
     port: 7777,
     hostname: "0.0.0.0",
-    globalMiddleware: [
-      logger
-    ],
+    globalMiddleware: [],
     stringLogger: (log: string) => console.log(log),
     eventLogger: (e: Event) => console.log(e),
     errorHandler: (_ctx: RequestContext, status: number) => {

@@ -4,7 +4,7 @@ import { Crypto } from "../utils/Crypto.ts"
 /**
  * Auth middleware, uses Crypto utility class to verify JWTs
  * @param crypto: Crypto instance to be used
- * @returns MiddlewareResponse
+ * @returns Middleware
  */
 export const authenticator = (crypto: Crypto): Middleware => async (ctx: RequestContext): Promise<Response | void>=> {
   const authHeader = ctx.request.headers.get("Authorization")
