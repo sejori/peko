@@ -10,9 +10,11 @@ Deno.test("HANDLER: STATIC", async (t) => {
   const ctx = new RequestContext(server)
   const fileURL = new URL(import.meta.url)
   const decoder = new TextDecoder()
+  const cacheControl = 'max-age=60, stale-while-revalidate=10'
+  let response: Response
   
   await t.step("Response body created from file contents as expected", async () => {
-    const response = await staticHandler({ fileURL, contentType: 'application/javascript' })(ctx)
+    response = await staticHandler({ fileURL, contentType: 'application/javascript' })(ctx)
     const reader = response.body?.getReader()
 
     if (reader) {
@@ -20,5 +22,13 @@ Deno.test("HANDLER: STATIC", async (t) => {
       assert(!done)
       assert(decoder.decode(value) === decoder.decode(await Deno.readFile(fileURL)))
     }
+  }) 
+
+  await t.step("ETAG header created from body as expected", () => {
+    assert(response.headers.get('ETAG'))
+  }) 
+
+  await t.step("Cache-Control header set as expected", () => {
+    assert(response.headers.get('Cache-Control') === cacheControl)
   }) 
 })
