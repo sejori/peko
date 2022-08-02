@@ -14,7 +14,7 @@ export type Render = (ctx: RequestContext) => string | Promise<string>
  * Generates Response with SSRData.render result in body, sets modifiable 
  * "Cache-Control" header and hashes render output for "ETAG" header
  * @param ssrData: SSRData
- * @returns Promise<Response>
+ * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
 export const ssrHandler = (ssrData: SSRData) => async (ctx: RequestContext) => {
   // TODO: emit srcURL file change events from watcher worker (in devMode)
