@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.150.0/http/server.ts"
-import { logger } from "./middleware/logger.ts"
 import { Promisify } from "./utils/Promisify.ts"
 import { Cascade } from "./utils/Cascade.ts"
 
