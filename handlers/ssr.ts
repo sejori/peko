@@ -1,4 +1,4 @@
-import { RequestContext } from "../server.ts"
+import { RequestContext, Handler } from "../server.ts"
 import { Crypto } from "../utils/Crypto.ts"
 
 const crypto = new Crypto(Array.from({length: 10}, () => Math.floor(Math.random() * 9)).toString())
@@ -16,7 +16,7 @@ export type Render = (ctx: RequestContext) => string | Promise<string>
  * @param ssrData: SSRData
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const ssrHandler = (ssrData: SSRData) => async (ctx: RequestContext) => {
+export const ssrHandler = (ssrData: SSRData): Handler => async (ctx: RequestContext) => {
   // TODO: emit srcURL file change events from watcher worker (in devMode)
 
   // use provided render and template fcns for HTML generation

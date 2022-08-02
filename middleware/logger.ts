@@ -4,6 +4,7 @@ import { RequestContext } from "../server.ts"
  * Logging middleware, awaits next() so logRequest happens after request is handled
  * @param ctx: RequestContext
  * @param next: () => MiddlewareResult (for cascading middleware)
+ * @returns Promise<void>
  */
 export const logger = async (ctx: RequestContext, next: () => Promise<Response>): Promise<void> => {
   const start = Date.now()

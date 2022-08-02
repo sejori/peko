@@ -14,7 +14,7 @@ Deno.test("HANDLER: STATIC", async (t) => {
   let response: Response
   
   await t.step("Response body created from file contents as expected", async () => {
-    response = await staticHandler({ fileURL, contentType: 'application/javascript' })(ctx)
+    response = await staticHandler({ fileURL, contentType: 'application/javascript', cacheControl })(ctx)
     const reader = response.body?.getReader()
 
     if (reader) {
