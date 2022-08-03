@@ -6,7 +6,7 @@ import { Crypto } from "../utils/Crypto.ts"
  * @param crypto: Crypto instance to be used
  * @returns Middleware
  */
-export const authenticator = (crypto: Crypto): Middleware => async (ctx: RequestContext): Promise<Response | void>=> {
+export const authenticator = (crypto: Crypto): Middleware => async (ctx: RequestContext, next: () => Promise<Response>): Promise<Response | void>=> {
   const authHeader = ctx.request.headers.get("Authorization")
 
   // check JWT from cookies
@@ -15,7 +15,7 @@ export const authenticator = (crypto: Crypto): Middleware => async (ctx: Request
     const payload = await crypto.verify(jwt)
     if (payload && payload.exp > Date.now()) {
       ctx.state.auth = payload
-      return
+      return next()
     }
   }  
   

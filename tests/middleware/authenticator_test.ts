@@ -5,42 +5,37 @@ import { Crypto } from "../../utils/Crypto.ts"
 
 Deno.test("MIDDLEWARE: Authenticator", async (t) => {
   const successString = "Authorized!"
-  const failureString = "Authorized!"
+  const failureString = "Unauthorized!"
+  const crypto = new Crypto("test_key")
   const server = new Server({
-    errorHandler: async (_ctx, _code) => await new Response(failureString),
+    errorHandler: (_ctx, status) => new Response(failureString, {
+      status
+    }),
     eventLogger: () => {},
     stringLogger: () => {}
   })
-  const crypto = new Crypto("test_key")
-  const testPayload = { iat: Date.now(), exp: Date.now() + 1000, data: { foo: "bar" }}
-  const token = crypto.sign(testPayload)
 
-  const ctx = new RequestContext(server, new Request({ headers: new Headers({ "Authorization": `Bearer ${token}` }) }))
-  
-  const decoder = new TextDecoder()
+  const testPayload = { iat: Date.now(), exp: Date.now() + 1000, data: { foo: "bar" }}
+  const token = await crypto.sign(testPayload)
+
+  const request = new Request('https://localhost:7777')
+  request.headers.set("Authorization", `Bearer ${token}`)
   
   await t.step("Response authorized as expected", async () => {
+    const ctx = new RequestContext(server, request)
     const response = await authenticator(crypto)(ctx, async() => await new Response(successString))
-    const reader = response?.body?.getReader()
 
-    if (reader) {
-      const { done, value } = await reader?.read()
-      assert(!done)
-      assert(decoder.decode(value) === successString)
-      assert(response?.status === 200)
-      assert(ctx.state.auth === testPayload)
-    }
+    assert(await response?.text() === successString)
+    assert(response?.status === 200)
+    assert(JSON.stringify(ctx.state.auth) === JSON.stringify(testPayload))
   }) 
 
   await t.step("Response unauthorized as expected", async () => {
+    const ctx = new RequestContext(server)
     const response = await authenticator(crypto)(ctx, async() => await new Response(successString))
-    const reader = response?.body?.getReader()
 
-    if (reader) {
-      const { done, value } = await reader?.read()
-      assert(!done)
-      assert(decoder.decode(value) === failureString)
-      assert(response?.status === 401)
-    }
+    assert(await response?.text() === failureString)
+    assert(response?.status === 401)
+    assert(!ctx.state.auth)
   }) 
 })
