@@ -30,4 +30,6 @@ Deno.test("HANDLER: Server-side render", async (t) => {
   await t.step("Cache-Control header set as expected", () => {
     assert(response.headers.get('Cache-Control') === cacheControl)
   }) 
+
+  //TODO: add ETag change test
 })
