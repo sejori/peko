@@ -64,22 +64,22 @@ export class Server {
     if (config) this.setConfig(config)
   }
 
-    // utility classes for server logic
-    cascade = new Cascade()
-    promisify = new Promisify()
-  
-    // route array for request routing
-    routes: SafeRoute[] = []
+  // utility classes for server logic
+  cascade = new Cascade()
+  promisify = new Promisify()
+
+  // route array for request routing
+  routes: SafeRoute[] = []
 
   /**
    * Update config with partial config object
-   * @param c: Partial<Config>
+   * @param newConf: Partial<Config>
    * @returns void
    */
-  setConfig: (c: Partial<Config>) => void = (newConfObj) => {
-    for (const key in newConfObj) {
+  setConfig (newConf: Partial<Config>): void {
+    for (const key in newConf) {
       Object.defineProperty(this.config, key, {
-        value: newConfObj[key as keyof typeof this.config]
+        value: newConf[key as keyof typeof this.config]
       })
     }
   }
@@ -89,7 +89,7 @@ export class Server {
    * @param route: Route - middleware can be Middlewares or Middleware 
    * @returns number - routes.length
    */
-  addRoute(route: Route) {
+  addRoute(route: Route): number {
     const method = route.method ? route.method : "GET"
     const m: Middleware[] = []
     function none() {}
@@ -119,7 +119,7 @@ export class Server {
    * @param route: string - route id of Route to remove
    * @returns 
    */
-  removeRoute(route: string) {
+  removeRoute(route: string): number {
     const routeToRemove = this.routes.find(r => r.route === route)
     if (!routeToRemove) return this.routes.length
   
@@ -130,12 +130,9 @@ export class Server {
   /**
    * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
    * @param port: number
-   * @param cb: callback function
+   * @param cb: onListen callback function
    */
-  listen(port?: number, cb?: (params: { hostname: string; port: number; }) => void) {
-    this.logString(`Peko server ${this.config.devMode ? "(devMode) " : ""}started with routes:`)
-    this.routes.forEach((route, i) => this.logString(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
-
+  listen(port?: number, cb?: (params: { hostname: string; port: number; }) => void): void {
     serve((request) => this.#requestHandler.call(this, request), { 
       hostname: this.config.hostname, 
       port: port ? port : this.config.port,
@@ -150,18 +147,23 @@ export class Server {
         const ctx = new RequestContext(this)
         return this.handleError(ctx, 500)
       },
-      onListen: cb ? cb : () => {}
+      onListen: cb 
+        ? cb 
+        : () => {
+          this.logString(`Peko server ${this.config.devMode ? "(devMode) " : ""}started with routes:`)
+          this.routes.forEach((route, i) => this.logString(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
+        } 
     })
   }
 
-  async #requestHandler(request: Request) {
+  async #requestHandler(request: Request): Promise<Response> {
     const ctx: RequestContext = new RequestContext(this, request)
     const requestURL = new URL(request.url)
     const route = this.routes.find(route => route.route === requestURL.pathname && route.method === request.method)
 
     const toCall: SafeMiddleware[] = route 
       ? [ ...this.config.globalMiddleware, ...route.middleware, route.handler ]
-      : [ ...this.config.globalMiddleware, (ctx) => this.handleError(ctx, 404) ]
+      : [ ...this.config.globalMiddleware, async (ctx) => await this.handleError(ctx, 404) ]
   
     const { response, toResolve } = await this.cascade.forward(ctx, toCall)
 
@@ -178,7 +180,7 @@ export class Server {
    * @param status 
    * @returns Response
    */
-  async handleError(ctx: RequestContext, status: number) {
+  async handleError(ctx: RequestContext, status: number): Promise<Response> {
     try {
       return await this.config.errorHandler(ctx, status)
     } catch (error) {
@@ -192,7 +194,7 @@ export class Server {
    * @param string: string
    * @returns void
    */
-  async logString(string: string) {
+  async logString(string: string): Promise<void> {
     try {
       return await this.config.stringLogger(string)
     } catch (error) {
@@ -206,7 +208,7 @@ export class Server {
    * @param event: Event 
    * @returns void
    */
-  async logEvent(event: Event) {
+  async logEvent(event: Event): Promise<void> {
     try {
       return await this.config.eventLogger(event)
     } catch (error) {
@@ -222,7 +224,7 @@ export class Server {
    * @param responseTime: number
    * @returns Promise<void>
    */
-  async logRequest(ctx: RequestContext, response: Response, start: number, responseTime: number) {
+  async logRequest(ctx: RequestContext, response: Response, start: number, responseTime: number): Promise<void> {
     const date = new Date(start)
     const status = response.status
     const cached = ctx.state.responseFromCache
@@ -260,7 +262,7 @@ export class Server {
    * @param date: Date
    * @returns Promise<void>
    */
-  async logError(id: string, error: string, date: Date) {
+  async logError(id: string, error: string, date: Date): Promise<void> {
     try {
       return await this.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
     } catch (e) {
