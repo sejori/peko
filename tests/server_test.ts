@@ -13,6 +13,7 @@ Deno.test("SERVER", async (t) => {
   const testErrorHandler = (ctx: RequestContext, status: number) => {
     return new Response(JSON.stringify({ ctx, status }), { status })
   }
+
   server.setConfig({
     stringLogger: emptyFcn,
     eventLogger: emptyFcn,
@@ -22,7 +23,6 @@ Deno.test("SERVER", async (t) => {
       testMiddleware2
     ]
   })
-  server.listen()
 
   await t.step("config updates and server starts", () => {
     assert(server.config.stringLogger === emptyFcn)
@@ -45,10 +45,11 @@ Deno.test("SERVER", async (t) => {
     assert(routesLength === 0 && server.routes.length === 0)
   })
 
-  await t.step("error handler triggered with 404", async () => {
-    const response = await fetch("http://localhost:7777/")
+  await t.step("error handler triggered with 404", async () => {    
+    const request = new Request("http://localhost:7777/")
+    const response = await server.requestHandler(request)
     const body = await response.json()
-    // await new Promise(res => setTimeout(res, 100))
+
     assert(response.status === 404 && body.status === 404)
   })
 
@@ -58,7 +59,8 @@ Deno.test("SERVER", async (t) => {
       handler: () => { throw new Error("ERROR") }
     })
 
-    const response = await fetch("http://localhost:7777/")
+    const request = new Request("http://localhost:7777/")
+    const response = await server.requestHandler(request)
     const body = await response.json()
 
     assert(response.status === 500 && body.status === 500)
@@ -71,7 +73,8 @@ Deno.test("SERVER", async (t) => {
       handler: testHandler
     })
 
-    const response = await fetch("http://localhost:7777/test")
+    const request = new Request("http://localhost:7777/test")
+    const response = await server.requestHandler(request)
     const body = await response.json()
 
     assert(body["middleware1"] && body["middleware2"] && body["middleware3"])
