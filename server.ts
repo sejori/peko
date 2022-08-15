@@ -133,7 +133,7 @@ export class Server {
    * @param cb: onListen callback function
    */
   listen(port?: number, cb?: (params: { hostname: string; port: number; }) => void): void {
-    serve((request) => this.#requestHandler.call(this, request), { 
+    serve((request) => this.requestHandler.call(this, request), { 
       hostname: this.config.hostname, 
       port: port ? port : this.config.port,
       onError: (error) => {
@@ -156,14 +156,14 @@ export class Server {
     })
   }
 
-  async #requestHandler(request: Request): Promise<Response> {
+  async requestHandler(request: Request): Promise<Response> {
     const ctx: RequestContext = new RequestContext(this, request)
     const requestURL = new URL(request.url)
     const route = this.routes.find(route => route.route === requestURL.pathname && route.method === request.method)
 
     const toCall: SafeMiddleware[] = route 
       ? [ ...this.config.globalMiddleware, ...route.middleware, route.handler ]
-      : [ ...this.config.globalMiddleware, async (ctx) => await this.handleError(ctx, 404) ]
+      : [ ...this.config.globalMiddleware, (ctx) => this.handleError(ctx, 404) ]
   
     const { response, toResolve } = await this.cascade.forward(ctx, toCall)
 
