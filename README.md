@@ -51,7 +51,7 @@
         <strong>First-class frontend</strong> - Server-side render and client-side hydrate with the same code, bring your own library! 
     </li>
     <li>
-        <strong>Production-ready backend</strong> - Full tested TypeScript with Response caching and JWT authentication middleware.
+        <strong>Production-ready backend</strong> - Fully-tested TypeScript with Response caching and JWT middleware.
     </li>
     <li>
         <strong>Software minimalism</strong> - Sleek runtime with no build step. Uses only the Deno <a href="https://deno.land/std">std</a> library.
