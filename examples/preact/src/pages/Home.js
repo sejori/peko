@@ -4,7 +4,7 @@ import Layout from "../layouts/Layout.js"
 
 const Home = (props) => {
   return html`
-    <${Layout} navColor="limegreen">
+    <${Layout} navColor="forestgreen">
       <h1 style="text-align: center;">Peko</h1>
       <p style="text-align: center;"><strong>
         Featherweight server framework and utility library for full-stack stateless apps<br/>🐓 on <a href="https://deno.com/deploy">Deno Deploy</a> 🦕

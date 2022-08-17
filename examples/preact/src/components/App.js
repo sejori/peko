@@ -7,8 +7,11 @@ const App = () => {
 
   return html`
     <div style="margin: 2rem 0;">
-      <p>This website is appified with the Preact JavaScript library!</p>
-      <p>It even uses localStorage to store state locally between page loads 🤯</p>
+      <p>
+        This website is appified with the Preact JavaScript library.
+        It even uses localStorage to store state locally between page loads 🤯.
+        Check out the 👉 <a href="https://github.com/sebringrose/peko/tree/main/examples/preact">source code here</a> 👈.
+      </p>
       <${List} data=${dataArray} />
       <button 
         class="btn-lg-primary" 
