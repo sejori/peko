@@ -9,25 +9,32 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
     ${tags && tags.title}
     <meta name="description" content="The Featherweight Deno SSR Library">
 
-    <script modulepreload="true" type="text/plain" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
     ${tags && tags.modulepreload}
 
     <style>
-      html, body {
+      html, body, #root {
         height: 100%;
         width: 100%;
         margin: 0;
         font-family: helvetica, sans-serif;
         line-height: 1.5rem;
+        display: flex;
+        flex-direction: column;
       }
 
       img { max-width: 100%; }
       li { margin: 10px 0; }
       a { color: royalblue; }
       a:visited { color: hotpink; }
-      .container { max-width: 900px; margin: auto; }
-      .row { display: flex; }
+
+      main { flex: 1; }
+      .row { display: flex; align-items: center; }
       .justify-around { justify-content: space-around; }
+
+      .container {   
+        max-width: 800px;
+        margin: 0 auto;
+      }
 
       .btn-lg-primary {
         border: solid 1px limegreen;
@@ -41,6 +48,13 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
         background-color: orange;
         padding: 0.5rem;
         font-size: 1rem;
+      }
+
+      footer {
+        display: flex;
+        justify-content: space-around;
+        background-color: saddlebrown;
+        color: white;
       }
     </style>
   </head>

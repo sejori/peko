@@ -25,6 +25,8 @@ export const staticHandler = (staticData: StaticData): Handler => async (ctx: Re
   const body = await Deno.readFile(filePath)
   const hashString = await crypto.hash(body.toString())
 
+  console.log(ctx.server.config)
+
   return new Response(body, {
     headers: new Headers({
       'Content-Type': staticData.contentType ? staticData.contentType : 'text/plain',
