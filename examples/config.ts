@@ -4,7 +4,7 @@ const env = Deno.env.toObject()
 
 const config = {
   // set devMode true to disable browser & server caching
-  devMode: env.ENVIRONMENT === "production" ? true : false,
+  devMode: env.ENVIRONMENT === "production" ? false : true,
   globalMiddleware: [
     logger
   ],
