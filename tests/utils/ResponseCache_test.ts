@@ -3,7 +3,7 @@ import { Server, RequestContext } from "../../server.ts"
 import { testHandler } from "../../tests/mock_data.ts"
 import { ResponseCache } from "../../utils/ResponseCache.ts"
 
-Deno.test("UTIL: RESPONSE CACHE", async (t) => {
+Deno.test("UTIL: Response cache", async (t) => {
   const testServer = new Server()
   const testContext = new RequestContext(testServer, undefined, { foo: "bar" })
 
