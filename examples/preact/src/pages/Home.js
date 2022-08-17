@@ -1,4 +1,4 @@
-import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
+import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact"
 
 import Layout from "../layouts/Layout.js"
 
@@ -16,7 +16,7 @@ const Home = (props) => {
       </div>
 
       <p>Time of server request: <strong>${props.server_time}</strong></p>
-      <p>Time of latest render: <strong>${Date.now()}</strong> ${"<"}- changes with hydration!</p>
+      <p>Time of client JS hydration: <strong>${Date.now()}</strong></p>
 
       <h2>Features</h2>
       <ul>

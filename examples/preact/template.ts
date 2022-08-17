@@ -12,18 +12,23 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
     ${tags && tags.modulepreload}
 
     <style>
-      html, body {
+      html, body, #root {
         height: 100%;
         width: 100%;
         margin: 0;
         font-family: helvetica, sans-serif;
         line-height: 1.5rem;
+        display: flex;
+        flex-direction: column;
       }
 
       img { max-width: 100%; }
       li { margin: 10px 0; }
       a { color: royalblue; }
       a:visited { color: hotpink; }
+
+      main { flex: 1; }
+
       .container { max-width: 900px; margin: auto; }
       .row { display: flex; }
       .justify-around { justify-content: space-around; }
@@ -40,6 +45,13 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
         background-color: orange;
         padding: 0.5rem;
         font-size: 1rem;
+      }
+
+      footer {
+        display: flex;
+        justify-content: space-around;
+        background-color: grey;
+        color: white;
       }
     </style>
   </head>
