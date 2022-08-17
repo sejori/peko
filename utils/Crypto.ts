@@ -11,8 +11,7 @@ type Payload = {
 
 /**
  * Crypto class, generates hashes and signs and verifies JWTs using provided key.
- * @param alg: string
- * @returns jwt: JWT
+ * @param key: CryptoKey | string
  */
 export class Crypto {
   key: CryptoKey | undefined
@@ -53,17 +52,21 @@ export class Crypto {
 
   /**
    * Sign (create) JWT from payload
-   * @param payload: Record<string, unknown>
+   * @param payload: {
+   *   exp: number,
+   *   iat: number,
+   *   data: Record<string, unknown>
+   * }
    * @returns jwt: string
    */
   async sign (payload: Payload): Promise<string> {
     if (!this.key) await this.createCryptoKey()
 
-    const b64Header = btoa(JSON.stringify({
+    const b64Header = encodeB64(JSON.stringify({
       alg: this.algorithm,
       typ: "JWT"
     }))
-    const b64Payload = btoa(JSON.stringify(payload))
+    const b64Payload = encodeB64(JSON.stringify(payload))
 
     const signatureBuffer = await crypto.subtle.sign(
       this.algorithm, 
@@ -78,7 +81,11 @@ export class Crypto {
   /**
    * Verify JWT and extract payload
    * @param jwt: string
-   * @returns payload: Record<string, unknown>
+   * @returns payload: {
+   *   exp: number,
+   *   iat: number,
+   *   data: Record<string, unknown>
+   * }
    */
   async verify (jwt: string): Promise<Payload | undefined> {
     if (jwt.split(".").length != 3) return undefined
@@ -96,6 +103,7 @@ export class Crypto {
   
     try {
       const payload = JSON.parse(atob(b64Payload))
+      if (payload.exp < Date.now()) return undefined
       return payload
     } catch(error) {
       throw(error)
