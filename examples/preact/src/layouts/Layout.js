@@ -3,15 +3,17 @@ import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact
 const Layout = ({ navColor, children }) => {
   return html`
     <nav style=${navStyle(navColor)}>
-      <a style=${navLinkStyle} href="/">Home</a>
-      <img height="100px" width="100px" style="margin: 1rem;" src="/assets/twemoji_chicken.svg" alt="chicken" />
-      <a style=${navLinkStyle} href="/about">About</a>
+      <div class="container row">
+        <a style=${navLinkStyle} href="/">Home</a>
+        <img height="100px" width="100px" style="margin: 1rem;" src="/assets/twemoji_chicken.svg" alt="chicken" />
+        <a style=${navLinkStyle} href="/about">About</a>
+      </div>
     </nav>
-    <main style=${mainStyle}>
+    <main style="padding: 1rem;" class="container">
       ${children}
     </main>
     <footer>
-      <p>Build for the open source community by <a style="color: orange;" href="github.com/sebringrose">Seb Ringrose</a></p>
+      <p>Build for the open source community by <a style="color: white;" href="https://github.com/sebringrose">Seb Ringrose</a></p>
     </footer>
   `   
 }
@@ -26,15 +28,14 @@ const navStyle = (navColor) => `
 `
 
 const navLinkStyle = `
+  flex: 1;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
   margin: 1rem 3rem;
   color: white;
   text-decoration-color: red;
-`
-
-const mainStyle = `
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 1rem;
+  padding: 0px 5px;
 `
   
 export default Layout

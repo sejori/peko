@@ -6,5 +6,5 @@ import { ResponseCache } from "../utils/ResponseCache.ts";
  * @returns Middleware
  */
 export const cacher = (cache: ResponseCache): Middleware => (ctx: RequestContext, next: () => Promise<Response>): Promise<Response> => {
-  return cache.memoize(next)(ctx)
+  return ctx.server.config.devMode ? next() : cache.memoize(next)(ctx)
 }

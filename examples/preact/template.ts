@@ -28,10 +28,13 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
       a:visited { color: hotpink; }
 
       main { flex: 1; }
-
-      .container { max-width: 900px; margin: auto; }
-      .row { display: flex; }
+      .row { display: flex; align-items: center; }
       .justify-around { justify-content: space-around; }
+
+      .container {   
+        max-width: 800px;
+        margin: 0 auto;
+      }
 
       .btn-lg-primary {
         border: solid 1px limegreen;
@@ -50,7 +53,7 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
       footer {
         display: flex;
         justify-content: space-around;
-        background-color: steelblue;
+        background-color: saddlebrown;
         color: white;
       }
     </style>
