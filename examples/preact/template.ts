@@ -9,7 +9,6 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
     ${tags && tags.title}
     <meta name="description" content="The Featherweight Deno SSR Library">
 
-    <script modulepreload="true" type="text/plain" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
     ${tags && tags.modulepreload}
 
     <style>
