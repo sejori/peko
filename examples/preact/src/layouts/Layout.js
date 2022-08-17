@@ -1,7 +1,7 @@
 import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 const Layout = ({ navColor, children }) => {
-  return html`<div>
+  return html`
     <nav style=${navStyle(navColor)}>
       <a style=${navLinkStyle} href="/">Home</a>
       <img height="100px" width="100px" style="margin: 1rem;" src="/assets/twemoji_chicken.svg" alt="chicken" />
@@ -10,7 +10,10 @@ const Layout = ({ navColor, children }) => {
     <main style=${mainStyle}>
       ${children}
     </main>
-  </div>`   
+    <footer>
+      <p>Build for the open source community by <a style="color: orange;" href="github.com/sebringrose">Seb Ringrose</a></p>
+    </footer>
+  `   
 }
 
 const navStyle = (navColor) => `

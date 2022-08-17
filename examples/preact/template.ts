@@ -50,7 +50,7 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
       footer {
         display: flex;
         justify-content: space-around;
-        background-color: grey;
+        background-color: steelblue;
         color: white;
       }
     </style>
