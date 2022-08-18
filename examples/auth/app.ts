@@ -9,10 +9,12 @@ const user = { // <-- replace with db / auth provider query
   password: await crypto.hash("test-password")
 }
 
-const validateUser = async (username: string, password: string) =>
-  !username || !password 
-  || username !== user.username // <-- replace with db / auth provider query
-  || await crypto.hash(password) !== user.password 
+const validateUser = async (username: string, password: string) => {
+  return username && password 
+  && username === user.username // <-- replace with db / auth provider query
+  && await crypto.hash(password) === user.password 
+}
+
 
 
 // Configure Peko
@@ -79,6 +81,8 @@ server.addRoute({
             method: "POST",
             body: JSON.stringify({ username: "test-user", password: "test-password" })
           })
+
+          if (response.status !== 200) return alert("Login failed.")
 
           jwt = await response.text()
           console.log("jwt: " + jwt)
