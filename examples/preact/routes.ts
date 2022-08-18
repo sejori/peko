@@ -34,14 +34,17 @@ export const pages: Route[] = [
         ctx.state.server_time = `${Date.now()}`
       }
     ],
-    handler: (ctx) => ssrHandler(ctx, {
+    handler: ssrHandler({
       srcURL: new URL("./src/pages/Home.js", import.meta.url),
       render: (ctx) => {
         const appHTML = renderToString(Home(ctx.state), null, null)
         return htmlTemplate({
           appHTML,
           title: `<title>Peko</title>`,
-          modulepreload: `<script modulepreload="true" type="module" src="/pages/Home.js"></script>`,
+          modulepreload: `
+            <script modulepreload="true" type="module" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
+            <script modulepreload="true" type="module" src="/pages/Home.js"></script>
+          `,
           hydrationScript: `<script type="module">
             import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
             import Home from "/pages/Home.js";
@@ -54,14 +57,17 @@ export const pages: Route[] = [
   {
     route: "/about",
     middleware: cacher(cache),
-    handler: (ctx) => ssrHandler(ctx, {
+    handler: ssrHandler({
       srcURL: new URL("./src/pages/About.js", import.meta.url),
       render: () => {
         const appHTML = renderToString(About(), null, null)
         return htmlTemplate({
           appHTML,
           title: `<title>Peko | About</title>`,
-          modulepreload: `<script modulepreload="true" type="module" src="/pages/About.js"></script>`,
+          modulepreload: `
+            <script modulepreload="true" type="module" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
+            <script modulepreload="true" type="module" src="/pages/About.js"></script>
+          `,
           hydrationScript: `<script type="module">
             import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
             import About from "/pages/About.js";
@@ -81,7 +87,7 @@ export const assets: Route[] = srcFiles.map(file => {
   return {
     route: fileRoute,
     middleware: cacher(cache),
-    handler: (ctx) => staticHandler(ctx, {
+    handler: staticHandler({
       fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
       contentType: lookup(file)
     })

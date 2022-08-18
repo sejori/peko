@@ -18,7 +18,7 @@ const List = ({ data }) => { // takes a data prop
           </li>
         `)}
       </ul>
-      <h3>${count} ${count === 1 ? 'click' : 'clicks'} counted</h3>
+      <p><strong>${count} ${count === 1 ? 'click' : 'clicks'} counted</strong></p>
     </div>
   `
 }

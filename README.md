@@ -7,9 +7,6 @@
     />
 </p>
 <h1 align="center">Peko</h1>
-<p align="center"><strong>
-    🪶 Featherweight server toolkit for the <a href="https://deno.com/deploy">modern stateless web</a> 🦕 
-</strong></p>
 
 <p align="center">
     <span>
@@ -51,10 +48,10 @@
 <h2>Philosophy</h2>
 <ul>
     <li>
-        <strong>First-class frontend</strong> - Server-side render and client-side hydrate with the same code, no enforced tooling. 
+        <strong>First-class frontend</strong> - Server-side render and client-side hydrate with the same code, bring your own library! 
     </li>
     <li>
-        <strong>Production-ready backend</strong> - TypeScript, Response caching (+ <a href="https://github.com/sebringrose/peko/issues">more soon</a>).
+        <strong>Production-ready backend</strong> - Fully-tested TypeScript with Response caching and JWT middleware.
     </li>
     <li>
         <strong>Software minimalism</strong> - Sleek runtime with no build step. Uses only the Deno <a href="https://deno.land/std">std</a> library.
@@ -68,7 +65,7 @@
 </p>
 
 <h2>Get started</h2>
-<h3>Build and launch a secure and scalable webapp from one file 🧑‍💻🌠</h3>
+<!--<h3>Build and launch a secure and scalable webapp from one file 🧑‍💻🌠</h3>-->
 
 <h3>Try the example apps:</h3>
 <ol>
@@ -100,10 +97,6 @@
 | Eta-templating |     ❌      |    ✅   |
 | Vue            |     ❌      |    ❌   |
 
-<p>
-    <strong>This project aims to be ready for production soon but it is not complete with extensive testing yet! Use at your own risk.</strong>
-</p>
-
 <h2 id="#routing">Routing</h2>
 <p>
     Requests are matched to a mutable array of <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/Route">Routes</a>. Routes can be added or removed at runtime via the <code>addRoute</code> and <code>removeRoute</code> exports.
@@ -116,18 +109,15 @@
 
 <h2 id="request-handling">Request handling</h2>
 <p>
-    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> serve static assets, render JavaScript apps and stream server-sent events respectively. There are also premade <code>addStaticRoute</code>, <code>addSSRRoute</code> and <code>addSSERoute</code> exports that implement their respective handlers. Of course, you can also create your own handlers plug them into a basic Route (see <code>examples/custom-handler</code>).
+    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> serve static assets, render JavaScript apps and stream server-sent events respectively. There are also authentication, logging and caching middleware. Of course, you can also create your own middleware or handlers and plug them into your routes (see <code>examples/custom-handler</code>).
 </p>
 
 <h2 id="response-caching">Response caching</h2>
 <p>
-    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. Peko provides a <code>createResponseCache</code> utility export to create caches and memoize functions to them. The <code>addSSRRoute</code> export does this with the <code>ssrHandler</code> so that Requests can be served from the cache and not unecessarily rerendered (Response cache is indexed by serialized <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/Render">RequestContext</a>).
+    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. Peko provides a <code>ResponseCache</code> utility to create caches and memoize functions with them. The cache middleware does this so that Requests can be served from the cache and not unecessarily rerendered (Response cache is indexed by serialized <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/Render">RequestContext</a>).
 </p>
 <p>
     <strong>Tip:</strong> Caching Responses from external data services helps keep your app fast and reduce network overhead in serving Requests!
-</p>
-<p>
-    <strong>Note:</strong> <code>addSSRRoute</code> only caches Responses when <code>config.devMode === false</code> (which is the default config). It is recommended to use the <code>setConfig</code> export to set <code>devMode</code> from an environment variable (see <code>examples/config.ts</code>).
 </p>
 
 <h2 id="cool">This is cool...</h2>
@@ -146,4 +136,4 @@
     Peko is built with one radical design decision: no build-step (i.e. no Webpack, no Babel). That means frontend modules must run in the server and browser as source if you want to utilize server-side rendering. You can still use component libraries and other node packages if you import their compiled module distributions. This is all a deliberate step away from the inflated state that many web applications find themselves in... it’s 2022.
 </p>
 
-<p>This project started in 2020 out of excitement for the elegancy of Deno and the freedom it would bring to the JavaScript community. At time of writing all code has been written and maintained by me. If you are interested in contributing please get in contact.</p>
+<p>This project started out of excitement for the elegancy of Deno and the freedom it would bring to the JavaScript community. At time of writing all code has been written and maintained by me. If you are interested in contributing please get in contact.</p>
