@@ -9,7 +9,7 @@ type ResolvePromise = {
  * Utility class for running middleware functions as a cascade
  */
 export class Cascade {
-  async forward(ctx: RequestContext, toCall: SafeMiddleware[]) {
+  async forward(ctx: RequestContext, toCall: SafeMiddleware[]): Promise<{ response: Response, toResolve: ResolvePromise[] }> {
     let result: Response | void
     let called = 0
   
@@ -25,10 +25,13 @@ export class Cascade {
     return { response, toResolve }
   }
 
-  backward(response: Response, toResolve: ResolvePromise[]): void {
-    for (let i = toResolve.length-1; i >= 0; i--) {
-      toResolve[i].resolve(response)
-    }
+  backward(response: Response, toResolve: ResolvePromise[]): Promise<void> {
+    return new Promise(res => {
+      for (let i = toResolve.length-1; i >= 0; i--) {
+        toResolve[i].resolve(response)
+      }
+      res()
+    })
   }
   
   // quite a funky Promise-based middleware executor

@@ -1,4 +1,4 @@
-import { RequestContext } from "../server.ts"
+import { RequestContext, Handler } from "../server.ts"
 import { Crypto } from "../utils/Crypto.ts"
 
 const crypto = new Crypto("SUPER_SECRET_KEY_123") // <-- should come from env
@@ -13,9 +13,9 @@ export type StaticData = {
  * Generates Response with body from file URL, sets modifiable
  * "Cache-Control" header and hashes file contents for "ETAG" header.
  * @param staticData: StaticData
- * @returns Promise<Response>
+ * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const staticHandler = async (ctx: RequestContext, staticData: StaticData) => {
+export const staticHandler = (staticData: StaticData): Handler => async (ctx: RequestContext) => {
   let filePath = decodeURI(staticData.fileURL.pathname)
   
   // fix annoying windows paths
@@ -24,6 +24,8 @@ export const staticHandler = async (ctx: RequestContext, staticData: StaticData)
   // Is it more efficient to stream file into response body?
   const body = await Deno.readFile(filePath)
   const hashString = await crypto.hash(body.toString())
+
+  console.log(ctx.server.config)
 
   return new Response(body, {
     headers: new Headers({
