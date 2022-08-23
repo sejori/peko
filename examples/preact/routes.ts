@@ -9,6 +9,7 @@ import {
 
 import { lookup } from "https://deno.land/x/media_types@v3.0.3/mod.ts"
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
+import { fromFileUrl } from "https://deno.land/std@0.150.0/path/mod.ts"
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 // Preact page components and HTML template for ssrHandler render logic
@@ -79,7 +80,7 @@ export const pages: Route[] = [
   }
 ]
 
-const srcFiles = await recursiveReaddir(new URL(`./src`, import.meta.url).pathname)
+const srcFiles = await recursiveReaddir(fromFileUrl(new URL(`./src`, import.meta.url)))
 export const assets: Route[] = srcFiles.map(file => {
   const rootPath = `${Deno.cwd()}/examples/preact/src/`
   const fileRoute: `/${string}` = `/${file.slice(rootPath.length)}`
