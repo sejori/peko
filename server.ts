@@ -150,7 +150,7 @@ export class Server {
       onListen: cb 
         ? cb 
         : () => {
-          this.logString(`Peko server ${this.config.devMode ? "(devMode) " : ""}started with routes:`)
+          this.logString(`Peko server ${this.config.devMode ? "(devMode) " : ""}started on port ${this.config.port} with routes:`)
           this.routes.forEach((route, i) => this.logString(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
         } 
     })
