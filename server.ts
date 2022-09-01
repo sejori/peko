@@ -22,7 +22,6 @@ export class RequestContext {
 export class Server {
   // define default config values
   config: Config = {
-    devMode: false,
     port: 7777,
     hostname: "0.0.0.0",
     globalMiddleware: [],
@@ -150,7 +149,7 @@ export class Server {
       onListen: cb 
         ? cb 
         : () => {
-          this.logString(`Peko server ${this.config.devMode ? "(devMode) " : ""}started on port ${this.config.port} with routes:`)
+          this.logString(`Peko server started on port ${this.config.port} with routes:`)
           this.routes.forEach((route, i) => this.logString(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
         } 
     })
@@ -272,7 +271,6 @@ export class Server {
 }
 
 export interface Config { 
-  devMode: boolean
   port: number
   hostname: string
   globalMiddleware: SafeMiddleware[]
@@ -307,6 +305,3 @@ export type Event = {
 }
 
 export default Server
-
-// TODO: test route strings for formatting to enforce type `/${string}` in devMode
-// TODO: test middleware and handlers for cookie and rendering bear traps
