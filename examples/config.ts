@@ -1,4 +1,4 @@
-import { logger } from "../mod.ts"
+import { logger } from "../mod.ts" // <- https://deno.land/x/peko/server.ts 
 
 const env = Deno.env.toObject()
 
