@@ -1,12 +1,12 @@
 import { RequestContext, Handler } from "../server.ts"
 import { Crypto } from "../utils/Crypto.ts"
 
-const crypto = new Crypto("SUPER_SECRET_KEY_123") // <-- should come from env
+const crypto = new Crypto(Array.from({length: 10}, () => Math.floor(Math.random() * 9)).toString())
 
 export type StaticData = { 
   fileURL: URL
   contentType: string | undefined
-  cacheControl?: string
+  headers?: Headers
 }
 
 /**
@@ -15,7 +15,7 @@ export type StaticData = {
  * @param staticData: StaticData
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const staticHandler = (staticData: StaticData): Handler => async (ctx: RequestContext) => {
+export const staticHandler = (staticData: StaticData): Handler => async (_ctx: RequestContext) => {
   let filePath = decodeURI(staticData.fileURL.pathname)
   
   // fix annoying windows paths
@@ -25,15 +25,16 @@ export const staticHandler = (staticData: StaticData): Handler => async (ctx: Re
   const body = await Deno.readFile(filePath)
   const hashString = await crypto.hash(body.toString())
 
-  return new Response(body, {
-    headers: new Headers({
-      'Content-Type': staticData.contentType ? staticData.contentType : 'text/plain',
-      // tell browser not to cache if in devMode
-      'Cache-Control': ctx.server.config.devMode
-        ? 'no-store'
-        : staticData.cacheControl ? staticData.cacheControl : 'max-age=604800, stale-while-revalidate=86400',
-      // create ETag hash so 304 (not modified) response can be given from cacher
-      'ETag': hashString
-    })
+  const headers = new Headers({
+    "ETag": hashString,
+    "Content-Type": staticData.contentType ? staticData.contentType : "text/plain",
   })
+
+  if (staticData.headers) {
+    for (const pair of staticData.headers.entries()) {
+      headers.append(pair[0], pair[1])
+    }
+  }
+
+  return new Response(body, { headers })
 }

@@ -18,6 +18,7 @@ import About from "./src/pages/About.js"
 import htmlTemplate from "./template.ts"
 
 const cache = new ResponseCache()
+const env = Deno.env.toObject()
 
 export const pages: Route[] = [
   {
@@ -31,7 +32,10 @@ export const pages: Route[] = [
       //   // ^ log the error event after finishing stack and responding
       // },
       (ctx) => { 
-        ctx.state.server_time = `${Date.now()}`
+        ctx.state = {
+          request_time: `${Date.now()}`,
+          ...Deno.env.toObject()
+        }
       }
     ],
     handler: ssrHandler({
@@ -56,9 +60,16 @@ export const pages: Route[] = [
   },
   {
     route: "/about",
-    middleware: cacher(cache),
+    middleware: env.ENVIRONMENT === "production" ? cacher(cache) : [],
+    // ^ use cacher to serve responses from cache in prod env
     handler: ssrHandler({
       srcURL: new URL("./src/pages/About.js", import.meta.url),
+      headers: new Headers({
+        "Cache-Control": env.ENVIRONMENT === "production"
+          ? "max-age=86400, stale-while-revalidate=604800"
+          : "no-store"
+          // ^ instruct browser to cache page in prod env
+      }),
       render: () => {
         const appHTML = renderToString(About(), null, null)
         return htmlTemplate({
@@ -89,6 +100,11 @@ export const assets: Route[] = srcFiles.map(file => {
     middleware: cacher(cache),
     handler: staticHandler({
       fileURL: new URL(`./src/${fileRoute}`, import.meta.url),
+      headers: new Headers({
+        "Cache-Control": env.ENVIRONMENT === "production"
+          ? "max-age=86400, stale-while-revalidate=604800"
+          : "no-store"
+      }),
       contentType: lookup(file)
     })
   }
