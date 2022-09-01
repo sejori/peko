@@ -1,14 +1,19 @@
-import { logger } from "../mod.ts"
-
-const env = Deno.env.toObject()
+import { logger } from "../mod.ts" // <- https://deno.land/x/peko/server.ts 
 
 const config = {
-  // set devMode true to disable caching in cacher middleware and set 
-  // cache-control response headers to no-store in Static and SSR handlers
-  devMode: env.ENVIRONMENT === "production" ? false : true,
   globalMiddleware: [
-    logger
+    logger 
+    // ^ log requests
   ],
+  //
+  // You can send logs to a custom service like so:
+  //
+  // stringLogger: (s: string) => {
+  //   fetch("https://loggingservice.net", { 
+  //     method: "POST", 
+  //     body: s 
+  //   })
+  // },
   eventLogger: () => {}, // <-- ingore event logs for clean shell
 }
 
