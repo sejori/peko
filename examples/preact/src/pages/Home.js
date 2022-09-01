@@ -11,9 +11,9 @@ const Home = (props) => {
       </strong></p>
 
       <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
-        <p>Server request: <strong>${props.request_time}</strong></p>
-        <p>Client hydration: <strong>${Date.now()}</strong></p>
-        <p>Served from: <strong>${props.DENO_REGION}</strong></p>
+        <p style="margin:5px">Server request: <strong>${props.request_time}</strong></p>
+        <p style="margin:5px">Client hydration: <strong>${Date.now()}</strong></p>
+        <p style="margin:5px">Served from: <strong>${props.DENO_REGION}</strong></p>
       </div>
 
       <h2>Features</h2>
