@@ -3,7 +3,6 @@ import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact
 import Layout from "../layouts/Layout.js"
 
 const Home = (props) => {
-  console.log(props)
   return html`
     <${Layout} navColor="forestgreen">
       <h1 style="text-align: center;">Peko</h1>
@@ -14,6 +13,7 @@ const Home = (props) => {
       <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
         <p>Server request: <strong>${props.request_time}</strong></p>
         <p>Client hydration: <strong>${Date.now()}</strong></p>
+        <p>Served from: <strong>${props.DENO_REGION}</strong></p>
       </div>
 
       <h2>Features</h2>
