@@ -32,10 +32,9 @@ export const pages: Route[] = [
       //   // ^ log the error event after finishing stack and responding
       // },
       (ctx) => { 
-        console.log(Deno.env.toObject())
         ctx.state = {
           request_time: `${Date.now()}`,
-          request_instance: Deno.env.get("INSTANCE_ID")
+          ...Deno.env.toObject()
         }
       }
     ],
