@@ -6,7 +6,7 @@ const crypto = new Crypto("SUPER_SECRET_KEY_123") // <-- should come from env
 export type StaticData = { 
   fileURL: URL
   contentType: string | undefined
-  cacheControl?: string
+  headers?: Headers
 }
 
 /**
@@ -15,7 +15,7 @@ export type StaticData = {
  * @param staticData: StaticData
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const staticHandler = (staticData: StaticData): Handler => async (ctx: RequestContext) => {
+export const staticHandler = (staticData: StaticData): Handler => async (_ctx: RequestContext) => {
   let filePath = decodeURI(staticData.fileURL.pathname)
   
   // fix annoying windows paths
@@ -28,12 +28,9 @@ export const staticHandler = (staticData: StaticData): Handler => async (ctx: Re
   return new Response(body, {
     headers: new Headers({
       'Content-Type': staticData.contentType ? staticData.contentType : 'text/plain',
-      // tell browser not to cache if in devMode
-      'Cache-Control': ctx.server.config.devMode
-        ? 'no-store'
-        : staticData.cacheControl ? staticData.cacheControl : 'max-age=604800, stale-while-revalidate=86400',
       // create ETag hash so 304 (not modified) response can be given from cacher
-      'ETag': hashString
+      'ETag': hashString,
+      ...staticData.headers
     })
   })
 }
