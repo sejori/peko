@@ -1,7 +1,7 @@
 import { RequestContext, Handler } from "../server.ts"
 import { Crypto } from "../utils/Crypto.ts"
 
-const crypto = new Crypto("SUPER_SECRET_KEY_123") // <-- should come from env
+const crypto = new Crypto(Array.from({length: 10}, () => Math.floor(Math.random() * 9)).toString())
 
 export type StaticData = { 
   fileURL: URL
@@ -25,12 +25,16 @@ export const staticHandler = (staticData: StaticData): Handler => async (_ctx: R
   const body = await Deno.readFile(filePath)
   const hashString = await crypto.hash(body.toString())
 
-  return new Response(body, {
-    headers: new Headers({
-      'Content-Type': staticData.contentType ? staticData.contentType : 'text/plain',
-      // create ETag hash so 304 (not modified) response can be given from cacher
-      'ETag': hashString,
-      ...staticData.headers
-    })
+  const headers = new Headers({
+    "ETag": hashString,
+    "Content-Type": staticData.contentType ? staticData.contentType : "text/plain",
   })
+
+  if (staticData.headers) {
+    for (const pair of staticData.headers.entries()) {
+      headers.append(pair[0], pair[1])
+    }
+  }
+
+  return new Response(body, { headers })
 }
