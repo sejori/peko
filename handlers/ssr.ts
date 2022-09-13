@@ -5,7 +5,6 @@ const crypto = new Crypto(Array.from({length: 10}, () => Math.floor(Math.random(
 
 export type SSRData = { 
   render: Render
-  srcURL?: URL
   headers?: Headers
 }
 export type Render = (ctx: RequestContext) => string | Promise<string>
