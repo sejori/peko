@@ -136,4 +136,4 @@
     Peko is built with one radical design decision: no build-step (i.e. no Webpack, no Babel). That means frontend modules must run in the server and browser as source if you want to utilize server-side rendering. You can still use component libraries and other node packages if you import their compiled module distributions. This is all a deliberate step away from the inflated state that many web applications find themselves in... it’s 2022.
 </p>
 
-<p>This project started out of excitement for the elegancy of Deno and the freedom it would bring to the JavaScript community. At time of writing all code has been written and maintained by me. If you are interested in contributing please get in contact.</p>
+<p>This project started out of excitement for the elegancy of Deno and the freedom it would bring to the JavaScript community. At time of writing all library code has been written and maintained by me. If you are interested in contributing please submit a PR or get in contact.</p>
