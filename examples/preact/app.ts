@@ -1,8 +1,8 @@
 import Server from "../../server.ts" // <- https://deno.land/x/peko/server.ts 
 import config from "../config.ts"
-import pages from "./routes/page.ts"
-import assets from "./routes/asset.ts"
-import APIs from "./routes/api.ts"
+import pages from "./routes/pages.ts"
+import assets from "./routes/assets.ts"
+import APIs from "./routes/APIs.ts"
 
 // initialize server with config
 const server = new Server(config)

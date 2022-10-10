@@ -1,7 +1,10 @@
 import Server, { Emitter, sseHandler, ssrHandler } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
-import { pages, assets, APIs } from "../preact/routes.ts"
+import pages from "../preact/routes/pages.ts"
+import assets from "../preact/routes/assets.ts"
+import APIs from "../preact/routes/APIs.ts"
+
 import Home from "../preact/src/pages/Home.js"
 import htmlTemplate from "../preact/template.ts"
 

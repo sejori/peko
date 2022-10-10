@@ -2,13 +2,12 @@ import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 import config from "../config.ts"
-import { assets, APIs } from "../preact/routes.ts"
+import assets from "../preact/routes/assets.ts"
+import APIs from "../preact/routes/APIs.ts"
 import Home from "../preact/src/pages/Home.js"
 import htmlTemplate from "../preact/template.ts"
 
 const server = new Peko.Server()
-
-// create a response cache for our custom handler
 const cache = new Peko.ResponseCache()
 
 // Configure Peko
@@ -18,12 +17,12 @@ assets.forEach(asset => server.addRoute(asset))
 // Custom API functions
 APIs.forEach(API => server.addRoute(API))
 
-// Route with cached custom handler - returns preact component JSON data instead of HTML
+// Custom SSR logic responds preact component JSON data
 server.addRoute({
   route: "/",
   method: "GET",
-  // memoize our custom handler so responses are cached until lifetime expires
-  // and not re-rendered for every request
+  // memoize our custom handler 
+  // (could use cacher middleware like Preact example but this works too)
   handler: cache.memoize(async () => {
     const decoder = new TextDecoder();
 
@@ -31,7 +30,7 @@ server.addRoute({
     const jsUInt8Array = await Deno.readFile(new URL("../preact/src/pages/Home.js", import.meta.url))
     const jsString = decoder.decode(jsUInt8Array)
 
-    // here we manually render our app to HTML
+    // render app into HTML template
     const appHTML = renderToString(Home({ server_time: `${Date.now()}` }), null, null)
     const HTML = htmlTemplate({
       appHTML,
@@ -44,7 +43,7 @@ server.addRoute({
       </script>`
     })
 
-    // now we take our HTML & JS and add into our JSON data along with an example CSS string
+    // object with HTML & JS along with example CSS string
     const customBody = {
       html: HTML,
       css: `body { font-family: monospace !important; }`,
