@@ -48,10 +48,10 @@
 <h2>Philosophy</h2>
 <ul>
     <li>
-        <strong>First-class frontend</strong> - Server-side render and client-side hydrate with the same code, bring your own library! 
+        <strong>First-class frontend</strong> - Designed for server-side-rendering, use your library of choice! 
     </li>
     <li>
-        <strong>Production-ready backend</strong> - Fully-tested TypeScript with Response caching and JWT middleware.
+        <strong>Production-ready backend</strong> - Typescript server class along with all the utilities you need.
     </li>
     <li>
         <strong>Software minimalism</strong> - Sleek runtime with no build step. Uses only the Deno <a href="https://deno.land/std">std</a> library.
@@ -61,11 +61,13 @@
     </li>
 </ul>
 <p>
-    Read on, please star/fork/clone, and any feature suggestions or code reviews are very welcome!
+    Any feature suggestions or code reviews are very welcome!
 </p>
 
 <h2>Get started</h2>
-<!--<h3>Build and launch a secure and scalable webapp from one file 🧑‍💻🌠</h3>-->
+<a href="https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts>
+    <h3>Build and launch a secure and scalable webapp from one file 🧑‍💻🌠</h3>
+</a>
 
 <h3>Try the example apps:</h3>
 <ol>
@@ -129,11 +131,6 @@
 </p>
 <p>
     Peko is made possible by powerful new JavaScript tools. Deno is built to the <a href="https://tc39.es/">ECMAScript specification</a>. This makes it compatible with browser JavaScript which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like Preact combined with <a href="https://github.com/developit/htm">htm</a> offer lightning fast client-side hydration with a browser-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and loads of community tools for your back-end needs.
-</p>
-
-<h2>Differences between Next.js, etc.</h2>
-<p>
-    Peko is built with one radical design decision: no build-step (i.e. no Webpack, no Babel). That means frontend modules must run in the server and browser as source if you want to utilize server-side rendering. You can still use component libraries and other node packages if you import their compiled module distributions. This is all a deliberate step away from the inflated state that many web applications find themselves in... it’s 2022.
 </p>
 
 <p>This project started out of excitement for the elegancy of Deno and the freedom it would bring to the JavaScript community. At time of writing all library code has been written and maintained by me. If you are interested in contributing please submit a PR or get in contact.</p>
