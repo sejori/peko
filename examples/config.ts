@@ -1,6 +1,6 @@
 import {
   logger,
-  // Event
+  Event
 } from "../mod.ts"      // <- https://deno.land/x/peko/middleware/mod.ts 
 
 const config = {
@@ -9,9 +9,9 @@ const config = {
     logger              
   ],
   // ingore event logs for clean shell. 
+  // eventLogger: () => {}
   // For debugging try:
-  // (event: Event) => console.log(event.data.response), 
-  eventLogger: () => {}
+  // eventLogger: (event: Event) => console.log(event.data.response), 
 }
 
 export default config

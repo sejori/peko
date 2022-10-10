@@ -169,7 +169,7 @@ export class Server {
     // called without await to not block process
     this.cascade.backward(response, toResolve)
 
-    // clone so cache middleware can store original
+    // clone so cached original can be reused
     return response.clone()
   }
   
@@ -215,54 +215,17 @@ export class Server {
       console.log(error)
     }
   }
-
-  /**
-   * Uses Server.config.logString and Server.config.logEvent. Returns promise to not block process
-   * @param ctx: RequestContext
-   * @param start: number
-   * @param responseTime: number
-   * @returns Promise<void>
-   */
-  async logRequest(ctx: RequestContext, response: Response, start: number, responseTime: number): Promise<void> {
-    const date = new Date(start)
-    const status = response.status
-    const cached = ctx.state.responseFromCache
-    const request: Request | undefined = ctx.request
-    const requestEvent: Event = {
-      id: `${ctx.request?.method}-${request?.url}-${date.toJSON()}`,
-      type: "request",
-      date: date,
-      data: {
-        ctx,
-        response,
-        responseTime: `${responseTime}ms`,
-        request,
-        status,
-      }
-    }
-
-    try {
-      await this.logString(`[${requestEvent.date}] ${status} ${request?.method} ${request?.url} ${requestEvent.data.responseTime}${cached ? " (CACHED)" : ""}`)
-    } catch (error) {
-      console.log(error)
-    }
-
-    try {
-      await this.logEvent(requestEvent)
-    } catch (error) {
-      console.log(error)
-    }
-  }
   
   /**
-   * Uses this.config.logEvent. Returns promise to not block process
+   * Safe error logger. Uses this.config.eventLogger. Returns promise to not block process.
    * @param id: string
    * @param error: any
    * @param date: Date
    * @returns Promise<void>
    */
-  async logError(id: string, error: string, date: Date): Promise<void> {
+  async logError(id: string, error: string, date?: Date): Promise<void> {
     try {
+      if (!date) date = new Date()
       return await this.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
     } catch (e) {
       return console.error(e)

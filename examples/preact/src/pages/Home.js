@@ -16,6 +16,8 @@ const Home = (props) => {
         <p style="margin:5px">Served from: <strong>${props.DENO_REGION}</strong></p>
       </div>
 
+      <!-- TODO: add parrot text box -->
+
       <h2>Features</h2>
       <ul>
         <li>Simple routing and error handling.</li>
