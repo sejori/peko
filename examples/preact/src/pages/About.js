@@ -1,4 +1,4 @@
-import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact"
+import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 import Layout from "../components/Layout.js"
 import App from "../components/App.js"
