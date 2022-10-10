@@ -1,6 +1,6 @@
 import {
   logger,
-  Event
+  // Event
 } from "../mod.ts"      // <- https://deno.land/x/peko/middleware/mod.ts 
 
 const config = {
