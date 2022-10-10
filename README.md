@@ -109,7 +109,7 @@ Instantly deploy a peko app straight from GitHub with <a href="https://dash.deno
 
 <h3 id="response-caching">Response caching</h3>
 <p>
-    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. Peko provides a <code>ResponseCache</code> utility to create caches and memoize functions with them. The cacher middleware wraps this and provides drop in response caching for your routes so that responses are not unecessarily rerendered (Response cache is indexed by serialized <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/RequestContext">RequestContext</a>).
+    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. Peko provides a <code>ResponseCache</code> utility to create caches and memoize functions with them. The `cacher` middleware wraps this and provides drop in response caching for your routes so that responses are not unecessarily rerendered (Response cache is indexed by serialized <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/RequestContext">RequestContext</a>).
 </p>
 
 <h3 id="#events">Events</h3>
