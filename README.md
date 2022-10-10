@@ -66,7 +66,7 @@
 
 <h2>Get started</h2>
 <a href="https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts">
-    <h3>Deploy a secure and scalable webapp from one file 🧑‍💻🌠</h3>
+    <p>Deploy a secure and scalable webapp from one file 🧑‍💻🌠</p>
 </a>
 
 <h3>Or try the example apps:</h3>
