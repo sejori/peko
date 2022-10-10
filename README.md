@@ -66,10 +66,10 @@
 
 <h2>Get started</h2>
 <a href="https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts">
-    <h3>Build and launch a secure and scalable webapp from one file 🧑‍💻🌠</h3>
+    <h3>Deploy a secure and scalable webapp from one file 🧑‍💻🌠</h3>
 </a>
 
-<h3>Try the example apps:</h3>
+<h3>Or try the example apps:</h3>
 <ol>
     <li>
         <p><a href="#cool">Deno is sick.</a> <a href="https://deno.land/manual/getting_started/installation">Install it.</a></p>
@@ -78,10 +78,10 @@
         <code>$ git clone https://github.com/sebringrose/peko.git</code>
     </li>
     <li>
-        <code>$ cd peko</code>
+        <code>$ cd peko/examples</code>
     </li>
     <li>
-        <code>$ deno run --allow-net --allow-env --allow-read --watch examples/preact/app.ts</code>
+        <code>$ deno task start:dev</code>
     </li>
 </ol>
 <p>
