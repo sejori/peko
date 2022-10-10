@@ -4,18 +4,17 @@ import config from "../config.ts"
 const server = new Peko.Server()
 const crypto = new Peko.Crypto("SUPER_SECRET_KEY_123") // <-- replace from env
 
-const user = { // <-- replace with db / auth provider query
+// replace with db / auth provider query
+const user = {
   username: "test-user",
   password: await crypto.hash("test-password")
 }
 
 const validateUser = async (username: string, password: string) => {
   return username && password 
-  && username === user.username // <-- replace with db / auth provider query
+  && username === user.username
   && await crypto.hash(password) === user.password 
 }
-
-
 
 // Configure Peko
 server.setConfig(config)

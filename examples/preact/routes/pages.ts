@@ -25,13 +25,12 @@ export const pages: Route[] = [
           ...Deno.env.toObject()
         }
       },
-      // async () => devSocketEmitter.emit(new URL("./src/pages/About.js", import.meta.url).toString()),
       // async (_ctx, next) => {
       //   // throw("some exception")
       //   // ^ stop middleware stack and respond with 500
-      //   await next()
+      //   const response = await next()
       //   // throw("some exception")
-      //   // ^ log the error event after finishing stack and responding
+      //   // ^ log the error event after responding
       // },
       //
     ],
@@ -42,11 +41,11 @@ export const pages: Route[] = [
           appHTML,
           title: `<title>Peko</title>`,
           modulepreload: `
-            <script modulepreload="true" type="module" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
+            <script modulepreload="true" type="module" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact"></script>
             <script modulepreload="true" type="module" src="/pages/Home.js"></script>
           `,
           hydrationScript: `<script type="module">
-            import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+            import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact";
             import Home from "/pages/Home.js";
             hydrate(Home(${JSON.stringify(ctx.state)}), document.getElementById("root"));
           </script>`
@@ -71,11 +70,11 @@ export const pages: Route[] = [
           appHTML,
           title: `<title>Peko | About</title>`,
           modulepreload: `
-            <script modulepreload="true" type="module" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"></script>
+            <script modulepreload="true" type="module" src="https://npm.reversehttp.com/preact,preact/hooks,htm/preact"></script>
             <script modulepreload="true" type="module" src="/pages/About.js"></script>
           `,
           hydrationScript: `<script type="module">
-            import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+            import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact";
             import About from "/pages/About.js";
             hydrate(About(), document.getElementById("root"))
           </script>`

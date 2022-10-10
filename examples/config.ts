@@ -1,14 +1,17 @@
 import {
   logger,
   // Event
-} from "../mod.ts" // <- https://deno.land/x/peko/middleware/mod.ts 
+} from "../mod.ts"      // <- https://deno.land/x/peko/middleware/mod.ts 
 
 const config = {
   globalMiddleware: [
-    logger
+    // log requests and events  
+    logger              
   ],
-  // eventLogger: (event: Event) => console.log(event.data.response), 
-  eventLogger: () => {} // <-- ingore event logs for clean shell
+  // ingore event logs for clean shell. 
+  // For debugging try:
+  // (event: Event) => console.log(event.data.response), 
+  eventLogger: () => {}
 }
 
 export default config

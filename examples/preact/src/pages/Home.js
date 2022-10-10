@@ -1,6 +1,6 @@
 import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact"
 
-import Layout from "../layouts/Layout.js"
+import Layout from "../components/Layout.js"
 
 const Home = (props) => {
   return html`

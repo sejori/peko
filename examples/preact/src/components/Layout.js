@@ -1,4 +1,4 @@
-import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
+import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact"
 
 const Layout = ({ navColor, children }) => {
   return html`

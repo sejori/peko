@@ -1,6 +1,6 @@
-import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
+import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact"
 
-import Layout from "../layouts/Layout.js"
+import Layout from "../components/Layout.js"
 import App from "../components/App.js"
 
 const About = () => {
