@@ -1,20 +1,17 @@
-import { logger } from "../mod.ts" // <- https://deno.land/x/peko/server.ts 
+import {
+  logger,
+  // Event
+} from "../mod.ts"      // <- https://deno.land/x/peko/middleware/mod.ts 
 
 const config = {
   globalMiddleware: [
-    logger 
-    // ^ log requests
+    // log requests and events  
+    logger              
   ],
-  //
-  // You can send logs to a custom service like so:
-  //
-  // stringLogger: (s: string) => {
-  //   fetch("https://loggingservice.net", { 
-  //     method: "POST", 
-  //     body: s 
-  //   })
-  // },
-  eventLogger: () => {}, // <-- ingore event logs for clean shell
+  // ingore event logs for clean shell. 
+  // eventLogger: () => {}
+  // For debugging try:
+  // eventLogger: (event: Event) => console.log(event.data.response), 
 }
 
 export default config

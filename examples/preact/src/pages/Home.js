@@ -1,6 +1,6 @@
 import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact"
 
-import Layout from "../layouts/Layout.js"
+import Layout from "../components/Layout.js"
 
 const Home = (props) => {
   return html`
@@ -15,6 +15,8 @@ const Home = (props) => {
         <p style="margin:5px">Client hydration: <strong>${Date.now()}</strong></p>
         <p style="margin:5px">Served from: <strong>${props.DENO_REGION}</strong></p>
       </div>
+
+      <!-- TODO: add input for parrot API route -->
 
       <h2>Features</h2>
       <ul>

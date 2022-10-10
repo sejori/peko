@@ -3,7 +3,11 @@ import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,
 import { renderFile, configure as configureEta } from "https://deno.land/x/eta@v1.12.3/mod.ts"
 
 import config from "../config.ts"
-import { pages, assets, APIs } from "../preact/routes.ts"
+
+import pages from "../preact/routes/pages.ts"
+import assets from "../preact/routes/assets.ts"
+import APIs from "../preact/routes/APIs.ts"
+
 import Home from "../preact/src/pages/Home.js"
 import About from "../preact/src/pages/About.js"
 
@@ -16,9 +20,6 @@ configureEta({
 // adjust premade preact page render fcns to use eta
 // parege.route ternary operator used to return Home & About page specifics
 pages.forEach(page => page.handler = Peko.ssrHandler({
-  srcURL: page.route === "/" 
-    ? new URL("../preact.src/pages/Home.js", import.meta.url)
-    : new URL("../preact/src/pages/Src.js", import.meta.url), 
   render: async (ctx) => {
     const appHTML = renderToString(page.route === "/" ? Home(ctx.state) : About(), null, null)
     const etaResult = await renderFile("./template.eta", {
