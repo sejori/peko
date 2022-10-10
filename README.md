@@ -69,7 +69,7 @@
     <p>Deploy a secure and scalable webapp from one file 🧑‍💻🌠</p>
 </a>
 
-<h3>Or try the example apps:</h3>
+<h3>Or try the examples:</h3>
 <ol>
     <li>
         <p><a href="#cool">Deno is sick.</a> <a href="https://deno.land/manual/getting_started/installation">Install it.</a></p>
