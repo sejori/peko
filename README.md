@@ -95,7 +95,7 @@
 
 <h2>Deployment</h2>
 
-Instantly deploy a peko app straight from GitHub with <a href="https://dash.deno.com/projects">Deno Deploy</a> (deploy my auth or preact examples if you fancy it 💖).
+Instantly deploy from GitHub with <a href="https://dash.deno.com/projects">Deno Deploy</a> (deploy the auth or preact examples if you fancy it 💖).
 
 <h2>Overview</h2>
 
