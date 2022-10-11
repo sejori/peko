@@ -121,7 +121,7 @@ Instantly deploy a peko app straight from GitHub with <a href="https://dash.deno
 
 <h2 id="cool">The modern edge is really cool because...</h2>
 <p>
-    Our apps can share source code across frontend and backend. We can have all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling. We can write classes that let users store data in the browser until they decide to back it up to the cloud (you might need to <a href="https://github.com/denoland/deno_emit">emit</a> JS versions of TS in this case). This completely eliminates part of the traditional JavaScript toolchain, increasing project maintainability and simplicity, all while making our software even faster.
+    Our apps can share source code across frontend and backend. We can have all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling. We can write classes that let users store data in the browser until they decide to back it up to the cloud. If we want TS on the server we can <a href="https://github.com/denoland/deno_emit">emit</a> JS versions of code to the browser). This completely eliminates part of the traditional JavaScript toolchain, increasing project maintainability and simplicity, all while making our software even faster.
 </p>
 <p>
     Better yet, Peko is not build for any specific frontend framework or library. You can use React, Preact, Vue... you name it (if you do set up a React or Vue project please consider adding it to the examples). Simply plug your app-rendering logic into the <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts/~/Render">Render</a> function of an <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts/~/SSRRoute">SSRRoute</a>.
