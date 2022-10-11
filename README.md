@@ -51,7 +51,7 @@
         <strong>First-class frontend</strong> - Designed for server-side-rendering, use your library of choice! 
     </li>
     <li>
-        <strong>Production-ready backend</strong> - Typescript server class along with all the utilities you need.
+        <strong>Production-ready backend</strong> - Fully tested typescript server and utilities.
     </li>
     <li>
         <strong>Software minimalism</strong> - Sleek runtime with no build step. Uses only the Deno <a href="https://deno.land/std">std</a> library.
@@ -66,7 +66,7 @@
 
 <h2>Get started</h2>
 <a href="https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts">
-    <p>Deploy a secure and scalable webapp from one file 🧑‍💻🌠</p>
+    <p>Build a secure and scalable webapp from one file 🧑‍💻🌠</p>
 </a>
 
 <h3>Or try the examples:</h3>
@@ -90,6 +90,8 @@
 
 <h3>Otherwise:</h3>
 <code>import * as Peko from "https://deno.land/x/peko/mod.ts"</code>
+<p>If you don't want any unnecessary utitlies imported:</p>
+<code>import { Server } from "https://deno.land/x/peko/server.ts"</code>
 
 <h2>Deployment</h2>
 
@@ -104,12 +106,12 @@ Instantly deploy a peko app straight from GitHub with <a href="https://dash.deno
 
 <h3 id="request-handling">Request handling</h3>
 <p>
-    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> handlers can be plugged straight into a route and reduce boilerplate code to serve static assets, render JavaScript apps and stream server-sent events respectively. There are also authentication, logging and caching middleware. Of course, you can also create your own middleware or handlers and plug them into your routes (see <code>examples/custom-handler</code>).
+    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> handlers can be plugged straight into a route and reduce boilerplate code for serving static assets, rendering JavaScript apps to html or streaming server-sent events respectively. There are also authentication, logging and caching middleware. Of course, you can also create your own middleware or handlers and plug them into your routes (see <code>examples/custom-handler</code>).
 </p>
 
 <h3 id="response-caching">Response caching</h3>
 <p>
-    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. Peko provides a <code>ResponseCache</code> utility to create caches and memoize functions with them. The <code>cacher</code> middleware wraps this and provides drop in response caching for your routes so that responses are not unecessarily rerendered (Response cache is indexed by serialized <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/RequestContext">RequestContext</a>).
+    In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. Peko provides a <code>ResponseCache</code> utility for this. The <code>cacher</code> middleware wraps it and provides drop in response caching for your routes. The ResponseCache is indexed by serializing the incoming <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/RequestContext">RequestContext</a> and has a configurable cache item lifetime. Coming soon: Automatically drop items when system memory is close to full. 
 </p>
 
 <h3 id="#events">Events</h3>
@@ -117,9 +119,9 @@ Instantly deploy a peko app straight from GitHub with <a href="https://dash.deno
     Realtime apps can be built with <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko/lib/utils/emitter.ts/~/Emitter">Emitters</a> via the <code>.emit</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe</code> or given to the <code>sseHandler</code> to stream <a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events">Server-sent events</a> to connected clients (see <code>examples/sse</code>).
 </p>
 
-<h3 id="cool">This is cool...</h3>
+<h3 id="cool">The modern edge is really cool because...</h3>
 <p>
-    Because our apps can have all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling required - the server and browser can use the exact same code. This completely eliminates part of the traditional JavaScript SSR toolchain, increasing project maintainability and simplicity.
+    Our apps can share source code across frontend and backend. We can have all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling. We can write classes that let users store data in the browser until they decide to back it up to the cloud (you might need to <a href="https://github.com/denoland/deno_emit">emit</a> JS versions of TS in this case). This completely eliminates part of the traditional JavaScript toolchain, increasing project maintainability and simplicity, all while making our software even faster.
 </p>
 <p>
     Better yet, Peko is not build for any specific frontend framework or library. You can use React, Preact, Vue... you name it (if you do set up a React or Vue project please consider adding it to the examples ❤️). Simply plug your app-rendering logic into the <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts/~/Render">Render</a> function of an <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts/~/SSRRoute">SSRRoute</a>.
