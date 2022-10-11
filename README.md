@@ -88,7 +88,7 @@
     <strong>Note: <a href="https://marketplace.visualstudio.com/items?itemName=bierner.lit-html">Lit-html</a></strong> VS Code plugin recommended if using HTM & Preact.
 </p>
 
-<h3>Import to your next app:</h3>
+<h3>Import to your project:</h3>
 <p><code>import * as Peko from "https://deno.land/x/peko/mod.ts"</code></p>
 <p>and if you don't want unnecessary utitlies:</p>
 <p><code>import { Server } from "https://deno.land/x/peko/server.ts"</code></p>
