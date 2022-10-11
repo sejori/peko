@@ -1,11 +1,11 @@
-import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact"
+import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 const Layout = ({ navColor, children }) => {
   return html`
     <nav style=${navStyle(navColor)}>
       <div class="container row">
         <a style=${navLinkStyle} href="/">Home</a>
-        <img height="100px" width="100px" style="margin: 1rem;" src="/assets/twemoji_chicken.svg" alt="chicken" />
+        <img height="100px" width="100px" style="margin: 1rem;" src="/assets/twemoji_chick.svg" alt="peko-chick" />
         <a style=${navLinkStyle} href="/about">About</a>
       </div>
     </nav>
@@ -34,7 +34,6 @@ const navLinkStyle = `
   font-size: 1.2rem;
   margin: 1rem 3rem;
   color: white;
-  text-decoration-color: red;
   padding: 0px 5px;
 `
   
