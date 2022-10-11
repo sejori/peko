@@ -1,4 +1,4 @@
-import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact"
+import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 import Layout from "../components/Layout.js"
 
@@ -6,14 +6,14 @@ const Home = (props) => {
   return html`
     <${Layout} navColor="forestgreen">
       <h1 style="text-align: center;">Peko</h1>
-      <p style="text-align: center;"><strong>
-        Featherweight server framework and utility library for full-stack stateless apps<br/>🐓 on <a href="https://deno.com/deploy">Deno Deploy</a> 🦕
-      </strong></p>
+      <p style="text-align: center;">
+        Webserver framework and utility library for full-stack apps on the <a href="https://deno.com/deploy">stateless edge</a> 🐣<br/>
+      </p>
 
       <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
-        <p style="margin:5px">Server request: <strong>${props.request_time}</strong></p>
-        <p style="margin:5px">Client hydration: <strong>${Date.now()}</strong></p>
-        <p style="margin:5px">Served from: <strong>${props.DENO_REGION}</strong></p>
+        <p style="margin:5px"><strong>Request time:</strong> ${props.request_time}</p>
+        <p style="margin:5px"><strong>Hydration time:</strong> ${Date.now()}</p>
+        <p style="margin:5px"><strong>Served from:</strong> ${props.DENO_REGION}</p>
       </div>
 
       <!-- TODO: add input for parrot API route -->
