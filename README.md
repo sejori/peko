@@ -90,7 +90,7 @@
 
 <h3>Import to your next app:</h3>
 <p><code>import * as Peko from "https://deno.land/x/peko/mod.ts"</code></p>
-<p>If you don't want unnecessary utitlies:</p>
+<p>and if you don't want unnecessary utitlies:</p>
 <p><code>import { Server } from "https://deno.land/x/peko/server.ts"</code></p>
 
 <h2>Deployment</h2>
