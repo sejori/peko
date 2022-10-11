@@ -66,10 +66,10 @@
 
 <h2>Get started</h2>
 <a href="https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts">
-    <p>Build a secure and scalable webapp from one file 🧑‍💻🌠</p>
+    <p>A secure and scalable webapp in one file 🧑‍💻🌠</p>
 </a>
 
-<h3>Or try the examples:</h3>
+<h3>Try the examples:</h3>
 <ol>
     <li>
         <p><a href="#cool">Deno is sick.</a> <a href="https://deno.land/manual/getting_started/installation">Install it.</a></p>
