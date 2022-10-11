@@ -119,7 +119,7 @@ Instantly deploy a peko app straight from GitHub with <a href="https://dash.deno
     Realtime apps can be built with <a href="https://doc.deno.land/https://deno.land/x/peko/lib/server.ts/~/Event">Events</a>. Events are created by <a href="https://doc.deno.land/https://deno.land/x/peko/lib/utils/emitter.ts/~/Emitter">Emitters</a> via the <code>.emit</code> method. Emitters can be subscribed to manually <code>Emitter.subscribe</code> or given to the <code>sseHandler</code> to stream <a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events">Server-sent events</a> to connected clients (see <code>examples/sse</code>).
 </p>
 
-<h3 id="cool">The modern edge is really cool because...</h3>
+<h2 id="cool">The modern edge is really cool because...</h2>
 <p>
     Our apps can share source code across frontend and backend. We can have all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling. We can write classes that let users store data in the browser until they decide to back it up to the cloud (you might need to <a href="https://github.com/denoland/deno_emit">emit</a> JS versions of TS in this case). This completely eliminates part of the traditional JavaScript toolchain, increasing project maintainability and simplicity, all while making our software even faster.
 </p>
