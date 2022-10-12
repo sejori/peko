@@ -46,8 +46,10 @@ Deno.test("UTIL: Store", async (t) => {
 
     try {
       const jimId = jim.save()
-      const freshJim = store.load(jimId)
+      const freshJim = store.load(jimId, Person)
       console.log(freshJim)
+
+      freshJim.addHobby(fencing)
     } catch(e) {
       console.log(e)
     }

@@ -37,7 +37,7 @@ export class Store {
     return storeNode(node)
   }
 
-  load(rootId: string) {
+  load<T>(rootId: string, _type: T): T {
     const parsed: Map<string, Model> = new Map()
 
     const parseNode = (nodeId: string) => {
@@ -52,7 +52,8 @@ export class Store {
         ? new Function()
         : JSON.parse((nodeString as string))
 
-      const nodeObj = { ...constructor(), ...deserialized }
+      const baseObj = constructor()
+      const nodeObj = { ...baseObj, ...deserialized }
 
       parsed.set(nodeObj[this.code], nodeObj)
       delete nodeObj[this.code]
@@ -68,7 +69,7 @@ export class Store {
       return nodeObj
     }
 
-    return parseNode(rootId)
+    return parseNode(rootId) as T
   }
 }
 
@@ -77,13 +78,11 @@ export class Model {
   _storage: Store
   _constructor: () => this
 
-  constructor(store: Store, constructArgs?: IArguments) {
+  constructor(store: Store, constructArgs: IArguments) {
     const This = Object.getPrototypeOf(this).constructor
 
     this._storage = store
-    this._constructor = constructArgs
-      ? () => new This(...constructArgs)
-      : () => new This()
+    this._constructor = () => new This(...constructArgs)
     this._storage.constructors.set(This.name, this._constructor)
   }
 
