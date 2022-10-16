@@ -1,7 +1,7 @@
 import { RequestContext, Handler } from "../server.ts"
 import { Crypto } from "../utils/Crypto.ts"
 
-// TODO: Make this come from env not random
+// random crypto just for ETag generation
 const crypto = new Crypto(Array.from({length: 10}, () => Math.floor(Math.random() * 9)).toString())
 
 export type SSRData = { 
