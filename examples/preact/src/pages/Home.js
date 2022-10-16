@@ -13,7 +13,7 @@ const Home = (props) => {
       <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
         <p style="margin:5px"><strong>Request time:</strong> ${props.request_time}</p>
         <p style="margin:5px"><strong>Hydration time:</strong> ${Date.now()}</p>
-        <p style="margin:5px"><strong>Served from:</strong> ${props.DENO_REGION}</p>
+        <p style="margin:5px"><strong>Served from:</strong> ${props.DENO_REGION ? props.DENO_REGION : "localhost"}</p>
       </div>
 
       <!-- TODO: add input for parrot API route -->
@@ -21,8 +21,8 @@ const Home = (props) => {
       <h2>Features</h2>
       <ul>
         <li>Simple routing and error handling.</li>
-        <li>Server-Side Render, Server-Sent Event & Static asset request handlers.</li>
-        <li>Logging, Emitting, Caching, and Authenticating utilities and middleware.</li>
+        <li>Server-side render, server-sent event & static asset request handlers.</li>
+        <li>Logging, emitting, caching + authenticating utilities and middleware.</li>
         <li>Cascading middleware for efficient chaining and post-response operations.</li>
         <li>100% TypeScript complete with tests.</li>
       </ul>

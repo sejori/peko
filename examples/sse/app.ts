@@ -19,7 +19,7 @@ setInterval(() => testEmitter.emit({ value: Math.random() }), 1000)
 // SSE route streams data from testEmitter
 server.addRoute({
   route: "/sse",
-  handler: sseHandler(testEmitter)
+  handler: sseHandler({ emitter: testEmitter })
 })
 
 // adjust home page handler templating to include EventSource connection logic

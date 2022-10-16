@@ -55,14 +55,14 @@ export const pages: Route[] = [
   },
   {
     route: "/about",
+    // use cacher to serve responses from cache in prod env
     middleware: env.ENVIRONMENT === "production" ? cacher(cache) : [],
-    // ^ use cacher to serve responses from cache in prod env
     handler: ssrHandler({
       headers: new Headers({
+        // instruct browser to cache page in prod env
         "Cache-Control": env.ENVIRONMENT === "production"
-          ? "max-age=86400, stale-while-revalidate=604800"
+          ? "max-age=86400, stale-while-revalidate=86400"
           : "no-store"
-          // ^ instruct browser to cache page in prod env
       }),
       render: () => {
         const appHTML = renderToString(About(), null, null)

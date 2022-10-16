@@ -3,19 +3,24 @@ import { Emitter } from "../utils/Emitter.ts"
 
 const encoder = new TextEncoder()
 
+export type SSEData = { 
+  emitter: Emitter
+  headers?: Headers
+}
+
 /**
  * Streams Event data from provided Emitter to Response body
- * @param emitter: Emitter
+ * @param sseData: SSEData
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const sseHandler = (emitter: Emitter): Handler => (ctx: RequestContext) => {
+export const sseHandler = (sseData: SSEData): Handler => (ctx: RequestContext) => {
   let lexController: ReadableStreamDefaultController<unknown>
   const lexEnqueue = (event: Event) => lexController.enqueue(encoder.encode(`data: ${JSON.stringify(event.data)}\n\n`))
 
   const body = new ReadableStream({
     start(controller) {
       lexController = controller
-      emitter.subscribe(lexEnqueue)
+      sseData.emitter.subscribe(lexEnqueue)
       ctx.server.logEvent({
         id: "SSE-CONNECT",
         type: "request",
@@ -24,7 +29,7 @@ export const sseHandler = (emitter: Emitter): Handler => (ctx: RequestContext) =
       })
     },
     cancel() {
-      emitter.unsubscribe(lexEnqueue)
+      sseData.emitter.unsubscribe(lexEnqueue)
       ctx.server.logEvent({
         id: "SSE-DISCONNECT",
         type: "request",
@@ -34,9 +39,15 @@ export const sseHandler = (emitter: Emitter): Handler => (ctx: RequestContext) =
     }
   })
 
-  return new Response(body, {
-    headers: {
-      "Content-Type": "text/event-stream",
-    }
+  const headers = new Headers({
+    "Content-Type": "text/event-stream",
   })
+
+  if (sseData.headers) {
+    for (const pair of sseData.headers.entries()) {
+      headers.append(pair[0], pair[1])
+    }
+  }
+
+  return new Response(body, { headers })
 }
