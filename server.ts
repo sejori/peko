@@ -64,8 +64,8 @@ export class Server {
   }
 
   // utility classes for server logic
-  cascade = new Cascade()
-  promisify = new Promisify()
+  #cascade = new Cascade()
+  #promisify = new Promisify()
 
   // route array for request routing
   routes: SafeRoute[] = []
@@ -108,8 +108,8 @@ export class Server {
     return this.routes.push({ 
       ...route,
       method,
-      middleware: m.map(mware => this.promisify.middleware(mware)),
-      handler: this.promisify.handler(route.handler)
+      middleware: m.map(mware => this.#promisify.middleware(mware)),
+      handler: this.#promisify.handler(route.handler)
     })
   }
     
@@ -164,10 +164,10 @@ export class Server {
       ? [ ...this.config.globalMiddleware, ...route.middleware, route.handler ]
       : [ ...this.config.globalMiddleware, (ctx) => this.handleError(ctx, 404) ]
   
-    const { response, toResolve } = await this.cascade.forward(ctx, toCall)
+    const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
 
     // called without await to not block process
-    this.cascade.backward(response, toResolve)
+    this.#cascade.backward(response, toResolve)
 
     // clone so cached original can be reused
     return response.clone()
