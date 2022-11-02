@@ -147,11 +147,17 @@ export class Server {
       ? [ ...this.config.globalMiddleware, ...route.middleware, route.handler ]
       : [ ...this.config.globalMiddleware, async () => await new Response(null, { status: 404 }) ]
     
-    const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
-    await this.#cascade.backward(response, toResolve)
 
-    // clone so cached original can be reused
-    return response.clone()
+    try {
+      const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
+      await this.#cascade.backward(response, toResolve)
+
+      // clone so cached original can be reused
+      return response.clone()
+    } catch(error) {
+      this.log(error)
+      return new Response(null, { status: 500 }).clone()
+    }
   }
 
   /**
@@ -177,8 +183,8 @@ export interface Config {
 }
 
 interface SafeRoute {
-  route: string,
-  method: string,
+  route: `/${string}`
+  method?: "GET" | "POST" | "PUT" | "DELETE"
   middleware: SafeMiddleware[],
   handler: SafeHandler
 }
@@ -186,8 +192,8 @@ export type SafeHandler = (ctx: RequestContext) => Promise<Response>
 export type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void>
 
 export interface Route { 
-  route: string
-  method?: string
+  route: `/${string}`
+  method?: "GET" | "POST" | "PUT" | "DELETE"
   middleware?: Middleware[] | Middleware
   handler: Handler
 }
