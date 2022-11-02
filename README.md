@@ -48,13 +48,13 @@
 <h2>Philosophy</h2>
 <ul>
     <li>
-        <strong>Client-edge synergy</strong> - Share modules for server-side-rendering and data consistency. 
+        <strong>Client-edge synergy</strong> - Share modules for server-side-rendering and data consistency.
     </li>
     <li>
-        <strong>Production-ready backend</strong> - Cascading middleware server + caching and other helpful web dev utilities, all with tests.
+        <strong>Production-ready backend</strong> - Cascading middlware, authentication utils and more, all tested.
     </li>
     <li>
-        <strong>Software minimalism</strong> - No build-step, built using only the Deno <a href="https://deno.land/std">std</a> library.
+        <strong>Software minimalism</strong> - Sleek runtime, with no build step, using only Deno <a href="https://deno.land/std">std</a> library.
     </li>
     <li>
         <strong>Ease of adoption</strong> - Intuitive API, lots of examples and no fixed project structure.
