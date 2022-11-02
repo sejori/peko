@@ -1,7 +1,8 @@
 import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
-import config from "../config.ts"
 
 const server = new Peko.Server()
+server.use(Peko.logger)
+
 const crypto = new Peko.Crypto("SUPER_SECRET_KEY_123") // <-- replace from env
 
 // replace with db / auth provider query
@@ -15,9 +16,6 @@ const validateUser = async (username: string, password: string) => {
   && username === user.username
   && await crypto.hash(password) === user.password 
 }
-
-// Configure Peko
-server.setConfig(config)
 
 // generate JWT
 server.addRoute({
