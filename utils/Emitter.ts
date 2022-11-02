@@ -1,6 +1,4 @@
-import { Event } from "../server.ts"
-
-export type Listener = (e: Event) => unknown | Promise<unknown>
+export type Listener = (data: unknown) => unknown | Promise<unknown>
 
 /**
  * Event emitter class, designed to be used with the sseHandler
@@ -32,20 +30,7 @@ export class Emitter {
   }
 
   // async so won't block process when called without "await"
-  async emit(data: Record<string, unknown>): Promise<unknown[]> {
-    const date = new Date()
-    const eventId = `EMIT-${JSON.stringify(data)}`
-    const event: Event = { 
-      id: `${eventId}-${date.toJSON()}`, 
-      type: "emit", 
-      date: date, 
-      data 
-    }
-    
-    try {
-      return await Promise.all(this.listeners.map(async listener => await listener(event)))
-    } catch (error) {
-      throw(error)
-    }
+  async emit(data: unknown): Promise<unknown[]> {    
+    return await Promise.all(this.listeners.map(async listener => await listener(data)))
   }
 }

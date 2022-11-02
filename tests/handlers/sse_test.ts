@@ -4,10 +4,7 @@ import { sseHandler } from "../../handlers/sse.ts"
 import { Emitter } from "../../utils/Emitter.ts"
 
 Deno.test("HANDLER: Server-sent events", async (t) => {
-  const server = new Server({
-    eventLogger: () => {},
-    stringLogger: () => {}
-  })
+  const server = new Server({ logging: () => {} })
   const ctx = new RequestContext(server)
   const emitter = new Emitter()
   const decoder = new TextDecoder()

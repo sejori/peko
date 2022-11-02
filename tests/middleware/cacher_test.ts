@@ -9,10 +9,7 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
   const cache = new ResponseCache({
     lifetime: CACHE_LIFETIME
   })
-  const server = new Server({
-    eventLogger: () => {},
-    stringLogger: () => {}
-  })
+  const server = new Server({ logging: () => {} })
 
   const testData = {
     foo: "bar"

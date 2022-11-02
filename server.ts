@@ -20,43 +20,11 @@ export class RequestContext {
 }
 
 export class Server {
-  // define default config values
   config: Config = {
     port: 7777,
     hostname: "0.0.0.0",
     globalMiddleware: [],
-    stringLogger: (log: string) => console.log(log),
-    eventLogger: (e: Event) => console.log(e),
-    errorHandler: (_ctx: RequestContext, status: number) => {
-      let response
-      switch (status) {
-        case 400: 
-          response = new Response("400: Bad request", {
-            headers: new Headers(),
-            status: 400
-          })
-          break
-        case 401: 
-          response = new Response("401: Unauthorized", {
-            headers: new Headers(),
-            status: 401
-          })
-          break
-        case 404: 
-          response = new Response("404: Nothing found here", {
-            headers: new Headers(),
-            status: 404
-          })
-          break
-        default:
-          response = new Response("500: Internal Server Error", {
-            headers: new Headers(),
-            status: 500
-          })
-          break
-      }
-      return response;
-    }
+    logging: (log: unknown) => console.log(log),
   }
 
   constructor(config?: Partial<Config>) {
@@ -64,8 +32,8 @@ export class Server {
   }
 
   // utility classes for server logic
-  cascade = new Cascade()
-  promisify = new Promisify()
+  #cascade = new Cascade()
+  #promisify = new Promisify()
 
   // route array for request routing
   routes: SafeRoute[] = []
@@ -108,23 +76,45 @@ export class Server {
     return this.routes.push({ 
       ...route,
       method,
-      middleware: m.map(mware => this.promisify.middleware(mware)),
-      handler: this.promisify.handler(route.handler)
+      middleware: m.map(mware => this.#promisify.middleware(mware)),
+      handler: this.#promisify.handler(route.handler)
     })
   }
-    
+
+  /**
+   * Add Routes
+   * @param routes: Route[] - middleware can be Middlewares or Middleware 
+   * @returns number - routes.length
+   */
+  addRoutes(routes: Route[]): number {
+    return routes.map(route => {
+      return this.addRoute(route)
+    }).reduce((a, b) => a + b)
+  }
+
+
   /**
    * Remove Route from Peko server
    * @param route: string - route id of Route to remove
    * @returns 
    */
-  removeRoute(route: string): number {
-    const routeToRemove = this.routes.find(r => r.route === route)
-    if (!routeToRemove) return this.routes.length
-  
-    this.routes.splice(this.routes.indexOf(routeToRemove), 1)
+  removeRoutes(routes: string[]): number {
+    routes.forEach(route => this.removeRoute(route))
     return this.routes.length
   }
+
+    /**
+   * Remove Route from Peko server
+   * @param route: string - route id of Route to remove
+   * @returns 
+   */
+     removeRoute(route: string): number {
+      const routeToRemove = this.routes.find(r => r.route === route)
+      if (!routeToRemove) return this.routes.length
+    
+      this.routes.splice(this.routes.indexOf(routeToRemove), 1)
+      return this.routes.length
+    }
   
   /**
    * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
@@ -136,21 +126,14 @@ export class Server {
       hostname: this.config.hostname, 
       port: port ? port : this.config.port,
       onError: (error) => {
-        try {
-          if (error) this.logError(`${error}`, `${error}`, new Date())
-        } catch(e) {
-          console.log(e)
-          console.log(error)
-        }
-
-        const ctx = new RequestContext(this)
-        return this.handleError(ctx, 500)
+        this.log(error)
+        return new Response(null, { status: 500 })
       },
       onListen: cb 
         ? cb 
         : () => {
-          this.logString(`Peko server started on port ${this.config.port} with routes:`)
-          this.routes.forEach((route, i) => this.logString(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
+          this.log(`Peko server started on port ${this.config.port} with routes:`)
+          this.routes.forEach((route, i) => this.log(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
         } 
     })
   }
@@ -162,73 +145,32 @@ export class Server {
 
     const toCall: SafeMiddleware[] = route 
       ? [ ...this.config.globalMiddleware, ...route.middleware, route.handler ]
-      : [ ...this.config.globalMiddleware, (ctx) => this.handleError(ctx, 404) ]
-  
-    const { response, toResolve } = await this.cascade.forward(ctx, toCall)
+      : [ ...this.config.globalMiddleware, async () => await new Response(null, { status: 404 }) ]
+    
 
-    // called without await to not block process
-    this.cascade.backward(response, toResolve)
-
-    // clone so cached original can be reused
-    return response.clone()
-  }
-  
-  /**
-   * Safe error handler. Uses config.handleError wrapped in try catch.
-   * @param ctx 
-   * @param status 
-   * @returns Response
-   */
-  async handleError(ctx: RequestContext, status: number): Promise<Response> {
     try {
-      return await this.config.errorHandler(ctx, status)
-    } catch (error) {
-      console.log(error)
-      return new Response("Error:", error)
+      const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
+      await this.#cascade.backward(response, toResolve)
+
+      // clone so cached original can be reused
+      return response.clone()
+    } catch(error) {
+      this.log(error)
+      return new Response(null, { status: 500 }).clone()
     }
   }
 
   /**
-   * Safe string logger. Uses config.stringLogger wrapped in try catch.
-   * @param string: string
+   * Safe unknown data logging. Uses config.logging wrapped in try catch.
+   * @param data: unknown 
    * @returns void
    */
-  async logString(string: string): Promise<void> {
+  async log(data: unknown): Promise<void> {
     try {
-      return await this.config.stringLogger(string)
+      return await this.config.logging(data)
     } catch (error) {
-      console.log(string)
+      console.log(data)
       console.log(error)
-    }
-  }
-
-  /**
-   * Safe string logger. Uses config.stringLogger wrapped in try catch.
-   * @param event: Event 
-   * @returns void
-   */
-  async logEvent(event: Event): Promise<void> {
-    try {
-      return await this.config.eventLogger(event)
-    } catch (error) {
-      console.log(event)
-      console.log(error)
-    }
-  }
-  
-  /**
-   * Safe error logger. Uses this.config.eventLogger. Returns promise to not block process.
-   * @param id: string
-   * @param error: any
-   * @param date: Date
-   * @returns Promise<void>
-   */
-  async logError(id: string, error: string, date?: Date): Promise<void> {
-    try {
-      if (!date) date = new Date()
-      return await this.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
-    } catch (e) {
-      return console.error(e)
     }
   }
 }
@@ -237,14 +179,12 @@ export interface Config {
   port: number
   hostname: string
   globalMiddleware: SafeMiddleware[]
-  stringLogger: (log: string) => Promise<void> | void
-  eventLogger: (data: Event) => Promise<void> | void
-  errorHandler: (ctx: RequestContext, statusCode: number) => Response | Promise<Response>
+  logging: (data: unknown) => Promise<void> | void
 }
 
 interface SafeRoute {
-  route: string,
-  method: string,
+  route: `/${string}`
+  method?: "GET" | "POST" | "PUT" | "DELETE"
   middleware: SafeMiddleware[],
   handler: SafeHandler
 }
@@ -252,19 +192,12 @@ export type SafeHandler = (ctx: RequestContext) => Promise<Response>
 export type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void>
 
 export interface Route { 
-  route: string
-  method?: string
+  route: `/${string}`
+  method?: "GET" | "POST" | "PUT" | "DELETE"
   middleware?: Middleware[] | Middleware
   handler: Handler
 }
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 export type Middleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void> | Response | void
-
-export type Event = {
-  id: string
-  type: "request" | "emit" | "error"
-  date: Date
-  data: Record<string, unknown>
-}
 
 export default Server

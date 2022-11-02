@@ -5,15 +5,8 @@ import { Crypto } from "../../utils/Crypto.ts"
 
 Deno.test("MIDDLEWARE: Authenticator", async (t) => {
   const successString = "Authorized!"
-  const failureString = "Unauthorized!"
   const crypto = new Crypto("test_key")
-  const server = new Server({
-    errorHandler: (_ctx, status) => new Response(failureString, {
-      status
-    }),
-    eventLogger: () => {},
-    stringLogger: () => {}
-  })
+  const server = new Server({ logging: () => {} })
 
   const testPayload = { iat: Date.now(), exp: Date.now() + 1000, data: { foo: "bar" }}
   const token = await crypto.sign(testPayload)
@@ -34,7 +27,6 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
     const ctx = new RequestContext(server)
     const response = await authenticator(crypto)(ctx, async() => await new Response(successString))
 
-    assert(await response?.text() === failureString)
     assert(response?.status === 401)
     assert(!ctx.state.auth)
   }) 

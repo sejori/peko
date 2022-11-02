@@ -19,5 +19,5 @@ export const authenticator = (crypto: Crypto): Middleware => async (ctx: Request
     }
   }  
   
-  return await ctx.server.handleError(ctx, 401)
+  return new Response(null, { status: 401 })
 }
