@@ -48,13 +48,13 @@
 <h2>Philosophy</h2>
 <ul>
     <li>
-        <strong>First-class frontend</strong> - Designed for server-side-rendering, use your library of choice! 
+        <strong>Client-edge synergy</strong> - Share modules for server-side-rendering and data consistency.
     </li>
     <li>
-        <strong>Production-ready backend</strong> - Fully tested typescript server and utilities.
+        <strong>Production-ready backend</strong> - Cascading middlware, authentication and more, all tested.
     </li>
     <li>
-        <strong>Software minimalism</strong> - Sleek runtime with no build step. Uses only the Deno <a href="https://deno.land/std">std</a> library.
+        <strong>Software minimalism</strong> - Sleek runtime, with no build step, using only Deno <a href="https://deno.land/std">std</a> library.
     </li>
     <li>
         <strong>Ease of adoption</strong> - Intuitive API, lots of examples and no fixed project structure.
