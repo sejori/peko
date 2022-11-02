@@ -36,7 +36,7 @@ export class Cascade {
   
   // quite a funky Promise-based middleware executor
   run(ctx: RequestContext, fcn: SafeMiddleware, toResolve: ResolvePromise[]): Promise<Response | void> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       // resolve current Promise to move onto next middleware
       // will resolve with eventual server response
       const next = () => {
@@ -50,8 +50,7 @@ export class Cascade {
           resolve(result)
         })
         .catch((error) => {
-          ctx.server.log(error)
-          resolve(new Response(null, { status: 500 }))
+          reject(error)
         })
     })
   }

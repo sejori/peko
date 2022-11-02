@@ -10,19 +10,14 @@ import {
 
 Deno.test("UTIL: Cascade", async (t) => {
   const cascade = new Cascade()
-  const testServer = new Server()
-  const testContext = new RequestContext(testServer, undefined, { foo: "bar" })
+  const testServer = new Server({ logging: () => {} })
+  const testContext = new RequestContext(testServer, undefined)
   const toCall = [testMiddleware1, testMiddleware2, testMiddleware3, testHandler]
   let lex_response: Response
   let lex_toResolve: {
     resolve: (value: Response | PromiseLike<Response>) => void, 
     reject: (reason?: unknown) => void
   }[] = []
-
-  await t.step("middleware error triggers basic 500", async () => {
-    const { response } = await cascade.forward(testContext, [ () => new Promise(_ => { throw new Error("ERROR") }) ])
-    assert(response.status === 500)
-  })
 
   await t.step("cascade run as expected", async () => {
     const { response, toResolve } = await cascade.forward(testContext, toCall)
