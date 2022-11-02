@@ -7,7 +7,7 @@ const Home = (props) => {
     <${Layout} navColor="forestgreen">
       <h1 style="text-align: center;">Peko</h1>
       <p style="text-align: center;">
-        Webserver framework and utility library for full-stack apps on the <a href="https://deno.com/deploy">stateless edge</a> 🐣<br/>
+        Featherweight full-stack framework for the stateless edge 🐣
       </p>
 
       <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
@@ -22,7 +22,7 @@ const Home = (props) => {
       <ul>
         <li>Simple routing and error handling.</li>
         <li>Server-side render, server-sent event & static asset request handlers.</li>
-        <li>Logging, emitting, caching + authenticating utilities and middleware.</li>
+        <li>Logging, emitting, caching and authenticating utilities and middleware.</li>
         <li>Cascading middleware for efficient chaining and post-response operations.</li>
         <li>100% TypeScript complete with tests.</li>
       </ul>
