@@ -2,8 +2,6 @@ import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 import { renderFile, configure as configureEta } from "https://deno.land/x/eta@v1.12.3/mod.ts"
 
-import config from "../config.ts"
-
 import pages from "../preact/routes/pages.ts"
 import assets from "../preact/routes/assets.ts"
 import APIs from "../preact/routes/APIs.ts"
@@ -37,10 +35,10 @@ pages.forEach(page => page.handler = Peko.ssrHandler({
   }
 }))
 
-const server = new Peko.Server()
 
-// Configure Peko
-server.setConfig(config)
+const server = new Peko.Server()
+server.use(Peko.logger)
+
 // SSR'ed app page routes
 server.addRoutes(pages)
 // Static assets
