@@ -51,7 +51,7 @@
         <strong>Client-edge synergy</strong> - Share modules for server-side-rendering and data consistency. 
     </li>
     <li>
-        <strong>Production-ready backend</strong> - Tested cascading middleware server with caching and other helpful web dev utilities.
+        <strong>Production-ready backend</strong> - Cascading middleware server + caching and other helpful web dev utilities, all with tests.
     </li>
     <li>
         <strong>Software minimalism</strong> - No build-step, built using only the Deno <a href="https://deno.land/std">std</a> library.
