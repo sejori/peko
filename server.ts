@@ -112,19 +112,41 @@ export class Server {
       handler: this.#promisify.handler(route.handler)
     })
   }
-    
+
+  /**
+   * Add Routes
+   * @param routes: Route[] - middleware can be Middlewares or Middleware 
+   * @returns number - routes.length
+   */
+  addRoutes(routes: Route[]): number {
+    return routes.map(route => {
+      return this.addRoute(route)
+    }).reduce((a, b) => a + b)
+  }
+
+
   /**
    * Remove Route from Peko server
    * @param route: string - route id of Route to remove
    * @returns 
    */
-  removeRoute(route: string): number {
-    const routeToRemove = this.routes.find(r => r.route === route)
-    if (!routeToRemove) return this.routes.length
-  
-    this.routes.splice(this.routes.indexOf(routeToRemove), 1)
+  removeRoutes(routes: string[]): number {
+    routes.forEach(route => this.removeRoute(route))
     return this.routes.length
   }
+
+    /**
+   * Remove Route from Peko server
+   * @param route: string - route id of Route to remove
+   * @returns 
+   */
+     removeRoute(route: string): number {
+      const routeToRemove = this.routes.find(r => r.route === route)
+      if (!routeToRemove) return this.routes.length
+    
+      this.routes.splice(this.routes.indexOf(routeToRemove), 1)
+      return this.routes.length
+    }
   
   /**
    * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
