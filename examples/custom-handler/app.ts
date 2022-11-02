@@ -1,17 +1,15 @@
 import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
-
-import config from "../config.ts"
 import assets from "../preact/routes/assets.ts"
 import APIs from "../preact/routes/APIs.ts"
 import Home from "../preact/src/pages/Home.js"
 import htmlTemplate from "../preact/template.ts"
 
 const server = new Peko.Server()
+server.use(Peko.logger)
+
 const cache = new Peko.ResponseCache()
 
-// Configure Peko
-server.setConfig(config)
 // Static assets
 server.addRoutes(assets)
 // Custom API functions
