@@ -6,7 +6,7 @@ Deno.test("MIDDLEWARE: Logger", async (t) => {
   const successString = "Success!"
 
   let loggedData: unknown
-  const server = new Server({ logger: (data) => { loggedData = data } })
+  const server = new Server({ logging: (data) => { loggedData = data } })
 
   const testData = {
     foo: "bar"

@@ -12,7 +12,7 @@ Deno.test("SERVER", async (t) => {
   const emptyFcn = () => {}
 
   server.setConfig({
-    logger: emptyFcn,
+    logging: emptyFcn,
     globalMiddleware: [
       testMiddleware1,
       testMiddleware2
@@ -22,7 +22,7 @@ Deno.test("SERVER", async (t) => {
   // TODO test request context creation
 
   await t.step("config updates and server starts", () => {
-    assert(server.config.logger === emptyFcn)
+    assert(server.config.logging === emptyFcn)
   })
 
   await t.step("routes added", () => {
@@ -40,23 +40,11 @@ Deno.test("SERVER", async (t) => {
     assert(routesLength === 0 && server.routes.length === 0)
   })
 
-  await t.step("default not found handling triggers 404", async () => {    
+  await t.step("no route found triggers basic 404", async () => {    
     const request = new Request("http://localhost:7777/")
     const response = await server.requestHandler(request)
 
     assert(response.status === 404)
-  })
-
-  await t.step("default error handling triggers 500", async () => {
-    server.addRoute({
-      route: "/",
-      handler: () => { throw new Error("ERROR") }
-    })
-
-    const request = new Request("http://localhost:7777/")
-    const response = await server.requestHandler(request)
-
-    assert(response.status === 500)
   })
 
   await t.step("all middleware and handlers run", async () => {
