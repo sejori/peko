@@ -1,11 +1,11 @@
-import Server from "../../server.ts" // <- https://deno.land/x/peko/server.ts 
-import config from "../config.ts"
+import { Server, logger } from "../../mod.ts" // <- https://deno.land/x/peko/server.ts 
 import pages from "./routes/pages.ts"
 import assets from "./routes/assets.ts"
 import APIs from "./routes/APIs.ts"
 
-// initialize server with config
-const server = new Server(config)
+// initialize server
+const server = new Server()
+server.use(logger)
 
 // SSR'ed app page routes
 server.addRoutes(pages)

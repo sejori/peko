@@ -20,16 +20,9 @@ export class RequestContext {
 }
 
 export class Server {
-  config: Config = {
-    port: 7777,
-    hostname: "0.0.0.0",
-    globalMiddleware: [],
-    logging: (log: unknown) => console.log(log),
-  }
-
-  constructor(config?: Partial<Config>) {
-    if (config) this.setConfig(config)
-  }
+  port = 7777
+  hostname = "0.0.0.0"
+  logging: (l: unknown) => Promise<unknown> | unknown = (log: unknown) => console.log(log)
 
   // utility classes for server logic
   #cascade = new Cascade()
@@ -38,23 +31,38 @@ export class Server {
   // route array for request routing
   routes: SafeRoute[] = []
 
+  // middleware array for request handling
+  middleware: SafeMiddleware[] = []
+
+  constructor(config?: { 
+    port?: number, 
+    hostname?: string, 
+    logging: (l: unknown) => Promise<unknown> | unknown 
+  }) {
+    if (!config) return
+    const { port, hostname, logging } = config
+    if (port) this.port = port
+    if (hostname) this.hostname = hostname
+    if (logging) this.logging = logging
+  }
+
   /**
-   * Update config with partial config object
-   * @param newConf: Partial<Config>
-   * @returns void
+   * Add global middleware to all server routes
+   * @param middleware: Middleware[] | Middleware 
+   * @returns number - server.middleware.length
    */
-  setConfig (newConf: Partial<Config>): void {
-    for (const key in newConf) {
-      Object.defineProperty(this.config, key, {
-        value: newConf[key as keyof typeof this.config]
-      })
+  use(middleware: Middleware | Middleware[]) {
+    if (Array.isArray(middleware)) {
+      middleware.forEach(mware => this.use(mware))
+      return middleware.length
     }
+    return this.middleware.push(this.#promisify.middleware(middleware))
   }
 
   /**
    * Add Route
    * @param route: Route - middleware can be Middlewares or Middleware 
-   * @returns number - routes.length
+   * @returns number - server.routes.length
    */
   addRoute(route: Route): number {
     const method = route.method ? route.method : "GET"
@@ -87,11 +95,24 @@ export class Server {
    * @returns number - routes.length
    */
   addRoutes(routes: Route[]): number {
-    return routes.map(route => {
+    routes.forEach(route => {
       return this.addRoute(route)
-    }).reduce((a, b) => a + b)
+    })
+    return routes.length
   }
 
+  /**
+   * Remove Route from Peko server
+   * @param route: string - route id of Route to remove
+   * @returns 
+   */
+  removeRoute(route: string): number {
+    const routeToRemove = this.routes.find(r => r.route === route)
+    if (!routeToRemove) return this.routes.length
+
+    this.routes.splice(this.routes.indexOf(routeToRemove), 1)
+    return this.routes.length
+  }
 
   /**
    * Remove Route from Peko server
@@ -102,19 +123,6 @@ export class Server {
     routes.forEach(route => this.removeRoute(route))
     return this.routes.length
   }
-
-    /**
-   * Remove Route from Peko server
-   * @param route: string - route id of Route to remove
-   * @returns 
-   */
-     removeRoute(route: string): number {
-      const routeToRemove = this.routes.find(r => r.route === route)
-      if (!routeToRemove) return this.routes.length
-    
-      this.routes.splice(this.routes.indexOf(routeToRemove), 1)
-      return this.routes.length
-    }
   
   /**
    * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
@@ -123,8 +131,8 @@ export class Server {
    */
   listen(port?: number, cb?: (params: { hostname: string; port: number; }) => void): void {
     serve((request) => this.requestHandler.call(this, request), { 
-      hostname: this.config.hostname, 
-      port: port ? port : this.config.port,
+      hostname: this.hostname, 
+      port: port ? port : this.port,
       onError: (error) => {
         this.log(error)
         return new Response(null, { status: 500 })
@@ -132,7 +140,7 @@ export class Server {
       onListen: cb 
         ? cb 
         : () => {
-          this.log(`Peko server started on port ${this.config.port} with routes:`)
+          this.log(`Peko server started on port ${this.port} with routes:`)
           this.routes.forEach((route, i) => this.log(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
         } 
     })
@@ -144,8 +152,8 @@ export class Server {
     const route = this.routes.find(route => route.route === requestURL.pathname && route.method === request.method)
 
     const toCall: SafeMiddleware[] = route 
-      ? [ ...this.config.globalMiddleware, ...route.middleware, route.handler ]
-      : [ ...this.config.globalMiddleware, async () => await new Response(null, { status: 404 }) ]
+      ? [ ...this.middleware, ...route.middleware, route.handler ]
+      : [ ...this.middleware, async () => await new Response(null, { status: 404 }) ]
     
 
     try {
@@ -165,21 +173,14 @@ export class Server {
    * @param data: unknown 
    * @returns void
    */
-  async log(data: unknown): Promise<void> {
+  async log(data: unknown) {
     try {
-      return await this.config.logging(data)
+      return await this.logging(data)
     } catch (error) {
       console.log(data)
       console.log(error)
     }
   }
-}
-
-export interface Config { 
-  port: number
-  hostname: string
-  globalMiddleware: SafeMiddleware[]
-  logging: (data: unknown) => Promise<void> | void
 }
 
 interface SafeRoute {
