@@ -3,10 +3,7 @@ import { Server, RequestContext } from "../../server.ts"
 import { ssrHandler } from "../../handlers/ssr.ts"
 
 Deno.test("HANDLER: Server-side render", async (t) => {
-  const server = new Server({
-    eventLogger: () => {},
-    stringLogger: () => {}
-  })
+  const server = new Server({ logging: () => {} })
   const ctx = new RequestContext(server)
   const decoder = new TextDecoder()
   const cacheControl = "max-age=60, stale-while-revalidate=10"

@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
-import { Server, RequestContext } from "../server.ts"
+import { Server } from "../server.ts"
 import {
   testMiddleware1,
   testMiddleware2,
@@ -10,24 +10,19 @@ import {
 Deno.test("SERVER", async (t) => {
   const server = new Server()
   const emptyFcn = () => {}
-  const testErrorHandler = (ctx: RequestContext, status: number) => {
-    return new Response(JSON.stringify({ ctx, status }), { status })
-  }
 
   server.setConfig({
-    stringLogger: emptyFcn,
-    eventLogger: emptyFcn,
-    errorHandler: testErrorHandler,
+    logging: emptyFcn,
     globalMiddleware: [
       testMiddleware1,
       testMiddleware2
     ]
   })
 
+  // TODO test request context creation
+
   await t.step("config updates and server starts", () => {
-    assert(server.config.stringLogger === emptyFcn)
-    assert(server.config.eventLogger === emptyFcn)
-    assert(server.config.errorHandler === testErrorHandler)
+    assert(server.config.logging === emptyFcn)
   })
 
   await t.step("routes added", () => {
@@ -45,28 +40,24 @@ Deno.test("SERVER", async (t) => {
     assert(routesLength === 0 && server.routes.length === 0)
   })
 
-  await t.step("error handler triggered with 404", async () => {    
+  await t.step("no route found triggers basic 404", async () => {    
     const request = new Request("http://localhost:7777/")
     const response = await server.requestHandler(request)
-    const body = await response.json()
 
-    assert(response.status === 404 && body.status === 404)
+    assert(response.status === 404)
   })
 
-  await t.step("error handler triggered with 500", async () => {
+  await t.step("requestHandler error triggers basic 500", async () => {
     server.addRoute({
-      route: "/",
-      handler: () => { throw new Error("ERROR") }
+      route: "/error",
+      handler: _ => { throw new Error("ERROR") }
     })
-
-    const request = new Request("http://localhost:7777/")
+    const request = new Request("http://localhost:7777/error")
     const response = await server.requestHandler(request)
-    const body = await response.json()
-
-    assert(response.status === 500 && body.status === 500)
+    assert(response.status === 500)
   })
 
-  await t.step("test all middleware and handlers run", async () => {
+  await t.step("all middleware and handlers run", async () => {
     server.addRoute({
       route: "/test",
       middleware: testMiddleware3,

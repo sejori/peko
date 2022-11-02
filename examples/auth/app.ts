@@ -27,7 +27,7 @@ server.addRoute({
     const { username, password } = await ctx.request.json()
 
     if (!await validateUser(username, password)) {
-      return await server.handleError(ctx, 400)
+      return new Response(null, {status: 400 })
     }
 
     const exp = new Date()

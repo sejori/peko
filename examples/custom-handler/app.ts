@@ -13,9 +13,9 @@ const cache = new Peko.ResponseCache()
 // Configure Peko
 server.setConfig(config)
 // Static assets
-assets.forEach(asset => server.addRoute(asset))
+server.addRoutes(assets)
 // Custom API functions
-APIs.forEach(API => server.addRoute(API))
+server.addRoutes(APIs)
 
 // Custom SSR logic responds preact component JSON data
 server.addRoute({

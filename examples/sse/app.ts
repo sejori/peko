@@ -11,7 +11,7 @@ import htmlTemplate from "../preact/template.ts"
 const server = new Server()
 
 // create Emitter - pass logEvent as initial listener so we can see it working
-const testEmitter = new Emitter([(e) => server.logEvent(e)])
+const testEmitter = new Emitter([(data) => server.log(data)])
 
 // emit random value every second
 setInterval(() => testEmitter.emit({ value: Math.random() }), 1000)
@@ -46,11 +46,11 @@ pages[0].handler = ssrHandler({
 })
 
 // SSR'ed page routes
-pages.forEach(page => server.addRoute(page))
+server.addRoutes(pages)
 // Static assets
-assets.forEach(asset => server.addRoute(asset))
+server.addRoutes(assets)
 // Custom API functions
-APIs.forEach(API => server.addRoute(API))
+server.addRoutes(APIs)
 
 // Start Peko server :)
 server.listen()

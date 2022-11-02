@@ -42,11 +42,11 @@ const server = new Peko.Server()
 // Configure Peko
 server.setConfig(config)
 // SSR'ed app page routes
-pages.forEach(page => server.addRoute(page))
+server.addRoutes(pages)
 // Static assets
-assets.forEach(asset => server.addRoute(asset))
+server.addRoutes(assets)
 // Custom API functions
-APIs.forEach(API => server.addRoute(API))
+server.addRoutes(APIs)
 
 // Start Peko server :)
 server.listen()
