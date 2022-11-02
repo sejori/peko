@@ -1,20 +1,20 @@
 import "./globals.ts" // <- extends window global for @vue/server-renderer
 
-import Server from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
-
-import config from "../config.ts"
+import { Server, logger } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { pages, assets, APIs } from "./routes.ts"
 
+// initialize server
 const server = new Server()
+server.use(logger)
 
-// Configure Peko
-server.setConfig(config)
 // SSR'ed app page routes
-pages.forEach(page => server.addRoute(page))
-// Static assets
-assets.forEach(asset => server.addRoute(asset))
-// Custom API functions
-APIs.forEach(API => server.addRoute(API))
+server.addRoutes(pages)
 
-// Start your Peko server :)
+// Static assets
+server.addRoutes(assets)
+
+// Custom API functions
+server.addRoutes(APIs)
+
+// Start Peko server ^^
 server.listen()
