@@ -19,6 +19,11 @@ Deno.test("UTIL: Cascade", async (t) => {
     reject: (reason?: unknown) => void
   }[] = []
 
+  await t.step("middleware error triggers basic 500", async () => {
+    const { response } = await cascade.forward(testContext, [ () => new Promise(_ => { throw new Error("ERROR") }) ])
+    assert(response.status === 500)
+  })
+
   await t.step("cascade run as expected", async () => {
     const { response, toResolve } = await cascade.forward(testContext, toCall)
     lex_response = response

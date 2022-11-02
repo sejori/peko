@@ -8,13 +8,13 @@ import APIs from "./routes/APIs.ts"
 const server = new Server(config)
 
 // SSR'ed app page routes
-pages.forEach(page => server.addRoute(page))
+server.addRoutes(pages)
 
 // Static assets
-assets.forEach(asset => server.addRoute(asset))
+server.addRoutes(assets)
 
 // Custom API functions
-APIs.forEach(API => server.addRoute(API))
+server.addRoutes(APIs)
 
 // Start Peko server ^^
 server.listen()

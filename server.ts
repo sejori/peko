@@ -20,42 +20,11 @@ export class RequestContext {
 }
 
 export class Server {
-  // define default config values
   config: Config = {
     port: 7777,
     hostname: "0.0.0.0",
     globalMiddleware: [],
-    logger: (log: unknown) => console.log(log),
-    // errorHandler: (_ctx: RequestContext, status: number) => {
-    //   let response
-    //   switch (status) {
-    //     case 400: 
-    //       response = new Response("400: Bad request", {
-    //         headers: new Headers(),
-    //         status: 400
-    //       })
-    //       break
-    //     case 401: 
-    //       response = new Response("401: Unauthorized", {
-    //         headers: new Headers(),
-    //         status: 401
-    //       })
-    //       break
-    //     case 404: 
-    //       response = new Response("404: Nothing found here", {
-    //         headers: new Headers(),
-    //         status: 404
-    //       })
-    //       break
-    //     default:
-    //       response = new Response("500: Internal Server Error", {
-    //         headers: new Headers(),
-    //         status: 500
-    //       })
-    //       break
-    //   }
-    //   return response;
-    // }
+    logging: (log: unknown) => console.log(log),
   }
 
   constructor(config?: Partial<Config>) {
@@ -158,7 +127,6 @@ export class Server {
       port: port ? port : this.config.port,
       onError: (error) => {
         this.log(error)
-
         return new Response(null, { status: 500 })
       },
       onListen: cb 
@@ -171,7 +139,6 @@ export class Server {
   }
 
   async requestHandler(request: Request): Promise<Response> {
-    console.log("request handler called")
     const ctx: RequestContext = new RequestContext(this, request)
     const requestURL = new URL(request.url)
     const route = this.routes.find(route => route.route === requestURL.pathname && route.method === request.method)
@@ -180,71 +147,33 @@ export class Server {
       ? [ ...this.config.globalMiddleware, ...route.middleware, route.handler ]
       : [ ...this.config.globalMiddleware, async () => await new Response(null, { status: 404 }) ]
     
-    try {
-      const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
-      await this.#cascade.backward(response, toResolve)
-  
-      // clone so cached original can be reused
-      return response.clone()
-    } catch(error) {
-      this.log(error)
-      return new Response(null, { status: 500 })
-    }
+    const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
+    await this.#cascade.backward(response, toResolve)
+
+    // clone so cached original can be reused
+    return response.clone()
   }
-  
-  // /**
-  //  * Safe error handler. Uses config.handleError wrapped in try catch.
-  //  * @param ctx 
-  //  * @param status 
-  //  * @returns Response
-  //  */
-  // async handleError(ctx: RequestContext, status: number): Promise<Response> {
-  //   try {
-  //     return await this.config.errorHandler(ctx, status)
-  //   } catch (error) {
-  //     console.log(error)
-  //     return new Response("Error:", error)
-  //   }
-  // }
 
   /**
-   * Safe unknown data logger. Uses config.logger wrapped in try catch.
+   * Safe unknown data logging. Uses config.logging wrapped in try catch.
    * @param data: unknown 
    * @returns void
    */
   async log(data: unknown): Promise<void> {
     try {
-      return await this.config.logger(data)
+      return await this.config.logging(data)
     } catch (error) {
       console.log(data)
       console.log(error)
     }
   }
-  
-  // /**
-  //  * Safe error logger. Uses this.config.eventLogger. Returns promise to not block process.
-  //  * @param id: string
-  //  * @param error: any
-  //  * @param date: Date
-  //  * @returns Promise<void>
-  //  */
-  // async logError(id: string, error: string, date?: Date): Promise<void> {
-  //   try {
-  //     if (!date) date = new Date()
-  //     return await this.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
-  //   } catch (e) {
-  //     return console.error(e)
-  //   }
-  // }
 }
 
 export interface Config { 
   port: number
   hostname: string
   globalMiddleware: SafeMiddleware[]
-  // stringLogger: (log: string) => Promise<void> | void
-  logger: (data: unknown) => Promise<void> | void
-  // errorHandler: (ctx: RequestContext, statusCode: number) => Response | Promise<Response>
+  logging: (data: unknown) => Promise<void> | void
 }
 
 interface SafeRoute {
@@ -264,12 +193,5 @@ export interface Route {
 }
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 export type Middleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void> | Response | void
-
-// export type Event = {
-//   id: string
-//   type: "request" | "emit" | "error"
-//   date: Date
-//   data: Record<string, unknown>
-// }
 
 export default Server

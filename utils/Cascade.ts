@@ -49,6 +49,10 @@ export class Cascade {
         .then((result: Response | void) => {
           resolve(result)
         })
+        .catch((error) => {
+          ctx.server.log(error)
+          resolve(new Response(null, { status: 500 }))
+        })
     })
   }
 }
