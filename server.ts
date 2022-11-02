@@ -25,38 +25,37 @@ export class Server {
     port: 7777,
     hostname: "0.0.0.0",
     globalMiddleware: [],
-    stringLogger: (log: string) => console.log(log),
-    eventLogger: (e: Event) => console.log(e),
-    errorHandler: (_ctx: RequestContext, status: number) => {
-      let response
-      switch (status) {
-        case 400: 
-          response = new Response("400: Bad request", {
-            headers: new Headers(),
-            status: 400
-          })
-          break
-        case 401: 
-          response = new Response("401: Unauthorized", {
-            headers: new Headers(),
-            status: 401
-          })
-          break
-        case 404: 
-          response = new Response("404: Nothing found here", {
-            headers: new Headers(),
-            status: 404
-          })
-          break
-        default:
-          response = new Response("500: Internal Server Error", {
-            headers: new Headers(),
-            status: 500
-          })
-          break
-      }
-      return response;
-    }
+    logger: (log: unknown) => console.log(log),
+    // errorHandler: (_ctx: RequestContext, status: number) => {
+    //   let response
+    //   switch (status) {
+    //     case 400: 
+    //       response = new Response("400: Bad request", {
+    //         headers: new Headers(),
+    //         status: 400
+    //       })
+    //       break
+    //     case 401: 
+    //       response = new Response("401: Unauthorized", {
+    //         headers: new Headers(),
+    //         status: 401
+    //       })
+    //       break
+    //     case 404: 
+    //       response = new Response("404: Nothing found here", {
+    //         headers: new Headers(),
+    //         status: 404
+    //       })
+    //       break
+    //     default:
+    //       response = new Response("500: Internal Server Error", {
+    //         headers: new Headers(),
+    //         status: 500
+    //       })
+    //       break
+    //   }
+    //   return response;
+    // }
   }
 
   constructor(config?: Partial<Config>) {
@@ -158,110 +157,94 @@ export class Server {
       hostname: this.config.hostname, 
       port: port ? port : this.config.port,
       onError: (error) => {
-        try {
-          if (error) this.logError(`${error}`, `${error}`, new Date())
-        } catch(e) {
-          console.log(e)
-          console.log(error)
-        }
+        this.log(error)
 
-        const ctx = new RequestContext(this)
-        return this.handleError(ctx, 500)
+        return new Response(null, { status: 500 })
       },
       onListen: cb 
         ? cb 
         : () => {
-          this.logString(`Peko server started on port ${this.config.port} with routes:`)
-          this.routes.forEach((route, i) => this.logString(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
+          this.log(`Peko server started on port ${this.config.port} with routes:`)
+          this.routes.forEach((route, i) => this.log(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
         } 
     })
   }
 
   async requestHandler(request: Request): Promise<Response> {
+    console.log("request handler called")
     const ctx: RequestContext = new RequestContext(this, request)
     const requestURL = new URL(request.url)
     const route = this.routes.find(route => route.route === requestURL.pathname && route.method === request.method)
 
     const toCall: SafeMiddleware[] = route 
       ? [ ...this.config.globalMiddleware, ...route.middleware, route.handler ]
-      : [ ...this.config.globalMiddleware, (ctx) => this.handleError(ctx, 404) ]
-  
-    const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
-
-    // called without await to not block process
-    this.#cascade.backward(response, toResolve)
-
-    // clone so cached original can be reused
-    return response.clone()
-  }
-  
-  /**
-   * Safe error handler. Uses config.handleError wrapped in try catch.
-   * @param ctx 
-   * @param status 
-   * @returns Response
-   */
-  async handleError(ctx: RequestContext, status: number): Promise<Response> {
+      : [ ...this.config.globalMiddleware, async () => await new Response(null, { status: 404 }) ]
+    
     try {
-      return await this.config.errorHandler(ctx, status)
-    } catch (error) {
-      console.log(error)
-      return new Response("Error:", error)
+      const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
+      await this.#cascade.backward(response, toResolve)
+  
+      // clone so cached original can be reused
+      return response.clone()
+    } catch(error) {
+      this.log(error)
+      return new Response(null, { status: 500 })
     }
   }
+  
+  // /**
+  //  * Safe error handler. Uses config.handleError wrapped in try catch.
+  //  * @param ctx 
+  //  * @param status 
+  //  * @returns Response
+  //  */
+  // async handleError(ctx: RequestContext, status: number): Promise<Response> {
+  //   try {
+  //     return await this.config.errorHandler(ctx, status)
+  //   } catch (error) {
+  //     console.log(error)
+  //     return new Response("Error:", error)
+  //   }
+  // }
 
   /**
-   * Safe string logger. Uses config.stringLogger wrapped in try catch.
-   * @param string: string
+   * Safe unknown data logger. Uses config.logger wrapped in try catch.
+   * @param data: unknown 
    * @returns void
    */
-  async logString(string: string): Promise<void> {
+  async log(data: unknown): Promise<void> {
     try {
-      return await this.config.stringLogger(string)
+      return await this.config.logger(data)
     } catch (error) {
-      console.log(string)
-      console.log(error)
-    }
-  }
-
-  /**
-   * Safe string logger. Uses config.stringLogger wrapped in try catch.
-   * @param event: Event 
-   * @returns void
-   */
-  async logEvent(event: Event): Promise<void> {
-    try {
-      return await this.config.eventLogger(event)
-    } catch (error) {
-      console.log(event)
+      console.log(data)
       console.log(error)
     }
   }
   
-  /**
-   * Safe error logger. Uses this.config.eventLogger. Returns promise to not block process.
-   * @param id: string
-   * @param error: any
-   * @param date: Date
-   * @returns Promise<void>
-   */
-  async logError(id: string, error: string, date?: Date): Promise<void> {
-    try {
-      if (!date) date = new Date()
-      return await this.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
-    } catch (e) {
-      return console.error(e)
-    }
-  }
+  // /**
+  //  * Safe error logger. Uses this.config.eventLogger. Returns promise to not block process.
+  //  * @param id: string
+  //  * @param error: any
+  //  * @param date: Date
+  //  * @returns Promise<void>
+  //  */
+  // async logError(id: string, error: string, date?: Date): Promise<void> {
+  //   try {
+  //     if (!date) date = new Date()
+  //     return await this.logEvent({ id: `ERROR-${id}-${date.toJSON()}`, type: "error", date: date, data: { error } })
+  //   } catch (e) {
+  //     return console.error(e)
+  //   }
+  // }
 }
 
 export interface Config { 
   port: number
   hostname: string
   globalMiddleware: SafeMiddleware[]
-  stringLogger: (log: string) => Promise<void> | void
-  eventLogger: (data: Event) => Promise<void> | void
-  errorHandler: (ctx: RequestContext, statusCode: number) => Response | Promise<Response>
+  // stringLogger: (log: string) => Promise<void> | void
+  logger: (data: unknown) => Promise<void> | void
+  // errorHandler: (ctx: RequestContext, statusCode: number) => Response | Promise<Response>
 }
 
 interface SafeRoute {
@@ -282,11 +265,11 @@ export interface Route {
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 export type Middleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void> | Response | void
 
-export type Event = {
-  id: string
-  type: "request" | "emit" | "error"
-  date: Date
-  data: Record<string, unknown>
-}
+// export type Event = {
+//   id: string
+//   type: "request" | "emit" | "error"
+//   date: Date
+//   data: Record<string, unknown>
+// }
 
 export default Server

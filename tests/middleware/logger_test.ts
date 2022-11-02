@@ -1,16 +1,12 @@
 import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
-import { Server, RequestContext, Event } from "../../server.ts"
+import { Server, RequestContext } from "../../server.ts"
 import { logger } from "../../middleware/logger.ts"
 
 Deno.test("MIDDLEWARE: Logger", async (t) => {
   const successString = "Success!"
 
-  let loggedString: string
-  let loggedEvent: Event
-  const server = new Server({
-    eventLogger: (e: Event) => { loggedEvent = e },
-    stringLogger: (s: string) => { loggedString = s }
-  })
+  let loggedData: unknown
+  const server = new Server({ logger: (data) => { loggedData = data } })
 
   const testData = {
     foo: "bar"
@@ -21,7 +17,6 @@ Deno.test("MIDDLEWARE: Logger", async (t) => {
     await logger(ctx, async () => await new Response(successString))
     await new Promise(res => setTimeout(res, 50))
     assert(ctx.state.foo === testData.foo)
-    assert(loggedString)
-    assert(loggedEvent)
+    assert(loggedData)
   })
 })

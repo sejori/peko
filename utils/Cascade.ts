@@ -49,10 +49,6 @@ export class Cascade {
         .then((result: Response | void) => {
           resolve(result)
         })
-        .catch(async e => {
-          ctx.server.logError(ctx.request.url, e, new Date())
-          resolve(await ctx.server.handleError(ctx, 500))
-        })
     })
   }
 }
