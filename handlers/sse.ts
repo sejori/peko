@@ -1,4 +1,4 @@
-import { RequestContext, Handler } from "../server.ts"
+import { Handler } from "../server.ts"
 import { Emitter } from "../utils/Emitter.ts"
 
 const encoder = new TextEncoder()
