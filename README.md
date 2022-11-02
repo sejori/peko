@@ -11,6 +11,13 @@
 <p align="center">
     <span>
         &nbsp;
+        <a href="#events">
+            Server
+        </a>
+        &nbsp;
+    </span>
+    <span>
+        &nbsp;
         <a href="#routing">
             Routing
         </a>
@@ -27,13 +34,6 @@
         &nbsp;
         <a href="#response-caching">
             Response caching
-        </a>
-        &nbsp;
-    </span>
-    <span>
-        &nbsp;
-        <a href="#events">
-            Events
         </a>
         &nbsp;
     </span>
@@ -98,6 +98,10 @@
 Instantly deploy from GitHub with <a href="https://dash.deno.com/projects">Deno Deploy</a> (deploy the auth or preact examples if you fancy it 💖).
 
 <h2>Overview</h2>
+<h3 id="#server">Server</h3>
+<p>
+    The server is the main class of Peko. It wraps Deno's <a href="https://deno.land/std/http/server.ts">std/serve</a> and holds all route and middleware data for request handling. <code>Server.use</code> can be used to add global middleware like the popular Express and Koa frameworks. The <code>server.logging</code> function can also be overwritten for remote logging.
+</p>
 
 <h3 id="#routing">Routing</h3>
 <p>
