@@ -14,10 +14,10 @@ const env = Deno.env.toObject()
 const filenames = await recursiveReaddir(fromFileUrl(new URL(`../src`, import.meta.url)))
 
 const assets: Route[] = filenames.map(file => {
-  const fileRoute: `/${string}` = `/${file.slice(file.lastIndexOf("/src" ) + 5)}`
+  const fileRoute = file.slice(file.lastIndexOf("/src/" ) + 5)
 
   return {
-    route: fileRoute,
+    route: `/${fileRoute}`,
     middleware: env.ENVIRONMENT === "production" ? cacher(cache) : [],
     handler: staticHandler({
       fileURL: new URL(`../src/${fileRoute}`, import.meta.url),
