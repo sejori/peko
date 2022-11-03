@@ -37,7 +37,7 @@ export class Server {
   constructor(config?: { 
     port?: number, 
     hostname?: string, 
-    logging: (l: unknown) => Promise<unknown> | unknown 
+    logging?: (l: unknown) => Promise<unknown> | unknown 
   }) {
     if (!config) return
     const { port, hostname, logging } = config
@@ -130,6 +130,8 @@ export class Server {
    * @param cb: onListen callback function
    */
   listen(port?: number, cb?: (params: { hostname: string; port: number; }) => void): void {
+    if (port) this.port = port
+
     serve((request) => this.requestHandler.call(this, request), { 
       hostname: this.hostname, 
       port: port ? port : this.port,
