@@ -1,41 +1,33 @@
-import { Handler } from "../server.ts"
+import { Handler, HandlerOptions } from "../server.ts"
 import { Emitter } from "../utils/Emitter.ts"
+import { mergeHeaders } from "../utils/helpers.ts"
 
 const encoder = new TextEncoder()
 
-export type SSEData = { 
-  emitter: Emitter
-  headers?: Headers
-}
-
 /**
  * Streams Event data from provided Emitter to Response body
- * @param sseData: SSEData
+ * @param emitter: Emitter
+ * @param opts: (optional) HandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const sseHandler = (sseData: SSEData): Handler => () => {
+export const sseHandler = (emitter: Emitter, opts: HandlerOptions = {}): Handler => () => {
   let lexController: ReadableStreamDefaultController<unknown>
   const lexEnqueue = (data: unknown) => lexController.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
 
   const body = new ReadableStream({
     start(controller) {
       lexController = controller
-      sseData.emitter.subscribe(lexEnqueue)
+      emitter.subscribe(lexEnqueue)
     },
     cancel() {
-      sseData.emitter.unsubscribe(lexEnqueue)
+      emitter.unsubscribe(lexEnqueue)
     }
   })
 
   const headers = new Headers({
     "Content-Type": "text/event-stream",
   })
-
-  if (sseData.headers) {
-    for (const pair of sseData.headers.entries()) {
-      headers.append(pair[0], pair[1])
-    }
-  }
+  if (opts.headers) mergeHeaders(headers, opts.headers)
 
   return new Response(body, { headers })
 }

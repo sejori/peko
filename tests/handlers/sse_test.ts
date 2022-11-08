@@ -13,7 +13,7 @@ Deno.test("HANDLER: Server-sent events", async (t) => {
   }
   
   await t.step("Response created and event data emitted as expected", async () => {
-    const response = await sseHandler({ emitter })(ctx)
+    const response = await sseHandler(emitter)(ctx)
     const reader = response.body?.getReader()
 
     await emitter.emit(testData)

@@ -158,16 +158,10 @@ export class Server {
       : [ ...this.middleware, async () => await new Response(null, { status: 404 }) ]
     
 
-    try {
-      const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
-      await this.#cascade.backward(response, toResolve)
+    const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
+    await this.#cascade.backward(response, toResolve)
 
-      // clone so cached original can be reused
-      return response.clone()
-    } catch(error) {
-      this.log(error)
-      return new Response(null, { status: 500 }).clone()
-    }
+    return response
   }
 
   /**
@@ -191,8 +185,6 @@ interface SafeRoute {
   middleware: SafeMiddleware[],
   handler: SafeHandler
 }
-export type SafeHandler = (ctx: RequestContext) => Promise<Response>
-export type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void>
 
 export interface Route { 
   route: `/${string}`
@@ -200,7 +192,14 @@ export interface Route {
   middleware?: Middleware[] | Middleware
   handler: Handler
 }
+
+export type SafeHandler = (ctx: RequestContext) => Promise<Response>
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
+export type HandlerOptions = { 
+headers?: Headers
+}
+
+export type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void>
 export type Middleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void> | Response | void
 
 export default Server
