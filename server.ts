@@ -195,6 +195,9 @@ export interface Route {
   handler: Handler
 }
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
+export type HandlerOpts = { 
+  headers?: Headers
+}
 export type Middleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void> | Response | void
 
 export default Server
