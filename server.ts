@@ -158,16 +158,10 @@ export class Server {
       : [ ...this.middleware, async () => await new Response(null, { status: 404 }) ]
     
 
-    try {
-      const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
-      await this.#cascade.backward(response, toResolve)
+    const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
+    await this.#cascade.backward(response, toResolve)
 
-      // clone so cached original can be reused
-      return response.clone()
-    } catch(error) {
-      this.log(error)
-      return new Response(null, { status: 500 }).clone()
-    }
+    return response
   }
 
   /**

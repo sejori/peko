@@ -16,8 +16,13 @@ export class Cascade {
     const toResolve: ResolvePromise[]  = []
   
     while (!(result instanceof Response)) {
-      result = await this.run(ctx, toCall[called], toResolve)
-      called += called < toCall.length-1 ? 1 : 0
+      try {
+        result = await this.run(ctx, toCall[called], toResolve)
+        called += called < toCall.length-1 ? 1 : 0
+      } catch (e) {
+        result = new Response(null, { status: 500 }).clone()
+        ctx.server.log(e)
+      }
     }
   
     const response: Response = result
