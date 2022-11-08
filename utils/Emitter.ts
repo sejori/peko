@@ -20,8 +20,7 @@ export class Emitter {
   }
 
   unsubscribe(listener: Listener): boolean {
-    // convert listener function bodies to strings for comparison
-    const emListener = this.listeners.find(li => li.toString() === listener.toString())
+    const emListener = this.listeners.find(li => li === listener || li.toString() === listener.toString())
     if (emListener) {
       this.listeners.splice(this.listeners.indexOf(emListener), 1)
       return true
