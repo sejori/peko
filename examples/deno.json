@@ -1,6 +1,0 @@
-{
-  "tasks": {
-    "start": "deno run --allow-net --allow-read --allow-env preact/app.ts",
-    "start:dev": "deno run --allow-net --allow-read --allow-env --watch preact/app.ts"
-  }
-}
