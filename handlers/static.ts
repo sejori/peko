@@ -12,7 +12,7 @@ const crypto = new Crypto(Array.from({length: 10}, () => Math.floor(Math.random(
  * @param opts: (optional) HandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const staticHandler = (fileURL: URL, opts?: HandlerOptions): Handler => async (_ctx: RequestContext) => {
+export const staticHandler = (fileURL: URL, opts: HandlerOptions = {}): Handler => async (_ctx: RequestContext) => {
   let filePath = decodeURI(fileURL.pathname)
   
   // fix annoying windows paths
@@ -27,7 +27,7 @@ export const staticHandler = (fileURL: URL, opts?: HandlerOptions): Handler => a
     "ETag": hashString,
     "Content-Type": ctHeader ? ctHeader : "text/plain"
   })
-  if (opts?.headers) mergeHeaders(headers, opts.headers)
+  if (opts.headers) mergeHeaders(headers, opts.headers)
 
   return new Response(body, { headers })
 }

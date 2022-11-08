@@ -58,7 +58,7 @@ server.addRoute({
 // basic HTML page with buttons to call auth routes
 server.addRoute({
   route: "/",
-  handler: () => new Response(`<!doctype html>
+  handler: Peko.ssrHandler(() => `<!doctype html>
     <html lang="en">
     <head>
       <title>Peko auth example</title>
@@ -111,7 +111,9 @@ server.addRoute({
       </script>
     </body>
     </html>
-  `, { headers: new Headers({ "Content-Type": "text/html; charset=UTF-8" }) })
+  `, { 
+    crypto
+  })
 })
 
 // Start your Peko server :)
