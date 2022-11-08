@@ -10,7 +10,7 @@ const encoder = new TextEncoder()
  * @param opts: (optional) HandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const sseHandler = (emitter: Emitter, opts?: HandlerOptions): Handler => () => {
+export const sseHandler = (emitter: Emitter, opts: HandlerOptions = {}): Handler => () => {
   let lexController: ReadableStreamDefaultController<unknown>
   const lexEnqueue = (data: unknown) => lexController.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
 
@@ -27,7 +27,7 @@ export const sseHandler = (emitter: Emitter, opts?: HandlerOptions): Handler => 
   const headers = new Headers({
     "Content-Type": "text/event-stream",
   })
-  if (opts?.headers) mergeHeaders(headers, opts.headers)
+  if (opts.headers) mergeHeaders(headers, opts.headers)
 
   return new Response(body, { headers })
 }
