@@ -7,6 +7,7 @@ import {
   testMiddleware3,
   testHandler
 } from "../../tests/mock_data.ts"
+import { createContext } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 Deno.test("UTIL: Cascade", async (t) => {
   const cascade = new Cascade()
@@ -62,5 +63,10 @@ Deno.test("UTIL: Cascade", async (t) => {
         >=
       (testContext.state.middleware3 as { end: number }).end
     )
+  })
+
+  await t.step("error triggers basic 500 response", async () => {
+    const { response } = await cascade.forward(testContext, [_ => { throw new Error("ERROR") }])
+    assert(response.status === 500)
   })
 })

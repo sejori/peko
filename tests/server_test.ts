@@ -47,16 +47,6 @@ Deno.test("SERVER", async (t) => {
     assert(response.status === 404)
   })
 
-  await t.step("requestHandler error triggers basic 500", async () => {
-    server.addRoute({
-      route: "/error",
-      handler: _ => { throw new Error("ERROR") }
-    })
-    const request = new Request("http://localhost:7777/error")
-    const response = await server.requestHandler(request)
-    assert(response.status === 500)
-  })
-
   await t.step("all middleware and handlers run", async () => {
     server.addRoute({
       route: "/test",
