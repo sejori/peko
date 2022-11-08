@@ -1,0 +1,16 @@
+{
+  "tasks": {
+    "start": "deno run --allow-net --allow-read --allow-env examples/preact/app.ts",
+    "start:dev": "deno run --allow-net --allow-read --allow-env --watch examples/preact/app.ts",
+    "test": "deno test --allow-read"
+  },
+  "fmt": {
+    "options": {
+      "useTabs": true,
+      "lineWidth": 120,
+      "indentWidth": 2,
+      "singleQuote": false,
+      "proseWrap": "preserve"
+    }
+  }
+}
