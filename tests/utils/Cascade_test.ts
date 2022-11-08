@@ -7,7 +7,6 @@ import {
   testMiddleware3,
   testHandler
 } from "../../tests/mock_data.ts"
-import { createContext } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 Deno.test("UTIL: Cascade", async (t) => {
   const cascade = new Cascade()
