@@ -32,7 +32,7 @@ const navLinkStyle = `
   text-align: center;
   font-weight: bold;
   font-size: 1.2rem;
-  margin: 1rem 3rem;
+  margin: 1rem 1rem;
   color: white;
   padding: 0px 5px;
 `
