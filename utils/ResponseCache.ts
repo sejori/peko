@@ -93,8 +93,8 @@ export class ResponseCache {
 
       // update cache asynchronously to not block process before return
       const response = await fcn(ctx)
+      
       this.set(key, response.clone())
-
       return response.clone()
     }
   }
