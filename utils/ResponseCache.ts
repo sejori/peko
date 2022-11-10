@@ -25,8 +25,8 @@ export interface CacheOptions {
 
 /**
  * Response caching class, provides memoize method to be used on handlers or next() in middleware
- * @param options: CacheOptions (default lifetime = Infinity ms, memoryLimit = 128 * 1024 * 1024 bytes)
- * @returns memoizeHandler: (handler: Handler) => memoizedHandler
+ * @param options: CacheOptions (default = {lifetime: Infinity (unlimited ms), memoryLimit: 64 * 1024 * 1024 (64MB) })
+ * @returns memoizeHandler: (handler: Handler) => Handler
  */
 export class ResponseCache {
   items: Array<CacheItem> = []
@@ -40,16 +40,14 @@ export class ResponseCache {
 
     this.MEMORY_LIMIT = opts && opts.memoryLimit 
       ? opts.memoryLimit 
-      : 128 * 1024 * 1024
+      : 64 * 1024 * 1024
   }
 
   get(key: string): CacheItem | undefined {
     const item = this.items.find(item => item.key == key && Date.now() < item.dob + this.lifetime)
-    if (item) {
-      item.count++
-      return item
-    }
-    return undefined
+    if (!item) return undefined
+    item.count++
+    return item
   }
 
   set(key: string, value: Response): CacheItem {
@@ -95,8 +93,8 @@ export class ResponseCache {
 
       // update cache asynchronously to not block process before return
       const response = await fcn(ctx)
-      this.set(key, response)
-
+      
+      this.set(key, response.clone())
       return response.clone()
     }
   }
