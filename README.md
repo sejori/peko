@@ -54,10 +54,10 @@
         <strong>Production-ready backend</strong> - Cascading middlware, authentication utils and more, all tested.
     </li>
     <li>
-        <strong>Software minimalism</strong> - Sleek runtime, with no build step, using only Deno <a href="https://deno.land/std">std</a> library.
+        <strong>Software minimalism</strong> - Sleek runtime with no build step, only Deno <a href="https://deno.land/std">std</a> library.
     </li>
     <li>
-        <strong>Ease of adoption</strong> - Intuitive API, lots of examples and no fixed project structure.
+        <strong>Ease of adoption</strong> - Intuitive API, useful examples, no file-system routing.
     </li>
 </ul>
 <p>
