@@ -57,7 +57,7 @@
         <strong>Software minimalism</strong> - Built with native JS APIs and Deno <a href="https://deno.land/std">std</a> library only.
     </li>
     <li>
-        <strong>Ease of adoption</strong> - Intuitive server API with no file-system routing.
+        <strong>Ease of adoption</strong> - Intuitive/familiar methods with no file-system routing.
     </li>
 </ul>
 <p>
