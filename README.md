@@ -48,16 +48,16 @@
 <h2>Philosophy</h2>
 <ul>
     <li>
-        <strong>Client-edge synergy</strong> - Share modules for server-side-rendering and data consistency.
+        <strong>Client-edge synergy</strong> - Share modules for JIT server rendering, consistent data and easy maintenance.
     </li>
     <li>
-        <strong>Production-ready backend</strong> - Cascading middlware, authentication utils and more, all tested.
+        <strong>Production-ready backend</strong> - Cascading middlware, auth utils and more, all tested.
     </li>
     <li>
-        <strong>Software minimalism</strong> - Sleek runtime with no build step, only Deno <a href="https://deno.land/std">std</a> library.
+        <strong>Software minimalism</strong> - Built with native JS APIs and Deno <a href="https://deno.land/std">std</a> library only.
     </li>
     <li>
-        <strong>Ease of adoption</strong> - Intuitive API, useful examples, no file-system routing.
+        <strong>Ease of adoption</strong> - Intuitive server API with no file-system routing.
     </li>
 </ul>
 <p>
@@ -113,7 +113,7 @@ Instantly deploy from GitHub with <a href="https://dash.deno.com/projects">Deno 
     Each route must have a <code>handler</code> function that generates a response as well as optional <code>method</code> and <code>middleware</code> properties. If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with middleware.
 </p>
 <p>
-    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> handlers can be plugged straight into a route and reduce boilerplate code for serving static assets, rendering client-side apps to html or streaming server-sent events respectively (see <code>/examples</code> for implementations). There are also authentication, logging and caching middleware. Of course, you can also create your own middleware or handlers and plug them into your routes (see <code>examples/custom-handler</code>).
+    The included <code>staticHandler</code>, <code>ssrHandler</code> and <code>sseHandler</code> handlers can be plugged straight into a route and reduce boilerplate code for serving static assets, rendering client-side apps to html and streaming <a href="https://developer.mozilla.org/docs/Web/API/CustomEvent/CustomEvent">CustomEvents</a> for server-sent events respectively (see <code>/examples</code> for implementations). There are also authentication, logging and caching middleware. Of course, you can also create your own middleware or handlers and plug them into your routes (see <code>examples/custom-handler</code>).
 </p>
 
 <h3 id="response-caching">Response caching</h3>

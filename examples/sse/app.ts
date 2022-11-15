@@ -1,4 +1,4 @@
-import Server, { Emitter, sseHandler, ssrHandler } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import Server, { sseHandler, ssrHandler } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 import pages from "../preact/routes/pages.ts"
@@ -10,16 +10,15 @@ import htmlTemplate from "../preact/template.ts"
 
 const server = new Server()
 
-// create Emitter - pass logEvent as initial listener so we can see it working
-const testEmitter = new Emitter([(data) => server.log(data)])
-
-// emit random value every second
-setInterval(() => testEmitter.emit({ value: Math.random() }), 1000)
+const demoEventTarget = new EventTarget()
+setInterval(() => {
+  demoEventTarget.dispatchEvent(new CustomEvent("data", { detail: Math.random() }))
+}, 1000)
 
 // SSE route streams data from testEmitter
 server.addRoute({
   route: "/sse",
-  handler: sseHandler(testEmitter)
+  handler: sseHandler(demoEventTarget)
 })
 
 // adjust home page handler templating to include EventSource connection logic
@@ -36,9 +35,17 @@ pages[0].handler = ssrHandler((ctx) => {
 
       const sse = new EventSource("/sse")
       sse.onmessage = (e) => {
-        document.title = JSON.parse(e.data).value
+        const eventData = JSON.parse(e.data)
+        document.title = eventData.detail
+        document.body.prepend(e.data)
         console.log(e)
       }
+      sse.onerror = (e) => {
+        sse.close()
+        console.log(e)
+      }
+
+      document.body.addEventListener("unload", () => sse.close())
     </script>`
   })
 })
