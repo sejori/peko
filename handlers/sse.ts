@@ -1,26 +1,32 @@
 import { Handler, HandlerOptions } from "../server.ts"
-import { Emitter } from "../utils/Emitter.ts"
 import { mergeHeaders } from "../utils/helpers.ts"
 
 const encoder = new TextEncoder()
 
 /**
- * Streams Event data from provided Emitter to Response body
- * @param emitter: Emitter
+ * Streams "data" events from provided EventTarget to Response body. Call Response.body.cancel() to end.
+ * @param target: EventTarget
  * @param opts: (optional) HandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const sseHandler = (emitter: Emitter, opts: HandlerOptions = {}): Handler => () => {
-  let lexController: ReadableStreamDefaultController<unknown>
-  const lexEnqueue = (data: unknown) => lexController.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
-
+export const sseHandler = (target: EventTarget, opts: HandlerOptions = {}): Handler => () => {
+  let lexicalController: ReadableStreamDefaultController<unknown>
+  const enqueueEvent = (e: Event) => {
+    lexicalController.enqueue(encoder.encode(
+      `data: ${JSON.stringify({ 
+        timeStamp: e.timeStamp, 
+        detail: (e as CustomEvent).detail 
+      })}\n\n`
+    ))
+  }
+  
   const body = new ReadableStream({
     start(controller) {
-      lexController = controller
-      emitter.subscribe(lexEnqueue)
+      lexicalController = controller
+      target.addEventListener("data", enqueueEvent)
     },
     cancel() {
-      emitter.unsubscribe(lexEnqueue)
+      target.removeEventListener("data", enqueueEvent)
     }
   })
 
