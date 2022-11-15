@@ -16,19 +16,18 @@ Deno.test("HANDLER: Server-sent events", async (t) => {
     const reader = response.body?.getReader()
 
     const dataEvent = new CustomEvent("data", { detail: testData })
+    const dob = dataEvent.timeStamp;
     eventTarget.dispatchEvent(dataEvent);
 
     if (reader) {
-      const { done, value } = await reader?.read()
-      assert(!done)
+      const { value } = await reader?.read()
       const stringValue = decoder.decode(value)
       const JSONValue = JSON.parse(stringValue.slice(6))
+
+      assert(stringValue.slice(0,6) === "data: ")
+      assert(stringValue.slice(-2) === "\n\n")
       assert(JSONValue.detail.foo && JSONValue.detail.foo === "bar")
+      assert(JSONValue.timeStamp === dob)
     }
-
-    // assert accurate timestamp
-
-    // assert data: start and double newline end
-    // assert(decoder.decode(value) === `data: ${JSON.stringify({ detail: testData })}\n\n`)
   }) 
 })
