@@ -18,8 +18,7 @@ export * from "./middleware/cacher.ts"
 export * from "./middleware/logger.ts"
 
 // Utils
-// export * from "./utils/Cascade.ts" // <-- not likely to be needed by users & clutters docs
 export * from "./utils/Crypto.ts"
-export * from "./utils/Emitter.ts"
-// export * from "./utils/Promisify.ts" // <-- not likely to be needed by users & clutters docs
 export * from "./utils/ResponseCache.ts"
+// export * from "./utils/Cascade.ts" // <-- not likely to be needed by users & clutters docs
+// export * from "./utils/Promisify.ts" // <-- not likely to be needed by users & clutters docs

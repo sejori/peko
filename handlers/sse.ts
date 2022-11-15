@@ -10,20 +10,23 @@ const encoder = new TextEncoder()
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
 export const sseHandler = (target: EventTarget, opts: HandlerOptions = {}): Handler => () => {
-  let lexController: ReadableStreamDefaultController<unknown>
-  const lexEnqueue = (data: CustomEvent) => lexController.enqueue(
-    encoder.encode(
-      `data: ${JSON.stringify({ timeStamp: data.timeStamp, detail: data.detail })}\n\n`
-    )
-  )
-
+  let lexicalController: ReadableStreamDefaultController<unknown>
+  const enqueueEvent = (e: Event) => {
+    lexicalController.enqueue(encoder.encode(
+      `data: ${JSON.stringify({ 
+        timeStamp: e.timeStamp, 
+        detail: (e as CustomEvent).detail 
+      })}\n\n`
+    ))
+  }
+  
   const body = new ReadableStream({
     start(controller) {
-      lexController = controller
-      target.addEventListener("data", (e: Event) => lexEnqueue(e as CustomEvent))
+      lexicalController = controller
+      target.addEventListener("data", enqueueEvent)
     },
     cancel() {
-      target.removeEventListener("data", (e: Event) => lexEnqueue(e as CustomEvent))
+      target.removeEventListener("data", enqueueEvent)
     }
   })
 
