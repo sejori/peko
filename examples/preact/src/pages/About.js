@@ -9,6 +9,7 @@ const About = () => {
       <img src="/assets/lighthouse-score.png" alt="lighthouse-score" />
       <p>Need I say more?</p>
       <${App} />
+      <p>Psst... Hey devs, the edge can do a lot more than just serve static files. Try POSTing some text to <code>/api/parrot</code>.</p>
       <p>Credit for the bird: <a href="https://twemoji.twitter.com">https://twemoji.twitter.com</a></p>
     </${Layout}>
   `
