@@ -34,4 +34,26 @@ Deno.test("HANDLER: Static", async (t) => {
   await t.step("Custom headers set as expected", () => {
     assert(response.headers.get("Cache-Control") === cacheControl)
   }) 
+
+  await t.step("Body transformed applied as expected", async () => {
+    const testString = " extra text has been added here!"
+
+    response = await staticHandler(fileURL, {
+      transform: (contents: Uint8Array) => {
+        const text = decoder.decode(contents)
+        return text + testString
+      },
+      headers: new Headers({ 
+        "Cache-Control": cacheControl,
+        "Content-Type": "application/javascript"
+      }) 
+    })(ctx)
+    const reader = response.body?.getReader()
+
+    if (reader) {
+      const { done, value } = await reader?.read()
+      assert(!done)
+      assert(decoder.decode(value).includes(testString))
+    }
+  }) 
 })
