@@ -39,8 +39,9 @@ Deno.test("HANDLER: Static", async (t) => {
     const testString = " extra text has been added here!"
 
     response = await staticHandler(fileURL, {
-      transform: (contents: Uint8Array) => {
+      transform: async (contents: Uint8Array) => {
         const text = decoder.decode(contents)
+        await new Promise(res => setTimeout(res, 10))
         return text + testString
       },
       headers: new Headers({ 
