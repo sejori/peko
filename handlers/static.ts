@@ -5,7 +5,7 @@ import { mergeHeaders } from "../utils/helpers.ts";
 
 const crypto = new Crypto(Array.from({length: 10}, () => Math.floor(Math.random() * 9)).toString())
 export interface staticHandlerOptions extends HandlerOptions {
-  transform?: (contents: Uint8Array) => BodyInit
+  transform?: (contents: Uint8Array) => Promise<BodyInit> | BodyInit
 }
 
 /**
@@ -32,7 +32,7 @@ export const staticHandler = (fileURL: URL, opts: staticHandlerOptions = {}): Ha
   })
 
   if (opts.headers) mergeHeaders(headers, opts.headers)
-  if (opts.transform) return new Response(opts.transform(body), { headers })
+  if (opts.transform) return new Response(await opts.transform(body), { headers })
 
   return new Response(body, { headers })
 }
