@@ -207,7 +207,7 @@ export type HandlerOptions = {
 headers?: Headers
 }
 
-export type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void>
-export type Middleware = (ctx: RequestContext, next: () => Promise<Response>) => Promise<Response | void> | Response | void
+export type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response>| Response) => Promise<Response | void>
+export type Middleware = (ctx: RequestContext, next: () => Promise<Response> | Response) => Promise<Response | void> | Response | void
 
 export default Server
