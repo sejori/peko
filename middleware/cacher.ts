@@ -7,7 +7,8 @@ import { ResponseCache } from "../utils/ResponseCache.ts";
  * @returns Middleware
  */
 export const cacher = (cache: ResponseCache): Middleware => async (ctx, next) => {
-  const key = `${new URL(ctx.request.url).pathname}-${JSON.stringify(ctx.state)}`
+  const reqURL = new URL(ctx.request.url)
+  const key = `${reqURL.pathname}${reqURL.search}-${JSON.stringify(ctx.state)}`
 
   const cacheItem = cache.get(key)
 
