@@ -1,4 +1,4 @@
-import { RequestContext, Middleware } from "../server.ts"
+import { Middleware } from "../server.ts"
 
 /**
  * Ctx.server.log middleware, awaits next() so logging happens after request is handled.
