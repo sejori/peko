@@ -57,7 +57,7 @@
         <strong>Software minimalism</strong> - Built with native JS APIs and Deno <a href="https://deno.land/std">std</a> library only.
     </li>
     <li>
-        <strong>Ease of adoption</strong> - Intuitive server API with no fixed project structure.
+        <strong>Ease of adoption</strong> - Intuitive/familiar methods with no file-system routing.
     </li>
 </ul>
 <p>
@@ -95,7 +95,7 @@
 
 <h2>Deployment</h2>
 
-Instantly deploy from GitHub with <a href="https://dash.deno.com/projects">Deno Deploy</a> (deploy the auth or preact examples if you fancy it 💖).
+Instantly deploy from GitHub with <a href="https://dash.deno.com/projects">Deno Deploy</a> (deploy the examples if you fancy 💖).
 
 <h2>Overview</h2>
 <h3 id="#server">Server</h3>
@@ -126,10 +126,10 @@ Instantly deploy from GitHub with <a href="https://dash.deno.com/projects">Deno 
     The client-server gap practically disappears. We can have all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling. We can use modules and classes in the browser until users decide they want cloud compute. If we want TS source we can <a href="https://github.com/denoland/deno_emit">emit</a> JS versions of code. This completely eliminates part of the traditional JavaScript toolchain, increasing project maintainability and simplicity, all while making our software even faster.
 </p>
 <p>
-    Better yet, Peko is not build for any specific frontend framework or library. You can use barebones HTML, React, Preact, Vue... you name it (if you do set up a React or Vue project please consider opening a PR to the examples). Simply plug your app-rendering logic into the <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts/~/Render">Render</a> function of an <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts/~/SSRRoute">SSRRoute</a>.
+    Better yet, Peko is not build for any specific frontend framework or library. You can use barebones HTML, React, Preact, Vue... you name it (if you do set up a React or Vue project please consider opening a PR to the examples). Simply plug your app-rendering logic into the <a href="https://deno.land/x/peko@v1.0.0/handlers/ssr.ts?s=Render">Render</a> function of an <a href="https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts">ssrHandler</a>.
 </p>
 <p>
-    This is all made possible by powerful new JavaScript tools. Deno is built to the <a href="https://tc39.es/">ECMAScript specification</a>. This makes it compatible with browser JavaScript which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like Preact combined with <a href="https://github.com/developit/htm">htm</a> offer lightning fast client-side hydration with a browser-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and loads of community tools for your back-end needs.
+    This is all made possible by powerful new JavaScript tools. Deno is built to the <a href="https://tc39.es/">ECMAScript specification</a>. This makes it compatible with browser JavaScript which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like <a href="https://github.com/preactjs/preact">Preact</a> combined with <a href="https://github.com/developit/htm">htm</a> offer lightning fast client-side hydration with a browser-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and loads of community tools for your back-end needs.
 </p>
 
 <p>This project started out of excitement for the elegancy of Deno and the freedom it would bring to the JavaScript community. If you are interested in contributing please submit a PR or get in contact :D</p>
