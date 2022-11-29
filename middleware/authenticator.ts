@@ -1,4 +1,4 @@
-import { RequestContext, Middleware } from "../server.ts"
+import { Middleware } from "../server.ts"
 import { Crypto } from "../utils/Crypto.ts"
 
 /**
@@ -6,7 +6,7 @@ import { Crypto } from "../utils/Crypto.ts"
  * @param crypto: Crypto instance to be used
  * @returns Middleware
  */
-export const authenticator = (crypto: Crypto): Middleware => async (ctx: RequestContext, next: () => Promise<Response>): Promise<Response | void>=> {
+export const authenticator = (crypto: Crypto): Middleware => async (ctx, next) => {
   const authHeader = ctx.request.headers.get("Authorization")
 
   // check JWT from cookies
