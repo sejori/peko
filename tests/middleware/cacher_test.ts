@@ -55,7 +55,8 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
   await t.step("return 304 with matching ETAG", async () => {
     const ETag = "1234567890"
     
-    const ctx = new RequestContext(server, new Request("http://localhost/static-content", {
+    // consider testing for correct key generation as logic is set to include path + params
+    const ctx = new RequestContext(server, new Request("http://localhost/static-content?test-thing=hello", {
       headers: new Headers({ "if-none-match": ETag })
     }))
 
