@@ -4,7 +4,7 @@ import { Promisify } from "../../utils/Promisify.ts"
 
 Deno.test("UTIL: Promisify", async (t) => {
   const server = new Server()
-  const ctx = new RequestContext(server)
+  const ctx = new RequestContext(server, new Request("http://localhost"))
 
   const promisify = new Promisify()
   const mWare = (ctx: RequestContext, next: () => Promise<Response> | Response) => {

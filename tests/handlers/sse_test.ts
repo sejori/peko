@@ -4,7 +4,7 @@ import { sseHandler } from "../../handlers/sse.ts"
 
 Deno.test("HANDLER: Server-sent events", async (t) => {
   const server = new Server({ logging: () => {} })
-  const ctx = new RequestContext(server)
+  const ctx = new RequestContext(server, new Request("http://localhost"))
   const eventTarget = new EventTarget()
   const decoder = new TextDecoder()
   const testData = {
