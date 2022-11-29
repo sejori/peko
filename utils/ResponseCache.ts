@@ -1,5 +1,3 @@
-import { Handler, RequestContext, SafeHandler } from "../server.ts"
-
 export class CacheItem { 
   key: string
   value: Response
