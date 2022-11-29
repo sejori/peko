@@ -95,7 +95,7 @@
 
 <h2>Deployment</h2>
 
-Instantly deploy from GitHub with <a href="https://dash.deno.com/projects">Deno Deploy</a> (deploy the auth or preact examples if you fancy it 💖).
+Instantly deploy from GitHub with <a href="https://dash.deno.com/projects">Deno Deploy</a> (deploy the examples if you fancy 💖).
 
 <h2>Overview</h2>
 <h3 id="#server">Server</h3>
