@@ -24,7 +24,7 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
   }) 
 
   await t.step("Response unauthorized as expected", async () => {
-    const ctx = new RequestContext(server)
+    const ctx = new RequestContext(server, new Request("http://localhost"))
     const response = await authenticator(crypto)(ctx, async() => await new Response(successString))
 
     assert(response?.status === 401)

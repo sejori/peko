@@ -7,12 +7,9 @@ export class RequestContext {
   request: Request
   state: Record<string, unknown>
 
-  constructor(server: Server, request?: Request, state?: Record<string, unknown>) {
+  constructor(server: Server, request: Request, state?: Record<string, unknown>) {
     this.server = server
-    this.request = request 
-      ? request
-      : new Request("http://localhost")
-
+    this.request = request
     this.state = state
       ? state 
       : {}
