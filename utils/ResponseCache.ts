@@ -68,34 +68,4 @@ export class ResponseCache {
       return res()
     })
   }
-
-  memoize(fcn: Handler): SafeHandler {
-    return async (ctx: RequestContext) => {
-      const key = `${ctx.request.url}-${JSON.stringify(ctx.state)}`
-
-      const cacheItem = this.get(key)
-      if (cacheItem) {
-        // ETag match triggers 304
-        const ifNoneMatch = ctx.request.headers.get("if-none-match")
-        const ETag = cacheItem.value.headers.get("ETag")
-
-        if (ETag && ifNoneMatch?.includes(ETag)) {
-          return new Response(null, {
-            headers: cacheItem.value.headers,
-            status: 304
-          })
-        }
-
-        // else respond 200 clone of response - one-use original lives in cache
-        ctx.state.responseFromCache = true
-        return cacheItem.value.clone()
-      }
-
-      // update cache asynchronously to not block process before return
-      const response = await fcn(ctx)
-      
-      this.set(key, response.clone())
-      return response.clone()
-    }
-  }
 }

@@ -1,7 +1,6 @@
 import { 
   Handler, 
   Middleware, 
-  RequestContext,
   SafeHandler,
   SafeMiddleware
 } from "../server.ts"
@@ -12,7 +11,7 @@ import {
 export class Promisify {
   middleware (fcn: Middleware): SafeMiddleware {
     if (fcn.constructor.name === "AsyncFunction") return fcn as SafeMiddleware
-    return (ctx: RequestContext, next: () => Promise<Response>) => new Promise((res) => {
+    return (ctx, next) => new Promise((res) => {
       const result = fcn(ctx, next)
       res(result)
     })
@@ -20,7 +19,7 @@ export class Promisify {
   
   handler (fcn: Handler): SafeHandler {
     if (fcn.constructor.name === "AsyncFunction") return fcn as SafeHandler
-    return (ctx: RequestContext) => new Promise((res) => {
+    return (ctx) => new Promise((res) => {
       const result = fcn(ctx)
       res(result)
     })

@@ -7,7 +7,7 @@ Deno.test("UTIL: Promisify", async (t) => {
   const ctx = new RequestContext(server)
 
   const promisify = new Promisify()
-  const mWare = (ctx: RequestContext, next: () => Promise<Response>) => {
+  const mWare = (ctx: RequestContext, next: () => Promise<Response> | Response) => {
     ctx.state = { foo: 'bar' }
     return next()
   }

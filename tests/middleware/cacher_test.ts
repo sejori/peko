@@ -1,6 +1,7 @@
 import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
 import { Server, RequestContext } from "../../server.ts"
 import { cacher } from "../../middleware/cacher.ts"
+import { testHandler } from "../../tests/mock_data.ts"
 import { ResponseCache } from "../../utils/ResponseCache.ts"
 
 Deno.test("MIDDLEWARE: Cacher", async (t) => {
@@ -10,6 +11,7 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
     lifetime: CACHE_LIFETIME
   })
   const server = new Server({ logging: () => {} })
+  const memHandler = cacher(cache)
 
   const testData = {
     foo: "bar"
@@ -36,5 +38,35 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
 
     assert(!ctx.state.responseFromCache && ctx.state.foo === testData.foo)
     assert(body === successString)
-  }) 
+  })
+
+  await t.step("memoize - preserve handler logic", async () => {
+    const ctx = new RequestContext(server, undefined, { thing: "different" })
+    const testRes = await testHandler(ctx)
+    const memRes = await memHandler(ctx, () => testHandler(ctx))
+    assert(memRes)
+
+    const testJSON = await testRes.json()
+    const memJSON2 = await memRes.json()
+
+    assert(testJSON.foo === memJSON2.foo)
+  })
+
+  await t.step("return 304 with matching ETAG", async () => {
+    const ETag = "1234567890"
+    
+    const ctx = new RequestContext(server, new Request("http://localhost/static-content", {
+      headers: new Headers({ "if-none-match": ETag })
+    }))
+
+    const memRes = await memHandler(ctx, () => new Response("hello", {
+      headers: new Headers({ "ETag": ETag })
+    }))
+    const memRes2 = await memHandler(ctx, () => new Response("hello", {
+      headers: new Headers({ "ETag": ETag })
+    }))
+
+    assert(memRes && memRes.status === 200)
+    assert(memRes2 && memRes2.status === 304)
+  })
 })
