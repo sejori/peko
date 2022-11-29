@@ -1,4 +1,4 @@
-import { RequestContext } from "../server.ts"
+import { RequestContext, Middleware } from "../server.ts"
 
 /**
  * Ctx.server.log middleware, awaits next() so logging happens after request is handled.
@@ -6,7 +6,7 @@ import { RequestContext } from "../server.ts"
  * @param next: () => Promise<Response>
  * @returns Promise<void>
  */
-export const logger = async (ctx: RequestContext, next: () => Promise<Response>): Promise<void> => {
+export const logger: Middleware = async (ctx, next) => {
   const start = new Date();
 
   const response = await next();
