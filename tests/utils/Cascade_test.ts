@@ -65,7 +65,7 @@ Deno.test("UTIL: Cascade", async (t) => {
   })
 
   await t.step("error triggers basic 500 response", async () => {
-    const { response } = await cascade.forward(testContext, [_ => { throw new Error("ERROR") }])
+    const { response } = await cascade.forward(testContext, [(_: RequestContext) => { throw new Error("ERROR") }])
     assert(response.status === 500)
   })
 })

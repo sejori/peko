@@ -1,4 +1,4 @@
-import { SafeMiddleware, RequestContext } from "../server.ts"
+import { SafeMiddleware, SafeHandler, RequestContext } from "../server.ts"
 
 export const testMiddleware1: SafeMiddleware = async (ctx, next) => {
   const start = Date.now()
@@ -27,6 +27,6 @@ export const testMiddleware3: SafeMiddleware = async (ctx, next) => {
   ctx.state.middleware3 = { start, end, res }
 }
 
-export const testHandler = async (ctx: RequestContext) => {
+export const testHandler: SafeHandler = async (ctx: RequestContext) => {
   return await new Response(JSON.stringify({ ...ctx.state, createdAt: Date.now() }))
 }
