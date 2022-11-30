@@ -1,4 +1,4 @@
-import { RequestContext, SafeMiddleware } from "../server.ts"
+import { RequestContext, SafeHandler, SafeMiddleware } from "../server.ts"
 
 type ResolvePromise = { 
   resolve: (value: Response | PromiseLike<Response>) => void, 
@@ -9,7 +9,7 @@ type ResolvePromise = {
  * Utility class for running middleware functions as a cascade
  */
 export class Cascade {
-  async forward(ctx: RequestContext, toCall: SafeMiddleware[]): Promise<{ response: Response, toResolve: ResolvePromise[] }> {
+  async forward(ctx: RequestContext, toCall: Array<SafeMiddleware | SafeHandler> ): Promise<{ response: Response, toResolve: ResolvePromise[] }> {
     let result: Response | void
     let called = 0
   
