@@ -25,17 +25,19 @@ Deno.test("SERVER", async (t) => {
     assert(server.logging === emptyFcn)
   })
 
-  await t.step("routes added as full route object and string and partial object args", () => {
+  await t.step("routes added with full route and string arg options", () => {
     server.addRoute({
       route: "/",
       handler: testHandler
     })
 
-    const routesLength = server.addRoute("/anotherRoute", {
+    server.addRoute("/anotherRoute", {
       handler: testHandler
     })
 
-    assert(routesLength === 2 && server.routes.length === 2)
+    const routesLength = server.addRoute("/anotherNotherRoute", testHandler)
+
+    assert(routesLength === 3 && server.routes.length === 3)
   })
 
   await t.step("routes removed", () => {

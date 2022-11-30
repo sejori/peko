@@ -61,16 +61,13 @@ export class Server {
    * @param route: Route - middleware can be Middlewares or Middleware 
    * @returns number - server.routes.length
    */
-  addRoute(route: Route | `/${string}`, routeData?: Partial<Route>): number {
-    // slightly hacky arg handler... what can I say? TS is an imperfect system
-    let routeObj: Route
-    if (typeof route === "string") {
-      if (!routeData || !routeData.handler) throw new Error("Must provide route object with handler.") 
-
-      routeObj = { ...(routeData as Route), route }
-    } else routeObj = route as Route
-
-    const method = routeObj.method ? routeObj.method : "GET"
+  addRoute(route: Route): number
+  addRoute(route: `/${string}`, arg2: Partial<Route>): number
+  addRoute(route: `/${string}`, arg2: Middleware | Middleware[], arg3: Handler): number {
+    const routeObj: Route = arguments.length === 1 
+      ? route as Route
+      : arguments.length === 2  ? { route, ...arg2 } : { route, middleware: arg2, handler: arg3 }
+    
     const m: Middleware[] = []
     function none() {}
   
@@ -88,7 +85,6 @@ export class Server {
     // ensure middleware and handler return promises for requestHandler
     return this.routes.push({ 
       ...routeObj,
-      method,
       middleware: m.map(mware => this.#promisify.middleware(mware)),
       handler: this.#promisify.handler(routeObj.handler)
     })
