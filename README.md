@@ -48,7 +48,7 @@
 <h2>Philosophy</h2>
 <ul>
     <li>
-        <strong>Client-edge synergy</strong> - Share modules for JIT server rendering, consistent data and easy maintenance.
+        <strong>Client-edge synergy</strong> - Share modules for server rendering, consistent data and easy maintenance.
     </li>
     <li>
         <strong>Production-ready backend</strong> - Cascading middlware, auth utils and more, all tested.
@@ -57,7 +57,7 @@
         <strong>Software minimalism</strong> - Built with native JS APIs and Deno <a href="https://deno.land/std">std</a> library only.
     </li>
     <li>
-        <strong>Ease of adoption</strong> - Intuitive/familiar methods with no file-system routing.
+        <strong>Ease of adoption</strong> - Intuitive "Express-like" API with no file-system routing.
     </li>
 </ul>
 <p>
