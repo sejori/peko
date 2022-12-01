@@ -61,35 +61,34 @@ export class Server {
    * @param route: Route - middleware can be Middlewares or Middleware 
    * @returns number - server.routes.length
    */
-  addRoute(route: Route | `/${string}`, routeData?: Partial<Route>): number {
-    // slightly hacky arg handler... what can I say? TS is an imperfect system
-    let routeObj: Route
-    if (typeof route === "string") {
-      if (!routeData || !routeData.handler) throw new Error("Must provide route object with handler.") 
-
-      routeObj = { ...(routeData as Route), route }
-    } else routeObj = route as Route
-
-    const method = routeObj.method ? routeObj.method : "GET"
-    const m: Middleware[] = []
-    function none() {}
-  
-    if (!routeObj.method) routeObj.method = "GET"
-  
-    // consolidate singular or null middleware to Middleware[]
-    if (routeObj.middleware) {
-      if (routeObj.middleware instanceof Array) {
-        routeObj.middleware.forEach(middle => m.push(middle))
-      } else {
-        m.push(routeObj.middleware)
-      }
-    } else m.push(none)
+  addRoute(route: Route): number
+  addRoute(route: `/${string}`, data: Handler | Partial<Route>): number
+  addRoute(route: `/${string}`, middleware: Middleware | Middleware[], handler: Handler): number
+  addRoute(
+    arg1: Route | `/${string}`, 
+    arg2?: Partial<Route> | Middleware | Middleware[], 
+    arg3?: Handler
+  ): number {
+    // hacky arg handler... what can I say? TS is an imperfect system
+    // p.s. the above is called function or method overloading in TS
+    const routeObj: Partial<Route> = typeof arg1 !== "string"
+      ? arg1
+      : arguments.length === 2
+        ? typeof arg2 === "function"
+          ? { route: arg1, handler: arg2 as Handler }
+          : { route: arg1, ...arg2 as Partial<Route> }
+        : { route: arg1, middleware: arg2 as Middleware | Middleware[], handler: typeof arg2 === "function" ? arg2 as Handler : arg3 }
+     
+    // ensure good data
+    if (!routeObj.route) throw new Error("Missing route path string: /[route]")
+    if (!routeObj.handler) throw new Error("Missing route handler function")
+    routeObj.method = routeObj.method || "GET"
 
     // ensure middleware and handler return promises for requestHandler
     return this.routes.push({ 
-      ...routeObj,
-      method,
-      middleware: m.map(mware => this.#promisify.middleware(mware)),
+      ...routeObj as Route,
+      // consolidate singular or null middleware to Middleware[]
+      middleware: [routeObj.middleware].flat().filter(Boolean).map((mware) => this.#promisify.middleware(mware as Middleware)),
       handler: this.#promisify.handler(routeObj.handler)
     })
   }

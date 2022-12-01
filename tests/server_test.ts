@@ -25,22 +25,36 @@ Deno.test("SERVER", async (t) => {
     assert(server.logging === emptyFcn)
   })
 
-  await t.step("routes added as full route object and string and partial object args", () => {
+  await t.step("routes added with full route and string arg options", async () => {
     server.addRoute({
       route: "/",
       handler: testHandler
     })
 
-    const routesLength = server.addRoute("/anotherRoute", {
+    server.addRoute("/anotherRoute", {
       handler: testHandler
     })
 
-    assert(routesLength === 2 && server.routes.length === 2)
+    const routesLength = server.addRoute("/anotherNotherRoute", testHandler)
+
+    assert(routesLength === 3 && server.routes.length === 3)
+    const request = new Request("http://localhost:7777/")
+    const anotherRequest = new Request("http://localhost:7777/anotherRoute")
+    const anotherNotherRequest = new Request("http://localhost:7777/anotherNotherRoute")
+
+    const response = await server.requestHandler(request)
+    const anotherResponse = await server.requestHandler(anotherRequest)
+    const anotherNotherResponse = await server.requestHandler(anotherNotherRequest)
+
+    assert(response.status === 200)
+    assert(anotherResponse.status === 200)
+    assert(anotherNotherResponse.status === 200)
   })
 
   await t.step("routes removed", () => {
     server.removeRoute("/")
-    const routesLength = server.removeRoute("/anotherRoute")
+    server.removeRoute("/anotherRoute")
+    const routesLength = server.removeRoute("/anotherNotherRoute")
 
     assert(routesLength === 0 && server.routes.length === 0)
   })
