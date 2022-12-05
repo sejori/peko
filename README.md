@@ -118,7 +118,7 @@ After responding the server will cascade the RequestContext back through previou
 
 ```
 server.use(ctx => {
-    if (!ctx.server.routes.some(route => route.route === new URL(ctx.request.url).pathname)) return new Response("...", { status: 404 })
+    if (!ctx.response) return new Response("...", { status: 404 })
 })
 ```
 
@@ -127,7 +127,7 @@ server.use(async (ctx, next) => {
     try {
         await next()
     } catch(e) {
-        ctx.server.log(e)
+        console.log(e)
         return new Response("...", { status: 500 })
     }
 })
