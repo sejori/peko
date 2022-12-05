@@ -26,35 +26,34 @@ Deno.test("SERVER", async (t) => {
   })
 
   await t.step("routes added with full route and string arg options", async () => {
-    server.addRoute({
-      route: "/",
-      handler: testHandler
-    })
+    server.addRoute({ route: "/", handler: testHandler })
+    server.addRoute("/anotherRoute", { handler: testHandler })
+    server.addRoute("/anotherNotherRoute", testHandler)
+    const routesLength = server.addRoute("/anotherNotherNotherRoute", testMiddleware1, testHandler)
 
-    server.addRoute("/anotherRoute", {
-      handler: testHandler
-    })
+    assert(routesLength === 4 && server.routes.length === 4)
 
-    const routesLength = server.addRoute("/anotherNotherRoute", testHandler)
-
-    assert(routesLength === 3 && server.routes.length === 3)
     const request = new Request("http://localhost:7777/")
     const anotherRequest = new Request("http://localhost:7777/anotherRoute")
     const anotherNotherRequest = new Request("http://localhost:7777/anotherNotherRoute")
+    const anotherNotherNotherRequest = new Request("http://localhost:7777/anotherNotherRoute")
 
     const response = await server.requestHandler(request)
     const anotherResponse = await server.requestHandler(anotherRequest)
     const anotherNotherResponse = await server.requestHandler(anotherNotherRequest)
+    const anotherNotherNotherResponse = await server.requestHandler(anotherNotherNotherRequest)
 
     assert(response.status === 200)
     assert(anotherResponse.status === 200)
     assert(anotherNotherResponse.status === 200)
+    assert(anotherNotherNotherResponse.status === 200)
   })
 
   await t.step("routes removed", () => {
     server.removeRoute("/")
     server.removeRoute("/anotherRoute")
-    const routesLength = server.removeRoute("/anotherNotherRoute")
+    server.removeRoute("/anotherNotherRoute")
+    const routesLength = server.removeRoute("/anotherNotherNotherRoute")
 
     assert(routesLength === 0 && server.routes.length === 0)
   })
