@@ -112,9 +112,11 @@ server.removeRoute("/hello-log-headers");
 
 <h3 id="request-handling">Request handling</h3>
 
-Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). The `server.requestHandler` will execute global middleware in the order they were added first, then route middleware (in order) and then the route handler. If a Response is returned by any middleware along the way no subsequent middleware/handler will run.
+Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). Upon receiving a request the `server.requestHandler` will construct a RequestContext and pass it into the global middleware then the route-specific middleware  and finally the route handler. Global and route-specific middleware are invoked in the order they are added. If a response is returned by any middleware along the chain no subsequent middleware/handler will run.
 
-The server will then return the response into previously called middleware that implement `await next()` before responding to the client request, this is synchronous so the response isn't held for too long. If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
+We can design efficient logging/post-response operations by utilizing the middleware cascade. The server returns the response into previously called middleware that implement `await next()` before responding to the client request. In this backward cascade the middleware are executed synchronously to minimize the response delay. See the below snippet or `middleware/logger.ts` for examples of utlizing the cascade.
+
+If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
 
 ```
 server.use(ctx => {
@@ -133,7 +135,7 @@ server.use(async (ctx, next) => {
 })
 ```
 
-The included `staticHandler`, `ssrHandler` and `sseHandler` handlers can be plugged straight into routes and reduce boilerplate code for serving static assets, rendering client-side apps and streaming [CustomEvents](https://developer.mozilla.org/docs/Web/API/CustomEvent/CustomEvent) for server-sent events respectively (see `/examples` for implementations). There are also authentication, logging and caching middleware. Of course, you can also create your own middleware or handlers and plug them into your routes.
+The included `staticHandler`, `ssrHandler` and `sseHandler` handlers can be plugged straight into routes and reduce boilerplate code for serving static assets, rendering HTML on the server or streaming [CustomEvents](https://developer.mozilla.org/docs/Web/API/CustomEvent/CustomEvent) for server-sent events respectively. There are also authentication, logging and caching middleware to cover the basic set of app requirements. See `examples` for demo implementations. Of course, you can also create your own middleware or handlers and plug them into your routes.
 
 <h3 id="response-caching">Response caching</h3>
 
