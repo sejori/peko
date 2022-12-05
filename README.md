@@ -118,7 +118,7 @@ After responding the server will cascade the RequestContext back through previou
 
 ```
 server.use(ctx => {
-    if (!ctx.server.routes.includes(new URL(ctx.request.url).pathname) return new Response("...", { status: 404 })
+    if (!ctx.server.routes.some(route => route.route === new URL(ctx.request.url).pathname)) return new Response("...", { status: 404 })
 })
 ```
 
