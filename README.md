@@ -112,7 +112,7 @@ server.removeRoute("/hello-log-headers");
 
 <h3 id="request-handling">Request handling</h3>
 
-Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). Upon receiving a request the `server.requestHandler` will construct a [RequestContext](https://deno.land/x/peko/server.ts?s=RequestContext) and pass it into the global middleware then the route-specific middleware  and finally the route handler. Global and route-specific middleware are invoked in the order they are added. If a response is returned by any middleware along the chain no subsequent middleware/handler will run.
+Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). Upon receiving a request the `server.requestHandler` will construct a [RequestContext](https://deno.land/x/peko/server.ts?s=RequestContext) and pass it into global middleware, then route-specific middleware and finally the route handler. Global and route-specific middleware are invoked in the order they are added. If a response is returned by any middleware along the chain no subsequent middleware/handler will run.
 
 We can design efficient logging/post-response operations by utilizing the middleware cascade. The server returns the response into previously called middleware that implement `await next()` before responding to the client request. In this backward cascade the middleware are executed synchronously to minimize the response delay. See the below snippet or `middleware/logger.ts` for examples of utlizing the cascade.
 
