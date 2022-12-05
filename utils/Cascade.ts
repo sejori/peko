@@ -18,19 +18,15 @@ export class Cascade {
     const toResolve: ResolvePromise[]  = []
   
     while (!(result instanceof Response)) {
-      try {
-        const fcn: SafeMiddleware = toCall[called].constructor.name === "AsyncFunction"
-          ? toCall[called] as SafeMiddleware
-          : (ctx, next) => new Promise((res) => {
-            const result = toCall[called](ctx, next)
-            res(result)
-          })
+      const fcn: SafeMiddleware = toCall[called].constructor.name === "AsyncFunction"
+        ? toCall[called] as SafeMiddleware
+        : (ctx, next) => new Promise((res) => {
+          const result = toCall[called](ctx, next)
+          res(result)
+        })
 
-        result = await this.run(ctx, fcn, toResolve)
-        called += called < toCall.length-1 ? 1 : 0
-      } catch (error) {
-        result = new Response(String(error), { status: 500 }).clone()
-      }
+      result = await this.run(ctx, fcn, toResolve)
+      called += called < toCall.length-1 ? 1 : 0
     }
   
     const response: Response = result

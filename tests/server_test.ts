@@ -15,7 +15,7 @@ Deno.test("SERVER", async (t) => {
     testMiddleware2
   ])
 
-  // TODO test request context creation & hostname/port config
+  // TODO test RequestContext creation & hostname/port config
 
   await t.step("routes added with full route and string arg options", async () => {
     server.addRoute({ route: "/", handler: testHandler })
