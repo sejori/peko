@@ -112,9 +112,9 @@ server.removeRoute("/hello-log-headers");
 
 <h3 id="request-handling">Request handling</h3>
 
-Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). The `server.requestHandler` will execute global middleware in the order they were added first, then route middleware (in order) and then the route handler. If a Response is returned by any middleware along the way it will be sent the client and no subsequent middleware/handler will run.
+Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). The `server.requestHandler` will execute global middleware in the order they were added first, then route middleware (in order) and then the route handler. If a Response is returned by any middleware along the way no subsequent middleware/handler will run.
 
-After responding the server will cascade the RequestContext back through previously called middleware that implement `await next()`. If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
+The server will then return the response into previously called middleware that implement `await next()` before responding to the client request, this is synchronous so the response isn't held for too long. If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
 
 ```
 server.use(ctx => {
