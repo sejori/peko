@@ -3,7 +3,7 @@ import { Server, RequestContext } from "../../server.ts"
 import { sseHandler } from "../../handlers/sse.ts"
 
 Deno.test("HANDLER: Server-sent events", async (t) => {
-  const server = new Server({ logging: () => {} })
+  const server = new Server()
   const ctx = new RequestContext(server, new Request("http://localhost"))
   const eventTarget = new EventTarget()
   const decoder = new TextDecoder()

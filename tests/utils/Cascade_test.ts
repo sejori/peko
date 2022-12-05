@@ -10,7 +10,7 @@ import {
 
 Deno.test("UTIL: Cascade", async (t) => {
   const cascade = new Cascade()
-  const testServer = new Server({ logging: () => {} })
+  const testServer = new Server()
   const testContext = new RequestContext(testServer, new Request("http://localhost"))
   const toCall = [testMiddleware1, testMiddleware2, testMiddleware3, testHandler]
   let lex_response: Response
