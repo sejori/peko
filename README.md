@@ -89,7 +89,7 @@ server.use(Peko.logger(console.log));
 
 server.addRoute("/hello", () => new Response("Hello world!"))
 
-server.listen(7777, () => console.log("Peko server started - let's go!");
+server.listen(7777, () => console.log("Peko server started - let's go!"));
 ```
 
 <h3 id="#routing">Routing</h3>
