@@ -6,7 +6,7 @@ Deno.test("MIDDLEWARE: Logger", async (t) => {
   const successString = "Success!"
 
   let loggedData: unknown
-  const server = new Server({ logging: (data) => { loggedData = data } })
+  const server = new Server()
 
   const testData = {
     foo: "bar"
@@ -14,7 +14,8 @@ Deno.test("MIDDLEWARE: Logger", async (t) => {
   
   await t.step("Response string and event logged as expected", async () => {
     const ctx = new RequestContext(server, new Request("http://localhost"), { ...testData })
-    await logger(ctx, async () => await new Response(successString))
+    const logFcn = await logger((data) => { loggedData = data })
+    await logFcn(ctx, async () => await new Response(successString))
     await new Promise(res => setTimeout(res, 50))
     assert(ctx.state.foo === testData.foo)
     assert(loggedData)
