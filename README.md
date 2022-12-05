@@ -57,7 +57,7 @@
 
 Any feature suggestions or code reviews are very welcome!
 
-<h2>Example apps</h2>
+<h2>Example apps:</h2>
 
 [A secure and scalable webapp in one file 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
 
@@ -70,10 +70,6 @@ Any feature suggestions or code reviews are very welcome!
 3. `$ deno task start:dev`
 
 <strong>Note: [Lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html)</strong> VS Code plugin recommended if using HTM & Preact.
-
-<h2>Deployment</h2>
-
-Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖).
 
 <h2>Overview</h2>
 <h3 id="#server">Server</h3>
@@ -144,6 +140,10 @@ const cache = new Peko.ResponseCache({ lifetime: 5000; });
 
 server.addRoute("/do-stuff", Peko.cacher(cache), () => new Response(Date.now()));
 ```
+
+<h2>Deployment</h2>
+
+Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖).
 
 <h2 id="cool">The modern edge is cool because...</h2>
 
