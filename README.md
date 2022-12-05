@@ -78,7 +78,7 @@ Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) 
 <h2>Overview</h2>
 <h3 id="#server">Server</h3>
 
-The [Server](https://deno.land/x/peko/server.ts)</a> is the main class of Peko. It wraps Deno's [std/serve](<a href="https://deno.land/std/http/server.ts">) and holds all route and middleware data for request handling. `Server.use` can be used to add global middleware like the popular Express and Koa frameworks. The `server.logging` function can also be overwritten for remote logging.
+The [Server](https://deno.land/x/peko/server.ts)</a> is the main class of Peko. It wraps Deno's [std/serve](<a href="https://deno.land/std/http/server.ts">) and holds all route and middleware data for request handling. `Server.use` can be used to add global middleware like the popular Express and Koa frameworks.
 
 ```
 import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
