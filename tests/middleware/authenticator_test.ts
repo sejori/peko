@@ -6,7 +6,7 @@ import { Crypto } from "../../utils/Crypto.ts"
 Deno.test("MIDDLEWARE: Authenticator", async (t) => {
   const successString = "Authorized!"
   const crypto = new Crypto("test_key")
-  const server = new Server({ logging: () => {} })
+  const server = new Server()
 
   const testPayload = { iat: Date.now(), exp: Date.now() + 1000, data: { foo: "bar" }}
   const token = await crypto.sign(testPayload)

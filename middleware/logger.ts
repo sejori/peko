@@ -1,12 +1,11 @@
 import { Middleware } from "../server.ts"
 
 /**
- * Ctx.server.log middleware, awaits next() so logging happens after request is handled.
- * @param ctx: RequestContext
- * @param next: () => Promise<Response>
- * @returns Promise<void>
+ * Generic request info logging middleware. Awaits next() so log happens post request handling.
+ * @param log: (input: unknown) => unknown)
+ * @returns Middleware
  */
-export const logger: Middleware = async (ctx, next) => {
+export const logger = (log: (input: unknown) => unknown): Middleware => async (ctx, next) => {
   const start = new Date();
 
   const response = await next();
@@ -17,5 +16,5 @@ export const logger: Middleware = async (ctx, next) => {
   const request: Request | undefined = ctx.request
   // ^ can be undefined in certain test cases
 
-  await ctx.server.log(`[${start}] ${status} ${request?.method} ${request?.url} ${responseTime}${cached ? " (CACHED)" : ""}`)
+  await log(`[${start}] ${status} ${request?.method} ${request?.url} ${responseTime}${cached ? " (CACHED)" : ""}`)
 }

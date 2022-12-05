@@ -8,22 +8,14 @@ import {
 } from "./mock_data.ts"
 
 Deno.test("SERVER", async (t) => {
-  const emptyFcn = () => {}
-
-  const server = new Server({
-    logging: emptyFcn
-  })
+  const server = new Server()
 
   server.use([
     testMiddleware1,
     testMiddleware2
   ])
 
-  // TODO test request context creation
-
-  await t.step("config updates and server starts", () => {
-    assert(server.logging === emptyFcn)
-  })
+  // TODO test request context creation & hostname/port config
 
   await t.step("routes added with full route and string arg options", async () => {
     server.addRoute({ route: "/", handler: testHandler })

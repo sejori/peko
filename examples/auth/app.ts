@@ -116,5 +116,5 @@ server.addRoute({
   })
 })
 
-// Start your Peko server :)
+// Start Peko server :^)
 server.listen()
