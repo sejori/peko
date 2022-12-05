@@ -117,13 +117,13 @@ Each route must have a <code>handler</code> function that generates a [Response]
 After responding the server will cascade the RequestContext back through previously called middleware that implement `await next()`. If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
 
 ```
-app.use(ctx => {
+server..use(ctx => {
     if (!ctx.server.routes.includes(new URL(ctx.request.url).pathname) return new Response("...", { status: 404 })
 })
 ```
 
 ```
-app.use(async (ctx, next) => {
+server.use(async (ctx, next) => {
     try {
         await next()
     } catch(e) {
