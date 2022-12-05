@@ -57,6 +57,33 @@ Deno.test("SERVER", async (t) => {
     assert(response.status === 404)
   })
 
+  await t.step("custom 404", async () => { 
+    server.use(ctx => {
+      if (!ctx.server.routes.some(route => route.route === new URL(ctx.request.url).pathname)) return new Response("Uh-oh!", { status: 404 })
+    }) 
+    const request = new Request("http://localhost:7777/")
+    const response = await server.requestHandler(request)
+
+    assert(response.status === 404)
+    assert(await response.text() === "Uh-oh!")
+  })
+
+  await t.step("custom 500", async () => { 
+    server.addRoute("/error-test", () => { throw new Error("Oopsie!") })
+    server.use(async (_, next) => {
+      try {
+          await next()
+      } catch(_) {
+          return new Response("Error! :(", { status: 500 })
+      }
+    })
+    const request = new Request("http://localhost:7777/error-test")
+    const response = await server.requestHandler(request)
+
+    assert(response.status === 500)
+    assert(await response.text() === "Error! :(")
+  })
+
   await t.step("all middleware and handlers run", async () => {
     server.addRoute({
       route: "/test",
