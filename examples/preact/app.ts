@@ -16,5 +16,5 @@ server.addRoutes(assets)
 // Custom API functions
 server.addRoutes(APIs)
 
-// Start Peko server ^^
+// Start Peko server :^)
 server.listen()

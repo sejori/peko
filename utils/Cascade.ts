@@ -1,15 +1,17 @@
-import { RequestContext, SafeHandler, SafeMiddleware } from "../server.ts"
+import { RequestContext, Handler, Middleware } from "../server.ts"
 
 type ResolvePromise = { 
   resolve: (value: Response | PromiseLike<Response>) => void, 
   reject: (reason?: unknown) => void
 }
 
+type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response>| Response) => Promise<Response | void>
+
 /**
  * Utility class for running middleware functions as a cascade
  */
 export class Cascade {
-  async forward(ctx: RequestContext, toCall: Array<SafeMiddleware | SafeHandler> ): Promise<{ response: Response, toResolve: ResolvePromise[] }> {
+  async forward(ctx: RequestContext, toCall: Array<Middleware | Handler> ): Promise<{ response: Response, toResolve: ResolvePromise[] }> {
     let result: Response | void
     let called = 0
   
@@ -17,11 +19,17 @@ export class Cascade {
   
     while (!(result instanceof Response)) {
       try {
-        result = await this.run(ctx, toCall[called], toResolve)
+        const fcn: SafeMiddleware = toCall[called].constructor.name === "AsyncFunction"
+          ? toCall[called] as SafeMiddleware
+          : (ctx, next) => new Promise((res) => {
+            const result = toCall[called](ctx, next)
+            res(result)
+          })
+
+        result = await this.run(ctx, fcn, toResolve)
         called += called < toCall.length-1 ? 1 : 0
-      } catch (e) {
-        result = new Response(null, { status: 500 }).clone()
-        ctx.server.log(e)
+      } catch (error) {
+        result = new Response(String(error), { status: 500 }).clone()
       }
     }
   

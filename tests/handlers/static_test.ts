@@ -3,7 +3,7 @@ import { Server, RequestContext } from "../../server.ts"
 import { staticHandler } from "../../handlers/static.ts"
 
 Deno.test("HANDLER: Static", async (t) => {
-  const server = new Server({ logging: () => {} })
+  const server = new Server()
   const ctx = new RequestContext(server, new Request("http://localhost"))
   const fileURL = new URL(import.meta.url)
   const decoder = new TextDecoder()
