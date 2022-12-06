@@ -119,16 +119,10 @@ We can design efficient logging/post-response operations by utilizing the middle
 If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
 
 ```
-<<<<<<< HEAD
 server.use(async (_, next) => {
     const response = await next();
     if (!response) return new Response("Would you look at that? Nothing's here!", { status: 404 });
 });
-=======
-server.use(ctx => {
-    if (!ctx.response) return new Response("...", { status: 404 })
-})
->>>>>>> main
 ```
 
 ```
@@ -136,13 +130,8 @@ server.use(async (_, next) => {
     try {
         await next();
     } catch(e) {
-<<<<<<< HEAD
         console.log(e);
         return new Response("Oh no! An error occured :(", { status: 500 });
-=======
-        console.log(e)
-        return new Response("...", { status: 500 })
->>>>>>> main
     }
 });
 ```
