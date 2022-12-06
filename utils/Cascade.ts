@@ -1,11 +1,11 @@
 import { RequestContext, Handler, Middleware } from "../server.ts"
 
 type ResolvePromise = { 
-  resolve: (value: Response | PromiseLike<Response>) => Response | void, 
-  reject: (reason?: unknown) => void
+  resolve: (value: void | Response) => Response | void, 
+  reject: (error?: unknown) => void
 }
 type Result = void | Response | Error
-type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response>| Response) => Promise<Response | void>
+type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response | void> | Response | void) => Promise<Response | void>
 
 /**
  * Utility class for running middleware functions as a cascade
@@ -16,6 +16,8 @@ export class Cascade {
     const toResolve: ResolvePromise[]  = []
 
     for (const fcn of toCall) {
+      if (result) return { result, toResolve }
+
       try {
         const fcnPromise: SafeMiddleware = fcn.constructor.name === "AsyncFunction"
           ? fcn as SafeMiddleware
@@ -33,14 +35,16 @@ export class Cascade {
     return { result, toResolve }
   }
 
-  backward(result: Result, toResolve: ResolvePromise[]): Response | void {
-    let response: Response | void
+  backward(front_result: Result, toResolve: ResolvePromise[]): Response | void {
+    let result: Response | void
+    console.log('front_result', front_result)
     for (let i = toResolve.length-1; i >= 0; i--) {
-      response = result instanceof Response 
-        ? toResolve[i].resolve(result)
-        : toResolve[i].reject(result)
+      result = !(front_result instanceof Error) 
+        ? toResolve[i].resolve(front_result)
+        : toResolve[i].reject(front_result)
     }
-    return response
+    console.log('back_result', result)
+    return result
   }
   
   // quite a funky Promise-based middleware executor
@@ -50,7 +54,7 @@ export class Cascade {
       // will resolve with eventual server response
       const next = () => {
         resolve()
-        const callerPromise: Promise<Response> = new Promise((resolve, reject) => toResolve.push({ resolve, reject }))
+        const callerPromise: Promise<Response | void> = new Promise((resolve, reject) => toResolve.push({ resolve, reject }))
         return callerPromise
       }
   

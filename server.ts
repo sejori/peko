@@ -24,7 +24,7 @@ export interface Route {
 
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 export type HandlerOptions = { headers?: Headers }
-export type Middleware = (ctx: RequestContext, next: () => Promise<Response> | Response) => Promise<Response | void> | Response | void
+export type Middleware = (ctx: RequestContext, next: () => Promise<Response | void> | Response | void) => Promise<Response | void> | Response | void
 
 export class Server {
   port = 7777
@@ -180,7 +180,7 @@ export class Server {
     } else if (backward_result) {
       return backward_result
     } else {
-      return new Response("", { status: 404 })
+      return new Response()
     }
   }
 }
