@@ -31,7 +31,6 @@ export class Server {
   hostname = "0.0.0.0"
   middleware: Middleware[] = []
   routes: Route[] = []
-  #cascade = new Cascade()
 
   constructor(config?: { 
     port?: number, 
@@ -143,7 +142,8 @@ export class Server {
       onError: onError
         ? onError
         : (error) => {
-          return new Response(String(error), { status: 500 })
+          console.log(error)
+          return new Response("", { status: 500 })
         },
       onListen: onListen 
         ? onListen 
@@ -172,15 +172,12 @@ export class Server {
       ? [...this.middleware, ...route.middleware as Middleware[], route.handler]
       : [...this.middleware]
     
-    const { result: forward_result, toResolve } = await this.#cascade.forward(ctx, toCall)
-    const backward_result = this.#cascade.backward(forward_result, toResolve)
+    const result = await new Cascade(ctx, toCall).start()
 
-    if (forward_result instanceof Response) {
-      return forward_result
-    } else if (backward_result) {
-      return backward_result
+    if (result instanceof Response) {
+      return result
     } else {
-      return new Response()
+      return new Response("", { status: 404 })
     }
   }
 }
