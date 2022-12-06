@@ -143,7 +143,7 @@ The included `staticHandler`, `ssrHandler` and `sseHandler` handlers can be plug
 In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. Peko provides a `ResponseCache` utility for this with configurable item lifetime. The `cacher` middleware wraps it and provides drop in handler memoization and response caching for your routes.
 
 ```
-const cache = new Peko.ResponseCache({ lifetime: 5000; });
+const cache = new Peko.ResponseCache({ lifetime: 5000 });
 
 server.addRoute("/do-stuff", Peko.cacher(cache), () => new Response(Date.now()));
 ```
