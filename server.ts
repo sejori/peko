@@ -29,13 +29,9 @@ export type Middleware = (ctx: RequestContext, next: () => Promise<Response> | R
 export class Server {
   port = 7777
   hostname = "0.0.0.0"
-  #cascade = new Cascade()
-
-  // route array for request routing
-  routes: Route[] = []
-
-  // middleware array for request handling
   middleware: Middleware[] = []
+  routes: Route[] = []
+  #cascade = new Cascade()
 
   constructor(config?: { 
     port?: number, 
@@ -65,6 +61,7 @@ export class Server {
    * @param route: Route - middleware can be Middlewares or Middleware 
    * @returns number - server.routes.length
    */
+  // method overloading
   addRoute(route: Route): number
   addRoute(route: `/${string}`, data: Handler | Partial<Route>): number
   addRoute(route: `/${string}`, middleware: Middleware | Middleware[], handler: Handler): number
@@ -73,27 +70,24 @@ export class Server {
     arg2?: Partial<Route> | Middleware | Middleware[], 
     arg3?: Handler
   ): number {
-    // hacky arg handler... what can I say? TS is an imperfect system
-    // p.s. the above is called function or method overloading in TS
     const routeObj: Partial<Route> = typeof arg1 !== "string"
       ? arg1
       : arguments.length === 2
         ? typeof arg2 === "function"
           ? { route: arg1, handler: arg2 as Handler }
           : { route: arg1, ...arg2 as Partial<Route> }
-        : { route: arg1, middleware: arg2 as Middleware | Middleware[], handler: typeof arg2 === "function" ? arg2 as Handler : arg3 }
+        : { route: arg1, middleware: arg2 as Middleware | Middleware[], handler: arg3 }
      
-    // ensure good data
-    if (!routeObj.route) throw new Error("Missing route path string: /[route]")
-    if (!routeObj.handler) throw new Error("Missing route handler function")
+    if (!routeObj.route) throw new Error("Missing route path: `/${route}`")
+    if (!routeObj.handler) throw new Error("Missing route handler")
     routeObj.method = routeObj.method || "GET"
 
-    // ensure middleware and handler return promises for requestHandler
     return this.routes.push({ 
       ...routeObj as Route,
-      // consolidate singular or null middleware to Middleware[]
-      middleware: [routeObj.middleware].flat().filter(Boolean).map((mware) => mware as Middleware),
-      handler: routeObj.handler
+      middleware: [routeObj.middleware]
+        .flat()
+        .filter(Boolean)
+        .map((mware) => mware as Middleware),
     })
   }
 
@@ -160,14 +154,23 @@ export class Server {
     })
   }
 
+  /**
+   * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
+   * @param request: Request
+   * @returns Promise<Response>
+   */
   async requestHandler(request: Request): Promise<Response> {
     const ctx: RequestContext = new RequestContext(this, request)
-    const requestURL = new URL(request.url)
-    const route = this.routes.find(route => route.route === requestURL.pathname && route.method === request.method)
+    const requestURL = new URL(ctx.request.url)
+
+    const route = this.routes.find(route => 
+      route.route === requestURL.pathname && 
+      route.method === request.method
+    )
 
     const toCall: Middleware[] = route
-    ? [...this.middleware, ...route.middleware as Middleware[], route.handler]
-    : [...this.middleware]
+      ? [...this.middleware, ...route.middleware as Middleware[], route.handler]
+      : [...this.middleware]
     
     const { result: forward_result, toResolve } = await this.#cascade.forward(ctx, toCall)
     const backward_result = this.#cascade.backward(forward_result, toResolve)
