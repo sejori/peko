@@ -10,12 +10,12 @@ Deno.test("SERVER", async (t) => {
   // TODO test RequestContext creation & hostname/port config
 
   await t.step("routes added with full route and string arg options", async () => {
-    server.addRoute({ route: "/", handler: testHandler })
+    server.addRoute({ route: "/route", handler: testHandler })
     server.addRoute("/anotherRoute", { handler: testHandler })
     server.addRoute("/anotherNotherRoute", testHandler)
     const routesLength = server.addRoute("/anotherNotherNotherRoute", testMiddleware2, testHandler)
 
-    assert(routesLength === 4 && server.routes.length === 4)
+    assert(routesLength === 5 && server.routes.length === 5)
 
     const request = new Request("http://localhost:7777/")
     const anotherRequest = new Request("http://localhost:7777/anotherRoute")
@@ -34,12 +34,12 @@ Deno.test("SERVER", async (t) => {
   })
 
   await t.step("routes removed", () => {
-    server.removeRoute("/")
+    server.removeRoute("/route")
     server.removeRoute("/anotherRoute")
     server.removeRoute("/anotherNotherRoute")
     const routesLength = server.removeRoute("/anotherNotherNotherRoute")
 
-    assert(routesLength === 0 && server.routes.length === 0)
+    assert(routesLength === 1 && server.routes.length === 1)
   })
 
   await t.step("no route found triggers basic 404", async () => {    

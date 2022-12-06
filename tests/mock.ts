@@ -1,5 +1,6 @@
 import { Server, Middleware, Handler, RequestContext } from "../server.ts"
 import { logger } from "../middleware/logger.ts"
+import { _format } from "https://deno.land/std@0.166.0/path/_util.ts"
 
 export const testMiddleware1: Middleware = async (ctx, next) => {
   const start = Date.now()
@@ -33,6 +34,11 @@ export const testHandler: Handler = (ctx: RequestContext) => {
 }
 
 export const server = new Server()
+
+server.use(async (_, next) => {
+  try { await next() }
+  catch(e) { console.log(e) }
+})
 
 server.use(logger(console.log))
 
