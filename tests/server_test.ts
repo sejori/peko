@@ -43,27 +43,25 @@ Deno.test("SERVER", async (t) => {
   })
 
   await t.step("no route found triggers basic 404", async () => {    
-    const request = new Request("http://localhost:7777/")
+    const request = new Request("http://localhost:7777/404")
     const response = await server.requestHandler(request)
     console.log(response)
     assert(response.status === 404)
   })
 
   await t.step("custom 404", async () => { 
-    server.use(async (_, next) => {
-      console.log("here")
+    server.use(async function fourOhFour (_, next) {
       const response = await next()
-      console.log("now here")
-      console.log(response)
-      if (!response) return new Response("...", { status: 404 })
+      console.log("reqHandler res", response)
+      if (!response) return new Response("Uh-oh!", { status: 404 })
     })
 
     console.log(server.middleware)
 
-    const request = new Request("http://localhost:7777/")
+    const request = new Request("http://localhost:7777/404")
     const response = await server.requestHandler(request)
 
-    console.log(await response.text())
+    console.log("res text", response)
 
     assert(response.status === 404)
     assert(await response.text() === "Uh-oh!")

@@ -31,6 +31,7 @@ export const cacher = (cache: ResponseCache): Middleware => async (ctx, next) =>
 
   // update cache asynchronously to not block process before return
   const response = await next()
+  if (!response) return
   
   cache.set(key, response.clone())
   return response.clone()
