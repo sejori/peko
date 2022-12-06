@@ -50,18 +50,18 @@ Deno.test("SERVER", async (t) => {
     assert(response.status === 404)
   })
 
-  // await t.step("custom 404", async () => { 
-  //   server.use(async (_, next) => {
-  //     const response = await next()
-  //     if (!response) return new Response("Uh-oh!", { status: 404 })
-  //   })
+  await t.step("custom 404", async () => { 
+    server.use(async (_, next) => {
+      const response = await next()
+      if (!response) return new Response("Uh-oh!", { status: 404 })
+    })
 
-  //   const request = new Request("http://localhost:7777/404")
-  //   const response = await server.requestHandler(request)
+    const request = new Request("http://localhost:7777/404")
+    const response = await server.requestHandler(request)
 
-  //   assert(response.status === 404)
-  //   assert(await response.text() === "Uh-oh!")
-  // })
+    assert(response.status === 404)
+    assert(await response.text() === "Uh-oh!")
+  })
 
   await t.step("custom 500", async () => { 
     server.addRoute("/error-test", () => { throw new Error("Oopsie!") })
@@ -73,13 +73,8 @@ Deno.test("SERVER", async (t) => {
       }
     })
 
-    console.log(server.routes)
-    console.log(server.middleware)
-
     const request = new Request("http://localhost:7777/error-test")
     const response = await server.requestHandler(request)
-
-    console.log(response)
 
     assert(response.status === 500)
     assert(await response.text() === "Error! :(")
@@ -94,8 +89,6 @@ Deno.test("SERVER", async (t) => {
 
     const request = new Request("http://localhost:7777/test")
     const response = await server.requestHandler(request)
-
-    console.log(response)
 
     const body = await response.json()
 
