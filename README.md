@@ -59,7 +59,7 @@ Any feature suggestions or code reviews are very welcome!
 
 <h2>Examples</h2>
 
-[A secure and scalable webapp in one file 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
+[A secure and scalable webapp in one file 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts) Deployed 👉 [here](https://peko-auth.deno.dev).
 
 <h3>Try locally:</h3>
 
