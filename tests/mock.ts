@@ -1,4 +1,5 @@
-import { Middleware, Handler, RequestContext } from "../server.ts"
+import { Server, Middleware, Handler, RequestContext } from "../server.ts"
+import { logger } from "../middleware/logger.ts"
 
 export const testMiddleware1: Middleware = async (ctx, next) => {
   const start = Date.now()
@@ -30,3 +31,13 @@ export const testMiddleware3: Middleware = async (ctx, next) => {
 export const testHandler: Handler = (ctx: RequestContext) => {
   return new Response(JSON.stringify({ ...ctx.state, createdAt: Date.now() }))
 }
+
+export const server = new Server()
+
+server.use(logger(console.log))
+
+server.addRoute("/", [
+  testMiddleware1,
+], testHandler)
+
+server.listen(7777, () => console.log("wazzup B-)"))

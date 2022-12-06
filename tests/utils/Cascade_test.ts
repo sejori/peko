@@ -6,24 +6,16 @@ import {
   testMiddleware2,
   testMiddleware3,
   testHandler
-} from "../../tests/mock_data.ts"
+} from "../../tests/mock.ts"
 
 Deno.test("UTIL: Cascade", async (t) => {
   const cascade = new Cascade()
   const testServer = new Server()
   const testContext = new RequestContext(testServer, new Request("http://localhost"))
   const toCall = [testMiddleware1, testMiddleware2, testMiddleware3, testHandler]
-  let lex_response: Response
-  let lex_toResolve: {
-    resolve: (value: Response | PromiseLike<Response>) => void, 
-    reject: (reason?: unknown) => void
-  }[] = []
+  const { result, toResolve } = await cascade.forward(testContext, toCall)
 
-  await t.step("cascade run as expected", async () => {
-    const { response, toResolve } = await cascade.forward(testContext, toCall)
-    lex_response = response
-    lex_toResolve = toResolve
-
+  await t.step("cascade run as expected", () => {
     // check async code before await next() call is properly awaited
     assert(
       (testContext.state.middleware1 as { start: number }).start
@@ -39,15 +31,15 @@ Deno.test("UTIL: Cascade", async (t) => {
   })
 
   await t.step("cascade resolve as expected", async () => {
-    cascade.backward(lex_response, lex_toResolve)
+    cascade.backward(result, toResolve)
 
     // ensure process finished in each middleware post await next()
     await new Promise(res => setTimeout(res, 25))
 
     // check each middleware in context has correct response
-    assert((testContext.state.middleware1 as { res: Response }).res === lex_response)
-    assert((testContext.state.middleware2 as { res: Response }).res === lex_response)
-    assert((testContext.state.middleware3 as { res: Response }).res === lex_response)
+    assert((testContext.state.middleware1 as { res: Response }).res === result)
+    assert((testContext.state.middleware2 as { res: Response }).res === result)
+    assert((testContext.state.middleware3 as { res: Response }).res === result)
 
     // check context has end time for each middleware 
     // and that end of 2 is not less than 3 (and 1 !< 2)
