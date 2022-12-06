@@ -49,9 +49,9 @@
 
 - <strong>Client-edge synergy</strong> - Share modules for server rendering, consistent data and easy maintenance.
 
-- <strong>Production-ready backend</strong> - Cascading middlware, auth utils and more, all tested.
+- <strong>Production-ready backend</strong> - Cascading middleware + library for common use-cases, all tested.
 
-- <strong>Software minimalism</strong> - Built with native JS APIs and [Deno std library](https://deno.land/std) only.
+- <strong>Software minimalism</strong> - Built with native JavaScript APIs and [Deno std library](https://deno.land/std) only.
 
 - <strong>Ease of adoption</strong> - Intuitive "[Express](https://github.com/expressjs/express)-like" API with no file-system routing.
 
