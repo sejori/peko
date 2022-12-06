@@ -165,15 +165,20 @@ export class Server {
     const requestURL = new URL(request.url)
     const route = this.routes.find(route => route.route === requestURL.pathname && route.method === request.method)
 
-    const toCall: Middleware[] = route 
-      ? [ ...this.middleware, ...route.middleware as Middleware[], route.handler ]
-      : [ ...this.middleware, () => new Response(null, { status: 404 }) ]
+    const toCall: Middleware[] = route
+    ? [...this.middleware, ...route.middleware as Middleware[], route.handler]
+    : [...this.middleware]
     
+    const { result: forward_result, toResolve } = await this.#cascade.forward(ctx, toCall)
+    const backward_result = this.#cascade.backward(forward_result, toResolve)
 
-    const { response, toResolve } = await this.#cascade.forward(ctx, toCall)
-    await this.#cascade.backward(response, toResolve)
-
-    return response
+    if (forward_result instanceof Response) {
+      return forward_result
+    } else if (backward_result) {
+      return backward_result
+    } else {
+      return new Response("", { status: 404 })
+    }
   }
 }
 
