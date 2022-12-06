@@ -9,13 +9,14 @@ import {
 } from "../../tests/mock.ts"
 
 Deno.test("UTIL: Cascade", async (t) => {
-  const cascade = new Cascade()
   const testServer = new Server()
   const testContext = new RequestContext(testServer, new Request("http://localhost"))
   const toCall = [testMiddleware1, testMiddleware2, testMiddleware3, testHandler]
-  const { result, toResolve } = await cascade.forward(testContext, toCall)
 
-  await t.step("cascade run as expected", () => {
+  const cascade = new Cascade(testContext, toCall)
+  const result = await cascade.start()
+
+  await t.step("cascade run as expected", async () => {
     // check async code before await next() call is properly awaited
     assert(
       (testContext.state.middleware1 as { start: number }).start
@@ -28,10 +29,6 @@ Deno.test("UTIL: Cascade", async (t) => {
         <
       (testContext.state.middleware3 as { start: number }).start
     )
-  })
-
-  await t.step("cascade resolve as expected", async () => {
-    cascade.backward(result, toResolve)
 
     // ensure process finished in each middleware post await next()
     await new Promise(res => setTimeout(res, 25))

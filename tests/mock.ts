@@ -34,16 +34,3 @@ export const testHandler: Handler = (ctx: RequestContext) => {
 }
 
 export const server = new Server()
-
-server.use(async (_, next) => {
-  try { await next() }
-  catch(e) { console.log(e) }
-})
-
-server.use(logger(console.log))
-
-server.addRoute("/", [
-  testMiddleware1,
-], testHandler)
-
-server.listen(7777, () => console.log("wazzup B-)"))
