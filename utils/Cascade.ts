@@ -13,7 +13,7 @@ export class Cascade {
   constructor(public ctx: RequestContext, private toCall: Array<Middleware | Handler>) {}
 
 
-  async run(fcn: Middleware): Promise<void> {
+  async run(fcn: Middleware): Promise<Result> {
     if (!fcn) return
 
     // TODO: refactor this into addRoute logic
@@ -28,11 +28,13 @@ export class Cascade {
       if (!this.response && result) {
         this.response = result
       } else {
-        this.response = await this.run(this.toCall[++this.called])
+        await this.run(this.toCall[++this.called])
       }
     } catch (error) {
       throw error
     }
+
+    return this.response
   }
 
   async start() {
