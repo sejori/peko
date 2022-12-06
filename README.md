@@ -87,7 +87,7 @@ const server = new Peko.Server();
 
 server.use(Peko.logger(console.log));
 
-server.addRoute("/hello", () => new Response("Hello world!"))
+server.addRoute("/hello", () => new Response("Hello world!"));
 
 server.listen(7777, () => console.log("Peko server started - let's go!"));
 ```
@@ -117,20 +117,21 @@ Each route must have a <code>handler</code> function that generates a [Response]
 After responding the server will cascade the RequestContext back through previously called middleware that implement `await next()`. If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
 
 ```
-server.use(ctx => {
-    if (!ctx.server.routes.some(route => route.route === new URL(ctx.request.url).pathname)) return new Response("...", { status: 404 })
-})
+server.use(async (_, next) => {
+    const response = await next();
+    if (!response) return new Response("Would you look at that? Nothing's here!", { status: 404 });
+});
 ```
 
 ```
-server.use(async (ctx, next) => {
+server.use(async (_, next) => {
     try {
-        await next()
+        await next();
     } catch(e) {
-        ctx.server.log(e)
-        return new Response("...", { status: 500 })
+        console.log(e);
+        return new Response("Oh no! An error occured :(", { status: 500 });
     }
-})
+});
 ```
 
 The included `staticHandler`, `ssrHandler` and `sseHandler` handlers can be plugged straight into routes and reduce boilerplate code for serving static assets, rendering client-side apps and streaming [CustomEvents](https://developer.mozilla.org/docs/Web/API/CustomEvent/CustomEvent) for server-sent events respectively (see `/examples` for implementations). There are also authentication, logging and caching middleware. Of course, you can also create your own middleware or handlers and plug them into your routes.
