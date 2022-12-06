@@ -119,20 +119,32 @@ We can design efficient logging/post-response operations by utilizing the middle
 If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
 
 ```
+<<<<<<< HEAD
+server.use(async (_, next) => {
+    const response = await next();
+    if (!response) return new Response("Would you look at that? Nothing's here!", { status: 404 });
+});
+=======
 server.use(ctx => {
     if (!ctx.response) return new Response("...", { status: 404 })
 })
+>>>>>>> main
 ```
 
 ```
-server.use(async (ctx, next) => {
+server.use(async (_, next) => {
     try {
-        await next()
+        await next();
     } catch(e) {
+<<<<<<< HEAD
+        console.log(e);
+        return new Response("Oh no! An error occured :(", { status: 500 });
+=======
         console.log(e)
         return new Response("...", { status: 500 })
+>>>>>>> main
     }
-})
+});
 ```
 
 The included `staticHandler`, `ssrHandler` and `sseHandler` handlers can be plugged straight into routes and reduce boilerplate code for serving static assets, rendering HTML on the server or streaming [CustomEvents](https://developer.mozilla.org/docs/Web/API/CustomEvent/CustomEvent) for server-sent events respectively. There are also authentication, logging and caching middleware to cover the basic set of app requirements. See `examples` for demo implementations. Of course, you can also create your own middleware or handlers and plug them into your routes.

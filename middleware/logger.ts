@@ -10,8 +10,9 @@ export const logger = (log: (input: unknown) => unknown): Middleware => async (c
 
   const response = await next();
 
+
   const responseTime = `${Date.now() - start.valueOf()}ms`
-  const status = response.status
+  const status = response ? response.status : "NO RESPONSE"
   const cached = ctx.state.responseFromCache
   const request: Request | undefined = ctx.request
   // ^ can be undefined in certain test cases

@@ -1,7 +1,7 @@
 import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../server.ts"
+import { RequestContext } from "../../server.ts"
 import { cacher } from "../../middleware/cacher.ts"
-import { testHandler } from "../../tests/mock_data.ts"
+import { server, testHandler } from "../../tests/mock.ts"
 import { ResponseCache } from "../../utils/ResponseCache.ts"
 
 Deno.test("MIDDLEWARE: Cacher", async (t) => {
@@ -10,7 +10,6 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
   const cache = new ResponseCache({
     lifetime: CACHE_LIFETIME
   })
-  const server = new Server()
   const memHandler = cacher(cache)
 
   const testData = {
@@ -33,7 +32,7 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
   await t.step("Cached response invalidated as expected", async () => {
     await new Promise(res => setTimeout(res, CACHE_LIFETIME))
     const ctx = new RequestContext(server, new Request("http://localhost"), { ...testData })
-    const response = await cacher(cache)(ctx, async () => await new Response(successString))
+    const response = await cacher(cache)(ctx, () => new Response(successString))
     const body = await response?.text()
 
     assert(!ctx.state.responseFromCache && ctx.state.foo === testData.foo)
