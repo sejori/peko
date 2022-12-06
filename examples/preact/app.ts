@@ -5,7 +5,7 @@ import APIs from "./routes/APIs.ts"
 
 // initialize server
 const server = new Server()
-server.use(logger)
+server.use(logger(console.log))
 
 // SSR'ed app page routes
 server.addRoutes(pages)

@@ -1,4 +1,4 @@
-import Server, { sseHandler, ssrHandler } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import Server, { sseHandler, ssrHandler, logger } from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
 
 import pages from "../preact/routes/pages.ts"
@@ -9,6 +9,7 @@ import Home from "../preact/src/pages/Home.js"
 import htmlTemplate from "../preact/template.ts"
 
 const server = new Server()
+server.use(logger(console.log))
 
 const demoEventTarget = new EventTarget()
 setInterval(() => {
