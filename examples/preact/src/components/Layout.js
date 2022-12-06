@@ -13,7 +13,7 @@ const Layout = ({ navColor, children }) => {
       ${children}
     </main>
     <footer>
-      <p>Build for the open source community by <a style="color: white;" href="https://github.com/sebringrose">Seb Ringrose</a></p>
+      <p style="margin: 5px; text-align: center">Build for the open source community by <a style="color: white;" href="https://github.com/sebringrose">Seb Ringrose</a></p>
     </footer>
   `   
 }
