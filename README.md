@@ -116,7 +116,7 @@ Each route must have a <code>handler</code> function that generates a [Response]
 
 We can design efficient logging/post-response operations by utilizing the middleware cascade. The server returns the response into previously called middleware that implement `await next()` before responding to the client request. In this backward cascade the middleware are executed synchronously to minimize the response delay. See the below snippet or `middleware/logger.ts` for examples of utlizing the cascade.
 
-If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
+If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request the exception will not be caught and no response will be given to the client. Both of these behaviours can be overwritten with the following middleware:
 
 ```
 server.use(async (_, next) => {
