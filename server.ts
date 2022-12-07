@@ -136,9 +136,10 @@ export class Server {
     onListen?: (params: { hostname: string; port: number; }) => void,
     onError?: (error: unknown) => Promise<Response> | Response
   ): void {
+    if (port) this.port = port
     serve((request) => this.requestHandler.call(this, request), { 
       hostname: this.hostname, 
-      port: port ? port : this.port,
+      port: this.port,
       onError: onError
         ? onError
         : (error) => {
