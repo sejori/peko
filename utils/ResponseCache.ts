@@ -19,6 +19,7 @@ export class CacheItem {
 export interface CacheOptions { 
   lifetime?: number
   memoryLimit?: number
+  items?: CacheItem[]
 }
 
 /**
@@ -27,7 +28,7 @@ export interface CacheOptions {
  * @returns memoizeHandler: (handler: Handler) => Handler
  */
 export class ResponseCache {
-  items: Array<CacheItem> = []
+  items: Array<CacheItem>
   lifetime: number
   MEMORY_LIMIT: number
 
@@ -39,6 +40,10 @@ export class ResponseCache {
     this.MEMORY_LIMIT = opts && opts.memoryLimit 
       ? opts.memoryLimit 
       : 64 * 1024 * 1024
+
+    this.items = opts && opts.items 
+      ? opts.items
+      : []
   }
 
   get(key: string): CacheItem | undefined {
