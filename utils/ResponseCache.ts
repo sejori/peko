@@ -19,7 +19,10 @@ export class CacheItem {
 export interface CacheOptions { 
   lifetime?: number
   memoryLimit?: number
-  items?: CacheItem[]
+  items?: {
+    key: string,
+    value: Response
+  }[]
 }
 
 /**
@@ -42,7 +45,7 @@ export class ResponseCache {
       : 64 * 1024 * 1024
 
     this.items = opts && opts.items 
-      ? opts.items
+      ? opts.items.map(item => new CacheItem(item.key, item.value))
       : []
   }
 
