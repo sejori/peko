@@ -47,11 +47,11 @@
 
 <h2>Philosophy</h2>
 
-- <strong>Client-edge synergy</strong> - Share modules for server rendering, consistent data and easy maintenance.
+- <strong>Client-edge synergy</strong> - Share modules and classes for rendering/hydration, consistent data and simpler development.
 
-- <strong>Production-ready backend</strong> - Cascading middleware + library for common use-cases, all tested.
+- <strong>Production-ready backend</strong> - Cascading middleware library for common use-cases built on stable Deno APIs, all tested.
 
-- <strong>Software minimalism</strong> - Built with native JavaScript APIs and [Deno std library](https://deno.land/std) only.
+- <strong>Software minimalism</strong> - Uses native JavaScript APIs and [Deno std library](https://deno.land/std) only.
 
 - <strong>Ease of adoption</strong> - Intuitive "[Express](https://github.com/expressjs/express)-like" API with no file-system routing.
 
