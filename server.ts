@@ -144,7 +144,7 @@ export class Server {
         ? onError
         : (error) => {
           console.log(error)
-          return new Response("", { status: 500 })
+          return new Response("Something went wrong...", { status: 500 })
         },
       onListen: onListen 
         ? onListen 
