@@ -12,7 +12,6 @@ export class Cascade {
 
   constructor(public ctx: RequestContext, private toCall: Array<Middleware | Handler>) {}
 
-
   async run(fcn: Middleware): Promise<Result> {
     if (!fcn) return
 
@@ -25,7 +24,7 @@ export class Cascade {
 
     try {
       const result = await fcnPromise(this.ctx, async () => await this.run(this.toCall[++this.called]))
-      if (!this.response && result) {
+      if (result) {
         this.response = result
       } else {
         await this.run(this.toCall[++this.called])
