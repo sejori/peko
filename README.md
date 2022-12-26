@@ -47,9 +47,9 @@
 
 <h2>Philosophy</h2>
 
-- <strong>Client-edge synergy</strong> - Share modules and classes for rendering/hydration, consistent data and simpler development.
+- <strong>Client-edge synergy</strong> - Share modules for rendering + hydration and reuse classes for simpler development.
 
-- <strong>Production-ready backend</strong> - Cascading middleware library for common use-cases built on stable Deno APIs, all tested.
+- <strong>Production-ready backend</strong> - Cascading middleware library built on stable Deno APIs, all tested.
 
 - <strong>Software minimalism</strong> - Uses native JavaScript APIs and [Deno std library](https://deno.land/std) only.
 
