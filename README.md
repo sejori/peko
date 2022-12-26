@@ -114,9 +114,9 @@ server.removeRoute("/hello-log-headers");
 
 Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). Upon receiving a request the `server.requestHandler` will construct a [RequestContext](https://deno.land/x/peko/server.ts?s=RequestContext) and pass it into global middleware, then route-specific middleware and finally the route handler. Global and route-specific middleware are invoked in the order they are added. If a response is returned by any middleware along the chain no subsequent middleware/handler will run.
 
-We can design efficient logging/post-response operations by utilizing the middleware cascade. The server returns the response into previously called middleware that implement `await next()` before responding to the client request. See the below snippet or `middleware/logger.ts` for examples of utlizing the cascade.
+We can design efficient logging/post-response operations by utilizing the middleware cascade. The server returns the response into previously called middleware that implement `await next()` before responding to the client request. See the below snippet or `middleware/logger.ts` for examples of utlizing the cascade. Returning a new `Response` after awaiting `next` will overwrite the response to be sent to the client.
 
-If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request the exception will not be caught and no response will be given to the client. Both of these behaviours can be overwritten with the following middleware:
+If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
 
 ```
 server.use(async (_, next) => {
