@@ -24,15 +24,13 @@ export const cacher = (cache: ResponseCache): Middleware => async (ctx, next) =>
       })
     }
 
-    // else respond 200 clone of response - one-use original lives in cache
     ctx.state.responseFromCache = true
     return cacheItem.value.clone()
   }
 
-  // update cache asynchronously to not block process before return
   const response = await next()
   if (!response) return
   
-  cache.set(key, response.clone())
-  return response.clone()
+  const newCacheItem = cache.set(key, response.clone())
+  return newCacheItem.value.clone()
 }
