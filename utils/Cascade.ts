@@ -24,11 +24,8 @@ export class Cascade {
 
     try {
       const result = await fcnPromise(this.ctx, async () => await this.run(this.toCall[++this.called]))
-      if (result) {
-        this.response = result
-      } else {
-        await this.run(this.toCall[++this.called])
-      }
+      if (result) this.response = result
+      if (!this.response) await this.run(this.toCall[++this.called])
     } catch (error) {
       throw error
     }
