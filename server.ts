@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.150.0/http/server.ts"
+import { Server as stdServer } from "https://deno.land/std@0.171.0/http/server.ts";
 import { Cascade } from "./utils/Cascade.ts"
 
 export class RequestContext {
@@ -27,6 +27,7 @@ export type HandlerOptions = { headers?: Headers }
 export type Middleware = (ctx: RequestContext, next: () => Promise<Response | void> | Response | void) => Promise<Response | void> | Response | void
 
 export class Server {
+  #stdServer: stdServer | undefined
   port = 7777
   hostname = "0.0.0.0"
   middleware: Middleware[] = []
@@ -131,28 +132,24 @@ export class Server {
    * @param onListen: onListen callback function
    * @param onError: onListen callback function
    */
-  listen(
+  async listen(
     port?: number, 
-    onListen?: (params: { hostname: string; port: number; }) => void,
-    onError?: (error: unknown) => Promise<Response> | Response
-  ): void {
+    onListen?: (address: Deno.Addr[]) => void
+  ): Promise<void> {
     if (port) this.port = port
-    serve((request) => this.requestHandler.call(this, request), { 
-      hostname: this.hostname, 
-      port: this.port,
-      onError: onError
-        ? onError
-        : (error) => {
-          console.log(error)
-          return new Response("", { status: 500 })
-        },
-      onListen: onListen 
-        ? onListen 
-        : () => {
-          console.log(`Peko server started on port ${this.port} with routes:`)
-          this.routes.forEach((route, i) => console.log(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
-        } 
-    })
+    this.#stdServer = new stdServer({ port, handler: (request: Request) => this.requestHandler.call(this, request) })
+    if (onListen) onListen(this.#stdServer.addrs)
+    await this.#stdServer.listenAndServe()
+  }
+
+  /**
+   * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
+   * @param port: number
+   * @param onListen: onListen callback function
+   * @param onError: onListen callback function
+   */
+  close(): void {
+    if (this.#stdServer) this.#stdServer.close()
   }
 
   /**
