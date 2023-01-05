@@ -18,6 +18,7 @@ export const cacher = (cache: ResponseCache): Middleware => async (ctx, next) =>
     const ETag = cacheItem.value.headers.get("ETag")
 
     if (ETag && ifNoneMatch?.includes(ETag)) {
+      ctx.state.responseFromCache = true
       return new Response(null, {
         headers: cacheItem.value.headers,
         status: 304

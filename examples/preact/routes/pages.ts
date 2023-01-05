@@ -24,15 +24,7 @@ export const pages: Route[] = [
           request_time: `${Date.now()}`,
           ...Deno.env.toObject()
         }
-      },
-      // async (_ctx, next) => {
-      //   // throw("some exception")
-      //   // ^ stop middleware stack and respond with 500
-      //   const response = await next()
-      //   // throw("some exception")
-      //   // ^ log the error event after responding
-      // },
-      //
+      }
     ],
     handler: ssrHandler((ctx) => {
       const appHTML = renderToString(Home(ctx.state), null, null)
