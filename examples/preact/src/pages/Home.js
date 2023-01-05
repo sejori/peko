@@ -29,7 +29,7 @@ const Home = (props) => {
 
       <h2>Features</h2>
       <ul>
-        <li>Simple and familiar server, routing and middleware. Built on top of Deno's <a href="https://deno.land/std@0.165.0/http/server.ts?s=serve">std/http/server</a>.</li>
+        <li>Simple and familiar server, routing and middleware. Built on top of Deno's <a href="https://deno.land/std/http/server.ts?s=Server">std/http Server class</a>.</li>
         <li>Library of request <a href="#handlers">handlers</a> and <a href="#middleware">middleware</a> for common app requirements.</li>
         <li>Cascades <a target="_blank" href="https://github.com/sebringrose/peko/blob/main/server.ts">Request Context</a> through middleware stack for efficient data flow and post-response operations.</li>
         <li>100% TypeScript complete with tests.</li>
