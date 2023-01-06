@@ -7,7 +7,7 @@ const Home = (props) => {
     <${Layout} navColor="forestgreen">
       <h1 style="text-align: center;">Peko</h1>
       <p style="text-align: center;">
-        Featherweight server/routing framework for full-stack apps on <a target="_blank" href="https://deno.com/deploy">the stateless edge</a>.
+        Featherweight server/routing framework for full-stack apps on <a target="_blank" href="https://deno.com/deploy">Deno Deploy</a>.
       </p>
 
       <div style="width: 100%; display: flex; justify-content: space-around;">
@@ -39,9 +39,10 @@ const Home = (props) => {
         <div>
           <h2 id="handlers">Handlers</h2>
           <ul>
-            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/ssr.ts">server-side-render</a></li>
-            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/static.ts">static assets</a></li>
-            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/sse.ts">server-sent-events</a></li>
+            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/ssr.ts">Server-side render</a></li>
+            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/static.ts">Static assets</a></li>
+            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/sse.ts">Server-sent events</a></li>
+            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/ws.ts">WebSockets</a></li>
           </ul>
         </div>
 
