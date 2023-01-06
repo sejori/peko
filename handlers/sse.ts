@@ -23,10 +23,10 @@ export const sseHandler = (target: EventTarget, opts: HandlerOptions = {}): Hand
   const body = new ReadableStream({
     start(controller) {
       lexicalController = controller
-      target.addEventListener("data", enqueueEvent)
+      target.addEventListener("send", enqueueEvent)
     },
     cancel() {
-      target.removeEventListener("data", enqueueEvent)
+      target.removeEventListener("send", enqueueEvent)
     }
   })
 

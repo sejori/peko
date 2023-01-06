@@ -42,7 +42,7 @@ Deno.test("HANDLER: WebSocket", async (t) => {
     const socket = new WebSocket("ws://localhost:3000/ws")
     assert(await awaitOpen(socket))
 
-    const dataEvent = new CustomEvent("send-message", { detail: testData })
+    const dataEvent = new CustomEvent("send", { detail: testData })
     eventTarget.dispatchEvent(dataEvent);
 
     const message = await awaitResponse(socket)
