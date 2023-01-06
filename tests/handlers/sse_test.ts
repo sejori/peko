@@ -15,7 +15,7 @@ Deno.test("HANDLER: Server-sent events", async (t) => {
     const response = await sseHandler(eventTarget)(ctx)
     const reader = response.body?.getReader()
 
-    const dataEvent = new CustomEvent("data", { detail: testData })
+    const dataEvent = new CustomEvent("send", { detail: testData })
     const dob = dataEvent.timeStamp;
     eventTarget.dispatchEvent(dataEvent);
 

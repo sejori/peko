@@ -1,6 +1,5 @@
-import { RequestContext, Handler, Middleware } from "../server.ts"
+import { RequestContext, PromiseMiddleware } from "../server.ts"
 
-type SafeMiddleware = (ctx: RequestContext, next: () => Promise<Response | void> | Response | void) => Promise<Response | void>
 type Result = undefined | void | Response
 
 /**
@@ -10,20 +9,13 @@ export class Cascade {
   called = 0
   response: Result
 
-  constructor(public ctx: RequestContext, private toCall: Array<Middleware | Handler>) {}
+  constructor(public ctx: RequestContext, private toCall: Array<PromiseMiddleware>) {}
 
-  async run(fcn: Middleware): Promise<Result> {
+  async run(fcn: PromiseMiddleware): Promise<Result> {
     if (!fcn) return
 
-    // TODO: refactor this into addRoute logic
-    const fcnPromise: SafeMiddleware = fcn.constructor.name === "AsyncFunction"
-      ? fcn as SafeMiddleware
-      : (ctx, next) => new Promise((res, rej) => {
-        try { res(fcn(ctx, next)) } catch(e) { rej(e) }
-      })
-
     try {
-      const result = await fcnPromise(this.ctx, async () => await this.run(this.toCall[++this.called]))
+      const result = await fcn(this.ctx, async () => await this.run(this.toCall[++this.called]))
       if (result) this.response = result
       if (!this.response) await this.run(this.toCall[++this.called])
     } catch (error) {
