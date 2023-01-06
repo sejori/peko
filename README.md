@@ -7,7 +7,7 @@
     />
 </p>
 <h1 align="center">Peko</h1>
-
+<p>Featherweight server + middleware library for full-stack apps on Deno Deploy<p>
 <p align="center">
     <span>
         &nbsp;
