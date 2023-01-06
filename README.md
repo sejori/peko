@@ -99,8 +99,8 @@ Requests are matched to a mutable array of [Routes](https://doc.deno.land/https:
 ```
 import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
 
-const router = new Router()
 const server = new Server()
+const router = new Router()
 
 router.addRoute("/hello-log-headers", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, () => new Response("Hello world!"));
 
