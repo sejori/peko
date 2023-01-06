@@ -94,7 +94,7 @@ server.listen(7777, () => console.log("Peko server started - let's go!"));
 
 <h3 id="#routing">Routing</h3>
 
-Requests are matched to a mutable array of [Routes](https://doc.deno.land/https://deno.land/x/peko/server.ts/~/Route">). Routes are added and configured with their own middleware and handlers via the `addRoute`, `addRoutes`, `removeRoute` or `removeRoutes` server methods.
+Requests are matched to a mutable array of [Routes](https://doc.deno.land/https://deno.land/x/peko/server.ts/~/Route">). Routes are added and configured with their own middleware and handlers via the `addRoute`, `addRoutes`, `removeRoute` or `removeRoutes` server methods. `Peko.Router` is an alias to `Peko.Server` to assist with conventional server/router architecture across files.
 
 ```
 import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
