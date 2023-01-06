@@ -13,7 +13,7 @@ server.use(logger(console.log))
 
 const demoEventTarget = new EventTarget()
 setInterval(() => {
-  demoEventTarget.dispatchEvent(new CustomEvent("data", { detail: Math.random() }))
+  demoEventTarget.dispatchEvent(new CustomEvent("send", { detail: Math.random() }))
 }, 1000)
 
 // SSE route streams data from testEmitter

@@ -1,5 +1,6 @@
-import { Server as stdServer } from "https://deno.land/std@0.171.0/http/server.ts";
+import { Server as stdServer } from "https://deno.land/std@0.171.0/http/server.ts"
 import { Cascade } from "./utils/Cascade.ts"
+import { promisify } from "./utils/helpers.ts"
 
 export class RequestContext {
   server: Server
@@ -24,13 +25,15 @@ export interface Route {
 
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response
 export type HandlerOptions = { headers?: Headers }
-export type Middleware = (ctx: RequestContext, next: () => Promise<Response | void> | Response | void) => Promise<Response | void> | Response | void
+export type NextMiddleware = () => Promise<Response | void> | Response | void
+export type Middleware = (ctx: RequestContext, next: NextMiddleware) => Promise<Response | void> | Response | void
+export type PromiseMiddleware = (ctx: RequestContext, next: NextMiddleware) => Promise<Response | void>
 
 export class Server {
   #stdServer: stdServer | undefined
   port = 7777
   hostname = "0.0.0.0"
-  middleware: Middleware[] = []
+  middleware: PromiseMiddleware[] = []
   routes: Route[] = []
 
   constructor(config?: { 
@@ -53,7 +56,7 @@ export class Server {
       middleware.forEach(mware => this.use(mware))
       return middleware.length
     }
-    return this.middleware.push(middleware)
+    return this.middleware.push(promisify(middleware))
   }
 
   /**
@@ -81,13 +84,14 @@ export class Server {
     if (!routeObj.route) throw new Error("Missing route path: `/${route}`")
     if (!routeObj.handler) throw new Error("Missing route handler")
     routeObj.method = routeObj.method || "GET"
+    routeObj.handler = promisify(routeObj.handler!) as Handler
 
     return this.routes.push({ 
       ...routeObj as Route,
       middleware: [routeObj.middleware]
         .flat()
         .filter(Boolean)
-        .map((mware) => mware as Middleware),
+        .map((mware) => promisify(mware!)),
     })
   }
 
@@ -132,13 +136,20 @@ export class Server {
    * @param onListen: onListen callback function
    * @param onError: onListen callback function
    */
-  async listen(
-    port?: number, 
-    onListen?: (address: Deno.Addr[]) => void
-  ): Promise<void> {
+  async listen(port?: number, onListen?: (address: Deno.Addr[]) => void): Promise<void> {
     if (port) this.port = port
-    this.#stdServer = new stdServer({ port, handler: (request: Request) => this.requestHandler.call(this, request) })
-    if (onListen) onListen(this.#stdServer.addrs)
+    this.#stdServer = new stdServer({ 
+      port: this.port, 
+      handler: (request: Request) => this.requestHandler.call(this, request) 
+    })
+
+    if (onListen) {
+      onListen(this.#stdServer.addrs)
+    } else {
+      console.log(`Peko server started on port ${this.port} with routes:`)
+      this.routes.forEach((route, i) => console.log(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
+    }
+
     await this.#stdServer.listenAndServe()
   }
 
@@ -166,8 +177,8 @@ export class Server {
       route.method === request.method
     )
 
-    const toCall: Middleware[] = route
-      ? [...this.middleware, ...route.middleware as Middleware[], route.handler]
+    const toCall: PromiseMiddleware[] = route
+      ? [...this.middleware, ...route.middleware as PromiseMiddleware[], route.handler as PromiseMiddleware]
       : [...this.middleware]
     
     const result = await new Cascade(ctx, toCall).start()

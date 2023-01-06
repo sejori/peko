@@ -22,11 +22,10 @@ export const wsHandler = (target: EventTarget, opts: HandlerOptions = {}): Handl
     const message = JSON.stringify((e as CustomEvent).detail)
     socket.send(message)
   }
-  target.addEventListener("send-message", (e) => enqueueEvent(e))
-
+  target.addEventListener("send", (e) => enqueueEvent(e))
   const closeEvent = () => {
     socket.close()
-    target.removeEventListener("send-message", enqueueEvent)
+    target.removeEventListener("send", enqueueEvent)
   }
 
   socket.onmessage = (e) => {

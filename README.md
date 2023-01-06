@@ -7,7 +7,7 @@
     />
 </p>
 <h1 align="center">Peko</h1>
-
+<p align="center">Featherweight server + middleware library for full-stack apps on Deno Deploy<p>
 <p align="center">
     <span>
         &nbsp;
@@ -47,13 +47,13 @@
 
 <h2>Philosophy</h2>
 
-- <strong>Client-edge synergy</strong> - Share modules for rendering + hydration and reuse classes for simpler development.
+- <strong>Client-edge synergy</strong> - Share modules and classes across the stack for simpler development.
 
 - <strong>Production-ready backend</strong> - Cascading middleware library built on stable Deno APIs, all tested.
 
 - <strong>Software minimalism</strong> - Uses native JavaScript APIs and [Deno std library](https://deno.land/std) only.
 
-- <strong>Ease of adoption</strong> - Intuitive "[Express](https://github.com/expressjs/express)-like" API with no file-system routing.
+- <strong>Ease of adoption</strong> - Intuitive "[Express](https://github.com/expressjs/express)-like" server API with no file-system routing.
 
 Any feature suggestions or code reviews are very welcome!
 
@@ -94,20 +94,29 @@ server.listen(7777, () => console.log("Peko server started - let's go!"));
 
 <h3 id="#routing">Routing</h3>
 
-Requests are matched to a mutable array of [Routes](https://doc.deno.land/https://deno.land/x/peko/server.ts/~/Route">). Routes are added and configured with their own middleware and handlers via the `addRoute`, `addRoutes`, `removeRoute` or `removeRoutes` server methods.
+Requests are matched to a mutable array of [Routes](https://doc.deno.land/https://deno.land/x/peko/server.ts/~/Route">). Routes are added and configured with their own middleware and handlers via the `addRoute`, `addRoutes`, `removeRoute` or `removeRoutes` server methods. `Peko.Router` is an alias to `Peko.Server` to assist with conventional server/router architecture across files.
 
 ```
-server.addRoute("/hello-log-headers", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, () => new Response("Hello world!"));
+import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
 
-server.addRoute({
+const server = new Peko.Server()
+const router = new Peko.Router()
+
+router.addRoute("/hello-log-headers", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, () => new Response("Hello world!"));
+
+router.addRoute({
     route: "/hello-object-log-headers",
     middleware: async (ctx, next) => { await next(); console.log(ctx.request.headers); }, // could also be an array of middleware
     handler: () => new Response("Hello world!")
 });
 
-server.addRoutes([ /* array of route objects */ ]);
+router.addRoutes([ /* array of route objects */ ]);
 
-server.removeRoute("/hello-log-headers");
+router.removeRoute("/hello-log-headers");
+
+server.addRoutes(router.routes)
+
+server.listen()
 ```
 
 <h3 id="request-handling">Request handling</h3>
