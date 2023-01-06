@@ -21,9 +21,9 @@ const Layout = ({ navColor, children }) => {
 const navStyle = (navColor) => `
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: firebrick;
   background-color: ${navColor};
 `
 
