@@ -6,9 +6,7 @@ const Home = (props) => {
   return html`
     <${Layout} navColor="forestgreen">
       <h1 style="text-align: center;">Peko</h1>
-      <p style="text-align: center;">
-        Featherweight server/routing framework for full-stack apps on <a target="_blank" href="https://deno.com/deploy">Deno Deploy</a>.
-      </p>
+      <h3 style="text-align: center;">Featherweight server + middleware library for full-stack apps on Deno Deploy</h3>
 
       <div style="width: 100%; display: flex; justify-content: space-around;">
         <div>
