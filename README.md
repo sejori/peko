@@ -97,17 +97,26 @@ server.listen(7777, () => console.log("Peko server started - let's go!"));
 Requests are matched to a mutable array of [Routes](https://doc.deno.land/https://deno.land/x/peko/server.ts/~/Route">). Routes are added and configured with their own middleware and handlers via the `addRoute`, `addRoutes`, `removeRoute` or `removeRoutes` server methods.
 
 ```
-server.addRoute("/hello-log-headers", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, () => new Response("Hello world!"));
+import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
 
-server.addRoute({
+const router = new Router()
+const server = new Server()
+
+router.addRoute("/hello-log-headers", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, () => new Response("Hello world!"));
+
+router.addRoute({
     route: "/hello-object-log-headers",
     middleware: async (ctx, next) => { await next(); console.log(ctx.request.headers); }, // could also be an array of middleware
     handler: () => new Response("Hello world!")
 });
 
-server.addRoutes([ /* array of route objects */ ]);
+router.addRoutes([ /* array of route objects */ ]);
 
-server.removeRoute("/hello-log-headers");
+router.removeRoute("/hello-log-headers");
+
+server.addRoutes(router.routes)
+
+server.listen()
 ```
 
 <h3 id="request-handling">Request handling</h3>
