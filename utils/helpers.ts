@@ -16,3 +16,14 @@ export const promisify = (fcn: Middleware): PromiseMiddleware => {
     })
 }
 
+// export const keyToDigest = (key: CryptoKey) => {
+//   console.log(key)
+//   // if (key.hash) return key.hash
+//   // this just needs to return SHA-256, SHA-384 or SHA-512 depending on key 
+//   return 
+// }
+
+// export const keyToJWTHeader = (key: CryptoKey) => {
+//   console.log(key)
+// }
+
