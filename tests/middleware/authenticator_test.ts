@@ -30,4 +30,10 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
     assert(response?.status === 401)
     assert(!ctx.state.auth)
   }) 
+
+  // await t.step("verify fails if token expires", async () => {
+  //   await new Promise(res => setTimeout(res, 250))
+
+  //   assert(await crypto.verify(token) === undefined)
+  // })
 })

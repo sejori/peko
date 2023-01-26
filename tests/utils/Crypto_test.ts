@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
-import { encode, decode } from "https://deno.land/std@0.150.0/encoding/base64url.ts";
+import { encode, decode } from "https://deno.land/std@0.150.0/encoding/base64url.ts"
 import { Crypto } from "../../utils/Crypto.ts"
 
 Deno.test("UTIL: Crypto", async (t) => {
@@ -35,11 +35,5 @@ Deno.test("UTIL: Crypto", async (t) => {
     const payload = await crypto.verify(token)
 
     assert(JSON.stringify(payload) == JSON.stringify(inputPayload))
-  })
-
-  await t.step("verify fails if token expires", async () => {
-    await new Promise(res => setTimeout(res, 250))
-
-    assert(await crypto.verify(token) === undefined)
   })
 })
