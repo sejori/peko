@@ -3,7 +3,7 @@ import { encode, decode } from "https://deno.land/std@0.150.0/encoding/base64url
 import { Crypto } from "../../utils/Crypto.ts"
 
 Deno.test("UTIL: Crypto", async (t) => {
-  const crypto = new Crypto("SUPER_SECRET_KEY_123")
+  const crypto = new Crypto("SUPER_SECRET_KEY_123", { name: "HMAC", hash: "SHA-256" })
   const str = "test-string-1234567890"
 
   const inputPayload = { 
