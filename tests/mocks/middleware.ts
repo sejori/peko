@@ -1,4 +1,4 @@
-import { Server, Middleware, Handler, RequestContext } from "../server.ts"
+import { Server, Middleware, Handler, RequestContext } from "../../server.ts"
 import { _format } from "std/path/_util.ts"
 
 export const testMiddleware1: Middleware = async (ctx, next) => {

@@ -2,7 +2,7 @@
 import { encode as encodeB64, decode as decodeB64 } from "std/encoding/base64.ts"
 const encoder = new TextEncoder()
 
-type HMACData = { name: "HMAC" | "RSA", hash: "SHA-256" | "SHA-384" | "SHA-512" }
+type HMACData = { name: "HMAC", hash: "SHA-256" | "SHA-384" | "SHA-512" }
 type RSAData = { name: "RSA", hash: "SHA-256" | "SHA-384" | "SHA-512" }
 type AlgData = HMACData | RSAData
 
@@ -14,8 +14,6 @@ export class Crypto {
   algData: AlgData
   key: CryptoKey | string
 
-  constructor(algData: HMACData, key: string)
-  constructor(algData: RSAData, key: `-----BEGIN PRIVATE KEY-----${string}-----END PRIVATE KEY-----`)
   constructor(algData: AlgData, key: CryptoKey | string, ) {
     this.algData = algData
     this.key = key
@@ -35,15 +33,13 @@ export class Crypto {
       )
     }
 
-    const b46KeyExec = /(?<=-----BEGIN PRIVATE KEY-----)(.|\n)*?(?=-----END PRIVATE KEY-----)/.exec(key)
-    if (!b46KeyExec || !b46KeyExec[0]) throw new Error("Invalid public key .pem file.")
-    const b64Key = b46KeyExec[0].replace(/(\n|\\n)/g, '')
-
-    console.log(b64Key)
+    // remove header, footer and line breaks
+    key = key.replace(/(-----(.*?)-----)/g, "")
+    key = key.replace(/(\n|\\n)/g, "")
 
     return await crypto.subtle.importKey(
-      "pkcs8",
-      decodeB64(b64Key),
+      usage.some(use => use === "verify") ? "spki" : "pkcs8",
+      decodeB64(key),
       { ...algData, name: "RSASSA-PKCS1-v1_5" },
       extractable,
       usage
