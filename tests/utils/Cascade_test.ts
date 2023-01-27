@@ -6,7 +6,7 @@ import {
   testMiddleware2,
   testMiddleware3,
   testHandler
-} from "../../tests/mock.ts"
+} from "../../tests/mocks/middleware.ts"
 
 Deno.test("UTIL: Cascade", async (t) => {
   const testServer = new Server()

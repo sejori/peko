@@ -64,7 +64,6 @@ export class Server {
    * @param route: Route - middleware can be Middlewares or Middleware 
    * @returns number - server.routes.length
    */
-  // method overloading
   addRoute(route: Route): number
   addRoute(route: `/${string}`, data: Handler | Partial<Route>): number
   addRoute(route: `/${string}`, middleware: Middleware | Middleware[], handler: Handler): number
