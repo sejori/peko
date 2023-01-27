@@ -1,4 +1,4 @@
-import { Server as stdServer } from "https://deno.land/std@0.171.0/http/server.ts"
+import { Server as stdServer } from "std/http/server.ts"
 import { Cascade } from "./utils/Cascade.ts"
 import { promisify } from "./utils/helpers.ts"
 
