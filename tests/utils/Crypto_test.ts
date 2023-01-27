@@ -18,8 +18,8 @@ Deno.test("UTIL: Crypto", async (t) => {
   const rsa_private_crypto = new Crypto({ name: "RSA", hash: "SHA-256" }, generatedKeyPair.privateKey)
   const rsa_public_crypto = new Crypto({ name: "RSA", hash: "SHA-256" }, generatedKeyPair.publicKey)
 
-  const rsa_private_crypto_from_cert = new Crypto({ name: "RSA", hash: "SHA-256" }, await Deno.readTextFile(new URL("./pkcs8.key", import.meta.url)))
-  const rsa_public_crypto_from_cert = new Crypto({ name: "RSA", hash: "SHA-256" }, await Deno.readTextFile(new URL("./publickey.crt", import.meta.url)))
+  const rsa_private_crypto_from_cert = new Crypto({ name: "RSA", hash: "SHA-256" }, await Deno.readTextFile(new URL("../mocks/crypto_rsa_private.key", import.meta.url)))
+  const rsa_public_crypto_from_cert = new Crypto({ name: "RSA", hash: "SHA-256" }, await Deno.readTextFile(new URL("../mocks/crypto_rsa_public_key.crt", import.meta.url)))
   
   const str = "test-string-1234567890"
 
