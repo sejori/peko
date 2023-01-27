@@ -4,6 +4,7 @@
     "start:dev": "deno run --allow-net --allow-read --allow-env --watch examples/preact/app.ts",
     "test": "deno test --allow-read --allow-net"
   },
+  "importMap": "import_map.json",
   "fmt": {
     "options": {
       "useTabs": true,
