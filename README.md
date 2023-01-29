@@ -1,7 +1,7 @@
 <p align="center">
     <img 
-        height="100px"
-        width="100px"
+        height="200px"
+        width="200px"
         style="margin: 1rem auto;"
         src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/DALL-Echu.webp" alt="DALL-Echu" 
     />
