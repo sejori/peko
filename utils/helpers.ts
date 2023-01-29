@@ -15,4 +15,3 @@ export const promisify = (fcn: Middleware): PromiseMiddleware => {
       try { res(fcn(ctx, next)) } catch(e) { rej(e) }
     })
 }
-

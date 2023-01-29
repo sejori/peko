@@ -16,7 +16,7 @@ export interface ssrHandlerOptions extends HandlerOptions {
  */
 export const ssrHandler = (render: Render, opts: ssrHandlerOptions = {}): Handler => async (ctx: RequestContext) => {
   if (!opts.crypto) {
-    opts.crypto = new Crypto(Array.from({length: 10}, () => Math.floor(Math.random() * 9)).toString())
+    opts.crypto = new Crypto(crypto.randomUUID())
   }
   
   const HTML = await render(ctx)   

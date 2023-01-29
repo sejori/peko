@@ -1,4 +1,4 @@
-import { contentType } from "https://deno.land/std@0.162.0/media_types/mod.ts";
+import { contentType } from "std/media_types/mod.ts";
 import { RequestContext, Handler, HandlerOptions } from "../server.ts"
 import { Crypto } from "../utils/Crypto.ts"
 import { mergeHeaders } from "../utils/helpers.ts";
@@ -17,10 +17,7 @@ export interface staticHandlerOptions extends HandlerOptions {
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
 export const staticHandler = (fileURL: URL, opts: staticHandlerOptions = {}): Handler => async (_ctx: RequestContext) => {
-  let filePath = decodeURI(fileURL.pathname)
-  
-  // fix annoying windows paths
-  if (Deno.build.os === "windows") filePath = filePath.substring(1)
+  const filePath = decodeURI(fileURL.pathname)
 
   const body = await Deno.readFile(filePath)
   const hashString = await crypto.hash(body.toString())
