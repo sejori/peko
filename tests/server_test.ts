@@ -4,11 +4,11 @@ import {
   testMiddleware2,
   testMiddleware3,
   testHandler,
-testMiddleware1
+  testMiddleware1
 } from "./mocks/middleware.ts"
 
 Deno.test("SERVER", async (t) => {
-  // TODO test RequestContext creation & hostname/port config
+  // TODO: test RequestContext creation & hostname/port config
   server.middleware = []
 
   await t.step("routes added with full route and string arg options", async () => {
