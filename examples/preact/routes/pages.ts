@@ -35,6 +35,13 @@ export const pages: Route[] = [
           hydrate(Home(), document.getElementById("root"));
         </script>`
       })
+    }, {
+      headers: new Headers({
+        // instruct browser to cache page in prod env
+        "Cache-Control": env.ENVIRONMENT === "production"
+          ? "max-age=86400, stale-while-revalidate=86400"
+          : "no-store"
+      }),
     })
   },
   {
@@ -62,13 +69,6 @@ export const pages: Route[] = [
           hydrate(About(${JSON.stringify(ctx.state)}), document.getElementById("root"))
         </script>`
       })
-    }, {
-      headers: new Headers({
-        // instruct browser to cache page in prod env
-        "Cache-Control": env.ENVIRONMENT === "production"
-          ? "max-age=86400, stale-while-revalidate=86400"
-          : "no-store"
-      }),
     })
   }
 ]
