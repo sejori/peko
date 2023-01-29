@@ -3,11 +3,11 @@
         height="100px"
         width="100px"
         style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/twemoji_chick.svg" alt="peko-chick" 
+        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/DALL-Echu.webp" alt="DALL-Echu" 
     />
 </p>
 <h1 align="center">Peko</h1>
-<p align="center">Featherweight server + middleware library for full-stack apps on Deno Deploy<p>
+<p align="center">Featherweight apps on Deno Deploy<p>
 <p align="center">
     <span>
         &nbsp;

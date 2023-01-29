@@ -3,14 +3,19 @@ import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact
 import Layout from "../components/Layout.js"
 import App from "../components/App.js"
 
-const About = () => {
+const About = (props) => {
   return html`
-    <${Layout} navColor="blueviolet">
+    <${Layout} navLink="" navColor="blueviolet">
+      <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+        <p style="margin:5px"><strong>Request time:</strong> ${props.request_time}</p>
+        <p style="margin:5px"><strong>Hydration time:</strong> ${Date.now()}</p>
+        <p style="margin:5px"><strong>Served from:</strong> ${props.DENO_REGION ? props.DENO_REGION : "localhost"}</p>
+      </div>
+
       <img src="/assets/lighthouse-score.png" alt="lighthouse-score" />
       <p>Need I say more?</p>
       <${App} />
       <p>Psst... Hey devs, the edge can do a lot more than just serve static files. Try POSTing some text to <code>/api/parrot</code>.</p>
-      <p>Credit for the bird: <a href="https://twemoji.twitter.com">https://twemoji.twitter.com</a></p>
     </${Layout}>
   `
 }
