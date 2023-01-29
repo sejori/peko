@@ -1,4 +1,4 @@
-import { Server as stdServer } from "https://deno.land/std@0.171.0/http/server.ts"
+import { Server as stdServer } from "std/http/server.ts"
 import { Cascade } from "./utils/Cascade.ts"
 import { promisify } from "./utils/helpers.ts"
 
@@ -64,7 +64,6 @@ export class Server {
    * @param route: Route - middleware can be Middlewares or Middleware 
    * @returns number - server.routes.length
    */
-  // method overloading
   addRoute(route: Route): number
   addRoute(route: `/${string}`, data: Handler | Partial<Route>): number
   addRoute(route: `/${string}`, middleware: Middleware | Middleware[], handler: Handler): number

@@ -1,39 +1,47 @@
-import { crypto } from "https://deno.land/std@0.150.0/crypto/mod.ts"
-import { DigestAlgorithm } from "https://deno.land/std@0.150.0/_wasm_crypto/mod.ts";
-import { encode as encodeB64, decode as decodeB64 } from "https://deno.land/std@0.150.0/encoding/base64url.ts";
+// import { crypto } from "https://deno.land/std@0.150.0/crypto/mod.ts"
+import { encode as encodeB64, decode as decodeB64 } from "std/encoding/base64.ts"
 const encoder = new TextEncoder()
 
-type Payload = {
-  exp: number,
-  iat: number,
-  data: Record<string, unknown>
-}
+type HMACData = { name: "HMAC", hash: "SHA-256" | "SHA-384" | "SHA-512" }
+type RSAData = { name: "RSA", hash: "SHA-256" | "SHA-384" | "SHA-512" }
+type AlgData = HMACData | RSAData
 
 /**
- * Crypto class, generates hashes and signs and verifies JWTs using provided key.
+ * Crypto class, generates hashes and signs and verifies JWTs using CyptoKey (generated from string or provided).
  * @param key: CryptoKey | string
  */
 export class Crypto {
-  key: CryptoKey | undefined
-  rawKey: string | undefined
-  algorithm: { name: string, hash: DigestAlgorithm } = { name: "HMAC", hash: "SHA-256" }
+  algData: AlgData
+  key: CryptoKey | string
 
-  constructor(key: CryptoKey | string) {
-    if (typeof key === "string") {
-      this.rawKey = key
-    } else this.key = key
+  constructor(key: CryptoKey | string, algData: AlgData = { name: "HMAC", hash: "SHA-256" }) {
+    this.algData = algData
+    this.key = key
   }
 
   /**
    * Create CryptoKey from rawKey string to be used in crypto methods
    */
-  async createCryptoKey(): Promise<void> {
-    this.key = await crypto.subtle.importKey(
-      "raw",
-      encoder.encode(await this.hash(this.rawKey as string)).buffer.slice(32),
-      this.algorithm,
-      false, //extractable
-      ["sign", "verify"]
+  static async createCryptoKey(key: string, algData: AlgData, usage: KeyUsage[], extractable = false): Promise<CryptoKey> {
+    if (algData.name === "HMAC") {
+      return await crypto.subtle.importKey(
+        "raw",
+        encoder.encode(key),
+        algData,
+        extractable,
+        usage
+      )
+    }
+
+    // remove header, footer and line breaks
+    key = key.replace(/(?:-----(?:BEGIN|END) (?:PUBLIC|PRIVATE) KEY-----|\s)/g, "")
+
+    return await crypto.subtle.importKey(
+      usage.some(use => use === "verify") ? "spki" : "pkcs8",
+      decodeB64(key),
+      { ...algData, name: "RSASSA-PKCS1-v1_5" },
+      extractable,
+      usage
     )
   }
 
@@ -43,34 +51,31 @@ export class Crypto {
    * @returns hashHex: string
    */
   async hash(contents: string): Promise<string> {
-    const hashBuffer = await crypto.subtle.digest(
-      this.algorithm.hash,
-      encoder.encode(contents),
-    )
+    const hashBuffer = await crypto.subtle.digest(this.algData.hash, encoder.encode(contents))
     return encodeB64(hashBuffer)
   }
 
   /**
    * Sign (create) JWT from payload
-   * @param payload: {
-   *   exp: number,
-   *   iat: number,
-   *   data: Record<string, unknown>
-   * }
-   * @returns jwt: string
+   * @param payload: Record<string, unknown>
+   * @returns jwt: Promise<string>
    */
-  async sign (payload: Payload): Promise<string> {
-    if (!this.key) await this.createCryptoKey()
-
-    const b64Header = encodeB64(JSON.stringify({
-      alg: this.algorithm,
+  async sign (payload: Record<string, unknown>): Promise<string> {
+    const key = this.key instanceof CryptoKey
+    ? this.key
+    : await Crypto.createCryptoKey(this.key, this.algData, ["sign"])
+    
+    const header = {
+      alg: `${this.algData.name[0]}S${this.algData.hash.split('-')[1]}`,
       typ: "JWT"
-    }))
+    }
+
+    const b64Header = encodeB64(JSON.stringify(header))
     const b64Payload = encodeB64(JSON.stringify(payload))
 
     const signatureBuffer = await crypto.subtle.sign(
-      this.algorithm, 
-      this.key as CryptoKey, 
+      key.algorithm, 
+      key, 
       encoder.encode(`${b64Header}.${b64Payload}`)
     )
     const signature = encodeB64(signatureBuffer)
@@ -81,32 +86,26 @@ export class Crypto {
   /**
    * Verify JWT and extract payload
    * @param jwt: string
-   * @returns payload: {
-   *   exp: number,
-   *   iat: number,
-   *   data: Record<string, unknown>
-   * }
+   * @returns payload: Promise<Record<string, unknown> | false>
    */
-  async verify (jwt: string): Promise<Payload | undefined> {
-    if (jwt.split(".").length != 3) return undefined
-    if (!this.key) await this.createCryptoKey()
-    
-    const [ b64Header, b64Payload, b64Signature ] = jwt.split(".")
+  async verify (jwt: string): Promise<Record<string, unknown> | false> {
+    const key = this.key instanceof CryptoKey
+    ? this.key
+    : await Crypto.createCryptoKey(this.key, this.algData, ["verify"])
+
+    const split = jwt.split(".")
+    if (split.length != 3) return false
+    const [ b64Header, b64Payload, b64Signature ] = split
 
     const verified = await crypto.subtle.verify(
-      this.algorithm, 
-      this.key as CryptoKey, 
+      key.algorithm, 
+      key, 
       decodeB64(b64Signature),
       encoder.encode(`${b64Header}.${b64Payload}`)
     )
-    if (!verified) return undefined
-  
-    try {
-      const payload = JSON.parse(atob(b64Payload))
-      if (payload.exp < Date.now()) return undefined
-      return payload
-    } catch(error) {
-      throw(error)
-    }
+
+    return verified
+      ? JSON.parse(atob(b64Payload))
+      : false
   }
 }
