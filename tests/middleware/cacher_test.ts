@@ -1,7 +1,7 @@
 import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
 import { RequestContext } from "../../server.ts"
 import { cacher } from "../../middleware/cacher.ts"
-import { server, testHandler } from "../../tests/mock.ts"
+import { server, testHandler } from "../mocks/middleware.ts"
 import { ResponseCache } from "../../utils/ResponseCache.ts"
 
 Deno.test("MIDDLEWARE: Cacher", async (t) => {

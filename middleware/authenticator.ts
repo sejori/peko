@@ -13,10 +13,8 @@ export const authenticator = (crypto: Crypto): Middleware => async (ctx, next) =
   if (authHeader && authHeader.slice(0,7) === "Bearer ") {
     const jwt = authHeader.slice(7)
     const payload = await crypto.verify(jwt)
-    if (payload && payload.exp > Date.now()) {
-      ctx.state.auth = payload
-      return next()
-    }
+    ctx.state.auth = payload
+    return next()
   }  
   
   return new Response(null, { status: 401 })
