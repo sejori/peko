@@ -14,7 +14,7 @@ export class Crypto {
   algData: AlgData
   key: CryptoKey | string
 
-  constructor(algData: AlgData, key: CryptoKey | string, ) {
+  constructor(key: CryptoKey | string, algData: AlgData = { name: "HMAC", hash: "SHA-256" }) {
     this.algData = algData
     this.key = key
   }
@@ -34,8 +34,7 @@ export class Crypto {
     }
 
     // remove header, footer and line breaks
-    key = key.replace(/(-----(.*?)-----)/g, "")
-    key = key.replace(/(\n|\\n)/g, "")
+    key = key.replace(/(?:-----(?:BEGIN|END) (?:PUBLIC|PRIVATE) KEY-----|\s)/g, "")
 
     return await crypto.subtle.importKey(
       usage.some(use => use === "verify") ? "spki" : "pkcs8",
