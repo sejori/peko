@@ -18,16 +18,10 @@ const env = Deno.env.toObject()
 export const pages: Route[] = [
   {
     route: "/",
-    middleware: [
-      (ctx) => { 
-        ctx.state = {
-          request_time: `${Date.now()}`,
-          ...Deno.env.toObject()
-        }
-      }
-    ],
-    handler: ssrHandler((ctx) => {
-      const appHTML = renderToString(Home(ctx.state), null, null)
+    // use cacher to serve responses from cache in prod env
+    middleware: env.ENVIRONMENT === "production" ? cacher(cache) : [],
+    handler: ssrHandler(() => {
+      const appHTML = renderToString(Home(), null, null)
       return htmlTemplate({
         appHTML,
         title: `<title>Peko</title>`,
@@ -38,17 +32,23 @@ export const pages: Route[] = [
         hydrationScript: `<script type="module">
           import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
           import Home from "/pages/Home.js";
-          hydrate(Home(${JSON.stringify(ctx.state)}), document.getElementById("root"));
+          hydrate(Home(), document.getElementById("root"));
         </script>`
       })
     })
   },
   {
     route: "/about",
-    // use cacher to serve responses from cache in prod env
-    middleware: env.ENVIRONMENT === "production" ? cacher(cache) : [],
-    handler: ssrHandler(() => {
-      const appHTML = renderToString(About(), null, null)
+    middleware: [
+      (ctx) => { 
+        ctx.state = {
+          request_time: `${Date.now()}`,
+          ...Deno.env.toObject()
+        }
+      }
+    ],
+    handler: ssrHandler((ctx) => {
+      const appHTML = renderToString(About(ctx.state), null, null)
       return htmlTemplate({
         appHTML,
         title: `<title>Peko | About</title>`,
@@ -59,7 +59,7 @@ export const pages: Route[] = [
         hydrationScript: `<script type="module">
           import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
           import About from "/pages/About.js";
-          hydrate(About(), document.getElementById("root"))
+          hydrate(About(${JSON.stringify(ctx.state)}), document.getElementById("root"))
         </script>`
       })
     }, {
