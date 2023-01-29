@@ -4,8 +4,8 @@ import {
   testMiddleware2,
   testMiddleware3,
   testHandler,
-testMiddleware1
-} from "./mock.ts"
+  testMiddleware1
+} from "./mocks/middleware.ts"
 
 Deno.test("SERVER", async (t) => {
   // TODO test RequestContext creation & hostname/port config
