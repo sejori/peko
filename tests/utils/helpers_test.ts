@@ -1,31 +1,27 @@
 import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
+import { Server, RequestContext } from "../../server.ts"
 import {
   mergeHeaders,
   promisify,
-  // keyToDigest,
-  // keyToJWTHeader
 } from "../../utils/helpers.ts"
 
 Deno.test("UTIL: helpers", async (t) => {  
   await t.step("mergeHeaders", () => {
-    assert(mergeHeaders)
+    const base = new Headers({
+      "Content-Type": "text/plain"
+    })
+    const source = new Headers({
+      "Authorization": "Bearer asdf"
+    })
+    mergeHeaders(base, source)
+    assert(base.has("Content-Type") && base.has("Authorization"))
   }) 
 
   await t.step("promisify", () => {
-    assert(promisify)
+    const testServer = new Server()
+    const testContext = new RequestContext(testServer, new Request("http://localhost"))
+    const testMW = () => new Response("hello")
+    const testMWProm = promisify(testMW)
+    assert(testMWProm(testContext, () => {}) instanceof Promise)
   }) 
-
-  // await t.step("keyToDigest", async () => {
-  //   const encoder = new TextEncoder()
-  //   const key = await crypto.subtle.importKey("raw", encoder.encode("qwertyuioplkjhgfdsazxcvbnm,./'`[]"), {
-  //     name: "RSASSA-PKCS1-v1_5",
-  //     hash: "SHA-256"
-  //   }, false, ["sign", "verify"])
-
-  //   assert(keyToDigest(key))
-  // }) 
-
-  // await t.step("keyToJWTHeader", () => {
-  //   assert(keyToJWTHeader)
-  // }) 
 })
