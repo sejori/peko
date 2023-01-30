@@ -33,7 +33,7 @@ export class Crypto {
     }
 
     // remove header, footer and line breaks
-    key = key.replace(/(?:-----(?:BEGIN|END) (?:PUBLIC|PRIVATE) KEY-----|\s)/g, "")
+    key = key.replace(/(?:-----(?:BEGIN|END) (?:PUBLIC|PRIVATE) KEY-----|\s|\\n)/g, "")
 
     return await crypto.subtle.importKey(
       usage.some(use => use === "verify") ? "spki" : "pkcs8",
