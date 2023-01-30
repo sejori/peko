@@ -1,4 +1,4 @@
-import { assert } from "https://deno.land/std@0.150.0/testing/asserts.ts"
+import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
 import { Server, RequestContext, PromiseMiddleware } from "../../server.ts"
 import { Cascade } from "../../utils/Cascade.ts"
 import { 

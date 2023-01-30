@@ -1,4 +1,4 @@
-import { assert } from "std/testing/asserts.ts"
+import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
 import { Server, RequestContext } from "../../server.ts"
 import { authenticator } from "../../middleware/authenticator.ts"
 import { Crypto } from "../../utils/Crypto.ts"

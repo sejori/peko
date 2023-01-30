@@ -1,4 +1,4 @@
-import { assert } from "std/testing/asserts.ts"
+import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
 import { ResponseCache } from "../../utils/ResponseCache.ts"
 
 Deno.test("UTIL: Response cache", async (t) => {

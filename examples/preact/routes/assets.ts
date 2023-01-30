@@ -6,7 +6,7 @@ import {
 } from "../../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
-import { fromFileUrl } from "std/path/mod.ts"
+import { fromFileUrl } from "https://deno.land/std@0.174.0/path/mod.ts"
 
 const cache = new ResponseCache()
 const env = Deno.env.toObject()
