@@ -37,7 +37,7 @@ export class Crypto {
 
     return await crypto.subtle.importKey(
       usage.some(use => use === "verify") ? "spki" : "pkcs8",
-      decodeB64(key),
+      new Uint8Array(atob(key).split('').map((c) => c.charCodeAt(0))),
       { ...algData, name: "RSASSA-PKCS1-v1_5" },
       extractable,
       usage
