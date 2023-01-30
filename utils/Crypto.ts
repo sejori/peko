@@ -1,5 +1,4 @@
-// import { crypto } from "https://deno.land/std@0.150.0/crypto/mod.ts"
-import { encode as encodeB64, decode as decodeB64 } from "std/encoding/base64.ts"
+import { encode as encodeB64, decode as decodeB64 } from "https://deno.land/std@0.174.0/encoding/base64.ts"
 const encoder = new TextEncoder()
 
 type HMACData = { name: "HMAC", hash: "SHA-256" | "SHA-384" | "SHA-512" }
