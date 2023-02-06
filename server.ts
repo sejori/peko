@@ -17,7 +17,7 @@ export class RequestContext {
 }
 
 export interface Route { 
-  route: `/${string}`
+  path: `/${string}`
   method?: "GET" | "POST" | "PUT" | "DELETE"
   middleware?: Middleware[] | Middleware
   handler: Handler
@@ -76,11 +76,11 @@ export class Server {
       ? arg1
       : arguments.length === 2
         ? typeof arg2 === "function"
-          ? { route: arg1, handler: arg2 as Handler }
-          : { route: arg1, ...arg2 as Partial<Route> }
-        : { route: arg1, middleware: arg2 as Middleware | Middleware[], handler: arg3 }
+          ? { path: arg1, handler: arg2 as Handler }
+          : { path: arg1, ...arg2 as Partial<Route> }
+        : { path: arg1, middleware: arg2 as Middleware | Middleware[], handler: arg3 }
      
-    if (!routeObj.route) throw new Error("Missing route path: `/${route}`")
+    if (!routeObj.path) throw new Error("Missing route path: `/${route}`")
     if (!routeObj.handler) throw new Error("Missing route handler")
     routeObj.method = routeObj.method || "GET"
     routeObj.handler = promisify(routeObj.handler!) as Handler
@@ -112,7 +112,7 @@ export class Server {
    * @returns 
    */
   removeRoute(route: string): number {
-    const routeToRemove = this.routes.find(r => r.route === route)
+    const routeToRemove = this.routes.find(r => r.path === route)
     if (!routeToRemove) return this.routes.length
 
     this.routes.splice(this.routes.indexOf(routeToRemove), 1)
@@ -146,7 +146,7 @@ export class Server {
       onListen(this.#stdServer.addrs)
     } else {
       console.log(`Peko server started on port ${this.port} with routes:`)
-      this.routes.forEach((route, i) => console.log(`${route.method} ${route.route} ${i===this.routes.length-1 ? "\n" : ""}`))
+      this.routes.forEach((route, i) => console.log(`${route.method} ${route.path} ${i===this.routes.length-1 ? "\n" : ""}`))
     }
 
     await this.#stdServer.listenAndServe()
@@ -172,7 +172,7 @@ export class Server {
     const requestURL = new URL(ctx.request.url)
 
     const route = this.routes.find(route => 
-      route.route === requestURL.pathname && 
+      route.path === requestURL.pathname && 
       route.method === request.method
     )
 
