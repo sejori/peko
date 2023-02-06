@@ -1,6 +1,5 @@
 import { Server as stdServer } from "https://deno.land/std@0.174.0/http/server.ts"
 import { Cascade } from "./utils/Cascade.ts"
-import { promisify } from "./utils/helpers.ts"
 
 export class RequestContext {
   server: Server
@@ -56,7 +55,7 @@ export class Server {
       middleware.forEach(mware => this.use(mware))
       return middleware.length
     }
-    return this.middleware.push(promisify(middleware))
+    return this.middleware.push(Cascade.promisify(middleware))
   }
 
   /**
@@ -83,14 +82,14 @@ export class Server {
     if (!routeObj.path) throw new Error("Missing route path: `/${route}`")
     if (!routeObj.handler) throw new Error("Missing route handler")
     routeObj.method = routeObj.method || "GET"
-    routeObj.handler = promisify(routeObj.handler!) as Handler
+    routeObj.handler = Cascade.promisify(routeObj.handler!) as Handler
 
     return this.routes.push({ 
       ...routeObj as Route,
       middleware: [routeObj.middleware]
         .flat()
         .filter(Boolean)
-        .map((mware) => promisify(mware!)),
+        .map((mware) => Cascade.promisify(mware!)),
     })
   }
 
