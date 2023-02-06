@@ -21,6 +21,14 @@ Deno.test("UTIL: Cascade", async (t) => {
   const cascade = new Cascade(testContext, toCall)
   const result = await cascade.start()
 
+  await t.step("promisify works", () => {
+    const testServer = new Server()
+    const testContext = new RequestContext(testServer, new Request("http://localhost"))
+    const testMW = () => new Response("hello")
+    const testMWProm = Cascade.promisify(testMW)
+    assert(testMWProm(testContext, () => {}) instanceof Promise)
+  }) 
+
   await t.step("cascade run as expected", async () => {
     // check async code before await next() call is properly awaited
     assert(

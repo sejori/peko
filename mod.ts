@@ -6,8 +6,9 @@
 import Server from "./server.ts"
 export default Server
 export * from "./server.ts"
-// alias for traditional Router setup
-export const Router = Server
+
+// Router alias for traditional Router setup
+export { Server as Router }
 
 // Handlers
 export * from "./handlers/static.ts"
@@ -22,5 +23,5 @@ export * from "./middleware/logger.ts"
 // Utils
 export * from "./utils/Crypto.ts"
 export * from "./utils/ResponseCache.ts"
-// export * from "./utils/Cascade.ts"
-// ^ not needed by users & clutters docs
+export * from "./utils/Cascade.ts"
+export * from "./utils/helpers.ts"
