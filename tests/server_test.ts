@@ -12,7 +12,7 @@ Deno.test("SERVER", async (t) => {
   server.middleware = []
 
   await t.step("routes added with full route and string arg options", async () => {
-    server.addRoute({ route: "/route", handler: testHandler })
+    server.addRoute({ path: "/route", handler: testHandler })
     server.addRoute("/anotherRoute", { handler: testHandler })
     server.addRoute("/anotherNotherRoute", testHandler)
     const routesLength = server.addRoute("/anotherNotherNotherRoute", testMiddleware2, testHandler)
@@ -82,7 +82,7 @@ Deno.test("SERVER", async (t) => {
 
   await t.step("all middleware and handlers run", async () => {
     server.addRoute({
-      route: "/test",
+      path: "/test",
       middleware: [testMiddleware1, testMiddleware2, testMiddleware3],
       handler: testHandler
     })
