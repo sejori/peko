@@ -87,23 +87,8 @@ export class Server {
           ? { path: arg1, handler: arg2 as Handler }
           : { path: arg1, ...arg2 as Partial<Route> }
         : { path: arg1, middleware: arg2 as Middleware | Middleware[], handler: arg3 }
-     
-    if (!routeObj.path) throw new Error("Route is missing path")
-    if (!routeObj.handler) throw new Error("Route is missing handler")
-    if (this.routes.flat().find(existing => existing.path === routeObj.path)) {
-      throw new Error(`Route with path ${routeObj.path} already exists!`)
-    }
 
-    routeObj.method = routeObj.method || "GET"
-    routeObj.handler = Cascade.promisify(routeObj.handler!) as Handler
-
-    return this.routeGroups[0].push({ 
-      ...routeObj as Route,
-      middleware: [routeObj.middleware]
-        .flat()
-        .filter(Boolean)
-        .map((mware) => Cascade.promisify(mware!)),
-    })
+    return this.routeGroups[0].push(this.#fixRoute(routeObj))
   }
 
   /**
@@ -112,14 +97,33 @@ export class Server {
    * @returns number - routes.length
    */
   addRoutes(routes: Route[]): number {
-    for (const route of this.routes.flat()) {
+    for (const route of this.routes) {
       if (routes.some(incoming => incoming.path === route.path)) {
         throw new Error(`Route with path ${route.path} already exists!`)
       }
     }
 
+    routes.forEach(route => this.#fixRoute(route))
+
     this.routeGroups.push(routes)
-    return this.routes.flat().length
+    return this.routes.length
+  }
+
+  #fixRoute(routeObj: Partial<Route>): Route {
+    if (!routeObj.path) throw new Error("Route is missing path")
+    if (!routeObj.handler) throw new Error("Route is missing handler")
+    if (this.routes.find(existing => existing.path === routeObj.path)) {
+      throw new Error(`Route with path ${routeObj.path} already exists!`)
+    }
+
+    routeObj.method = routeObj.method || "GET"
+    routeObj.handler = Cascade.promisify(routeObj.handler!) as Handler
+    routeObj.middleware = [routeObj.middleware]
+        .flat()
+        .filter(Boolean)
+        .map((mware) => Cascade.promisify(mware!))
+
+    return routeObj as Route
   }
 
   /**
@@ -135,7 +139,7 @@ export class Server {
       }
     })
     
-    return this.routes.flat().length
+    return this.routes.length
   }
 
   /**
@@ -165,7 +169,7 @@ export class Server {
       onListen(this.#stdServer.addrs)
     } else {
       console.log(`Peko server started on port ${this.port} with routes:`)
-      this.routes.flat().forEach((route, i) => console.log(`${route.method} ${route.path} ${i===this.routes.length-1 ? "\n" : ""}`))
+      this.routes.forEach((route, i) => console.log(`${route.method} ${route.path} ${i===this.routes.length-1 ? "\n" : ""}`))
     }
 
     await this.#stdServer.listenAndServe()
@@ -180,7 +184,7 @@ export class Server {
     const ctx: RequestContext = new RequestContext(this, request)
     const requestURL = new URL(ctx.request.url)
 
-    const route = this.routes.flat().find(route => 
+    const route = this.routes.find(route => 
       route.path === requestURL.pathname && 
       route.method === request.method
     )
