@@ -33,7 +33,11 @@ export class Server {
   port = 7777
   hostname = "0.0.0.0"
   middleware: PromiseMiddleware[] = []
-  routes: Route[] = []
+  routes: Route[][] = [[]]
+  // routes is array of arrays for one reason:
+  // we might update a router's routes after adding them
+  // to the main server. The only way to transfer these 
+  // changes is to preserve the original array reference
 
   constructor(config?: { 
     port?: number, 
@@ -79,12 +83,16 @@ export class Server {
           : { path: arg1, ...arg2 as Partial<Route> }
         : { path: arg1, middleware: arg2 as Middleware | Middleware[], handler: arg3 }
      
-    if (!routeObj.path) throw new Error("Missing route path: `/${route}`")
-    if (!routeObj.handler) throw new Error("Missing route handler")
+    if (!routeObj.path) throw new Error("Route is missing path")
+    if (!routeObj.handler) throw new Error("Route is missing handler")
+    if (this.routes.flat().find(existing => existing.path === routeObj.path)) {
+      throw new Error(`Route with path ${routeObj.path} already exists!`)
+    }
+
     routeObj.method = routeObj.method || "GET"
     routeObj.handler = Cascade.promisify(routeObj.handler!) as Handler
 
-    return this.routes.push({ 
+    return this.routes[0].push({ 
       ...routeObj as Route,
       middleware: [routeObj.middleware]
         .flat()
@@ -99,10 +107,14 @@ export class Server {
    * @returns number - routes.length
    */
   addRoutes(routes: Route[]): number {
-    routes.forEach(route => {
-      return this.addRoute(route)
-    })
-    return routes.length
+    for (const route of this.routes.flat()) {
+      if (routes.some(incoming => incoming.path === route.path)) {
+        throw new Error(`Route with path ${route.path} already exists!`)
+      }
+    }
+
+    this.routes.push(routes)
+    return this.routes.flat().length
   }
 
   /**
@@ -111,11 +123,14 @@ export class Server {
    * @returns 
    */
   removeRoute(route: string): number {
-    const routeToRemove = this.routes.find(r => r.path === route)
-    if (!routeToRemove) return this.routes.length
-
-    this.routes.splice(this.routes.indexOf(routeToRemove), 1)
-    return this.routes.length
+    this.routes.forEach(routeGroup => {
+      const routeToRemove = routeGroup.find(r => r.path === route)
+      if (routeToRemove) {
+        this.routes.splice(routeGroup.indexOf(routeToRemove), 1)
+      }
+    })
+    
+    return this.routes.flat().length
   }
 
   /**
@@ -145,20 +160,10 @@ export class Server {
       onListen(this.#stdServer.addrs)
     } else {
       console.log(`Peko server started on port ${this.port} with routes:`)
-      this.routes.forEach((route, i) => console.log(`${route.method} ${route.path} ${i===this.routes.length-1 ? "\n" : ""}`))
+      this.routes.flat().forEach((route, i) => console.log(`${route.method} ${route.path} ${i===this.routes.length-1 ? "\n" : ""}`))
     }
 
     await this.#stdServer.listenAndServe()
-  }
-
-  /**
-   * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
-   * @param port: number
-   * @param onListen: onListen callback function
-   * @param onError: onListen callback function
-   */
-  close(): void {
-    if (this.#stdServer) this.#stdServer.close()
   }
 
   /**
@@ -170,7 +175,7 @@ export class Server {
     const ctx: RequestContext = new RequestContext(this, request)
     const requestURL = new URL(ctx.request.url)
 
-    const route = this.routes.find(route => 
+    const route = this.routes.flat().find(route => 
       route.path === requestURL.pathname && 
       route.method === request.method
     )
@@ -186,6 +191,16 @@ export class Server {
     } else {
       return new Response("", { status: 404 })
     }
+  }
+
+  /**
+   * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
+   * @param port: number
+   * @param onListen: onListen callback function
+   * @param onError: onListen callback function
+   */
+  close(): void {
+    if (this.#stdServer) this.#stdServer.close()
   }
 }
 
