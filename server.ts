@@ -33,11 +33,7 @@ export class Server {
   port = 7777
   hostname = "0.0.0.0"
   middleware: PromiseMiddleware[] = []
-  routeGroups: Route[][] = [[]]
-  // routes is array of arrays for one reason:
-  // we might update a router's routes after adding them
-  // to the main server. The only way to transfer these 
-  // changes is to preserve the original array reference
+  routeGroups: Route[][] = [[]] // preserve original array references in case mutated after `this.addRoutes`
   
   public get routes(): Route[] {
     return this.routeGroups.flat()
