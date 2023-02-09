@@ -7,22 +7,19 @@ import { Crypto } from "../utils/Crypto.ts"
  * @returns Middleware
  */
 export const authenticator = (crypto: Crypto, opts?: { cookie: string }): Middleware => async (ctx, next) => {
-  let token = ''
+  let token = opts
+    ? ctx.request.headers.get("Cookies")!.cookie // <- fix
+    : ctx.request.headers.get("Authorization")
   
-  if (opts) {
-    token = ctx.request.headers.get("Cookies") || "" // <-- get cookie name somehow
-  } else {
-    const authHeader = ctx.request.headers.get("Authorization")
-    if (authHeader && authHeader.slice(0,7) === "Bearer ") {
-      token = authHeader.slice(7)
+  if (token) {
+    if (token.slice(0,7) === "Bearer ") token = token.slice(7)
+
+    const payload = await crypto.verify(token)
+
+    if (payload) {
+      ctx.state.auth = payload
+      return next()
     }
-  }
-
-  const payload = await crypto.verify(token)
-
-  if (payload) {
-    ctx.state.auth = payload
-    return next()
   }
   
   return new Response(null, { status: 401 })
