@@ -1,5 +1,5 @@
 /**
- * Featherweight toolkit for the modern stateless web. Built for Deno Deploy.
+ * Featherweight apps on Deno Deploy.
  */
 
 // Core classes, functions & types
