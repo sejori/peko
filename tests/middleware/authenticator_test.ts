@@ -16,7 +16,7 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
   
   await t.step("Response authorized as expected", async () => {
     const ctx = new RequestContext(server, request)
-    const response = await authenticator(crypto)(ctx, async() => await new Response(successString))
+    const response = await authenticator(crypto)(ctx, () => new Response(successString))
 
     assert(await response?.text() === successString)
     assert(response?.status === 200)
@@ -25,15 +25,20 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
 
   await t.step("Response unauthorized as expected", async () => {
     const ctx = new RequestContext(server, new Request("http://localhost"))
-    const response = await authenticator(crypto)(ctx, async() => await new Response(successString))
+    const response = await authenticator(crypto)(ctx, () => new Response(successString))
 
     assert(response?.status === 401)
     assert(!ctx.state.auth)
   }) 
 
-  // await t.step("verify fails if token expires", async () => {
-  //   await new Promise(res => setTimeout(res, 250))
+  await t.step("works with cookie header too", async () => {
+    const request2 = new Request('https://localhost:7777')
+    request2.headers.set("Cookies", `Bearer ${token}`)
 
-  //   assert(await crypto.verify(token) === undefined)
-  // })
+    const ctx = new RequestContext(server, request)
+    const response = await authenticator(crypto)(ctx, () => new Response(successString))
+  
+    assert(response?.status === 200)
+    assert(ctx.state.auth)
+  })
 })
