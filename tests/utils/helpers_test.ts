@@ -36,7 +36,7 @@ Deno.test("UTIL: staticDir", async (t) => {
     server.addRoutes(routes)
     const response = await server.requestHandler(request)
     const fileText = await response.text()
-  
+    console.log(fileText)
     assert(fileText == await Deno.readTextFile(new URL("./helpers_test.ts", import.meta.url)))
     assert(text === "I was set")
   }) 
