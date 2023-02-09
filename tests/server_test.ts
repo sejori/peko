@@ -1,4 +1,5 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
+import { Server, Route } from "../server.ts"
 import {
   server,
   testMiddleware2,
@@ -8,7 +9,6 @@ import {
 } from "./mocks/middleware.ts"
 
 Deno.test("SERVER", async (t) => {
-  // TODO: test RequestContext creation & hostname/port config
   server.middleware = []
 
   await t.step("routes added with full route and string arg options", async () => {
@@ -33,6 +33,21 @@ Deno.test("SERVER", async (t) => {
     assert(anotherResponse.status === 200)
     assert(anotherNotherResponse.status === 200)
     assert(anotherNotherNotherResponse.status === 200)
+  })
+
+  await t.step ("route group arrays can be subsequently editted", () => {
+    const anotherServer = new Server()
+    const routes: Route[] = [
+      { path: "/route", handler: testHandler },
+      { path: "/route2", handler: testHandler },
+      { path: "/route3", handler: testHandler }
+    ]
+
+    anotherServer.addRoutes(routes)
+
+    routes.splice(0, 1)
+
+    assert(!anotherServer.routes.find(route => route.path === "/route"))
   })
 
   await t.step("routes removed", () => {

@@ -33,11 +33,16 @@ export class Server {
   port = 7777
   hostname = "0.0.0.0"
   middleware: PromiseMiddleware[] = []
-  routes: Route[][] = [[]]
+  routeGroups: Route[][] = [[]]
   // routes is array of arrays for one reason:
   // we might update a router's routes after adding them
   // to the main server. The only way to transfer these 
   // changes is to preserve the original array reference
+  
+  public get routes(): Route[] {
+    return this.routeGroups.flat()
+  }
+  
 
   constructor(config?: { 
     port?: number, 
@@ -92,7 +97,7 @@ export class Server {
     routeObj.method = routeObj.method || "GET"
     routeObj.handler = Cascade.promisify(routeObj.handler!) as Handler
 
-    return this.routes[0].push({ 
+    return this.routeGroups[0].push({ 
       ...routeObj as Route,
       middleware: [routeObj.middleware]
         .flat()
@@ -113,7 +118,7 @@ export class Server {
       }
     }
 
-    this.routes.push(routes)
+    this.routeGroups.push(routes)
     return this.routes.flat().length
   }
 
@@ -123,10 +128,10 @@ export class Server {
    * @returns 
    */
   removeRoute(route: string): number {
-    this.routes.forEach(routeGroup => {
+    this.routeGroups.forEach(routeGroup => {
       const routeToRemove = routeGroup.find(r => r.path === route)
       if (routeToRemove) {
-        this.routes.splice(routeGroup.indexOf(routeToRemove), 1)
+        routeGroup.splice(routeGroup.indexOf(routeToRemove), 1)
       }
     })
     
@@ -205,3 +210,4 @@ export class Server {
 }
 
 export default Server
+export { Server as Router }
