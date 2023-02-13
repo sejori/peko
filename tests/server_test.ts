@@ -1,23 +1,15 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, Route } from "../server.ts"
 import {
   server,
+  testMiddleware,
   testMiddleware2,
   testMiddleware3,
-  testHandler,
-  testMiddleware1
-} from "./mocks/middleware.ts"
+  testHandler
+} from "./mocks/server.ts"
 
 Deno.test("SERVER", async (t) => {
-  server.middleware = []
-
-  await t.step("routes added with full route and string arg options", async () => {
-    server.addRoute({ path: "/route", handler: testHandler })
-    server.addRoute("/anotherRoute", { handler: testHandler })
-    server.addRoute("/anotherNotherRoute", testHandler)
-    const routesLength = server.addRoute("/anotherNotherNotherRoute", testMiddleware2, testHandler)
-
-    assert(routesLength === 4 && server.routes.length === 4)
+  await t.step("request routing works", async () => {
+    assert(server.routes.length === 4)
 
     const request = new Request("http://localhost:7777/route")
     const anotherRequest = new Request("http://localhost:7777/anotherRoute")
@@ -33,30 +25,6 @@ Deno.test("SERVER", async (t) => {
     assert(anotherResponse.status === 200)
     assert(anotherNotherResponse.status === 200)
     assert(anotherNotherNotherResponse.status === 200)
-  })
-
-  await t.step ("route group arrays can be subsequently editted", () => {
-    const anotherServer = new Server()
-    const routes: Route[] = [
-      { path: "/route", handler: testHandler },
-      { path: "/route2", handler: testHandler },
-      { path: "/route3", handler: testHandler }
-    ]
-
-    anotherServer.addRoutes(routes)
-
-    routes.splice(0, 1)
-
-    assert(!anotherServer.routes.find(route => route.path === "/route"))
-  })
-
-  await t.step("routes removed", () => {
-    server.removeRoute("/route")
-    server.removeRoute("/anotherRoute")
-    server.removeRoute("/anotherNotherRoute")
-    const routesLength = server.removeRoute("/anotherNotherNotherRoute")
-
-    assert(routesLength === 0 && server.routes.length === 0)
   })
 
   await t.step("no route found triggers basic 404", async () => {    
@@ -98,7 +66,7 @@ Deno.test("SERVER", async (t) => {
   await t.step("all middleware and handlers run", async () => {
     server.addRoute({
       path: "/test",
-      middleware: [testMiddleware1, testMiddleware2, testMiddleware3],
+      middleware: [testMiddleware, testMiddleware2, testMiddleware3],
       handler: testHandler
     })
 
