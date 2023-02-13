@@ -1,6 +1,7 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../server.ts"
+import { Server } from "../../Server.ts"
 import { staticHandler } from "../../handlers/static.ts"
+import { RequestContext } from "../../types.ts"
 
 Deno.test("HANDLER: Static", async (t) => {
   const server = new Server()

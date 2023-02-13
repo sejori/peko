@@ -1,6 +1,7 @@
-import { Server, Middleware, Handler, RequestContext } from "../../server.ts"
+import { Server } from "../../Server.ts"
+import { RequestContext, Middleware, Handler } from "../../types.ts"
 
-export const testMiddleware1: Middleware = async (ctx, next) => {
+export const testMiddleware: Middleware = async (ctx, next) => {
   const start = Date.now()
   ctx.state.middleware1 = { start }
   await new Promise(res => setTimeout(res, 1))
@@ -33,3 +34,9 @@ export const testHandler: Handler = async (ctx: RequestContext) => {
 }
 
 export const server = new Server()
+server.addRoutes([
+  { path: "/route", handler: testHandler },
+  { path: "/anoterRoute", handler: testHandler },
+  { path: "/anotherNotherRoute", handler: testHandler },
+  { path: "/anotherNotherNotherRoute", handler: testHandler }
+])

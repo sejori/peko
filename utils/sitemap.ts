@@ -1,6 +1,6 @@
 import { 
   Server
-} from "../server.ts"
+} from "../Server.ts"
 
 export const generateSitemap = (server: Server) => {
   return server.routes.map(route => {

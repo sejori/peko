@@ -1,20 +1,26 @@
-import { RequestContext, PromiseMiddleware, Middleware, NextMiddleware } from "../server.ts"
+import { 
+  RequestContext,
+  PromiseMiddleware, 
+  Middleware, 
+  Result, 
+  Next 
+} from "../types.ts"
 
-type Result = undefined | void | Response
+// type Result = undefined | void | Response
 
 /**
  * Utility class for running middleware functions as a cascade
  */
 export class Cascade {
   called = 0
-  response: Result
+  response: Result = (() => {})()
 
   constructor(public ctx: RequestContext, private toCall: Array<PromiseMiddleware>) {}
 
   static promisify = (fcn: Middleware): PromiseMiddleware => {
     return fcn.constructor.name === "AsyncFunction"
       ? fcn as PromiseMiddleware
-      : (ctx: RequestContext, next: NextMiddleware) => new Promise((res, rej) => {
+      : (ctx: RequestContext, next: Next) => new Promise((res, rej) => {
         try { res(fcn(ctx, next)) } catch(e) { rej(e) }
       })
   }

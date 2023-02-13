@@ -1,4 +1,4 @@
-import { Handler, HandlerOptions } from "../server.ts"
+import { Handler, HandlerOptions } from "../types.ts"
 
 /**
  * Upgrades requests with "upgrade: websocket" header to WebSocket connection.

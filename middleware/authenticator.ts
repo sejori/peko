@@ -1,4 +1,4 @@
-import { Middleware } from "../server.ts"
+import { Middleware } from "../types.ts"
 import { Crypto } from "../utils/Crypto.ts"
 
 /**

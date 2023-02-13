@@ -1,7 +1,7 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
 import { staticDir } from "../../utils/staticDir.ts"
 
-import { Server } from "../../server.ts"
+import { Server } from "../../Server.ts"
 
 Deno.test("UTIL: staticDir", async (t) => {  
   await t.step("returns all file routes with supplied middleware and static handler", async () => {

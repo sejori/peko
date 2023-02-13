@@ -1,7 +1,8 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../server.ts"
+import { Server } from "../../Server.ts"
 import { authenticator } from "../../middleware/authenticator.ts"
 import { Crypto } from "../../utils/Crypto.ts"
+import { RequestContext } from "../../types.ts"
 
 Deno.test("MIDDLEWARE: Authenticator", async (t) => {
   const successString = "Authorized!"
