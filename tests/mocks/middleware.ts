@@ -1,4 +1,4 @@
-import { Server, Middleware, Handler, RequestContext } from "../../server.ts"
+import { Middleware, Handler } from "../../server.ts"
 
 export const testMiddleware1: Middleware = async (ctx, next) => {
   const start = Date.now()
@@ -27,9 +27,7 @@ export const testMiddleware3: Middleware = async (ctx, next) => {
   ctx.state.middleware3 = { start, end, res }
 }
 
-export const testHandler: Handler = async (ctx: RequestContext) => {
+export const testHandler: Handler = async (ctx) => {
   await new Promise(res => setTimeout(res, 1))
   return new Response(JSON.stringify({ ...ctx.state, createdAt: Date.now() }))
 }
-
-export const server = new Server()
