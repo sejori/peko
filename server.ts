@@ -129,20 +129,21 @@ export class Server {
   }
   
   /**
-   * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
+   * Start listening to HTTP requests.
    * @param port: number
    * @param onListen: onListen callback function
    * @param onError: onListen callback function
    */
-  async listen(port?: number, onListen?: (address: Deno.Addr[]) => void): Promise<void> {
+  async listen(port?: number, onListen?: (server: stdServer) => void): Promise<void> {
     if (port) this.port = port
+    
     this.#stdServer = new stdServer({ 
       port: this.port, 
       handler: (request: Request) => this.requestHandler.call(this, request) 
     })
 
     if (onListen) {
-      onListen(this.#stdServer.addrs)
+      onListen(this.#stdServer)
     } else {
       console.log(`Peko server started on port ${this.port} with routes:`)
       this.routes.forEach((route, i) => console.log(`${route.method} ${route.path} ${i===this.routes.length-1 ? "\n" : ""}`))
@@ -152,17 +153,7 @@ export class Server {
   }
 
   /**
-   * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
-   * @param port: number
-   * @param onListen: onListen callback function
-   * @param onError: onListen callback function
-   */
-  close(): void {
-    if (this.#stdServer) this.#stdServer.close()
-  }
-
-  /**
-   * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
+   * Generate Response by running route middleware/handler with Cascade.
    * @param request: Request
    * @returns Promise<Response>
    */
@@ -174,18 +165,18 @@ export class Server {
       route.path === requestURL.pathname && 
       route.method === request.method
     )
-
-    const toCall: PromiseMiddleware[] = route
-      ? [...this.middleware, ...route.middleware as PromiseMiddleware[], route.handler as PromiseMiddleware]
-      : [...this.middleware]
     
-    const result = await new Cascade(ctx, toCall).start()
+    return await new Cascade(ctx, route).start()
+  }
 
-    if (result instanceof Response) {
-      return result
-    } else {
-      return new Response("", { status: 404 })
-    }
+  /**
+   * Stop listening to HTTP requests.
+   * @param port: number
+   * @param onListen: onListen callback function
+   * @param onError: onListen callback function
+   */
+  close(): void {
+    if (this.#stdServer) this.#stdServer.close()
   }
 }
 
