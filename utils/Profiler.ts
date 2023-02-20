@@ -1,19 +1,61 @@
 import Server, { Route } from "../server.ts"
 
-class Profiler {
-  constructor(public server: Server) {}
+type ProfileConfig = {
+  mode?: "serve" | "handle"
+  url?: string
+  count?: number
+  excludedRoutes?: Route[]
+}
 
-  static handleRoutes(server: Server, count: number = 100, excludedRoutes: Route[] = []) {
+type ProfileResults = Record<
+  Route["path"], 
+  {
+    avgTime: number
+    requests: { 
+      path: string
+      response: Response
+      ms: number 
+    }[]
+  }
+>
+
+class Profiler {
+  static async run(server: Server, config?: ProfileConfig) {
+    const url = (config && config.url) || `http://${server.hostname}:${server.port}`
+    const count = (config && config.count) || 100
+    const excludedRoutes = (config && config.excludedRoutes) || []
+    const mode = (config && config.mode) || "serve"
+
+    const results: ProfileResults = {}
+
     for (const route of server.routes) {
+      results[route.path] = { avgTime: 0, requests: [] }
+
       if (!excludedRoutes.includes(route)) {
-        const request = new Request(new URL(`${server.hostname}:${server.port}${route.route}`))
-        const response = server.requestHandler()
+        for (let i=0; i<count; i++) {
+          const routeUrl = new URL(`${url}${route.path}`)
+          
+          const start = Date.now()
+          const response = mode === "serve" 
+            ? await server.requestHandler(new Request(routeUrl))
+            : await fetch(routeUrl)
+          const end = Date.now()
+
+          results[route.path].requests.push({
+            path: routeUrl.pathname,
+            response,
+            ms: end-start
+          })
+        }
+
+        // calc avg.
+        results[route.path].avgTime = results[route.path].requests
+          .map(data => data.ms)
+          .reduce((a,b) => a+b) / results[route.path].requests.length
       }
     }
-  }
 
-  static requestRoutes(server: Server, count: number = 100, excludedRoutes: Route[] = []) {
-
+    return results
   }
 }
 
