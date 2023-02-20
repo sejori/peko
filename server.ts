@@ -149,7 +149,7 @@ export class Server {
       this.routes.forEach((route, i) => console.log(`${route.method} ${route.path} ${i===this.routes.length-1 ? "\n" : ""}`))
     }
 
-    await this.#stdServer.listenAndServe()
+    return await this.#stdServer.listenAndServe()
   }
 
   /**
