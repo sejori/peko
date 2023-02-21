@@ -1,4 +1,7 @@
-import { RequestContext, Middleware, PromiseMiddleware, Route } from "../server.ts"
+import { RequestContext } from "../server.ts"
+import { Middleware, Result, Next, Route } from "../types.ts"
+
+export type PromiseMiddleware = (ctx: RequestContext, next: Next) => Promise<Result>
 
 /**
  * Utility class for running middleware functions as a cascade

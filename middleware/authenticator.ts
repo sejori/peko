@@ -1,4 +1,4 @@
-import { Middleware } from "../server.ts"
+import { Middleware } from "../types.ts"
 import { Crypto } from "../utils/Crypto.ts"
 
 /**
@@ -6,18 +6,21 @@ import { Crypto } from "../utils/Crypto.ts"
  * @param crypto: Crypto instance to be used
  * @returns Middleware
  */
-export const authenticator = (crypto: Crypto): Middleware => async (ctx, next) => {
-  const authHeader = ctx.request.headers.get("Authorization")
+export const authenticator = (crypto: Crypto, opts?: { cookie: string }): Middleware => async (ctx, next) => {
+  let token = opts
+    ? ctx.request.headers.get("Cookies") //!.cookie // <- fix
+    : ctx.request.headers.get("Authorization")
+  
+  if (token) {
+    if (token.slice(0,7) === "Bearer ") token = token.slice(7)
 
-  // check JWT from cookies
-  if (authHeader && authHeader.slice(0,7) === "Bearer ") {
-    const jwt = authHeader.slice(7)
-    const payload = await crypto.verify(jwt)
+    const payload = await crypto.verify(token)
+
     if (payload) {
       ctx.state.auth = payload
       return next()
     }
-  }  
+  }
   
   return new Response(null, { status: 401 })
 }

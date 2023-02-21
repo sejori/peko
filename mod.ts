@@ -1,14 +1,11 @@
 /**
- * Featherweight toolkit for the modern stateless web. Built for Deno Deploy.
+ * Featherweight apps on Deno Deploy.
  */
 
 // Core classes, functions & types
 import Server from "./server.ts"
 export default Server
 export * from "./server.ts"
-
-// Router alias for traditional Router setup
-export { Server as Router }
 
 // Handlers
 export * from "./handlers/static.ts"
