@@ -16,7 +16,7 @@ const assets: Route[] = filenames.map(file => {
   const fileRoute = file.slice(file.lastIndexOf("/src/" ) + 5)
 
   return {
-    route: `/${fileRoute}`,
+    path: `/${fileRoute}`,
     middleware: env.ENVIRONMENT === "production" ? cacher(cache) : [],
     handler: staticHandler(new URL(`../src/${fileRoute}`, import.meta.url), {
       headers: new Headers({

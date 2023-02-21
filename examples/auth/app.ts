@@ -19,7 +19,7 @@ const validateUser = async (username: string, password: string) => {
 
 // generate JWT
 server.addRoute({
-  route: "/login",
+  path: "/login",
   method: "POST",
   handler: async (ctx) => {
     const { username, password } = await ctx.request.json()
@@ -50,14 +50,14 @@ server.addRoute({
 
 // verify JWT in auth middleware
 server.addRoute({
-  route: "/authTest",
+  path: "/authTest",
   middleware: Peko.authenticator(crypto),
   handler: () => new Response("You are authenticated!")
 })
 
 // basic HTML page with buttons to call auth routes
 server.addRoute({
-  route: "/",
+  path: "/",
   handler: Peko.ssrHandler(() => `<!doctype html>
     <html lang="en">
     <head>

@@ -17,7 +17,7 @@ const env = Deno.env.toObject()
 
 export const pages: Route[] = [
   {
-    route: "/",
+    path: "/",
     // use cacher to serve responses from cache in prod env
     middleware: env.ENVIRONMENT === "production" ? cacher(cache) : [],
     handler: ssrHandler(() => {
@@ -45,7 +45,7 @@ export const pages: Route[] = [
     })
   },
   {
-    route: "/about",
+    path: "/about",
     middleware: [
       (ctx) => { 
         ctx.state = {
