@@ -91,14 +91,17 @@ The TypeScript `server.ts` modules describes a small framework for building HTTP
 Here are the main components:
 
 - **Server class**: which manages the HTTP server, the routes, and the middleware.
-- **Route type**: an object with path, method, middleware, and handler properties.
-- **Middleware type**: a function that receives a RequestContext and updates state or generates a response.
-- **Handler type**: a function that handles requests by receiving a RequestContext and generating a response.
 - **RequestContext class:** holds information about the server, the request, and state to be shared between middleware.
+
+Main types (`types.ts`):
+
+- **Route**: an object with path, method, middleware, and handler properties.
+- **Middleware**: a function that receives a RequestContext and updates state or generates a response.
+- **Handler**: a function that handles requests by receiving a RequestContext and generating a response.
 
 The Server class has several methods for adding and removing routes and middleware, as well as starting the server and handling requests:
 
-- **use(middleware: Middleware | Middleware[])**: adds global middleware to all server routes.
+- **use(middleware: Middleware | Middleware[] | Router)**: add global middleware or a router (and its routes).
 - **addRoute(route: Route)**: adds a route to the server.
 - **addRoutes(routes: Route[])**: adds multiple routes to the server.
 - **removeRoute(route: string)**: removes a route from the server.
@@ -126,6 +129,7 @@ Instead of adding routes to a server instance directly, a Router class instance 
 import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
 
 const server = new Peko.Server()
+
 const router = new Peko.Router()
 
 router.addRoute("/hello-log-headers", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, () => new Response("Hello world!"));
@@ -140,7 +144,7 @@ router.addRoutes([ /* array of route objects */ ]);
 
 router.removeRoute("/hello-log-headers");
 
-server.addRoutes(router.routes)
+server.use(router)
 
 server.listen()
 ```
