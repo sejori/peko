@@ -105,7 +105,7 @@ const router = new Peko.Router()
 router.addRoute("/hello-log-headers", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, () => new Response("Hello world!"));
 
 router.addRoute({
-    route: "/hello-object-log-headers",
+    path: "/hello-object-log-headers",
     middleware: async (ctx, next) => { await next(); console.log(ctx.request.headers); }, // could also be an array of middleware
     handler: () => new Response("Hello world!")
 });
