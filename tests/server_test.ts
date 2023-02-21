@@ -1,14 +1,14 @@
-import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
+import Server from "../server.ts"
 import {
-  server,
   testMiddleware2,
   testMiddleware3,
   testHandler,
   testMiddleware1
 } from "./mocks/middleware.ts"
+import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
 
 Deno.test("SERVER", async (t) => {
-  // TODO: test RequestContext creation & hostname/port config
+  const server = new Server()
   server.middleware = []
 
   await t.step("routes added with full route and string arg options", async () => {
@@ -64,7 +64,6 @@ Deno.test("SERVER", async (t) => {
   })
 
   await t.step("custom 500", async () => { 
-    server.addRoute("/error-test", () => { throw new Error("Oopsie!") })
     server.use(async (_, next) => {
       try {
         await next()
@@ -72,6 +71,7 @@ Deno.test("SERVER", async (t) => {
         return new Response("Error! :(", { status: 500 })
       }
     })
+    server.addRoute("/error-test", () => { throw new Error("Oopsie!") })
 
     const request = new Request("http://localhost:7777/error-test")
     const response = await server.requestHandler(request)
