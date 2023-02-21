@@ -18,13 +18,13 @@ setInterval(() => {
 
 // SSE route streams data from testEmitter
 server.addRoute({
-  route: "/sse",
+  path: "/sse",
   handler: sseHandler(demoEventTarget)
 })
 
 // adjust home page handler templating to include EventSource connection logic
 pages[0].handler = ssrHandler((ctx) => {
-  const appHTML = renderToString(Home(ctx.state), null, null)
+  const appHTML = renderToString(Home(), null, null)
   return htmlTemplate({
     appHTML,
     title: `<title>Peko</title>`,

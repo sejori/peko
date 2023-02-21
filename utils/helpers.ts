@@ -36,6 +36,7 @@ export const staticDir = async (dirUrl: URL, middleware?: Middleware | Middlewar
   return routes
 }
 
+// TODO: sitemap generator
 // export const generateSitemap = (server: Server) => {
 //   return server.allRoutes.map(route => {
 //     // some custom sitemap object in here
