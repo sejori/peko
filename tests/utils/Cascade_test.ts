@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext, PromiseMiddleware } from "../../server.ts"
+import { Server, RequestContext } from "../../server.ts"
 import { Cascade } from "../../utils/Cascade.ts"
 import { 
   testMiddleware1,
@@ -11,14 +11,18 @@ import {
 Deno.test("UTIL: Cascade", async (t) => {
   const testServer = new Server()
   const testContext = new RequestContext(testServer, new Request("http://localhost"))
-  const toCall = [
-    testMiddleware1 as PromiseMiddleware, 
-    testMiddleware2 as PromiseMiddleware, 
-    testMiddleware3 as PromiseMiddleware, 
-    testHandler as PromiseMiddleware
-  ]
 
-  const cascade = new Cascade(testContext, toCall)
+  const cascade = new Cascade(testContext, {
+    path: "/",
+    middleware: [
+      testMiddleware1,
+      testMiddleware2,
+      testMiddleware3,
+      testHandler
+    ],
+    handler: testHandler
+  })
+  
   const result = await cascade.start()
 
   await t.step("promisify works", () => {
