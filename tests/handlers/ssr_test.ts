@@ -1,7 +1,6 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server } from "../../Server.ts"
+import { Server, RequestContext } from "../../server.ts"
 import { ssrHandler } from "../../handlers/ssr.ts"
-import { RequestContext } from "../../types.ts"
 
 Deno.test("HANDLER: Server-side render", async (t) => {
   const server = new Server()

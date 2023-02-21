@@ -1,4 +1,5 @@
-import { RequestContext, Handler, HandlerOptions } from "../types.ts"
+import { RequestContext } from "../server.ts"
+import { Handler, HandlerOptions } from "../types.ts"
 import { Crypto } from "../utils/Crypto.ts"
 import { mergeHeaders } from "../utils/helpers.ts"
 
