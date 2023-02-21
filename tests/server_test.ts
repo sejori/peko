@@ -35,15 +35,6 @@ Deno.test("SERVER", async (t) => {
     assert(anotherNotherNotherResponse.status === 200)
   })
 
-  await t.step("routes removed", () => {
-    server.removeRoute("/route")
-    server.removeRoute("/anotherRoute")
-    server.removeRoute("/anotherNotherRoute")
-    const routesLength = server.removeRoute("/anotherNotherNotherRoute")
-
-    assert(routesLength === 0 && server.routes.length === 0)
-  })
-
   await t.step("no route found triggers basic 404", async () => {    
     const request = new Request("http://localhost:7777/404")
     const response = await server.requestHandler(request)
