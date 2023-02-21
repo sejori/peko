@@ -1,4 +1,4 @@
-import { Server } from "../server.ts"
+// import { Server } from "../server.ts"
 import { Middleware, Route } from "../types.ts"
 import { staticHandler } from "../handlers/static.ts"
 
@@ -36,8 +36,8 @@ export const staticDir = async (dirUrl: URL, middleware?: Middleware | Middlewar
   return routes
 }
 
-export const generateSitemap = (server: Server) => {
-  return server.allRoutes.map(route => {
-    // some custom sitemap object in here
-  })
-}
+// export const generateSitemap = (server: Server) => {
+//   return server.allRoutes.map(route => {
+//     // some custom sitemap object in here
+//   })
+// }
