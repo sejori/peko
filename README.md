@@ -80,7 +80,7 @@ Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) 
 
 The [Server](https://deno.land/x/peko/server.ts)</a> is the main class of Peko. It wraps Deno's [std http Server class](https://deno.land/std/http/server.ts?s=Server) and holds all route and middleware data for request handling. `Server.use` can be used to add global middleware like the popular Express and Koa frameworks.
 
-```
+```js
 import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
 
 const server = new Peko.Server();
@@ -96,7 +96,7 @@ server.listen(7777, () => console.log("Peko server started - let's go!"));
 
 Requests are matched to a mutable array of [Routes](https://doc.deno.land/https://deno.land/x/peko/server.ts/~/Route">). Routes are added and configured with their own middleware and handlers via the `addRoute`, `addRoutes`, `removeRoute` or `removeRoutes` server methods. `Peko.Router` is an alias to `Peko.Server` to assist with conventional server/router architecture across files.
 
-```
+```js
 import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
 
 const server = new Peko.Server()
@@ -127,14 +127,14 @@ We can design efficient logging/post-response operations by utilizing the middle
 
 If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
 
-```
+```js
 server.use(async (_, next) => {
     const response = await next();
     if (!response) return new Response("Would you look at that? Nothing's here!", { status: 404 });
 });
 ```
 
-```
+```js
 server.use(async (_, next) => {
     try {
         await next();
@@ -151,7 +151,7 @@ The included `staticHandler`, `ssrHandler` and `sseHandler` handlers can be plug
 
 In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. Peko provides a `ResponseCache` utility for this with configurable item lifetime. The `cacher` middleware wraps it and provides drop in handler memoization and response caching for your routes.
 
-```
+```js
 const cache = new Peko.ResponseCache({ lifetime: 5000 });
 
 server.addRoute("/do-stuff", Peko.cacher(cache), () => new Response(Date.now()));
