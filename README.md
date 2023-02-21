@@ -47,13 +47,13 @@
 
 <h2>Philosophy</h2>
 
-- <strong>Client-edge synergy</strong> - Share front-end modules across the stack for easy server-rendering and simpler development.
+- <strong>Client-edge synergy</strong> - Share modules across stack for server-rendering and simpler dev (no transpiling).
 
-- <strong>Production-ready backend</strong> - Fully-tested request routing and middleware cascading, built with stable Deno APIs.
+- <strong>Production-ready backend</strong> - Fully-tested library built with stable Deno APIs only + server profiling utility.
 
 - <strong>Software minimalism</strong> - Native JavaScript APIs first, [Deno std library](https://deno.land/std) second, then custom utilities.
 
-- <strong>Ease of adoption</strong> - Easily convert [Express](https://github.com/expressjs/express) or [Koa](https://github.com/expressjs/express) apps - familiar API and no enforced file structure.
+- <strong>Ease of adoption</strong> - Easily convert [Express](https://github.com/expressjs/express) or [Koa](https://github.com/expressjs/express) apps with familiar API and no enforced file structure.
 
 Any feature suggestions or code reviews are very welcome!
 
@@ -75,7 +75,7 @@ Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) 
 
 [The original Preact SSR example](https://github.com/sebringrose/peko/blob/main/examples/preact/app.ts) Deployed 👉 [here](https://peko.deno.dev).
 
-[Single-file auth app 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts) Deployed 👉 [here](https://peko-auth.deno.dev).
+[Single-file auth example app 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts) Deployed 👉 [here](https://peko-auth.deno.dev).
 
 [Artist portfolio site with WASM (Rust) image resizing handler](https://github.com/sebringrose/third-sun/blob/main/server.ts) Deployed 👉 [here](https://iiisun.art).
 
@@ -86,23 +86,25 @@ Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) 
 <h2>Overview</h2>
 <h3 id="#server">Server</h3>
 
-The TypeScript Server class describes a small framework for building HTTP servers with the Deno http/server module. Here are the main components:
+The TypeScript `server.ts` modules describes a small framework for building HTTP servers on top of the Deno http/server module. 
 
-- RequestContext class: holds information about the server, the request, and state to be shared between middleware.
-- Middleware type: a function that receives a RequestContext and updates state or generates a response.
-- Handler type: a function that handles requests by receiving a RequestContext and generating a response.
-- Route interface: defines the route path, method, middleware, and handler function.
-- Server class, which manages the HTTP server, the routes, and the middleware.
+Here are the main components:
 
-The Server class has several methods for adding and removing routes and middleware, as well as for starting the server and handling requests:
+- **Server class**: which manages the HTTP server, the routes, and the middleware.
+- **Route type**: an object with path, method, middleware, and handler properties.
+- **Middleware type**: a function that receives a RequestContext and updates state or generates a response.
+- **Handler type**: a function that handles requests by receiving a RequestContext and generating a response.
+- **RequestContext class:** holds information about the server, the request, and state to be shared between middleware.
 
-- use(middleware: Middleware | Middleware[]) - adds global middleware to all server routes.
-- addRoute(route: Route) - adds a route to the server.
-- addRoutes(routes: Route[]) - adds multiple routes to the server.
-- removeRoute(route: string) - removes a route from the server.
-- removeRoutes(routes: string[]) - removes multiple routes from the server.
-- listen(port?: number, onListen?: callback) - starts listening to HTTP requests on the specified port.
-- close() - stops to HTTP listener process.
+The Server class has several methods for adding and removing routes and middleware, as well as starting the server and handling requests:
+
+- **use(middleware: Middleware | Middleware[])**: adds global middleware to all server routes.
+- **addRoute(route: Route)**: adds a route to the server.
+- **addRoutes(routes: Route[])**: adds multiple routes to the server.
+- **removeRoute(route: string)**: removes a route from the server.
+- **removeRoutes(routes: string[])**: removes multiple routes from the server.
+- **listen(port?: number, onListen?: callback)**: starts listening to HTTP requests on the specified port.
+- **close()**: stops to HTTP listener process.
 
 ```js
 import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
