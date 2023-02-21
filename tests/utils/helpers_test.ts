@@ -38,5 +38,5 @@ Deno.test("UTIL: helpers", async (t) => {
     assert(text === "I was set")
   }) 
 
-  // sitemap test
+  // TODO: sitemap test
 })

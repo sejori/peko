@@ -107,5 +107,3 @@ export class Server extends Router {
     if (this.stdServer) this.stdServer.close()
   }
 }
-
-export default Server
