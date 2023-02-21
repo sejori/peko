@@ -7,7 +7,7 @@
     />
 </p>
 <h1 align="center">Peko</h1>
-<p align="center">Featherweight apps on Deno Deploy<p>
+<p align="center">Featherweight app toolkit for Deno Deploy 🐣⚡<p>
 <p align="center">
     <span>
         &nbsp;
@@ -47,21 +47,17 @@
 
 <h2>Philosophy</h2>
 
-- <strong>Client-edge synergy</strong> - Share modules and classes across the stack for simpler development.
+- <strong>Client-edge synergy</strong> - Share front-end modules across the stack for easy server-rendering and simpler development.
 
-- <strong>Production-ready backend</strong> - Cascading middleware library built on stable Deno APIs, all tested.
+- <strong>Production-ready backend</strong> - Fully-tested request routing and middleware cascading, built with stable Deno APIs.
 
-- <strong>Software minimalism</strong> - Uses native JavaScript APIs and [Deno std library](https://deno.land/std) only.
+- <strong>Software minimalism</strong> - Native JavaScript APIs first, [Deno std library](https://deno.land/std) second, then custom utilities.
 
-- <strong>Ease of adoption</strong> - Intuitive "[Express](https://github.com/expressjs/express)-like" server API with no file-system routing.
+- <strong>Ease of adoption</strong> - Easily convert [Express](https://github.com/expressjs/express) or [Koa](https://github.com/expressjs/express) apps - familiar API and no enforced file structure.
 
 Any feature suggestions or code reviews are very welcome!
 
-<h2>Examples</h2>
-
-[A secure and scalable webapp in one file 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts) Deployed 👉 [here](https://peko-auth.deno.dev).
-
-<h3>Try locally:</h3>
+<h2>Get started</h2>
 
 1. Deno is sick. [Install it](https://deno.land/manual/getting_started/installation).</a>
 
@@ -75,10 +71,38 @@ Any feature suggestions or code reviews are very welcome!
 
 Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖).
 
+<h2>App showcase</h2>
+
+[The original Preact SSR example](https://github.com/sebringrose/peko/blob/main/examples/preact/app.ts) Deployed 👉 [here](https://peko.deno.dev).
+
+[Single-file auth app 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts) Deployed 👉 [here](https://peko-auth.deno.dev).
+
+[Artist portfolio site with WASM (Rust) image resizing handler](https://github.com/sebringrose/third-sun/blob/main/server.ts) Deployed 👉 [here](https://iiisun.art).
+
+[Community-tech landing page and Markdown blog](https://github.com/shine-systems/shineponics/blob/main/server.ts) Deployed 👉 [here](https://shineponics.org).
+
+(If you want to add a project using Peko to the showcase please open a PR 🙌)
+
 <h2>Overview</h2>
 <h3 id="#server">Server</h3>
 
-The [Server](https://deno.land/x/peko/server.ts)</a> is the main class of Peko. It wraps Deno's [std http Server class](https://deno.land/std/http/server.ts?s=Server) and holds all route and middleware data for request handling. `Server.use` can be used to add global middleware like the popular Express and Koa frameworks.
+The TypeScript Server class describes a small framework for building HTTP servers with the Deno http/server module. Here are the main components:
+
+- RequestContext class: holds information about the server, the request, and state to be shared between middleware.
+- Middleware type: a function that receives a RequestContext and updates state or generates a response.
+- Handler type: a function that handles requests by receiving a RequestContext and generating a response.
+- Route interface: defines the route path, method, middleware, and handler function.
+- Server class, which manages the HTTP server, the routes, and the middleware.
+
+The Server class has several methods for adding and removing routes and middleware, as well as for starting the server and handling requests:
+
+- use(middleware: Middleware | Middleware[]) - adds global middleware to all server routes.
+- addRoute(route: Route) - adds a route to the server.
+- addRoutes(routes: Route[]) - adds multiple routes to the server.
+- removeRoute(route: string) - removes a route from the server.
+- removeRoutes(routes: string[]) - removes multiple routes from the server.
+- listen(port?: number, onListen?: callback) - starts listening to HTTP requests on the specified port.
+- close() - stops to HTTP listener process.
 
 ```js
 import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
@@ -94,7 +118,7 @@ server.listen(7777, () => console.log("Peko server started - let's go!"));
 
 <h3 id="#routing">Routing</h3>
 
-Requests are matched to a mutable array of [Routes](https://doc.deno.land/https://deno.land/x/peko/server.ts/~/Route">). Routes are added and configured with their own middleware and handlers via the `addRoute`, `addRoutes`, `removeRoute` or `removeRoutes` server methods. `Peko.Router` is an alias to `Peko.Server` to assist with conventional server/router architecture across files.
+Instead of adding routes to a server instance directly, a Router class instance can be used. Below you can also see the different ways routes can be added with `addRoute`.
 
 ```js
 import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
@@ -121,9 +145,9 @@ server.listen()
 
 <h3 id="request-handling">Request handling</h3>
 
-Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). Upon receiving a request the `server.requestHandler` will construct a [RequestContext](https://deno.land/x/peko/server.ts?s=RequestContext) and pass it into global middleware, then route-specific middleware and finally the route handler. Global and route-specific middleware are invoked in the order they are added. If a response is returned by any middleware along the chain no subsequent middleware/handler will run.
+Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). Upon receiving a request the `server.requestHandler` will construct a [RequestContext](https://deno.land/x/peko/server.ts?s=RequestContext) and cascade it through global middleware, route-specific middleware and finally the route handler. Global and route-specific middleware are invoked in the order they are added. If a response is returned by any middleware along the chain no subsequent middleware/handler will run.
 
-We can design efficient logging/post-response operations by utilizing the middleware cascade. The server returns the response into previously called middleware that implement `await next()` before responding to the client request. See the below snippet or `middleware/logger.ts` for examples of utlizing the cascade. Returning a new `Response` after awaiting `next` will overwrite the response to be sent to the client.
+The second argument to any middleware/handler is the `next` fcn. This returns a promise that resolves to the first response returned by any subsequent middleware/handler. This is useful for error-handling as well as post-response operations such as logging. See the below snippet or `middleware/logger.ts` for examples.
 
 If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
 
@@ -145,7 +169,7 @@ server.use(async (_, next) => {
 });
 ```
 
-The included `staticHandler`, `ssrHandler` and `sseHandler` handlers can be plugged straight into routes and reduce boilerplate code for serving static assets, rendering HTML on the server or streaming [CustomEvents](https://developer.mozilla.org/docs/Web/API/CustomEvent/CustomEvent) for server-sent events respectively. There are also authentication, logging and caching middleware to cover the basic set of app requirements. See `examples` for demo implementations. Of course, you can also create your own middleware or handlers and plug them into your routes.
+Peko includes a library of utilities and premade middleware/handlers for common use-cases such as server-side-rendering HTML, opening WebSockets, authentication with JWTs as well as logging and caching. See `examples` for demo implementations.
 
 <h3 id="response-caching">Response caching</h3>
 
@@ -157,9 +181,11 @@ const cache = new Peko.ResponseCache({ lifetime: 5000 });
 server.addRoute("/do-stuff", Peko.cacher(cache), () => new Response(Date.now()));
 ```
 
-<h2 id="cool">The modern edge is cool because...</h2>
+And that's it! Check out the API docs for deeper info. Otherwise happy coding 🤓
 
-The client-server gap practically disappears. We can have all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling. We can use modules and classes in the browser until users decide they want cloud compute. If we want TS source we can [emit](https://github.com/denoland/deno_emit) JS versions of code. This completely eliminates part of the traditional JavaScript toolchain, increasing project maintainability and simplicity, all while making our software even faster.
+<h2 id="cool">Motivations</h2>
+
+The modern JS edge is great because the client-server gap practically disappears. We can have all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling. We can use modules and classes in the browser until users decide they want cloud compute. If we want TS source we can [emit](https://github.com/denoland/deno_emit) JS versions of code. This completely eliminates part of the traditional JavaScript toolchain, increasing project maintainability and simplicity, all while making our software even faster.
 
 Better yet, Peko is not build for any specific frontend framework or library. You can use barebones HTML, React, Preact, Vue... you name it (if you do set up a React or Vue project please consider opening a PR to the examples). Simply plug your app-rendering logic into the [Render](https://deno.land/x/peko@v1.0.0/handlers/ssr.ts?s=Render) function of an [ssrHandler](https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts).
 
