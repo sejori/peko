@@ -1,5 +1,5 @@
-import { Middleware, Handler, Route } from "./types.ts"
-import { Cascade } from "./utils/Cascade.ts"
+import { Middleware, Handler, Route } from "../types.ts"
+import { Cascade } from "./Cascade.ts"
 
 export class Router {
   constructor(public routes: Route[] = []) {}

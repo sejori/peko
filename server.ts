@@ -1,48 +1,54 @@
 import { Server as stdServer } from "https://deno.land/std@0.174.0/http/server.ts"
-import { Router } from "./Router.ts"
-import { Cascade } from "./utils/Cascade.ts"
-import { Middleware, PromiseMiddleware, RequestContext } from "./types.ts"
+import { Router } from "./utils/Router.ts"
+import { Cascade, PromiseMiddleware } from "./utils/Cascade.ts"
+import { Middleware, Route } from "./types.ts"
 
-export class Server {
+export class RequestContext {
+  server: Server
+  request: Request
+  state: Record<string, unknown>
+
+  constructor(server: Server, request: Request, state?: Record<string, unknown>) {
+    this.server = server
+    this.request = request
+    this.state = state
+      ? state 
+      : {}
+  }
+}
+
+export class Server extends Router {
   stdServer: stdServer | undefined
   port = 7777
   hostname = "0.0.0.0"
   middleware: PromiseMiddleware[] = []
-  routers: Router[] = [new Router()] 
-  public get routes() {
-    return this.routers.map(router => router.routes).flat()
+  routers: Router[] = [] 
+  
+  public get allRoutes(): Route[] {
+    return [ this, ...this.routers].map(router => router.routes).flat()
   }
 
   constructor(config?: { 
     port?: number, 
     hostname?: string, 
   }) {
+    super()
     if (!config) return
     const { port, hostname } = config
     if (port) this.port = port
     if (hostname) this.hostname = hostname
   }
 
-  // basic Router API on default router
-  addRoute = this.routers[0].addRoute
-  removeRoute = this.routers[0].removeRoute
-  addRoutes: Router["addRoutes"] = (...args) => this.routers[0].addRoutes(args[0])
-  removeRoutes: Router["removeRoutes"] = (...args) => this.routers[0].removeRoutes(args[0])
-
-  addRouter (router: Router) {
-    return this.routers.push(router)
-  }
-
-  removeRouter (router: Router) {
-    return this.routers = this.routers.filter(existing => existing !== router)
-  }
-
   /**
-   * Add global middleware to all server routes
-   * @param middleware: Middleware[] | Middleware 
+   * Add global middleware or another router
+   * @param middleware: Middleware[] | Middleware | Router
    * @returns number - server.middleware.length
    */
-  use(middleware: Middleware | Middleware[]) {
+  use(middleware: Middleware | Middleware[] | Router) {
+    if (middleware instanceof Router) {
+      return this.routers.push(middleware)
+    }
+
     if (Array.isArray(middleware)) {
       middleware.forEach(mware => this.use(mware))
       return middleware.length
@@ -51,30 +57,31 @@ export class Server {
   }
   
   /**
-   * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
+   * Start listening to HTTP requests.
    * @param port: number
    * @param onListen: onListen callback function
    * @param onError: onListen callback function
    */
-  async listen(port?: number, onListen?: (address: Deno.Addr[]) => void): Promise<void> {
+  async listen(port?: number, onListen?: (server: stdServer) => void): Promise<void> {
     if (port) this.port = port
+    
     this.stdServer = new stdServer({ 
       port: this.port, 
       handler: (request: Request) => this.requestHandler.call(this, request) 
     })
 
     if (onListen) {
-      onListen(this.stdServer.addrs)
+      onListen(this.stdServer)
     } else {
       console.log(`Peko server started on port ${this.port} with routes:`)
       this.routes.forEach((route, i) => console.log(`${route.method} ${route.path} ${i===this.routes.length-1 ? "\n" : ""}`))
     }
 
-    await this.stdServer.listenAndServe()
+    return await this.stdServer.listenAndServe()
   }
 
   /**
-   * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
+   * Generate Response by running route middleware/handler with Cascade.
    * @param request: Request
    * @returns Promise<Response>
    */
@@ -82,26 +89,16 @@ export class Server {
     const ctx: RequestContext = new RequestContext(this, request)
     const requestURL = new URL(ctx.request.url)
 
-    const route = this.routes.find(route => 
+    const route = this.allRoutes.find(route => 
       route.path === requestURL.pathname && 
       route.method === request.method
     )
-
-    const toCall: PromiseMiddleware[] = route
-      ? [...this.middleware, ...route.middleware as PromiseMiddleware[], route.handler as PromiseMiddleware]
-      : [...this.middleware]
     
-    const result = await new Cascade(ctx, toCall).start()
-
-    if (result instanceof Response) {
-      return result
-    } else {
-      return new Response("", { status: 404 })
-    }
+    return await new Cascade(ctx, route).start()
   }
 
   /**
-   * Start listening to HTTP requests. Peko's requestHandler provides routing, cascading middleware & error handling.
+   * Stop listening to HTTP requests.
    * @param port: number
    * @param onListen: onListen callback function
    * @param onError: onListen callback function
