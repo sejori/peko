@@ -1,5 +1,6 @@
 import { contentType } from "https://deno.land/std@0.174.0/media_types/mod.ts";
-import { RequestContext, Handler, HandlerOptions } from "../server.ts"
+import { RequestContext } from "../server.ts"
+import { Handler, HandlerOptions } from "../types.ts"
 import { Crypto } from "../utils/Crypto.ts"
 import { mergeHeaders } from "../utils/helpers.ts";
 

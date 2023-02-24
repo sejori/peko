@@ -1,4 +1,4 @@
-import { Middleware } from "../server.ts"
+import { Middleware } from "../types.ts"
 import { ResponseCache } from "../utils/ResponseCache.ts";
 
 /**

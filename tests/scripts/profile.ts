@@ -1,4 +1,4 @@
-import Server from "../../server.ts"
+import { Server } from "../../server.ts"
 import {
   testMiddleware2,
   testMiddleware3,
@@ -17,15 +17,15 @@ server.addRoute("/test", [
 
 server.addRoute("/bench", () => new Response("Hello, bench!"))
 
-server.listen()
+server.listen(8000, () => {})
 
 const handleResults = await Profiler.run(server, {
   mode: "handle",
-  count: 1000
+  count: 100
 })
 const serveResults = await Profiler.run(server, {
   mode: "serve",
-  count: 1000
+  count: 100
 })
 
 console.log("handle results")

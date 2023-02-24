@@ -1,4 +1,4 @@
-import { Middleware } from "../server.ts"
+import { Middleware } from "../types.ts"
 import { Crypto } from "../utils/Crypto.ts"
 
 /**
@@ -8,7 +8,7 @@ import { Crypto } from "../utils/Crypto.ts"
  */
 export const authenticator = (crypto: Crypto, opts?: { cookie: string }): Middleware => async (ctx, next) => {
   let token = opts
-    ? ctx.request.headers.get("Cookies")!.cookie // <- fix
+    ? ctx.request.headers.get("Cookies") //!.cookie // <- fix
     : ctx.request.headers.get("Authorization")
   
   if (token) {

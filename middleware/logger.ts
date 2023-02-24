@@ -1,4 +1,4 @@
-import { Middleware } from "../server.ts"
+import { Middleware } from "../types.ts"
 
 /**
  * Generic request info logging middleware. Awaits next() so log happens post request handling.

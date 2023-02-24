@@ -1,4 +1,5 @@
-import Server, { Route } from "../server.ts"
+import { Server } from "../server.ts"
+import { Route } from "../types.ts"
 
 type ProfileConfig = {
   mode?: "serve" | "handle"
@@ -32,7 +33,7 @@ class Profiler {
       results[route.path] = { avgTime: 0, requests: [] }
 
       if (!excludedRoutes.includes(route)) {
-        for (let i=0; i<count; i++) {
+        const promises = new Array(count).fill(0).map(async () => {
           const routeUrl = new URL(`${url}${route.path}`)
           
           const start = Date.now()
@@ -41,12 +42,14 @@ class Profiler {
             : await server.requestHandler(new Request(routeUrl))
           const end = Date.now()
 
-          results[route.path].requests.push({
+          return results[route.path].requests.push({
             path: routeUrl.pathname,
             response,
             ms: end-start
           })
-        }
+        })
+
+        await Promise.all(promises)
 
         // calc avg.
         results[route.path].avgTime = results[route.path].requests

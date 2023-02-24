@@ -37,7 +37,7 @@ Deno.test("HANDLER: WebSocket", async (t) => {
   };
 
   await t.step("Socket created and message events received as expected", async () => {
-    server.listen(3000, () => null)
+    server.listen(3000)
 
     const socket = new WebSocket("ws://localhost:3000/ws")
     assert(await awaitOpen(socket))
