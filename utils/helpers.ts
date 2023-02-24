@@ -1,8 +1,5 @@
-import { 
-  Middleware, 
-  Route
-} from "../server.ts"
-
+// import { Server } from "../server.ts"
+import { Middleware, Route } from "../types.ts"
 import { staticHandler } from "../handlers/static.ts"
 
 export const mergeHeaders = (base: Headers, source: Headers) => {
@@ -38,3 +35,10 @@ export const staticDir = async (dirUrl: URL, middleware?: Middleware | Middlewar
 
   return routes
 }
+
+// TODO: sitemap generator
+// export const generateSitemap = (server: Server) => {
+//   return server.allRoutes.map(route => {
+//     // some custom sitemap object in here
+//   })
+// }

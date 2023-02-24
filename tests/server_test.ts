@@ -1,4 +1,4 @@
-import Server from "../server.ts"
+import { Server } from "../server.ts"
 import {
   testMiddleware2,
   testMiddleware3,
@@ -33,15 +33,6 @@ Deno.test("SERVER", async (t) => {
     assert(anotherResponse.status === 200)
     assert(anotherNotherResponse.status === 200)
     assert(anotherNotherNotherResponse.status === 200)
-  })
-
-  await t.step("routes removed", () => {
-    server.removeRoute("/route")
-    server.removeRoute("/anotherRoute")
-    server.removeRoute("/anotherNotherRoute")
-    const routesLength = server.removeRoute("/anotherNotherNotherRoute")
-
-    assert(routesLength === 0 && server.routes.length === 0)
   })
 
   await t.step("no route found triggers basic 404", async () => {    
