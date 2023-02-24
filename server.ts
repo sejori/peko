@@ -74,7 +74,7 @@ export class Server extends Router {
       onListen(this.stdServer)
     } else {
       console.log(`Peko server started on port ${this.port} with routes:`)
-      this.routes.forEach((route, i) => console.log(`${route.method} ${route.path} ${i===this.routes.length-1 ? "\n" : ""}`))
+      this.allRoutes.forEach((route, i) => console.log(`${route.method} ${route.path} ${i===this.routes.length-1 ? "\n" : ""}`))
     }
 
     return await this.stdServer.listenAndServe()
