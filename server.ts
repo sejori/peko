@@ -60,14 +60,19 @@ export class Server extends Router {
    * Start listening to HTTP requests.
    * @param port: number
    * @param onListen: onListen callback function
-   * @param onError: onListen callback function
+   * @param onError: error handler
    */
-  async listen(port?: number, onListen?: (server: stdServer) => void): Promise<void> {
+  async listen(
+    port?: number,
+    onListen?: (server: stdServer) => void,
+    onError?: (error: unknown) => Response | Promise<Response>
+  ): Promise<void> {
     if (port) this.port = port
     
     this.stdServer = new stdServer({ 
       port: this.port, 
-      handler: (request: Request) => this.requestHandler.call(this, request) 
+      handler: (request: Request) => this.requestHandler.call(this, request),
+      onError
     })
 
     if (onListen) {
