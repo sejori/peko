@@ -14,7 +14,7 @@ export interface staticHandlerOptions extends HandlerOptions {
  * Optionally: provide custom headers and/or body transform fcn.
  * 
  * @param fileURL: URL object of file address
- * @param opts: (optional) HandlerOptions
+ * @param opts: (optional) staticHandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
 export const staticHandler = (fileURL: URL, opts: staticHandlerOptions = {}): Handler => async (_ctx: RequestContext) => {
