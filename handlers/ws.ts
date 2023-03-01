@@ -2,8 +2,9 @@ import { Handler, HandlerOptions } from "../types.ts"
 
 /**
  * Upgrades requests with "upgrade: websocket" header to WebSocket connection.
- * Dispatches received MessageEvents to provided EventTarget and sends "send-message" CustomEvents to the socket.
- * Closes the socket when EventTarget emits "close" or "error" events.
+ * Streams type "send" CustomEvents from provided EventTarget to client.
+ * Dispatches received MessageEvents to provided EventTarget.
+ * Routes using this handler should be requested via the WebSocket browser API. 
  * @param target: EventTarget
  * @param opts: (optional) HandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>

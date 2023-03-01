@@ -10,7 +10,7 @@ export interface ssrHandlerOptions extends HandlerOptions {
 
 /**
  * Generates Response with SSRData.render result in body 
- * Sets headers "Content-Type" and "ETag" to "text/html" and bodyHash
+ * Sets headers "Content-Type" and "ETag" to "text/html" and body hash
  * @param render: (ctx: RequestContext) => string | Promise<string>
  * @param opts: (optional) ssrHandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
