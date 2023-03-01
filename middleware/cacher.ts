@@ -1,4 +1,5 @@
-import { Middleware } from "../types.ts"
+import type { RequestContext } from "../server.ts";
+import { Middleware } from "../types.ts";
 import { ResponseCache } from "../utils/ResponseCache.ts";
 
 /**
@@ -6,9 +7,15 @@ import { ResponseCache } from "../utils/ResponseCache.ts";
  * @param cache: ResponseCache
  * @returns Middleware
  */
-export const cacher = (cache: ResponseCache): Middleware => async (ctx, next) => {
-  const reqURL = new URL(ctx.request.url)
-  const key = `${reqURL.pathname}${reqURL.search}-${JSON.stringify(ctx.state)}`
+export const cacher = (cache: ResponseCache, keygen?: (ctx: RequestContext) => string): Middleware => async (ctx, next) => {
+  // default key generator
+  const defaultKeygen = (ctx: RequestContext) => {
+    const reqURL = new URL(ctx.request.url);
+    return `${ctx.request.method}-${reqURL.pathname}${reqURL.search}-${JSON.stringify(ctx.state)}`;
+  };
+  // create key from request
+  keygen ??= defaultKeygen;
+  const key = keygen(ctx) || defaultKeygen(ctx);
 
   const cacheItem = cache.get(key)
 
