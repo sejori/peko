@@ -10,6 +10,7 @@
       "useTabs": true,
       "lineWidth": 120,
       "indentWidth": 2,
+      "semiColons": false,
       "singleQuote": false,
       "proseWrap": "preserve"
     }
