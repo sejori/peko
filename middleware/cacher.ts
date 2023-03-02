@@ -13,9 +13,8 @@ const defaultKeygen = (ctx: RequestContext) => {
  * @param cache: ResponseCache
  * @returns Middleware
  */
-export const cacher = (cache: ResponseCache, keygen?: (ctx: RequestContext) => string): Middleware => async (ctx, next) => {
+export const cacher = (cache: ResponseCache, keygen = defaultKeygen): Middleware => async (ctx, next) => {
   // create key from request
-  keygen ??= defaultKeygen;
   const key = keygen(ctx) || defaultKeygen(ctx);
 
   const cacheItem = cache.get(key)
