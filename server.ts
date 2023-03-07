@@ -71,6 +71,7 @@ export class Server extends Router {
     
     this.stdServer = new stdServer({ 
       port: this.port, 
+      hostname: this.hostname,
       handler: (request: Request) => this.requestHandler.call(this, request),
       onError
     })
