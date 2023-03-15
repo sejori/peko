@@ -42,7 +42,7 @@
     </a>
 </p>
 
-<h2>Project goals:</h2>
+<h2>Project goals</h2>
 
 - <strong>Client-edge synergy</strong> - Share modules across stack for server-rendering and simpler dev (no transpiling).
 
@@ -54,15 +54,7 @@
 
 Any feature suggestions or code reviews welcome.
 
-<p align="center">
-    <img 
-        height="200px"
-        style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/twemoji_chicken.svg" alt="twemoji_chicken" 
-    />
-</p>
-
-<h2>Get started</h2>
+<h2>Get started with the Preact demo</h2>
 
 1. Deno is sick. [Install it](https://deno.land/manual/getting_started/installation).</a>
 
@@ -76,15 +68,21 @@ Any feature suggestions or code reviews welcome.
 
 Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖).
 
-<h2>App showcase</h2>
+<p align="center">
+    <img 
+        height="200px"
+        style="margin: 1rem auto;"
+        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/twemoji_chicken.svg" alt="twemoji_chicken" 
+    />
+</p>
 
-[The original Preact SSR example](https://github.com/sebringrose/peko/blob/main/examples/preact/app.ts) Deployed 👉 [here](https://peko.deno.dev).
+<h2>App showcase</h2>
 
 [Single-file auth example app 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts) Deployed 👉 [here](https://peko-auth.deno.dev).
 
 [Artist portfolio site with WASM (Rust) image resizing handler](https://github.com/sebringrose/third-sun/blob/main/server.ts) Deployed 👉 [here](https://iiisun.art).
 
-[Community-tech landing page and Markdown blog](https://github.com/shine-systems/shineponics/blob/main/server.ts) Deployed 👉 [here](https://shineponics.org).
+[Green-tech landing page and Markdown blog](https://github.com/shine-systems/shineponics/blob/main/server.ts) Deployed 👉 [here](https://shineponics.org).
 
 (If you want to add a project using Peko to the showcase please open a PR 🙌)
 
