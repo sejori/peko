@@ -8,7 +8,7 @@
 <p align="center">
     <span>
         &nbsp;
-        <a href="#events">
+        <a href="#server">
             Server
         </a>
         &nbsp;
@@ -87,7 +87,7 @@ Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) 
 </p>
 
 <h2>Overview</h2>
-<h3 id="#server">Server</h3>
+<h3 id="server">Server</h3>
 
 The TypeScript `server.ts` modules describes a small framework for building HTTP servers on top of the Deno http/server module. 
 
@@ -124,7 +124,7 @@ server.addRoute("/hello", () => new Response("Hello world!"));
 server.listen(7777, () => console.log("Peko server started - let's go!"));
 ```
 
-<h3 id="#routing">Routing</h3>
+<h3 id="routing">Routing</h3>
 
 Instead of adding routes to a server instance directly, a Router class instance can be used. Below you can also see the different ways routes can be added with `addRoute`.
 
