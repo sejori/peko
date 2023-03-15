@@ -42,14 +42,6 @@
     </a>
 </p>
 
-<p align="center">
-    <img 
-        height="200px"
-        style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/twemoji_chicken.svg" alt="twemoji_chicken" 
-    />
-</p>
-
 <h2>Project goals:</h2>
 
 - <strong>Client-edge synergy</strong> - Share modules across stack for server-rendering and simpler dev (no transpiling).
@@ -60,7 +52,15 @@
 
 - <strong>Ease of adoption</strong> - Easily convert [Express](https://github.com/expressjs/express) or [Koa](https://github.com/expressjs/express) apps with familiar API and no enforced file structure.
 
-Any feature suggestions or code reviews are very welcome!
+Any feature suggestions or code reviews welcome.
+
+<p align="center">
+    <img 
+        height="200px"
+        style="margin: 1rem auto;"
+        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/twemoji_chicken.svg" alt="twemoji_chicken" 
+    />
+</p>
 
 <h2>Get started</h2>
 
