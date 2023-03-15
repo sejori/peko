@@ -4,7 +4,7 @@ const Layout = ({ navColor, navLink, children }) => {
   return html`
     <nav style=${navStyle(navColor)}>
       <div class="container align-center">
-        <img height="200px" width="200px" style="margin: 1rem;" src="/assets/DALL-Echu.webp" alt="peko-chick" />  
+        <img height="200px" width="1000px" style="max-width:100%; margin: 1rem;" src="/assets/logo_dark_alpha" alt="peko-chick" />  
         <h1 style="text-align: center;">Peko</h1>
         <h2 style="text-align: center;"><i>Featherweight <a href="/${navLink}">apps</a> on Deno Deploy</i></h2>
       </div>
