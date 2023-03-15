@@ -5,8 +5,7 @@ const Layout = ({ navColor, navLink, children }) => {
     <nav style=${navStyle(navColor)}>
       <div class="container align-center">
         <img height="200px" width="1000px" style="max-width:100%; margin: 1rem;" src="/assets/logo_dark_alpha.webp" alt="peko-chick" />  
-        <h1 style="text-align: center;">Featherweight HTTP server framework for the stateless edge</h1>
-        <h2><i>I'm an <a href="/${navLink}">app</a></i></h2>
+        <h1 style="text-align: center;">Featherweight <a href="/${navLink}">apps</a> on the stateless edge</h1>
       </div>
     </nav>
     <main style="padding: 1rem;" class="container">

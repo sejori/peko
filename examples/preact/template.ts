@@ -24,9 +24,7 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
 
       img { max-width: 100%; object-fit: contain; }
       li { margin: 10px 0; }
-      a { color: royalblue; }
-      a:visited { color: hotpink; }
-      h1 { font-size: 3rem; color: #fad803; margin: 1rem; }
+      h1 { margin: 1rem; }
       h2 { font-weight: normal; }
 
       main { flex: 1; }
@@ -45,15 +43,13 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
       }
 
       .btn-lg-primary {
-        border: solid 1px limegreen;
-        background-color: turquoise;
+        margin: 0.5rem;  
         padding: 0.5rem;
         font-size: 1rem;
       }
 
       .btn-lg-secondary {
-        border: solid 1px red;
-        background-color: orange;
+        margin: 0.5rem;
         padding: 0.5rem;
         font-size: 1rem;
       }
