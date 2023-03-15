@@ -57,12 +57,6 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
         padding: 0.5rem;
         font-size: 1rem;
       }
-
-      footer {
-        background-color: saddlebrown;
-        color: white;
-        padding-top: 20px;
-      }
     </style>
   </head>
   <body>
