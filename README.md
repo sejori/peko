@@ -68,15 +68,7 @@ Any feature suggestions or code reviews welcome.
 
 Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖).
 
-<p align="center">
-    <img 
-        height="200px"
-        style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/twemoji_chicken.svg" alt="twemoji_chicken" 
-    />
-</p>
-
-<h2>App showcase</h2>
+<h2>Showcase</h2>
 
 [Single-file auth example app 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts) Deployed 👉 [here](https://peko-auth.deno.dev).
 
@@ -85,6 +77,14 @@ Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) 
 [Green-tech landing page and Markdown blog](https://github.com/shine-systems/shineponics/blob/main/server.ts) Deployed 👉 [here](https://shineponics.org).
 
 (If you want to add a project using Peko to the showcase please open a PR 🙌)
+
+<p align="center">
+    <img 
+        height="200px"
+        style="margin: 1rem auto;"
+        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/twemoji_chicken.svg" alt="twemoji_chicken" 
+    />
+</p>
 
 <h2>Overview</h2>
 <h3 id="#server">Server</h3>
