@@ -26,7 +26,7 @@ const Layout = ({ navColor, navLink, children }) => {
         <a style=${navLinkStyle} href="/">Home</a>
         <a style=${navLinkStyle} href="/about">About</a>
       </div>
-      <p style="margin: 10px; text-align: center">Made by <a style="color: white;" href="https://github.com/sebringrose">Seb Ringrose</a></p>
+      <p style="color: black; margin: 10px; text-align: center">Made by <a style="color: white;" href="https://github.com/sebringrose">Seb Ringrose</a></p>
     </footer>
   `   
 }
