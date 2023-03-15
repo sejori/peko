@@ -5,14 +5,14 @@ const Layout = ({ navColor, navLink, children }) => {
     <nav style=${navStyle(navColor)}>
       <div class="container align-center">
         <img height="200px" width="1000px" style="max-width:100%; margin: 1rem;" src="/assets/logo_dark_alpha.webp" alt="peko-chick" />  
-        <h1 style="text-align: center;">Peko</h1>
-        <h2 style="text-align: center;"><i>Featherweight <a href="/${navLink}">apps</a> on Deno Deploy</i></h2>
+        <h1 style="text-align: center;">Featherweight HTTP server framework for the stateless edge</h1>
+        <h2><i>I'm an <a href="/${navLink}">app</a></i></h2>
       </div>
     </nav>
     <main style="padding: 1rem;" class="container">
       ${children}
     </main>
-    <footer>
+    <footer style=${footerStyle}>
       <div class="container row">
         <a style=${navLinkStyle} href="https://github.com/sebringrose/peko">
           <img src="https://github.githubassets.com/images/modules/logos_page/Octocat.png" width=100 height=100 alt=GitHub/>
@@ -27,7 +27,7 @@ const Layout = ({ navColor, navLink, children }) => {
         <a style=${navLinkStyle} href="/">Home</a>
         <a style=${navLinkStyle} href="/about">About</a>
       </div>
-      <p style="margin: 10px; text-align: center">Built by <a style="color: white;" href="https://github.com/sebringrose">Seb Ringrose</a></p>
+      <p style="margin: 10px; text-align: center">Made by <a style="color: white;" href="https://github.com/sebringrose">Seb Ringrose</a></p>
     </footer>
   `   
 }
@@ -51,5 +51,9 @@ const navLinkStyle = `
   color: white;
   padding: 0px 5px;
 `
+
+const footerStyle = `
+  padding-top: 20px;
+`;
   
 export default Layout
