@@ -1,6 +1,6 @@
 <p align="center">
     <img 
-        height="200px"
+        height="300px"
         style="margin: 1rem auto;"
         src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/logo_dark_bg.png" alt="peko-logo" 
     />
@@ -40,6 +40,14 @@
     <a href="https://doc.deno.land/https://deno.land/x/peko/mod.ts">
         API DOCS
     </a>
+</p>
+
+<p align="center">
+    <img 
+        height="200px"
+        style="margin: 1rem auto;"
+        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/twemoji_chicken.svg" alt="twemoji_chicken" 
+    />
 </p>
 
 <h2>Project goals:</h2>
