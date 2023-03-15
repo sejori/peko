@@ -62,7 +62,7 @@ Any feature suggestions or code reviews welcome.
 
 3. `$ deno task start:dev`
 
-<strong>Note: [Lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html)</strong> VS Code plugin recommended if using HTM & Preact.
+<strong>Note: [Lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html)</strong> VS Code plugin recommended.
 
 <h2>Deployment</h2>
 
