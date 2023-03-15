@@ -3,11 +3,9 @@
         height="200px"
         width="200px"
         style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/DALL-Echu.webp" alt="DALL-Echu" 
+        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/logo_dark_bg.png" alt="peko-logo" 
     />
 </p>
-<h1 align="center">Peko</h1>
-<p align="center">Featherweight app toolkit for Deno Deploy 🐣⚡<p>
 <p align="center">
     <span>
         &nbsp;
@@ -45,7 +43,7 @@
     </a>
 </p>
 
-<h2>Philosophy</h2>
+<h2>Project goals:</h2>
 
 - <strong>Client-edge synergy</strong> - Share modules across stack for server-rendering and simpler dev (no transpiling).
 
