@@ -4,7 +4,7 @@ import Layout from "../components/Layout.js"
 
 const Home = () => {
   return html`
-    <${Layout} navLink="about" navColor="forestgreen">
+    <${Layout} navLink="about" navColor="#101727">
       <h2>Features</h2>
       <ul>
         <li>Simple and familiar syntax, built on top of Deno's <a href="https://deno.land/std/http/server.ts?s=Server">std/http</a>.</li>

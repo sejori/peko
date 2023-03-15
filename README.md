@@ -1,14 +1,14 @@
 <p align="center">
     <img 
-        height="200px"
+        height="300px"
         style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/logo_dark_bg.png" alt="peko-logo" 
+        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/logo_dark_bg.webp" alt="peko-logo" 
     />
 </p>
 <p align="center">
     <span>
         &nbsp;
-        <a href="#events">
+        <a href="#server">
             Server
         </a>
         &nbsp;
@@ -42,7 +42,7 @@
     </a>
 </p>
 
-<h2>Project goals:</h2>
+<h2>Project goals</h2>
 
 - <strong>Client-edge synergy</strong> - Share modules across stack for server-rendering and simpler dev (no transpiling).
 
@@ -52,9 +52,9 @@
 
 - <strong>Ease of adoption</strong> - Easily convert [Express](https://github.com/expressjs/express) or [Koa](https://github.com/expressjs/express) apps with familiar API and no enforced file structure.
 
-Any feature suggestions or code reviews are very welcome!
+Any feature suggestions or code reviews welcome.
 
-<h2>Get started</h2>
+<h2>Get started with the Preact demo</h2>
 
 1. Deno is sick. [Install it](https://deno.land/manual/getting_started/installation).</a>
 
@@ -62,26 +62,32 @@ Any feature suggestions or code reviews are very welcome!
 
 3. `$ deno task start:dev`
 
-<strong>Note: [Lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html)</strong> VS Code plugin recommended if using HTM & Preact.
+<strong>Note: [Lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html)</strong> VS Code plugin recommended.
 
 <h2>Deployment</h2>
 
 Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖).
 
-<h2>App showcase</h2>
-
-[The original Preact SSR example](https://github.com/sebringrose/peko/blob/main/examples/preact/app.ts) Deployed 👉 [here](https://peko.deno.dev).
+<h2>Showcase</h2>
 
 [Single-file auth example app 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts) Deployed 👉 [here](https://peko-auth.deno.dev).
 
 [Artist portfolio site with WASM (Rust) image resizing handler](https://github.com/sebringrose/third-sun/blob/main/server.ts) Deployed 👉 [here](https://iiisun.art).
 
-[Community-tech landing page and Markdown blog](https://github.com/shine-systems/shineponics/blob/main/server.ts) Deployed 👉 [here](https://shineponics.org).
+[Green-tech landing page and Markdown blog](https://github.com/shine-systems/shineponics/blob/main/server.ts) Deployed 👉 [here](https://shineponics.org).
 
 (If you want to add a project using Peko to the showcase please open a PR 🙌)
 
+<p align="center">
+    <img 
+        height="200px"
+        style="margin: 1rem auto;"
+        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/twemoji_chicken.svg" alt="twemoji_chicken" 
+    />
+</p>
+
 <h2>Overview</h2>
-<h3 id="#server">Server</h3>
+<h3 id="server">Server</h3>
 
 The TypeScript `server.ts` modules describes a small framework for building HTTP servers on top of the Deno http/server module. 
 
@@ -118,7 +124,7 @@ server.addRoute("/hello", () => new Response("Hello world!"));
 server.listen(7777, () => console.log("Peko server started - let's go!"));
 ```
 
-<h3 id="#routing">Routing</h3>
+<h3 id="routing">Routing</h3>
 
 Instead of adding routes to a server instance directly, a Router class instance can be used. Below you can also see the different ways routes can be added with `addRoute`.
 

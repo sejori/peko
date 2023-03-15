@@ -4,7 +4,7 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/assets/DALL-Echu.webp">
+    <link rel="icon" href="/assets/twemoji_chick.svg">
     
     ${tags && tags.title}
     <meta name="description" content="The Featherweight Deno SSR Library">
@@ -24,9 +24,7 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
 
       img { max-width: 100%; object-fit: contain; }
       li { margin: 10px 0; }
-      a { color: royalblue; }
-      a:visited { color: hotpink; }
-      h1 { font-size: 3rem; color: #fad803; margin: 1rem; }
+      h1 { margin: 1rem; }
       h2 { font-weight: normal; }
 
       main { flex: 1; }
@@ -45,23 +43,15 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
       }
 
       .btn-lg-primary {
-        border: solid 1px limegreen;
-        background-color: turquoise;
+        margin: 0.5rem;  
         padding: 0.5rem;
         font-size: 1rem;
       }
 
       .btn-lg-secondary {
-        border: solid 1px red;
-        background-color: orange;
+        margin: 0.5rem;
         padding: 0.5rem;
         font-size: 1rem;
-      }
-
-      footer {
-        background-color: saddlebrown;
-        color: white;
-        padding-top: 20px;
       }
     </style>
   </head>
