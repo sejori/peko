@@ -1,7 +1,6 @@
 <p align="center">
     <img 
         height="200px"
-        width="200px"
         style="margin: 1rem auto;"
         src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/logo_dark_bg.png" alt="peko-logo" 
     />
