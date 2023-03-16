@@ -13,8 +13,15 @@ const About = (props) => {
       </div>
 
       <img src="/assets/lighthouse-score.png" alt="lighthouse-score" />
-      <p>Need I say more?</p>
+
+      <p>
+        This website is appified with the Preact JavaScript library.
+        It even uses localStorage to store state locally between page loads 🤯.
+        Check out the 👉 <a href="https://github.com/sebringrose/peko/tree/main/examples/preact">source code here</a> 👈.
+      </p>
+
       <${App} />
+
       <p>Psst... Hey devs, the edge can do a lot more than just serve static files. Try POSTing some text to <code>/api/parrot</code>.</p>
     </${Layout}>
   `
