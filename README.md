@@ -78,14 +78,6 @@ Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) 
 
 (If you want to add a project using Peko to the showcase please open a PR 🙌)
 
-<p align="center">
-    <img 
-        height="200px"
-        style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/twemoji_chicken.svg" alt="twemoji_chicken" 
-    />
-</p>
-
 <h2>Overview</h2>
 <h3 id="server">Server</h3>
 
