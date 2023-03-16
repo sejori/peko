@@ -14,13 +14,13 @@ const App = () => {
       </p>
       <${List} data=${dataArray} />
       <button 
-        class="btn-lg-primary" 
+        style=${btnLgStyle} 
         onClick=${() => setDataArray(dataArray => [...dataArray, `Item ${dataArray.length}`])}
       >
         add item
       </button>
       <button 
-        class="btn-lg-secondary" 
+        style=${btnLgStyle} 
         onClick=${() => setDataArray(dataArray => dataArray.slice(0, dataArray.length-1))}
       >
         remove item
@@ -28,5 +28,11 @@ const App = () => {
     </div>
   `
 }
+
+const btnLgStyle = `
+    margin: 0.5rem;  
+    padding: 0.5rem;
+    font-size: 1rem;
+`
 
 export default App
