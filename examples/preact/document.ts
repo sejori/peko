@@ -41,18 +41,6 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
         flex-direction: column;
         align-items: center;
       }
-
-      .btn-lg-primary {
-        margin: 0.5rem;  
-        padding: 0.5rem;
-        font-size: 1rem;
-      }
-
-      .btn-lg-secondary {
-        margin: 0.5rem;
-        padding: 0.5rem;
-        font-size: 1rem;
-      }
     </style>
   </head>
   <body>
