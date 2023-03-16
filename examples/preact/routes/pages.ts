@@ -10,7 +10,7 @@ import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,
 // Preact page components and HTML template for ssrHandler render logic
 import Home from "../src/pages/Home.js"
 import About from "../src/pages/About.js"
-import htmlTemplate from "../template.ts"
+import htmlTemplate from "../document.ts"
 
 const cache = new ResponseCache()
 const env = Deno.env.toObject()

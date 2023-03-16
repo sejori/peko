@@ -4,7 +4,8 @@ import { mergeHeaders } from "../utils/helpers.ts"
 const encoder = new TextEncoder()
 
 /**
- * Streams "data" events from provided EventTarget to Response body. Call Response.body.cancel() to end.
+ * Streams type "send" CustomEvents from provided EventTarget to Response body. 
+ * Routes using this handler should be requested via the EventSource browser API. 
  * @param target: EventTarget
  * @param opts: (optional) HandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
