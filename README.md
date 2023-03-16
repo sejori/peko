@@ -1,17 +1,14 @@
 <p align="center">
     <img 
-        height="200px"
-        width="200px"
+        height="300px"
         style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/DALL-Echu.webp" alt="DALL-Echu" 
+        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/logo_dark_bg.webp" alt="peko-logo" 
     />
 </p>
-<h1 align="center">Peko</h1>
-<p align="center">Featherweight app toolkit for Deno Deploy 🐣⚡<p>
 <p align="center">
     <span>
         &nbsp;
-        <a href="#events">
+        <a href="#server">
             Server
         </a>
         &nbsp;
@@ -45,7 +42,7 @@
     </a>
 </p>
 
-<h2>Philosophy</h2>
+<h2>Project goals</h2>
 
 - <strong>Client-edge synergy</strong> - Share modules across stack for server-rendering and simpler dev (no transpiling).
 
@@ -55,9 +52,9 @@
 
 - <strong>Ease of adoption</strong> - Easily convert [Express](https://github.com/expressjs/express) or [Koa](https://github.com/expressjs/express) apps with familiar API and no enforced file structure.
 
-Any feature suggestions or code reviews are very welcome!
+Any feature suggestions or code reviews welcome.
 
-<h2>Get started</h2>
+<h2>Get started with the Preact demo</h2>
 
 1. Deno is sick. [Install it](https://deno.land/manual/getting_started/installation).</a>
 
@@ -65,26 +62,32 @@ Any feature suggestions or code reviews are very welcome!
 
 3. `$ deno task start:dev`
 
-<strong>Note: [Lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html)</strong> VS Code plugin recommended if using HTM & Preact.
+<strong>Note: [Lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html)</strong> VS Code plugin recommended.
 
 <h2>Deployment</h2>
 
 Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖).
 
-<h2>App showcase</h2>
-
-[The original Preact SSR example](https://github.com/sebringrose/peko/blob/main/examples/preact/app.ts) Deployed 👉 [here](https://peko.deno.dev).
+<h2>Showcase</h2>
 
 [Single-file auth example app 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts) Deployed 👉 [here](https://peko-auth.deno.dev).
 
 [Artist portfolio site with WASM (Rust) image resizing handler](https://github.com/sebringrose/third-sun/blob/main/server.ts) Deployed 👉 [here](https://iiisun.art).
 
-[Community-tech landing page and Markdown blog](https://github.com/shine-systems/shineponics/blob/main/server.ts) Deployed 👉 [here](https://shineponics.org).
+[Green-tech landing page and Markdown blog](https://github.com/shine-systems/shineponics/blob/main/server.ts) Deployed 👉 [here](https://shineponics.org).
 
 (If you want to add a project using Peko to the showcase please open a PR 🙌)
 
+<p align="center">
+    <img 
+        height="200px"
+        style="margin: 1rem auto;"
+        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/twemoji_chicken.svg" alt="twemoji_chicken" 
+    />
+</p>
+
 <h2>Overview</h2>
-<h3 id="#server">Server</h3>
+<h3 id="server">Server</h3>
 
 The TypeScript `server.ts` modules describes a small framework for building HTTP servers on top of the Deno http/server module. 
 
@@ -121,7 +124,7 @@ server.addRoute("/hello", () => new Response("Hello world!"));
 server.listen(7777, () => console.log("Peko server started - let's go!"));
 ```
 
-<h3 id="#routing">Routing</h3>
+<h3 id="routing">Routing</h3>
 
 Instead of adding routes to a server instance directly, a Router class instance can be used. Below you can also see the different ways routes can be added with `addRoute`.
 
@@ -151,9 +154,18 @@ server.listen()
 
 <h3 id="request-handling">Request handling</h3>
 
-Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). Upon receiving a request the `server.requestHandler` will construct a [RequestContext](https://deno.land/x/peko/server.ts?s=RequestContext) and cascade it through global middleware, route-specific middleware and finally the route handler. Global and route-specific middleware are invoked in the order they are added. If a response is returned by any middleware along the chain no subsequent middleware/handler will run.
+Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). Upon receiving a request the `Server` will construct a [RequestContext](https://deno.land/x/peko/server.ts?s=RequestContext) and cascade it through any global middleware, then route middleware and finally the route handler. Global and route middleware are invoked in the order they are added. If a response is returned by any middleware along the chain no subsequent middleware/handler will run.
 
-The second argument to any middleware/handler is the `next` fcn. This returns a promise that resolves to the first response returned by any subsequent middleware/handler. This is useful for error-handling as well as post-response operations such as logging. See the below snippet or `middleware/logger.ts` for examples.
+Peko comes with a library of utilities, middleware and handlers for common route use-cases, such as:
+- server-side-rendering
+- opening WebSockets
+- JWT signing/verifying & authentication
+- logging
+- caching
+
+See `handlers`, `mmiddleware` or `utils` for source, or dive into `examples` for demo implementations. 
+
+The second argument to any middleware is the `next` fcn. This returns a promise that resolves to the first response returned by any subsequent middleware/handler. This is useful for error-handling as well as post-response operations such as logging. See the below snippet or `middleware/logger.ts` for examples.
 
 If no matching route is found for a request an empty 404 response is sent. If an error occurs in handling a request an empty 500 response is sent. Both of these behaviours can be overwritten with the following middleware:
 
@@ -175,8 +187,6 @@ server.use(async (_, next) => {
 });
 ```
 
-Peko includes a library of utilities and premade middleware/handlers for common use-cases such as server-side-rendering HTML, opening WebSockets, authentication with JWTs as well as logging and caching. See `examples` for demo implementations.
-
 <h3 id="response-caching">Response caching</h3>
 
 In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. Peko provides a `ResponseCache` utility for this with configurable item lifetime. The `cacher` middleware wraps it and provides drop in handler memoization and response caching for your routes.
@@ -197,4 +207,4 @@ Better yet, Peko is not build for any specific frontend framework or library. Yo
 
 This is all made possible by powerful new JavaScript tools. Deno is built to the [ECMAScript](https://tc39.es/) specification</a>. This makes it compatible with browser JavaScript which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like [Preact](https://github.com/preactjs/preact) combined with [htm](https://github.com/developit/htm) offer lightning fast client-side hydration with a browser-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and loads of community tools for your back-end needs.
 
-This project started out of excitement for the elegancy of Deno and the freedom it would bring to the JavaScript community. If you are interested in contributing please submit a PR or get in contact :D
+This project started out of excitement for the elegancy of Deno and the freedom it would bring to the JavaScript community. If you are interested in contributing please submit a PR or get in contact ^^
