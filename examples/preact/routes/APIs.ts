@@ -1,9 +1,19 @@
 import { 
   RequestContext, 
-  Route
+  Route,
+  sseHandler
 } from "../../../mod.ts" // <- https://deno.land/x/peko/mod.ts
 
+const demoEventTarget = new EventTarget()
+setInterval(() => {
+  demoEventTarget.dispatchEvent(new CustomEvent("send", { detail: Math.random() }))
+}, 2500)
+
 export const APIs: Route[] = [
+  {
+    path: "/sse",
+    handler: sseHandler(demoEventTarget)
+  },
   {
     path: "/api/parrot",
     method: "POST",
