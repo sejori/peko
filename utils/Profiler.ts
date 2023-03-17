@@ -21,6 +21,12 @@ type ProfileResults = Record<
 >
 
 class Profiler {
+  /**
+   * Benchmark performance of all server routes one at a time
+   * @param server 
+   * @param config 
+   * @returns results: ProfileResults
+   */
   static async run(server: Server, config?: ProfileConfig) {
     const url = (config && config.url) || `http://${server.hostname}:${server.port}`
     const count = (config && config.count) || 100
