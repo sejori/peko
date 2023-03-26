@@ -49,8 +49,9 @@ export class Crypto {
    * @param contents: string
    * @returns hashHex: string
    */
-  async hash(contents: string): Promise<string> {
-    const hashBuffer = await crypto.subtle.digest(this.algData.hash, encoder.encode(contents))
+  async hash(contents: BodyInit): Promise<string> {
+    const temp = new Response(contents) // how to array buffer all the things
+    const hashBuffer = await crypto.subtle.digest(this.algData.hash, await temp.arrayBuffer())
     return encodeB64(hashBuffer)
   }
 

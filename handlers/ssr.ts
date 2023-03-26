@@ -3,7 +3,7 @@ import { Handler, HandlerOptions } from "../types.ts"
 import { Crypto } from "../utils/Crypto.ts"
 import { mergeHeaders } from "../utils/helpers.ts"
 
-export type Render = (ctx: RequestContext) => string | Promise<string>
+export type Render = (ctx: RequestContext) => BodyInit | Promise<BodyInit>
 export interface ssrHandlerOptions extends HandlerOptions {
   crypto?: Crypto
 }
