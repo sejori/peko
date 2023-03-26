@@ -19,15 +19,13 @@ export const ssrHandler = (render: Render, opts: ssrHandlerOptions = {}): Handle
   if (!opts.crypto) {
     opts.crypto = new Crypto(crypto.randomUUID())
   }
-  
-  const HTML = await render(ctx)   
-  const hashString = await opts.crypto.hash(HTML)
 
+  const hashString = await opts.crypto.hash(await render(ctx))
   const headers = new Headers({
     "Content-Type": "text/html; charset=utf-8",
     "ETag": hashString
   })
   if (opts.headers) mergeHeaders(headers, opts.headers)
 
-  return new Response(HTML, { headers })
+  return new Response(await render(ctx), { headers })
 }
