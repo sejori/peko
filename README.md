@@ -42,19 +42,19 @@
     </a>
 </p>
 
-<h2>Project goals</h2>
+<h2>Philosophy</h2>
 
-- <strong>Client-edge synergy</strong> - Share modules across stack for server-rendering and simpler dev (no transpiling).
+- <strong>Featherweight</strong> - Core is browser-native JavaScript and Deno std library only + no build-time tooling.
 
-- <strong>Production-ready backend</strong> - Fully-tested library built with stable Deno APIs only + server profiling utility.
+- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + utility classes.
 
-- <strong>Software minimalism</strong> - Native JavaScript APIs first, [Deno std library](https://deno.land/std) second, then custom utilities.
+- <strong>Prod-ready</strong> - Fully-tested TypeScript source built with stable Deno APIs + server profiling utility.
 
-- <strong>Ease of adoption</strong> - Easily convert [Express](https://github.com/expressjs/express) or [Koa](https://github.com/expressjs/express) apps with familiar API and no enforced file structure.
+- <strong>Community-driven</strong> - Community-made 3rd-party integrations + PRs welcome.
 
 Any feature suggestions or code reviews welcome.
 
-<h2>Get started with the Preact demo</h2>
+<h2>Get started with the Preact demo app</h2>
 
 1. Deno is sick. [Install it](https://deno.land/manual/getting_started/installation).</a>
 
