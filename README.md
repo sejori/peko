@@ -46,7 +46,7 @@
 
 - <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library + no build-time tooling
 
-- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + middleware, handlers and utility classes
+- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + premade middleware, handlers and utility classes
 
 - <strong>Prod-ready</strong> - Fully-tested TypeScript source using stable Deno APIs + server profiling utility
 
