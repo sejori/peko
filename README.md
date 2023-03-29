@@ -44,13 +44,13 @@
 
 <h2>Philosophy</h2>
 
-- <strong>Featherweight</strong> - Core is browser-native JavaScript and Deno std library only + no build-time tooling.
+- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library core with no build-time tooling.
 
-- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + utility classes.
+- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API with middleware, handlers and utility classes.
 
 - <strong>Prod-ready</strong> - Fully-tested TypeScript source built with stable Deno APIs + server profiling utility.
 
-- <strong>Community-driven</strong> - Community-made 3rd-party integrations + PRs welcome.
+- <strong>Community-driven</strong> - Community-made 3rd-party integrations. Code reviews and PRs welcome.
 
 <h2>Get started with the Preact demo app</h2>
 
