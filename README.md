@@ -44,13 +44,13 @@
 
 <h2>Philosophy</h2>
 
-- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library + no build-time tooling = tiny apps.
+- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library + no build-time tooling
 
-- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + middleware, handlers and utility classes = simple apps.
+- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + middleware, handlers and utility classes
 
-- <strong>Prod-ready</strong> - Fully-tested TypeScript source built + stable Deno APIs + server profiling utility = reliabile apps.
+- <strong>Prod-ready</strong> - Fully-tested TypeScript source using stable Deno APIs + server profiling utility
 
-- <strong>Community-driven</strong> - Popular tool integrations + code reviews = easy apps. 
+- <strong>Community-driven</strong> - Popular tool integrations + code reviews 
 
 <h2>Get started with the Preact demo app</h2>
 
