@@ -52,8 +52,6 @@
 
 - <strong>Community-driven</strong> - Community-made 3rd-party integrations + PRs welcome.
 
-Any feature suggestions or code reviews welcome.
-
 <h2>Get started with the Preact demo app</h2>
 
 1. Deno is sick. [Install it](https://deno.land/manual/getting_started/installation).</a>
