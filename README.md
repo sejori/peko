@@ -51,7 +51,7 @@
 
 - <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + full-stack library
 
-- <strong>Prod-ready</strong> - Fully-tested TypeScript source using stable Deno APIs + server profiling utility
+- <strong>Production-ready</strong> - High test coverage + stable Deno APIs + server profiling utility
 
 - <strong>Community-driven</strong> - Popular tool integrations + contributions encouraged 
 
