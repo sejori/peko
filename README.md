@@ -6,7 +6,7 @@
     />
 </p>
 
-<h1>Peko</h1>
+<h1 align="center">Peko</h1>
 
 - <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library + no build-time tooling
 
