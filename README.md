@@ -2,7 +2,7 @@
     <img 
         height="300px"
         style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/Untitled_Artwork.png" alt="peko-logo" 
+        src="https://github.com/sebringrose/peko/blob/main/examples/preact/src/assets/twemoji_chicken.svg" alt="peko-logo" 
     />
 </p>
 <p align="center">
