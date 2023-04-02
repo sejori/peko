@@ -72,11 +72,11 @@
 
 <h2>Showcase</h2>
 
-[iiisun.art](https://iiisun.art) - [source](https://github.com/sebringrose/third-sun/blob/main/server.ts)
+[iiisun.art](https://iiisun.art) - artistic storefront built with Deno, Peko, React, ImageMagick_deno [source](https://github.com/sebringrose/third-sun/blob/main/server.ts)
 
-[shineponics.org](https://shineponics.org) - [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
+[shineponics.org](https://shineponics.org) - smart-farming PaaS built with Deno, Peko, React, Google Cloud Platform [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
 
-[peko-auth.deno.dev](https://peko-auth.deno.dev) - [source](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
+[peko-auth.deno.dev](https://peko-auth.deno.dev) - demo app built with Deno, Peko, Preact [source](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
 
 PR to add your project to the showcase 🙌
 
