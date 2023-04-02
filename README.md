@@ -2,7 +2,7 @@
     <img 
         height="300px"
         style="margin: 1rem auto;"
-        src="https://github.com/sebringrose/peko/blob/main/examples/preact/src/assets/twemoji_chicken.svg" alt="peko-logo" 
+        src="https://github.com/sebringrose/peko/blob/main/examples/preact/src/assets/twemoji_chick.svg" alt="peko-logo" 
     />
 </p>
 
@@ -49,7 +49,7 @@
 
 - <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library + no build-time tooling
 
-- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + premade middleware, handlers and utility classes
+- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + full-stack library
 
 - <strong>Prod-ready</strong> - Fully-tested TypeScript source using stable Deno APIs + server profiling utility
 
