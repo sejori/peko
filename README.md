@@ -5,6 +5,17 @@
         src="https://github.com/sebringrose/peko/blob/main/examples/preact/src/assets/twemoji_chicken.svg" alt="peko-logo" 
     />
 </p>
+
+<h1>Peko</h1>
+
+- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library + no build-time tooling
+
+- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + premade middleware, handlers and utility classes
+
+- <strong>Prod-ready</strong> - Fully-tested TypeScript source using stable Deno APIs + server profiling utility
+
+- <strong>Community-driven</strong> - Popular tool integrations + contributions encouraged 
+
 <p align="center">
     <span>
         &nbsp;
@@ -42,17 +53,7 @@
     </a>
 </p>
 
-<h2>Philosophy</h2>
-
-- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library + no build-time tooling
-
-- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + premade middleware, handlers and utility classes
-
-- <strong>Prod-ready</strong> - Fully-tested TypeScript source using stable Deno APIs + server profiling utility
-
-- <strong>Community-driven</strong> - Popular tool integrations + code reviews 
-
-<h2>Get started with the Preact demo app</h2>
+<h2>Get started with the Preact demo</h2>
 
 1. Deno is sick. [Install it](https://deno.land/manual/getting_started/installation).</a>
 
