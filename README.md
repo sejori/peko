@@ -8,14 +8,6 @@
 
 <h1 align="center">Peko</h1>
 
-- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library + no build-time tooling
-
-- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + premade middleware, handlers and utility classes
-
-- <strong>Prod-ready</strong> - Fully-tested TypeScript source using stable Deno APIs + server profiling utility
-
-- <strong>Community-driven</strong> - Popular tool integrations + contributions encouraged 
-
 <p align="center">
     <span>
         &nbsp;
@@ -53,7 +45,17 @@
     </a>
 </p>
 
-<h2>Get started with the Preact demo</h2>
+<h2>A stateless HTTP server that is:</h2>
+
+- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library + no build-time tooling
+
+- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + premade middleware, handlers and utility classes
+
+- <strong>Prod-ready</strong> - Fully-tested TypeScript source using stable Deno APIs + server profiling utility
+
+- <strong>Community-driven</strong> - Popular tool integrations + contributions encouraged 
+
+<h2>Try the Preact demo</h2>
 
 1. Deno is sick. [Install it](https://deno.land/manual/getting_started/installation).</a>
 
@@ -65,22 +67,23 @@
 
 <h2>Deployment</h2>
 
-Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖).
+- [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖).
+- Docker (coming soon...)
 
 <h2>Showcase</h2>
 
-[Single-file auth example app 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts) Deployed 👉 [here](https://peko-auth.deno.dev).
+[iiisun.art](https://iiisun.art) - [source](https://github.com/sebringrose/third-sun/blob/main/server.ts)
 
-[Artist portfolio site with WASM (Rust) image resizing handler](https://github.com/sebringrose/third-sun/blob/main/server.ts) Deployed 👉 [here](https://iiisun.art).
+[shineponics.org](https://shineponics.org) - [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
 
-[Green-tech landing page and Markdown blog](https://github.com/shine-systems/shineponics/blob/main/server.ts) Deployed 👉 [here](https://shineponics.org).
+[peko-auth.deno.dev](https://peko-auth.deno.dev) - [source](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
 
-(If you want to add a project using Peko to the showcase please open a PR 🙌)
+PR to add your project to the showcase 🙌
 
 <h2>Overview</h2>
 <h3 id="server">Server</h3>
 
-The TypeScript `server.ts` modules describes a small framework for building HTTP servers on top of the Deno http/server module. 
+The TypeScript `server.ts` module describes a small framework for building HTTP servers on top of the Deno http/server module. 
 
 Here are the main components:
 
@@ -95,7 +98,7 @@ Main types (`types.ts`):
 
 The Server class has several methods for adding and removing routes and middleware, as well as starting the server and handling requests:
 
-- **use(middleware: Middleware | Middleware[] | Router)**: add global middleware or a router (and its routes).
+- **use(middleware: Middleware | Middleware[] | Router)**: add global middleware or a router.
 - **addRoute(route: Route)**: adds a route to the server.
 - **addRoutes(routes: Route[])**: adds multiple routes to the server.
 - **removeRoute(route: string)**: removes a route from the server.
@@ -104,7 +107,7 @@ The Server class has several methods for adding and removing routes and middlewa
 - **close()**: stops to HTTP listener process.
 
 ```js
-import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
+import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "../server.ts" for super featherweight 
 
 const server = new Peko.Server();
 
@@ -117,26 +120,26 @@ server.listen(7777, () => console.log("Peko server started - let's go!"));
 
 <h3 id="routing">Routing</h3>
 
-Instead of adding routes to a server instance directly, a Router class instance can be used. Below you can also see the different ways routes can be added with `addRoute`.
+Routes can be added to a Server instance directly or a Router instance. Below you can see the different ways routes can be added with `addRoute`.
 
 ```js
 import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
 
 const server = new Peko.Server()
+server.addRoute("/hello", () => new Response("Hello world!"))
+server.removeRoute("/hello");
 
 const router = new Peko.Router()
 
-router.addRoute("/hello-log-headers", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, () => new Response("Hello world!"));
+router.addRoute("/shorthand-route", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, () => new Response("Hello world!"));
 
 router.addRoute({
-    path: "/hello-object-log-headers",
-    middleware: async (ctx, next) => { await next(); console.log(ctx.request.headers); }, // could also be an array of middleware
+    path: "/object-route",
+    middleware: async (ctx, next) => { await next(); console.log(ctx.request.headers); }, // can also be array of middleware
     handler: () => new Response("Hello world!")
-});
+})
 
-router.addRoutes([ /* array of route objects */ ]);
-
-router.removeRoute("/hello-log-headers");
+router.addRoutes([ /* array of route objects */ ])
 
 server.use(router)
 
