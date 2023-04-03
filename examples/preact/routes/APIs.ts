@@ -2,7 +2,7 @@ import {
   RequestContext, 
   Route,
   sseHandler
-} from "../../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+} from "https://deno.land/x/peko/mod.ts"
 
 const demoEventTarget = new EventTarget()
 setInterval(() => {
