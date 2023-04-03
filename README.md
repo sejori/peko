@@ -61,7 +61,7 @@ Peko apps are designed to boot from scratch at request time and disappear once t
 
 This paradigm is often referred to as "serverless" on cloud platforms, which offer cheap stateless code execution on spare server capacity.
 
-Because "serverless" apps cold-start it is important to keep the codebase small, hence Peko's focus on being "featherweght". The preact demo app only imports Peko and Preact as external dependencies (and is very fast as a result)! Large apps with many dependencies might not perform as well so consider this before getting started.
+Because "serverless" apps cold-start it is important to keep the codebase small, hence Peko's focus on being "featherweight". The preact demo app only imports Peko and Preact as external dependencies (and is very fast as a result)! Large apps with many dependencies might not perform as well so consider this before getting started.
 
 <h2>Try the Preact demo</h2>
 
