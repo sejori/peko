@@ -6,8 +6,6 @@
     />
 </p>
 
-<h1 align="center">Peko</h1>
-
 <p align="center">
     <span>
         &nbsp;
