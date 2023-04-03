@@ -77,7 +77,7 @@ Because "serverless" apps cold-start it is important to keep the codebase small,
 
 <h2>Deployment</h2>
 
-- [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖).
+- [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖)
 - Docker (coming soon...)
 
 <h2>App showcase</h2>
