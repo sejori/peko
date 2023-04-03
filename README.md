@@ -2,9 +2,12 @@
     <img 
         height="300px"
         style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/Untitled_Artwork.png" alt="peko-logo" 
+        src="https://github.com/sebringrose/peko/blob/main/examples/preact/src/assets/twemoji_chick.svg" alt="peko-logo" 
     />
 </p>
+
+<h1 align="center">Peko</h1>
+
 <p align="center">
     <span>
         &nbsp;
@@ -42,19 +45,27 @@
     </a>
 </p>
 
-<h2>Project goals</h2>
+<h2>A stateless HTTP server that is:</h2>
 
-- <strong>Client-edge synergy</strong> - Share modules across stack for server-rendering and simpler dev (no transpiling).
+- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library + no build-time tooling
 
-- <strong>Production-ready backend</strong> - Fully-tested library built with stable Deno APIs only + server profiling utility.
+- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + full-stack library
 
-- <strong>Software minimalism</strong> - Native JavaScript APIs first, [Deno std library](https://deno.land/std) second, then custom utilities.
+- <strong>Production-ready</strong> - High test coverage + stable Deno APIs + server profiling utility
 
-- <strong>Ease of adoption</strong> - Easily convert [Express](https://github.com/expressjs/express) or [Koa](https://github.com/expressjs/express) apps with familiar API and no enforced file structure.
+- <strong>Community-driven</strong> - Popular tool integrations + contributions encouraged 
 
-Any feature suggestions or code reviews welcome.
+<h2>What does stateless mean?</h2>
 
-<h2>Get started with the Preact demo</h2>
+Peko apps are designed to boot from scratch at request time and disappear once the request is served. Therefore, storing data in memory between requests (stateful) is not reliable. Instead we should use stateless logic and store data within the client or external services.
+
+This paradigm is often referred to as "serverless" on cloud platforms, which offer cheap code execution on spare server capacity.
+
+Because "serverless" apps cold-start it is important to keep the codebase small, hence Peko's focus on being featherweight. The preact demo app only imports Peko and Preact as external dependencies (and is very fast as a result)!
+
+<strong>Note:</strong> In reality a single app instance will serve multiple requests, we just can't guarantee it. This is why caching is still an effective optimization strategy but in-memory user sessions are not an effective authentication strategy.
+
+<h2>Try the Preact demo</h2>
 
 1. Deno is sick. [Install it](https://deno.land/manual/getting_started/installation).</a>
 
@@ -66,22 +77,23 @@ Any feature suggestions or code reviews welcome.
 
 <h2>Deployment</h2>
 
-Instantly deploy from GitHub with [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖).
+- [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖)
+- Docker (coming soon...)
 
-<h2>Showcase</h2>
+<h2>App showcase</h2>
 
-[Single-file auth example app 🧑‍💻🌠](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts) Deployed 👉 [here](https://peko-auth.deno.dev).
+[iiisun.art](https://iiisun.art) - artistic storefront built with Deno, Peko, React, ImageMagick_deno [source](https://github.com/sebringrose/third-sun/blob/main/server.ts)
 
-[Artist portfolio site with WASM (Rust) image resizing handler](https://github.com/sebringrose/third-sun/blob/main/server.ts) Deployed 👉 [here](https://iiisun.art).
+[shineponics.org](https://shineponics.org) - smart-farming PaaS built with Deno, Peko, React, Google Cloud Platform [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
 
-[Green-tech landing page and Markdown blog](https://github.com/shine-systems/shineponics/blob/main/server.ts) Deployed 👉 [here](https://shineponics.org).
+[peko-auth.deno.dev](https://peko-auth.deno.dev) - demo app built with Deno, Peko, Preact [source](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
 
-(If you want to add a project using Peko to the showcase please open a PR 🙌)
+PR to add your project to the showcase 🙌
 
-<h2>Overview</h2>
+<h2>Core overview</h2>
 <h3 id="server">Server</h3>
 
-The TypeScript `server.ts` modules describes a small framework for building HTTP servers on top of the Deno http/server module. 
+The TypeScript `server.ts` module describes a small framework for building HTTP servers on top of the Deno http/server module. 
 
 Here are the main components:
 
@@ -96,7 +108,7 @@ Main types (`types.ts`):
 
 The Server class has several methods for adding and removing routes and middleware, as well as starting the server and handling requests:
 
-- **use(middleware: Middleware | Middleware[] | Router)**: add global middleware or a router (and its routes).
+- **use(middleware: Middleware | Middleware[] | Router)**: add global middleware or a router.
 - **addRoute(route: Route)**: adds a route to the server.
 - **addRoutes(routes: Route[])**: adds multiple routes to the server.
 - **removeRoute(route: string)**: removes a route from the server.
@@ -105,7 +117,7 @@ The Server class has several methods for adding and removing routes and middlewa
 - **close()**: stops to HTTP listener process.
 
 ```js
-import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
+import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "../server.ts" for super featherweight 
 
 const server = new Peko.Server();
 
@@ -118,26 +130,26 @@ server.listen(7777, () => console.log("Peko server started - let's go!"));
 
 <h3 id="routing">Routing</h3>
 
-Instead of adding routes to a server instance directly, a Router class instance can be used. Below you can also see the different ways routes can be added with `addRoute`.
+Routes can be added to a Server instance directly or a Router instance. Below you can see the different ways routes can be added with `addRoute`.
 
 ```js
 import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "https://deno.land/x/peko/server.ts"
 
 const server = new Peko.Server()
+server.addRoute("/hello", () => new Response("Hello world!"))
+server.removeRoute("/hello");
 
 const router = new Peko.Router()
 
-router.addRoute("/hello-log-headers", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, () => new Response("Hello world!"));
+router.addRoute("/shorthand-route", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, () => new Response("Hello world!"));
 
 router.addRoute({
-    path: "/hello-object-log-headers",
-    middleware: async (ctx, next) => { await next(); console.log(ctx.request.headers); }, // could also be an array of middleware
+    path: "/object-route",
+    middleware: async (ctx, next) => { await next(); console.log(ctx.request.headers); }, // can also be array of middleware
     handler: () => new Response("Hello world!")
-});
+})
 
-router.addRoutes([ /* array of route objects */ ]);
-
-router.removeRoute("/hello-log-headers");
+router.addRoutes([ /* array of route objects */ ])
 
 server.use(router)
 
@@ -195,8 +207,8 @@ And that's it! Check out the API docs for deeper info. Otherwise happy coding �
 
 The modern JS edge is great because the client-server gap practically disappears. We can have all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling. We can use modules and classes in the browser until users decide they want cloud compute. If we want TS source we can [emit](https://github.com/denoland/deno_emit) JS versions of code. This completely eliminates part of the traditional JavaScript toolchain, increasing project maintainability and simplicity, all while making our software even faster.
 
-Better yet, Peko is not build for any specific frontend framework or library. You can use barebones HTML, React, Preact, Vue... you name it (if you do set up a React or Vue project please consider opening a PR to the examples). Simply plug your app-rendering logic into the [Render](https://deno.land/x/peko@v1.0.0/handlers/ssr.ts?s=Render) function of an [ssrHandler](https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts).
+Better yet, Peko is not build for any specific frontend framework or library. You can use barebones HTML, React, Preact, Vue... you name it. Simply plug your app-rendering logic into the [Render](https://deno.land/x/peko@v1.0.0/handlers/ssr.ts?s=Render) function of an [ssrHandler](https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts).
 
-This is all made possible by powerful new JavaScript tools. Deno is built to the [ECMAScript](https://tc39.es/) specification</a>. This makes it compatible with browser JavaScript which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like [Preact](https://github.com/preactjs/preact) combined with [htm](https://github.com/developit/htm) offer lightning fast client-side hydration with a browser-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and loads of community tools for your back-end needs.
+This is all made possible by modern JavaScript runtimes. Deno is built to the [ECMAScript](https://tc39.es/) specification</a>. This makes it compatible with browser JavaScript which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like [Preact](https://github.com/preactjs/preact) combined with [htm](https://github.com/developit/htm) offer lightning fast client-side hydration with a browser-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and loads of community tools for your back-end needs.
 
 This project started out of excitement for the elegancy of Deno and the freedom it would bring to the JavaScript community. If you are interested in contributing please submit a PR or get in contact ^^
