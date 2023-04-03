@@ -84,7 +84,7 @@ Peko apps are designed to boot from scratch at request time and disappear once t
 
 This paradigm is often referred to as "serverless" on cloud platforms, which offer cheap code execution on spare server capacity.
 
-Because "serverless" apps cold-start it is important to keep their codebases small. This is why Peko focuses on being featherweight. The preact demo app only imports Peko and Preact as external dependencies (and is very fast as a result)!
+Because "serverless" apps cold-start it is important to keep their codebases small. This is why Peko focuses on being featherweight. The preact demo app only imports Peko and Preact as external dependencies and is very fast as a result - [https://peko.deno.dev](https://peko.deno.dev)!
 
 <strong>Note:</strong> In reality a single app instance will serve multiple requests, we just can't guarantee it. This is why caching is still an effective optimization strategy but in-memory user sessions are not an effective authentication strategy.
 
