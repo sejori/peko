@@ -55,6 +55,11 @@
 
 - <strong>Community-driven</strong> - Popular tool integrations + contributions encouraged 
 
+<h2>What does stateless mean?</h2>
+Unlike a persistent server, capable of holding values in memory between requests, a Peko app is designed to boot from scratch at request time and then disappear once the request is served. This paradigm is often referred to as "serverless" on cloud platforms, which typically offer extremely cheap stateless code execution as it can be performed on spare server capacity.
+
+Because a "serverless" app will cold-start for most requests it is important to keep the codebase small and efficient, hence Peko's focus on being "featherweght". The preact demo app loads very quickly as it only imports Peko and Preact as external dependencies. Larger apps with many dependencies might not perform as well so consider whether you're happy to keep your app featherweight before getting started. If so, read on!
+
 <h2>Try the Preact demo</h2>
 
 1. Deno is sick. [Install it](https://deno.land/manual/getting_started/installation).</a>
