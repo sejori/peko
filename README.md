@@ -45,7 +45,7 @@
     </a>
 </p>
 
-<h2>A stateless HTTP server that is:</h2>
+<h2>Stateless HTTP(S) apps that are:</h2>
 
 - <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library + no build-time tooling
 
