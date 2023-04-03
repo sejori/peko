@@ -80,7 +80,7 @@ Because "serverless" apps cold-start it is important to keep the codebase small,
 - [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖).
 - Docker (coming soon...)
 
-<h2>Showcase</h2>
+<h2>App showcase</h2>
 
 [iiisun.art](https://iiisun.art) - artistic storefront built with Deno, Peko, React, ImageMagick_deno [source](https://github.com/sebringrose/third-sun/blob/main/server.ts)
 
@@ -90,7 +90,7 @@ Because "serverless" apps cold-start it is important to keep the codebase small,
 
 PR to add your project to the showcase 🙌
 
-<h2>Overview</h2>
+<h2>Core overview</h2>
 <h3 id="server">Server</h3>
 
 The TypeScript `server.ts` module describes a small framework for building HTTP servers on top of the Deno http/server module. 
