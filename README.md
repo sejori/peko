@@ -57,11 +57,13 @@
 
 <h2>What does stateless mean?</h2>
 
-Peko apps are designed to boot from scratch at request time and disappear once the request is served. Storing data in memory between requests is therefore not an option so our code is "stateless". 
+Peko apps are designed to boot from scratch at request time and disappear once the request is served. Therefore, storing data in memory between requests (stateful) is not reliable. Instead we should use stateless logic and store data within the client or external services.
 
-This paradigm is often referred to as "serverless" on cloud platforms, which offer cheap stateless code execution on spare server capacity.
+This paradigm is often referred to as "serverless" on cloud platforms, which offer cheap code execution on spare server capacity.
 
-Because "serverless" apps cold-start it is important to keep the codebase small, hence Peko's focus on being "featherweight". The preact demo app only imports Peko and Preact as external dependencies (and is very fast as a result)! Large apps with many dependencies might not perform as well so consider this before getting started.
+Because "serverless" apps cold-start it is important to keep the codebase small, hence Peko's focus on being featherweight. The preact demo app only imports Peko and Preact as external dependencies (and is very fast as a result)!
+
+<strong>Note:</strong> In reality a single app instance will serve multiple requests, we just can't guarantee it. This is why caching is still an effective optimization strategy but in-memory user sessions are not an effective authentication strategy.
 
 <h2>Try the Preact demo</h2>
 
