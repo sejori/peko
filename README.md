@@ -55,7 +55,7 @@
 
 <h2>What does stateless mean?</h2>
 
-Peko apps are designed to boot from scratch at request time and disappear once the request is served. Therefore, storing data in memory between requests (stateful) is not reliable. Instead we should use stateless logic and store data within the client or external services.
+Peko apps are designed to boot from scratch at request time and disappear once the request is served. Therefore, storing data in memory between requests (stateful logic) is not reliable. Instead we should use stateless logic and store data within the client or external services.
 
 This paradigm is often referred to as "serverless" on cloud platforms, which offer cheap code execution on spare server capacity.
 
