@@ -1,4 +1,4 @@
-import { Server, logger } from "../../mod.ts" // <- https://deno.land/x/peko/server.ts 
+import { Server, logger } from "https://deno.land/x/peko/mod.ts"
 import pages from "./routes/pages.ts"
 import assets from "./routes/assets.ts"
 import APIs from "./routes/APIs.ts"
