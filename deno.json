@@ -3,7 +3,7 @@
     "start": "deno run --allow-net --allow-read --allow-env examples/preact/index.ts",
     "start:dev": "deno run --allow-net --allow-read --allow-env --watch examples/preact/index.ts",
     "test": "deno test --allow-read --allow-net",
-    "profile": "deno run --allow-read --allow-net tests/scripts/profile.ts"
+    "profile": "deno run --allow-read --allow-net core/tests/scripts/profile.ts"
   },
   "fmt": {
     "options": {
