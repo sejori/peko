@@ -1,4 +1,4 @@
-import * as Peko from "../../mod.ts" // <- https://deno.land/x/peko/mod.ts
+import * as Peko from "https://deno.land/x/peko/mod.ts"
 
 const server = new Peko.Server()
 server.use(Peko.logger(console.log))
