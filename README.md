@@ -53,16 +53,6 @@
 
 - <strong>Community-driven</strong> - Popular tool integrations + contributions encouraged 
 
-<h2>What does stateless mean?</h2>
-
-Peko apps are designed to boot from scratch at request time and disappear once the request is served. Therefore, storing data in memory between requests (stateful logic) is not reliable. Instead we should use stateless logic and store data within the client or external services.
-
-This paradigm is often referred to as "serverless" on cloud platforms, which offer cheap code execution on spare server capacity.
-
-Because "serverless" apps cold-start it is important to keep the codebase small, hence Peko's focus on being featherweight. The preact demo app only imports Peko and Preact as external dependencies (and is very fast as a result)!
-
-<strong>Note:</strong> In reality a single app instance will serve multiple requests, we just can't guarantee it. This is why caching is still an effective optimization strategy but in-memory user sessions are not an effective authentication strategy.
-
 <h2>Try the Preact demo</h2>
 
 1. Deno is sick. [Install it](https://deno.land/manual/getting_started/installation).</a>
@@ -88,7 +78,17 @@ Because "serverless" apps cold-start it is important to keep the codebase small,
 
 PR to add your project to the showcase 🙌
 
-<h2>Core overview</h2>
+<h2>What does stateless mean?</h2>
+
+Peko apps are designed to boot from scratch at request time and disappear once the request is served. Therefore, storing data in memory between requests (stateful logic) is not reliable. Instead we should use stateless logic and store data within the client or external services.
+
+This paradigm is often referred to as "serverless" on cloud platforms, which offer cheap code execution on spare server capacity.
+
+Because "serverless" apps cold-start it is important to keep their codebases small. This is why Peko focuses on being featherweight. The preact demo app only imports Peko and Preact as external dependencies and is very fast as a result - [https://peko.deno.dev](https://peko.deno.dev)!
+
+<strong>Note:</strong> In reality a single app instance will serve multiple requests, we just can't guarantee it. This is why caching is still an effective optimization strategy but in-memory user sessions are not an effective authentication strategy.
+
+<h2>Library overview</h2>
 <h3 id="server">Server</h3>
 
 The TypeScript `server.ts` module describes a small framework for building HTTP servers on top of the Deno http/server module. 
