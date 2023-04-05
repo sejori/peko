@@ -38,9 +38,20 @@
 </p>
 
 <p align="center">
-    <a href="https://doc.deno.land/https://deno.land/x/peko/mod.ts">
-        API DOCS
-    </a>
+    <span>
+        &nbsp;
+            <a href="https://doc.deno.land/https://deno.land/x/peko/mod.ts">
+                API DOCS
+            </a>
+        &nbsp;
+    </span>
+    <span>
+        &nbsp;
+            <a href="https://github.com/sebringrose/pekommunity">
+                COMMUNITY TOOLS
+            </a>
+        &nbsp;
+    </span>
 </p>
 
 <h2>Stateless HTTP(S) apps that are:</h2>
