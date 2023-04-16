@@ -1,6 +1,6 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server } from "../../server.ts"
-import Profiler from "../../utils/Profiler.ts"
+import { Server } from "../../lib/server.ts"
+import Profiler from "../../lib/utils/Profiler.ts"
 
 Deno.test("UTIL: Profiler", async (t) => {
   const server = new Server()

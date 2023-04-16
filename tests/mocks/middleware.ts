@@ -1,4 +1,4 @@
-import { Middleware, Handler } from "../../types.ts"
+import { Middleware, Handler } from "../../lib/types.ts"
 
 export const testMiddleware1: Middleware = async (ctx, next) => {
   const start = Date.now()
