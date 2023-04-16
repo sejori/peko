@@ -1,6 +1,6 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server } from "../../server.ts"
-import { wsHandler } from "../../handlers/ws.ts"
+import { Server } from "../../lib/server.ts"
+import { wsHandler } from "../../lib/handlers/ws.ts"
 
 Deno.test("HANDLER: WebSocket", async (t) => {
   const server = new Server()
@@ -36,9 +36,9 @@ Deno.test("HANDLER: WebSocket", async (t) => {
     });
   };
 
-  await t.step("Socket created and message events received as expected", async () => {
-    server.listen(3000)
+  server.listen(3000, () => null)
 
+  await t.step("Socket created and message events received as expected", async () => {
     const socket = new WebSocket("ws://localhost:3000/ws")
     assert(await awaitOpen(socket))
 
@@ -51,13 +51,9 @@ Deno.test("HANDLER: WebSocket", async (t) => {
 
     socket.close()
     assert(socket.CLOSED)
-
-    server.close()
   })
 
   await t.step("send from client and socket.close() works as expected", async () => {
-    server.listen(3000, () => null)
-
     const test_string = "why hello my friend!"
     
     const socket = new WebSocket("ws://localhost:3000/ws")
@@ -73,7 +69,7 @@ Deno.test("HANDLER: WebSocket", async (t) => {
 
     socket.close()
     assert(await awaitClose(socket))
-
-    server.close()
   })
+
+  server.close()
 })

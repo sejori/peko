@@ -1,11 +1,11 @@
-import { Server } from "../../server.ts"
+import { Server } from "../../lib/server.ts"
 import {
   testMiddleware2,
   testMiddleware3,
   testHandler,
   testMiddleware1
 } from "../mocks/middleware.ts"
-import Profiler from "../../utils/Profiler.ts"
+import Profiler from "../../lib/utils/Profiler.ts"
 
 const server = new Server()
 

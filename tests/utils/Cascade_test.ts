@@ -1,6 +1,6 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../server.ts"
-import { Cascade } from "../../utils/Cascade.ts"
+import { Server, RequestContext } from "../../lib/server.ts"
+import { Cascade } from "../../lib/utils/Cascade.ts"
 import { 
   testMiddleware1,
   testMiddleware2,

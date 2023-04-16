@@ -1,4 +1,4 @@
-import { Server } from "../server.ts"
+import { Server } from "../lib/server.ts"
 import {
   testMiddleware2,
   testMiddleware3,

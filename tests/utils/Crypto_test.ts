@@ -1,6 +1,6 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
 import { encode, decode } from "https://deno.land/std@0.174.0/encoding/base64.ts"
-import { Crypto } from "../../utils/Crypto.ts"
+import { Crypto } from "../../lib/utils/Crypto.ts"
 
 Deno.test("UTIL: Crypto", async (t) => {
   const hmacCrypto = new Crypto("SUPER_SECRET_KEY_123")

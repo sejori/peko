@@ -1,9 +1,9 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server } from "../../server.ts"
+import { Server } from "../../lib/server.ts"
 import {
   mergeHeaders,
   staticDir
-} from "../../utils/helpers.ts"
+} from "../../lib/utils/helpers.ts"
 
 Deno.test("UTIL: helpers", async (t) => {  
   await t.step("mergeHeaders", () => {
