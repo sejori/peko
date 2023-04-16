@@ -36,9 +36,9 @@ Deno.test("HANDLER: WebSocket", async (t) => {
     });
   };
 
-  server.listen(3000, () => null)
-
   await t.step("Socket created and message events received as expected", async () => {
+    server.listen(3000, () => null)
+
     const socket = new WebSocket("ws://localhost:3000/ws")
     assert(await awaitOpen(socket))
 
@@ -51,9 +51,13 @@ Deno.test("HANDLER: WebSocket", async (t) => {
 
     socket.close()
     assert(socket.CLOSED)
+
+    server.close()
   })
 
   await t.step("send from client and socket.close() works as expected", async () => {
+    server.listen(3000, () => null)
+
     const test_string = "why hello my friend!"
     
     const socket = new WebSocket("ws://localhost:3000/ws")
@@ -69,7 +73,7 @@ Deno.test("HANDLER: WebSocket", async (t) => {
 
     socket.close()
     assert(await awaitClose(socket))
-  })
 
-  server.close()
+    server.close()
+  })
 })
