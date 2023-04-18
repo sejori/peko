@@ -4,76 +4,55 @@ import { wsHandler } from "../../lib/handlers/ws.ts"
 
 Deno.test("HANDLER: WebSocket", async (t) => {
   const server = new Server()
-  const eventTarget = new EventTarget()
+  // const sockets: Map<string, WebSocket> = new Map()
+  let message = ""
 
-  server.addRoute("/ws", wsHandler(eventTarget))
+  server.addRoute("/ws", wsHandler((socket) => {
+    // socket.addEventListener("open", (e) => console.log(e))
+    socket.addEventListener("message", (e) => message = e.data)
+    // socket.addEventListener("close", () => console.log("socket closed"))
+  }))
 
-  const testData = {
-    foo: "bar"
-  }
+  server.listen(3000, () => null)
 
-  const awaitOpen = (conn: WebSocket): Promise<boolean> => {
-    return new Promise(resolve => {
-      conn.addEventListener("open", () => {
-        resolve(true);
-      });
-    });
-  };
-
-  const awaitResponse = (conn: WebSocket): Promise<MessageEvent> => {
-    return new Promise(resolve => {
-      conn.addEventListener("message", (event) => {
-        resolve(event);
-      });
-    });
-  }
-
-  const awaitClose = (conn: WebSocket): Promise<boolean> => {
-    return new Promise(resolve => {
-      conn.addEventListener("close", () => {
-        resolve(true);
-      });
-    });
-  };
-
-  await t.step("Socket created and message events received as expected", async () => {
-    server.listen(3000, () => null)
-
+  await t.step("Socket created and closed as expected", async () => {
     const socket = new WebSocket("ws://localhost:3000/ws")
-    assert(await awaitOpen(socket))
-
-    const dataEvent = new CustomEvent("send", { detail: testData })
-    eventTarget.dispatchEvent(dataEvent);
-
-    const message = await awaitResponse(socket)
-
-    assert(JSON.parse(message.data).foo && JSON.parse(message.data).foo === "bar")
+    assert(await openPromise(socket))
 
     socket.close()
-    assert(socket.CLOSED)
 
-    server.close()
+    assert(await closePromise(socket))
   })
 
-  await t.step("send from client and socket.close() works as expected", async () => {
-    server.listen(3000, () => null)
+  await t.step("messages received from client as expected", async () => {
+    const socket = new WebSocket("ws://localhost:3000/ws")
+    await openPromise(socket)
 
     const test_string = "why hello my friend!"
-    
-    const socket = new WebSocket("ws://localhost:3000/ws")
-    assert(await awaitOpen(socket))
+    socket.send(test_string)
 
-    const event: MessageEvent = await new Promise(res => {
-      eventTarget.addEventListener("message", (e: Event) => res(e as MessageEvent))
-
-      socket.send(test_string)
-    })
-
-    assert(event.data === test_string)
+    while (!message) await new Promise(res => setTimeout(res, 100))
+    assert(message === test_string)
 
     socket.close()
-    assert(await awaitClose(socket))
-
-    server.close()
+    await closePromise(socket)
   })
-})
+
+  server.close()
+});
+
+function openPromise(conn: WebSocket): Promise<boolean> {
+  return new Promise(resolve => {
+    conn.addEventListener("open", () => {
+      resolve(true);
+    });
+  });
+}
+
+function closePromise(conn: WebSocket): Promise<boolean> {
+  return new Promise(resolve => {
+    conn.addEventListener("close", () => {
+      resolve(true);
+    });
+  });
+}
