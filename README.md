@@ -9,28 +9,28 @@
 <p align="center">
     <span>
         &nbsp;
-        <a href="#server">
+        <a href="https://raw.githubusercontent.com/sebringrose/peko/main/overview.md#server">
             Server
         </a>
         &nbsp;
     </span>
     <span>
         &nbsp;
-        <a href="#routing">
+        <a href="https://raw.githubusercontent.com/sebringrose/peko/main/overview.md#routing">
             Routing
         </a>
         &nbsp;
     </span>
     <span>
         &nbsp;
-        <a href="#request-handling">
+        <a href="https://raw.githubusercontent.com/sebringrose/peko/main/overview.md#request-handling">
             Request handling
         </a>
         &nbsp;
     </span>
     <span>
         &nbsp;
-        <a href="#response-caching">
+        <a href="https://raw.githubusercontent.com/sebringrose/peko/main/overview.md#response-caching">
             Response caching
         </a>
         &nbsp;
