@@ -41,7 +41,9 @@ Deno.test("HANDLER: WebSocket", async (t) => {
 
   await t.step("messages sent to clients as expected", async () => {
     const socket1 = new WebSocket("ws://localhost:3000/ws")
+    await openPromise(socket1)
     const socket2 = new WebSocket("ws://localhost:3000/ws")
+    await openPromise(socket2)
     const socket3 = new WebSocket("ws://localhost:3000/ws")
     await openPromise(socket3)
 
