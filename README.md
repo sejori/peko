@@ -80,21 +80,21 @@ server.listen(7777, () => console.log("Peko server started - let's go!"));
 
 <h2>App showcase</h2>
 
+PR to add your project 🙌
+
 ### [iiisun.art](https://iiisun.art) - artistic storefront [source](https://github.com/sebringrose/third-sun/blob/main/server.ts)
 - **Stack:** React, ImageMagick_deno
 - **Features:** CI resized-image precaching, Gelato & Stripe integrations, Parallax CSS
+- **Note:** [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) and [es6-string-css](https://marketplace.visualstudio.com/items?itemName=bashmish.es6-string-css) VS Code extensions recommended.
 
 ### [shineponics.org](https://shineponics.org) - smart-farming PaaS [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
 - **Stack:** React, Google Cloud Platform
 - **Features:** Google Sheet analytics, GCP email list, Markdown rendering
+- **Note:** [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) and [es6-string-css](https://marketplace.visualstudio.com/items?itemName=bashmish.es6-string-css) VS Code extensions recommended.
 
 ### [peko-auth.deno.dev](https://peko-auth.deno.dev) - basic authentication demo [source](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
 - **Stack:** HTML5
 - **Features:** JWT-based auth
-
-**Note:** [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) and [es6-string-css](https://marketplace.visualstudio.com/items?itemName=bashmish.es6-string-css) VS Code extensions recommended.
-
-PR to add your project to the showcase 🙌
 
 <h2>Deployment</h2>
 
