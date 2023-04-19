@@ -1,6 +1,6 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server } from "../server.ts"
-import { Router } from "../utils/Router.ts"
+import { Server } from "../lib/server.ts"
+import { Router } from "../lib/utils/Router.ts"
 import {
   testMiddleware1,
   testHandler,

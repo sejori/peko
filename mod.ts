@@ -3,25 +3,25 @@
  */
 
 // Core classes, functions & types
-export * from "./server.ts"
-export * from "./types.ts"
+export * from "./lib/server.ts"
+export * from "./lib/types.ts"
 
 // Handlers
-export * from "./handlers/static.ts"
-export * from "./handlers/ssr.ts"
-export * from "./handlers/sse.ts"
+export * from "./lib/handlers/static.ts"
+export * from "./lib/handlers/ssr.ts"
+export * from "./lib/handlers/sse.ts"
 
 // Middlewares
-export * from "./middleware/logger.ts"
-export * from "./middleware/cacher.ts"
-export * from "./middleware/authenticator.ts"
+export * from "./lib/middleware/logger.ts"
+export * from "./lib/middleware/cacher.ts"
+export * from "./lib/middleware/authenticator.ts"
 
 // Utils
-export * from "./utils/Router.ts"
-export * from "./utils/Cascade.ts"
-export * from "./utils/ResponseCache.ts"
-export * from "./utils/Crypto.ts"
-export * from "./utils/helpers.ts"
+export * from "./lib/utils/Router.ts"
+export * from "./lib/utils/Cascade.ts"
+export * from "./lib/utils/ResponseCache.ts"
+export * from "./lib/utils/Crypto.ts"
+export * from "./lib/utils/helpers.ts"
 
-import { Server } from "./server.ts"
+import { Server } from "./lib/server.ts"
 export default Server
