@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { ResponseCache } from "../../utils/ResponseCache.ts"
+import { ResponseCache } from "../../lib/utils/ResponseCache.ts"
 
 Deno.test("UTIL: Response cache", async (t) => {
   const CACHE_LIFETIME = 200
