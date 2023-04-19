@@ -56,9 +56,9 @@
 
 <h2>Stateless HTTP(S) apps that are:</h2>
 
-- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library only
+- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library
 
-- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + full-stack library
+- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + full-stack tooling
 
 - <strong>Production-ready</strong> - High test coverage + stable APIs + server profiling
 
@@ -72,7 +72,7 @@
 
 3. `$ deno task start:dev`
 
-<strong>Note: [Lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html)</strong> VS Code plugin recommended.
+**Note:** [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) and [es6-string-css](https://marketplace.visualstudio.com/items?itemName=bashmish.es6-string-css) VS Code extensions recommended.
 
 <h2>Deployment</h2>
 
@@ -82,16 +82,16 @@
 <h2>App showcase</h2>
 
 ### [iiisun.art](https://iiisun.art) - artistic storefront [source](https://github.com/sebringrose/third-sun/blob/main/server.ts)
-Stack: React, ImageMagick_deno
-Features: CI resized-image precaching, Gelato & Stripe integrations, Parallax CSS
+- **Stack:** React, ImageMagick_deno
+- **Features:** CI resized-image precaching, Gelato & Stripe integrations, Parallax CSS
 
 ### [shineponics.org](https://shineponics.org) - smart-farming PaaS [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
-Stack: React, Google Cloud Platform
-Features: Google Sheet analytics, GCP email list, Markdown rendering
+- **Stack:** React, Google Cloud Platform
+- **Features:** Google Sheet analytics, GCP email list, Markdown rendering
 
 ### [peko-auth.deno.dev](https://peko-auth.deno.dev) - basic authentication demo [source](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
-Stack: HTML5
-Features: JWT-based auth
+- **Stack:** HTML5
+- **Features:** JWT-based auth
 
 PR to add your project to the showcase ðŸ™Œ
 
@@ -220,9 +220,7 @@ And that's it! Check out the API docs for deeper info. Otherwise happy coding ðŸ
 
 <h2 id="cool">Motivations</h2>
 
-The modern JS edge is great because the client-server gap practically disappears. We can have all of the SEO and UX benefits of SSR without any JavaScript transpilation or bundling. We can use modules and classes in the browser until users decide they want cloud compute. If we want TS source we can [emit](https://github.com/denoland/deno_emit) JS versions of code. This completely eliminates part of the traditional JavaScript toolchain, increasing project maintainability and simplicity, all while making our software even faster.
-
-Better yet, Peko is not build for any specific frontend framework or library. You can use barebones HTML, React, Preact, Vue... you name it. Simply plug your app-rendering logic into the [Render](https://deno.land/x/peko@v1.0.0/handlers/ssr.ts?s=Render) function of an [ssrHandler](https://doc.deno.land/https://deno.land/x/peko/lib/handlers/ssr.ts).
+The modern JS edge rocks because the client-server gap practically disappears. We can share modules and classes across the client and the cloud. If we want TS source we can [emit](https://github.com/denoland/deno_emit) JS. This eliminates much of the bloat in traditional JS server-side systems, increasing project simplicity, while making our software even faster.
 
 This is all made possible by modern JavaScript runtimes. Deno is built to the [ECMAScript](https://tc39.es/) specification</a>. This makes it compatible with browser JavaScript which elimates the need to generate separate client and server JavaScript bundles (the support for URL imports is the secret sauce). UI libraries like [Preact](https://github.com/preactjs/preact) combined with [htm](https://github.com/developit/htm) offer lightning fast client-side hydration with a browser-friendly markup syntax. On top of this Deno has native TypeScript support, a rich runtime API and loads of community tools for your back-end needs.
 
