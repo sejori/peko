@@ -56,11 +56,11 @@
 
 <h2>Stateless HTTP(S) apps that are:</h2>
 
-- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library + no build-time tooling
+- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library only
 
 - <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + full-stack library
 
-- <strong>Production-ready</strong> - High test coverage + stable Deno APIs + server profiling utility
+- <strong>Production-ready</strong> - High test coverage + stable APIs + server profiling
 
 - <strong>Community-driven</strong> - Popular tool integrations + contributions encouraged 
 
@@ -81,11 +81,17 @@
 
 <h2>App showcase</h2>
 
-[iiisun.art](https://iiisun.art) - artistic storefront built with Deno, Peko, React, ImageMagick_deno [source](https://github.com/sebringrose/third-sun/blob/main/server.ts)
+### [iiisun.art](https://iiisun.art) - artistic storefront [source](https://github.com/sebringrose/third-sun/blob/main/server.ts)
+Stack: React, ImageMagick_deno
+Features: CI resized-image precaching, Gelato & Stripe integrations, Parallax CSS
 
-[shineponics.org](https://shineponics.org) - smart-farming PaaS built with Deno, Peko, React, Google Cloud Platform [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
+### [shineponics.org](https://shineponics.org) - smart-farming PaaS [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
+Stack: React, Google Cloud Platform
+Features: Google Sheet analytics, GCP email list, Markdown rendering
 
-[peko-auth.deno.dev](https://peko-auth.deno.dev) - demo app built with Deno, Peko, Preact [source](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
+### [peko-auth.deno.dev](https://peko-auth.deno.dev) - basic authentication demo [source](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
+Stack: HTML5
+Features: JWT-based auth
 
 PR to add your project to the showcase 🙌
 
