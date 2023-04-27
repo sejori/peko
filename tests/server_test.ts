@@ -15,9 +15,9 @@ Deno.test("SERVER", async (t) => {
     server.addRoute({ path: "/route", handler: testHandler })
     server.addRoute("/anotherRoute", { handler: testHandler })
     server.addRoute("/anotherNotherRoute", testHandler)
-    const routesLength = server.addRoute("/anotherNotherNotherRoute", testMiddleware2, testHandler)
+    server.addRoute("/anotherNotherNotherRoute", testMiddleware2, testHandler)
 
-    assert(routesLength === 4 && server.routes.length === 4)
+    assert(server.routes.length === 4)
 
     const request = new Request("http://localhost:7777/route")
     const anotherRequest = new Request("http://localhost:7777/anotherRoute")
