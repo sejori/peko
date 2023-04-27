@@ -67,7 +67,8 @@
 <h2>Getting started</h2>
 
 ```js
-import * as Peko from "https://deno.land/x/peko/mod.ts"; // or "../server.ts" for super featherweight 
+import * as Peko from "https://deno.land/x/peko/mod.ts"; 
+// import from ".../peko/lib/Server.ts" for featherweight mode
 
 const server = new Peko.Server();
 
