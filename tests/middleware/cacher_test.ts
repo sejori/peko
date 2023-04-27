@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../lib/server.ts"
+import { Server, RequestContext } from "../../lib/Server.ts"
 import { cacher } from "../../lib/middleware/cacher.ts"
 import { testHandler } from "../mocks/middleware.ts"
 import { ResponseCache } from "../../lib/utils/ResponseCache.ts"

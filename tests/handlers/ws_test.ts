@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server } from "../../lib/server.ts"
+import { Server } from "../../lib/Server.ts"
 import { wsHandler } from "../../lib/handlers/ws.ts"
 
 Deno.test("HANDLER: WebSocket", async (t) => {
