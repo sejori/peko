@@ -1,10 +1,10 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server } from "../lib/server.ts"
-import { Router } from "../lib/utils/Router.ts"
+import { Server } from "../../lib/Server.ts"
+import { Router } from "../../lib/utils/Router.ts"
 import {
   testMiddleware1,
   testHandler,
-} from "./mocks/middleware.ts"
+} from "../mocks/middleware.ts"
 
 Deno.test("SERVER", async (t) => {
   const router = new Router()
