@@ -1,15 +1,11 @@
 import * as Peko from "https://deno.land/x/peko/mod.ts"
 
 const server = new Peko.Server()
-server.use(Peko.logger(console.log))
-
 const crypto = new Peko.Crypto("SUPER_SECRET_KEY_123") // <-- replace from env
-
-// replace with db / auth provider query
-const user = {
+const user = { 
   username: "test-user",
   password: await crypto.hash("test-password")
-}
+} // <-- replace with db / auth provider query
 
 const validateUser = async (username: string, password: string) => {
   return username && password 
@@ -17,30 +13,26 @@ const validateUser = async (username: string, password: string) => {
   && await crypto.hash(password) === user.password 
 }
 
-// generate JWT
-server.addRoute({
-  path: "/login",
+server.use(Peko.logger(console.log))
+server.addRoute("/login", {
   method: "POST",
   handler: async (ctx) => {
     const { username, password } = await ctx.request.json()
 
     if (!await validateUser(username, password)) {
-      return new Response(null, {status: 400 })
+      return new Response("Bad credentials", {status: 401 })
     }
 
     const exp = new Date()
     exp.setMonth(exp.getMonth() + 1)
-
-    const jwt = await crypto.sign(
-      // Payload: { iat: number, exp: number, data: Record<string, undefined> }
-      {
-        iat: Date.now(),
-        exp: exp.valueOf(),
-        data: { user: user.username }
-      }
-    )
+    const jwt = await crypto.sign({
+      iat: Date.now(),
+      exp: exp.valueOf(),
+      data: { user: user.username }
+    })
 
     return new Response(jwt, {
+      status: 201,
       headers: new Headers({
         "Content-Type": "application/json"
       })
@@ -48,73 +40,98 @@ server.addRoute({
   }
 })
 
-// verify JWT in auth middleware
-server.addRoute({
-  path: "/authTest",
+server.addRoute("/verify", {
   middleware: Peko.authenticator(crypto),
   handler: () => new Response("You are authenticated!")
 })
 
-// basic HTML page with buttons to call auth routes
-server.addRoute({
-  path: "/",
-  handler: Peko.ssrHandler(() => `<!doctype html>
-    <html lang="en">
-    <head>
-      <title>Peko auth example</title>
-    </head>
-    <body style="width: 100vw; height: 100vh; margin: 0; background-color: steelblue">
-      <div style="border: 1px solid black; margin: auto; padding: 1rem;">
-        <button id="login">Login</button>
-        <button onclick="testAuth()">Test Auth</button>
-      </div>
+const html = String
+server.addRoute("/", Peko.ssrHandler(() => html`<!doctype html>
+  <html lang="en">
+  <head>
+    <title>Peko auth example</title>
+    <style>
+      html, body {
+        height: 100%; width: 100%;
+        margin: 0;
+        background-color: steelblue;
+      }
+      .auth-box {
+        width: 300px;
+        margin: 10rem auto;
+        padding: 1rem;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-box">
+      <input id="email" type="email" value="test-user">
+      <input id="password" type="password" value="test-password">
+      <button id="login">Login</button>
+      <button onclick="verify()">Test Auth</button>
+      <p>Status: <span id="status"></span></p>
+      <p>Response: <span id="response" style="word-wrap: break-word"></span></p>
+    </div>
 
-      <script>
-        const loginBtn = document.querySelector("#login")
-        let jwt
+    <script>
+      const email = document.querySelector("#email")
+      const password = document.querySelector("#password")
+      const loginBtn = document.querySelector("#login")
+      const status = document.querySelector("#status")
+      const responseText = document.querySelector("#response")
+      let jwt
 
-        async function login() {
-          const response = await fetch("/login", {
-            method: "POST",
-            body: JSON.stringify({ username: "test-user", password: "test-password" })
+      async function login() {
+        const response = await fetch("/login", {
+          method: "POST",
+          body: JSON.stringify({ username: email.value, password: password.value })
+        })
+
+        jwt = await response.text()
+        responseText.innerText = jwt
+        
+        updateStatus(response.status)
+        updateButton()
+      }
+
+      function logout() { 
+        jwt = "" 
+        responseText.innerText = jwt
+
+        updateStatus()
+        updateButton()
+      }
+
+      async function verify() {
+        const response = await fetch("/verify", {
+          headers: new Headers({
+            "Authorization": "Bearer " + jwt
           })
+        })
+        
+        updateStatus(response.status)
+        responseText.innerText = await response.text()
+      }
 
-          if (response.status !== 200) return alert("Login failed.")
-
-          jwt = await response.text()
-          console.log("jwt: " + jwt)
-
-          loginBtn.textContent = "Logout"
-          loginBtn.removeEventListener("click", login)
-          loginBtn.addEventListener("click", logout)
+      function updateStatus(statusCode = "") {
+        status.innerText = statusCode
+        if (statusCode !== 200 && statusCode !== 201) {
+          status.style.color = "red"
+        } else {
+          status.style.color = "limegreen"
         }
+      }
 
-        function logout() { 
-          jwt = undefined 
-          console.log("jwt: " + jwt)
+      function updateButton() {
+        loginBtn.textContent = jwt ? "Logout" : "Login"
+        loginBtn.onclick = jwt ? logout : login
+      }
 
-          loginBtn.textContent = "Login"
-          loginBtn.removeEventListener("click", logout)
-          loginBtn.addEventListener("click", login)
-        }
+      updateButton()
+    </script>
+  </body>
+  </html>
+`))
 
-        async function testAuth() {
-          const response = await fetch("/authTest", {
-            headers: new Headers({
-              "Authorization": "Bearer " + jwt
-            })
-          })
-          console.log(response)
-        }
-
-        document.querySelector("#login").addEventListener("click", login)
-      </script>
-    </body>
-    </html>
-  `, { 
-    crypto
-  })
-})
-
-// Start Peko server :^)
 server.listen()
