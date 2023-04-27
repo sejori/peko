@@ -2,51 +2,49 @@ import * as Peko from "https://deno.land/x/peko/mod.ts"
 
 const server = new Peko.Server()
 const crypto = new Peko.Crypto("SUPER_SECRET_KEY_123") // <-- replace from env
-const user = { 
+const user = {                    // <-- replace with db / auth provider query
   username: "test-user",
   password: await crypto.hash("test-password")
-} // <-- replace with db / auth provider query
+} 
 
 const validateUser = async (username: string, password: string) => {
   return username && password 
-  && username === user.username
-  && await crypto.hash(password) === user.password 
+    && username === user.username
+    && await crypto.hash(password) === user.password 
 }
 
 server.use(Peko.logger(console.log))
-server.addRoute("/login", {
-  method: "POST",
-  handler: async (ctx) => {
-    const { username, password } = await ctx.request.json()
+server.post("/login", async (ctx) => {
+  const { username, password } = await ctx.request.json()
 
-    if (!await validateUser(username, password)) {
-      return new Response("Bad credentials", {status: 401 })
-    }
-
-    const exp = new Date()
-    exp.setMonth(exp.getMonth() + 1)
-    const jwt = await crypto.sign({
-      iat: Date.now(),
-      exp: exp.valueOf(),
-      data: { user: user.username }
-    })
-
-    return new Response(jwt, {
-      status: 201,
-      headers: new Headers({
-        "Content-Type": "application/json"
-      })
-    })
+  if (!await validateUser(username, password)) {
+    return new Response("Bad credentials", {status: 401 })
   }
+
+  const exp = new Date()
+  exp.setMonth(exp.getMonth() + 1)
+  const jwt = await crypto.sign({
+    iat: Date.now(),
+    exp: exp.valueOf(),
+    data: { user: user.username }
+  })
+
+  return new Response(jwt, {
+    status: 201,
+    headers: new Headers({
+      "Content-Type": "application/json"
+    })
+  })
 })
 
-server.addRoute("/verify", {
-  middleware: Peko.authenticator(crypto),
-  handler: () => new Response("You are authenticated!")
-})
+server.get(
+  "/verify", 
+  Peko.authenticator(crypto), 
+  () => new Response("You are authenticated!")
+)
 
 const html = String
-server.addRoute("/", Peko.ssrHandler(() => html`<!doctype html>
+server.get("/", Peko.ssrHandler(() => html`<!doctype html>
   <html lang="en">
   <head>
     <title>Peko auth example</title>
