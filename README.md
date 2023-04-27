@@ -83,19 +83,22 @@ server.listen(7777, () => console.log("Peko server started - let's go!"));
 
 PR to add your project 🙌
 
-### [iiisun.art](https://iiisun.art) - artistic storefront [source](https://github.com/sebringrose/third-sun/blob/main/server.ts)
+### [iiisun.art](https://iiisun.art) - artistic storefront 
 - **Stack:** React, ImageMagick_deno
 - **Features:** CI resized-image precaching, Gelato & Stripe integrations, Parallax CSS
-- **Note:** [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) and [es6-string-css](https://marketplace.visualstudio.com/items?itemName=bashmish.es6-string-css) VS Code extensions recommended.
+- [source](https://github.com/sebringrose/third-sun/blob/main/server.ts)
 
-### [shineponics.org](https://shineponics.org) - smart-farming PaaS [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
+### [shineponics.org](https://shineponics.org) - smart-farming PaaS 
 - **Stack:** React, Google Cloud Platform
 - **Features:** Google Sheet analytics, GCP email list, Markdown rendering
-- **Note:** [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) and [es6-string-css](https://marketplace.visualstudio.com/items?itemName=bashmish.es6-string-css) VS Code extensions recommended.
+- [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
 
-### [peko-auth.deno.dev](https://peko-auth.deno.dev) - basic authentication demo [source](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
+### [peko-auth.deno.dev](https://peko-auth.deno.dev) - basic authentication demo 
 - **Stack:** HTML5
 - **Features:** JWT-based auth
+- [source](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
+
+**Note:** [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) and [es6-string-css](https://marketplace.visualstudio.com/items?itemName=bashmish.es6-string-css) VS Code extensions recommended.
 
 <h2>Deployment</h2>
 
