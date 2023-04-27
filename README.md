@@ -74,7 +74,7 @@ const server = new Peko.Server();
 
 server.use(Peko.logger(console.log));
 
-server.addRoute("/hello", () => new Response("Hello world!"));
+server.get("/hello", () => new Response("Hello world!"));
 
 server.listen(7777, () => console.log("Peko server started - let's go!"));
 ```
