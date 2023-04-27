@@ -1,4 +1,3 @@
-// import { Server } from "../server.ts"
 import { Middleware, Route } from "../types.ts"
 import { staticHandler } from "../handlers/static.ts"
 

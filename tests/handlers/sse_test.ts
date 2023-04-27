@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../lib/server.ts"
+import { Server, RequestContext } from "../../lib/Server.ts"
 import { sseHandler } from "../../lib/handlers/sse.ts"
 
 Deno.test("HANDLER: Server-sent events", async (t) => {
