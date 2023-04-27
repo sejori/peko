@@ -1,4 +1,4 @@
-import { Server } from "../server.ts"
+import { Server } from "../Server.ts"
 import { Route } from "../types.ts"
 
 type ProfileConfig = {

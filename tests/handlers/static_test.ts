@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../lib/server.ts"
+import { Server, RequestContext } from "../../lib/Server.ts"
 import { staticHandler } from "../../lib/handlers/static.ts"
 
 Deno.test("HANDLER: Static", async (t) => {
