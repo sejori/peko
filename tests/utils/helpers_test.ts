@@ -2,8 +2,9 @@ import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
 import { Server } from "../../lib/Server.ts"
 import {
   mergeHeaders,
-  staticDir
+  routesFromDir
 } from "../../lib/utils/helpers.ts"
+import { staticHandler } from "../../mod.ts"
 
 Deno.test("UTIL: helpers", async (t) => {  
   await t.step("mergeHeaders", () => {
@@ -17,12 +18,12 @@ Deno.test("UTIL: helpers", async (t) => {
     assert(base.has("Content-Type") && base.has("Authorization"))
   }) 
 
-  await t.step("staticDir returns all file routes with supplied middleware and static handler", async () => {
+  await t.step("routesFromDir returns all file routes with supplied middleware and handler", async () => {
     const server = new Server()
     const request = new Request('https://localhost:7777/utils/helpers_test.ts')
 
     let text = ''
-    const routes = await staticDir(new URL("../", import.meta.url), () => { text = "I was set" })
+    const routes = await routesFromDir(new URL("../", import.meta.url), (url: URL) => staticHandler(url), () => { text = "I was set" })
 
     assert(routes.find(route => route.path.includes("handlers")))
     assert(routes.find(route => route.path.includes("middleware")))
