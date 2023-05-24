@@ -1,6 +1,6 @@
 // import { Server } from "../server.ts"
 import { Middleware, Route } from "../types.ts"
-import { staticHandler } from "../handlers/static.ts"
+import { Handler } from "../types.ts"
 
 /**
  * Merge source headers into base headers and return base
@@ -22,20 +22,20 @@ export const mergeHeaders = (base: Headers, source: Headers) => {
  * @param dirUrl: URL
  * @param middleware: Middleware for each route added
  * @param routes: init Route array
- * @param depth: used internally to correct paths, don't set
+ * @param _depth: used internally to correct paths, don't set
  * @returns routes: Route[]
  */
-export const staticDir = async (dirUrl: URL, middleware?: Middleware | Middleware[], routes?: Route[], _depth = 1): Promise<Route[]> => {
+export const routesFromDir = async (dirUrl: URL, handlerGen: (url: URL) => Handler, middleware?: Middleware | Middleware[], _depth = 1): Promise<Route[]> => {
   if (!(await Deno.stat(dirUrl)).isDirectory) throw new Error("URL does not point to directory.")
-  if (!routes) routes = []
+  const routes: Route[] = []
 
   for await (const file of Deno.readDir(dirUrl)) {
     const fileUrl = new URL(`file://${dirUrl.pathname}/${file.name}`)
     if (file.isDirectory) {
-      await staticDir(fileUrl, middleware, routes, _depth+1)
+      const subDirRoutes = await routesFromDir(fileUrl, handlerGen, middleware, _depth+1)
+      routes.splice(0, 0, ...subDirRoutes)
     } else {
       const pieces = dirUrl.pathname.split("/")
-
       let dirPath = ''
       for (let i=1; i<_depth; i++) dirPath = `${pieces[pieces.length-i]}/${dirPath}`
 
@@ -43,7 +43,7 @@ export const staticDir = async (dirUrl: URL, middleware?: Middleware | Middlewar
       routes.push({
         path: `/${filePath}`,
         middleware,
-        handler: staticHandler(fileUrl)
+        handler: handlerGen(fileUrl)
       })
     }
   }
