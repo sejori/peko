@@ -1,5 +1,5 @@
 /**
- * Featherweight apps on Deno Deploy.
+ * Featherweight apps on the edge.
  */
 
 // Core classes, functions & types

@@ -1,4 +1,3 @@
-import { Server as stdServer } from "https://deno.land/std@0.174.0/http/server.ts"
 import { Router } from "./utils/Router.ts"
 import { Cascade, PromiseMiddleware } from "./utils/Cascade.ts"
 import { Middleware, Route } from "./types.ts"
@@ -18,7 +17,6 @@ export class RequestContext {
 }
 
 export class Server extends Router {
-  stdServer: stdServer | undefined
   port = 7777
   hostname = "0.0.0.0"
   middleware: PromiseMiddleware[] = []
@@ -55,36 +53,6 @@ export class Server extends Router {
     }
     return this.middleware.push(Cascade.promisify(middleware))
   }
-  
-  /**
-   * Start listening to HTTP requests.
-   * @param port: number
-   * @param onListen: onListen callback function
-   * @param onError: error handler
-   */
-  async listen(
-    port?: number,
-    onListen?: (server: stdServer) => void,
-    onError?: (error: unknown) => Response | Promise<Response>
-  ): Promise<void> {
-    if (port) this.port = port
-    
-    this.stdServer = new stdServer({ 
-      port: this.port, 
-      hostname: this.hostname,
-      handler: (request: Request) => this.requestHandler.call(this, request),
-      onError
-    })
-
-    if (onListen) {
-      onListen(this.stdServer)
-    } else {
-      console.log(`Peko server started on port ${this.port} with routes:`)
-      this.allRoutes.forEach((route, i) => console.log(`${route.method} ${route.path} ${i===this.routes.length-1 ? "\n" : ""}`))
-    }
-
-    return await this.stdServer.listenAndServe()
-  }
 
   /**
    * Generate Response by running route middleware/handler with Cascade.
@@ -101,15 +69,5 @@ export class Server extends Router {
     )
     
     return await new Cascade(ctx, route).start()
-  }
-
-  /**
-   * Stop listening to HTTP requests.
-   * @param port: number
-   * @param onListen: onListen callback function
-   * @param onError: onListen callback function
-   */
-  close(): void {
-    if (this.stdServer) this.stdServer.close()
   }
 }

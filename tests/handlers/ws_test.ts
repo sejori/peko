@@ -1,12 +1,13 @@
-import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
+import { assert } from "https://deno.land/std@0.190.0/testing/asserts.ts"
+import { Server as StdServer } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Server } from "../../lib/server.ts"
 import { wsHandler } from "../../lib/handlers/ws.ts"
 
 Deno.test("HANDLER: WebSocket", async (t) => {
   const server = new Server()
+
   const sockets: Map<string, WebSocket> = new Map()
   const client_messages: string[] = []
-
   server.addRoute("/ws", wsHandler((socket) => {
     const socketID = crypto.randomUUID()
     socket.addEventListener("open", () => sockets.set(socketID, socket))
@@ -14,7 +15,11 @@ Deno.test("HANDLER: WebSocket", async (t) => {
     socket.addEventListener("close", () => sockets.delete(socketID))
   }))
 
-  server.listen(3000, () => null)
+  const stdServer = new StdServer({
+    port: 3000,
+    handler: (req) => server.requestHandler(req)
+  })
+  stdServer.listenAndServe()
 
   await t.step("Socket created and closed as expected", async () => {
     const socket = new WebSocket("ws://localhost:3000/ws")
@@ -66,7 +71,7 @@ Deno.test("HANDLER: WebSocket", async (t) => {
     await closePromise(socket3)
   })
 
-  server.close()
+  stdServer.close()
 });
 
 function openPromise(conn: WebSocket): Promise<boolean> {

@@ -57,21 +57,9 @@ export class ResponseCache {
   }
 
   set(key: string, value: Response): CacheItem {
-    // await this.clean() <-- no worky with Deno Deploy
-
     const newItem = new CacheItem(key, value)
     this.items = [ ...this.items.filter((item) => item.key !== key), newItem ]
 
     return newItem
-  }
-
-  clean(): Promise<void> {
-    return new Promise<void>((res) => {
-      if (Deno.memoryUsage().heapTotal < this.MEMORY_LIMIT) return res()
-      
-      this.items.sort((item1, item2) => item1.useRate() < item2.useRate() ? 1 : 0) 
-      this.items.splice(Math.floor(this.items.length/2))
-      return res()
-    })
   }
 }

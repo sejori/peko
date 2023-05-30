@@ -7,7 +7,7 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
     <link rel="icon" href="/assets/twemoji_chick.svg">
     
     ${tags && tags.title}
-    <meta name="description" content="The Featherweight Deno SSR Library">
+    <meta name="description" content="Featherweight apps on the edge.">
 
     ${tags && tags.modulepreload}
 

@@ -1,9 +1,14 @@
-import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
+import { assert } from "https://deno.land/std@0.190.0/testing/asserts.ts"
+import { Server as StdServer } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Server } from "../../lib/server.ts"
 import Profiler from "../../lib/utils/Profiler.ts"
 
 Deno.test("UTIL: Profiler", async (t) => {
   const server = new Server()
+  const stdServer = new StdServer({
+    port: 3000,
+    handler: server.requestHandler
+  })
 
   server.addRoute("/hello", () => {
     return new Response("Hello, World!")
@@ -36,7 +41,7 @@ Deno.test("UTIL: Profiler", async (t) => {
   })
 
   await t.step("profiles served requests", async () => {
-    server.listen(8000, () => {})
+    stdServer.listenAndServe()
 
     // can't await listen so timeout necessary
     await new Promise(res => setTimeout(res, 500))
@@ -61,6 +66,6 @@ Deno.test("UTIL: Profiler", async (t) => {
     await Promise.all(results["/hello"].requests.map(request => request.response.body?.cancel()))
     await Promise.all(results["/goodbye"].requests.map(request => request.response.body?.cancel()))
 
-    server.close()
+    stdServer.close()
   })
 });
