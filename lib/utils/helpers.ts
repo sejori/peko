@@ -1,6 +1,4 @@
-// import { Server } from "../server.ts"
-import { Middleware, Route } from "../types.ts"
-import { Handler } from "../types.ts"
+import { Route } from "../types.ts"
 
 /**
  * Merge source headers into base headers and return base
