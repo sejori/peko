@@ -20,10 +20,17 @@ Deno.test("UTIL: helpers", async (t) => {
 
   await t.step("routesFromDir returns all file routes with supplied middleware and handler", async () => {
     const server = new Server()
-    const request = new Request('https://localhost:7777/utils/helpers_test.ts')
+    const request = new Request('https://localhost:7777/tests/utils/helpers_test.ts')
 
     let text = ''
-    const routes = await routesFromDir(new URL("../", import.meta.url), (url: URL) => staticHandler(url), () => { text = "I was set" })
+    const routes = await routesFromDir(
+      new URL("../", import.meta.url), 
+      (path, url) => ({
+        path: path,
+        middleware: () => { text = "I was set" },
+        handler: staticHandler(url)
+      })
+    )
 
     assert(routes.find(route => route.path.includes("handlers")))
     assert(routes.find(route => route.path.includes("middleware")))
