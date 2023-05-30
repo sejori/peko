@@ -1,21 +1,21 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server } from "../lib/server.ts"
-import { Router } from "../lib/utils/Router.ts"
+import { Server } from "../../lib/Server.ts"
+import { Router } from "../../lib/utils/Router.ts"
 import {
   testMiddleware1,
   testHandler,
-} from "./mocks/middleware.ts"
+} from "../mocks/middleware.ts"
 
-Deno.test("SERVER", async (t) => {
+Deno.test("ROUTER", async (t) => {
   const router = new Router()
 
   await t.step("routes added with full route and string arg options", () => {
     router.addRoute({ path: "/route", handler: testHandler })
     router.addRoute("/anotherRoute", { handler: testHandler })
     router.addRoute("/anotherNotherRoute", testHandler)
-    const routesLength = router.addRoute("/anotherNotherNotherRoute", testMiddleware1, testHandler)
+    const finalRoute = router.addRoute("/anotherNotherNotherRoute", testMiddleware1, testHandler)
 
-    assert(routesLength === 4 && router.routes.length === 4)
+    assert(finalRoute.path === "/anotherNotherNotherRoute" && router.routes.length === 4)
   })
 
   await t.step("routes removed", () => {
@@ -42,5 +42,32 @@ Deno.test("SERVER", async (t) => {
 
     assert(!aRouter.routes.find(route => route.path === "/route"))
     assert(aRouter.routes.length === 2)
+  })
+
+  await t.step ("http shorthand methods work correctly", () => {
+    const router = new Router()
+
+    const getRoute = router.get({
+      path: "/get",
+      handler: () => new Response("GET")
+    })
+    const postRoute = router.post({
+      path: "/post",
+      handler: () => new Response("POST")
+    })
+    const putRoute =router.put({
+      path: "/put",
+      handler: () => new Response("PUT")
+    })
+    const deleteRoute = router.delete({
+      path: "/delete",
+      handler: () => new Response("DELETE")
+    })
+
+    assert(router.routes.length === 4)
+    assert(getRoute.method === "GET")
+    assert(postRoute.method === "POST")
+    assert(putRoute.method === "PUT")
+    assert(deleteRoute.method === "DELETE")
   })
 })
