@@ -7,7 +7,7 @@ Deno.test("UTIL: Profiler", async (t) => {
   const server = new Server()
   const stdServer = new StdServer({
     port: 3000,
-    handler: server.requestHandler
+    handler: (req) => server.requestHandler(req)
   })
 
   server.addRoute("/hello", () => {
