@@ -3,7 +3,7 @@
  */
 
 // Core classes, functions & types
-export * from "./lib/server.ts"
+export * from "./lib/Server.ts"
 export * from "./lib/types.ts"
 
 // Handlers
@@ -23,5 +23,5 @@ export * from "./lib/utils/ResponseCache.ts"
 export * from "./lib/utils/Crypto.ts"
 export * from "./lib/utils/helpers.ts"
 
-import { Server } from "./lib/server.ts"
+import { Server } from "./lib/Server.ts"
 export default Server
