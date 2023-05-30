@@ -23,62 +23,108 @@ export class Router {
    * @param route: Route | Route["path"]
    * @param arg2?: Partial<Route> | Middleware | Middleware[], 
    * @param arg3?: Handler
-   * @returns number - Router.length
+   * @returns route: Route - added route object
    */
-    addRoute(route: Route): number
-    addRoute(route: Route["path"], data: Handler | Partial<Route>): number
-    addRoute(route: Route["path"], middleware: Middleware | Middleware[], handler: Handler): number
-    addRoute(
-      arg1: Route | Route["path"], 
-      arg2?: Partial<Route> | Middleware | Middleware[], 
-      arg3?: Handler
-    ): number {
-      const routeObj: Partial<Route> = typeof arg1 !== "string"
-        ? arg1
-        : arguments.length === 2
-          ? typeof arg2 === "function"
-            ? { path: arg1, handler: arg2 as Handler }
-            : { path: arg1, ...arg2 as Partial<Route> }
-          : { path: arg1, middleware: arg2 as Middleware | Middleware[], handler: arg3 }
-  
-      if (this.routes.find(existing => existing.path === routeObj.path)) {
-        throw new Error(`Route with path ${routeObj.path} already exists!`)
-      }
-      
-      return this.routes.push(Router.applyDefaults(routeObj))
+  addRoute(route: Route): Route
+  addRoute(route: Route["path"], data: Handler | Partial<Route>): Route
+  addRoute(route: Route["path"], middleware: Middleware | Middleware[], handler: Handler): Route
+  addRoute(
+    arg1: Route | Route["path"], 
+    arg2?: Partial<Route> | Middleware | Middleware[], 
+    arg3?: Handler
+  ): Route {
+    const routeObj: Partial<Route> = typeof arg1 !== "string"
+      ? arg1
+      : arguments.length === 2
+        ? typeof arg2 === "function"
+          ? { path: arg1, handler: arg2 as Handler }
+          : { path: arg1, ...arg2 as Partial<Route> }
+        : { path: arg1, middleware: arg2 as Middleware | Middleware[], handler: arg3 }
+
+    if (this.routes.find(existing => existing.path === routeObj.path)) {
+      throw new Error(`Route with path ${routeObj.path} already exists!`)
     }
-  
-    /**
-     * Add Routes
-     * @param routes: Route[] - middleware can be Middlewares or Middleware 
-     * @returns number - routes.length
-     */
-    addRoutes(routes: Route[]): number {
-      routes.forEach(route => this.addRoute(route))
-      return this.routes.length
+    
+    const fullRoute = Router.applyDefaults(routeObj)
+    this.routes.push(fullRoute)
+
+    return fullRoute
+  }
+  /**
+   * Add Route with method "GET" (same as default addRoute behaviour)
+   * @returns route: Route - added route object
+   */
+  get: typeof this.addRoute = function() {
+    // @ts-ignore supply overload args
+    const newRoute = this.addRoute(...arguments)
+    newRoute.method = "GET"
+    return newRoute
+  }
+
+  /**
+   * Add Route with method "POST"
+   * @returns route: Route - added route object
+   */
+  post: typeof this.addRoute = function() {
+    // @ts-ignore supply overload args
+    const newRoute = this.addRoute(...arguments)
+    newRoute.method = "POST"
+    return newRoute
+  }
+
+  /**
+   * Add Route with method "PUT"
+   * @returns route: Route - added route object
+   */
+  put: typeof this.addRoute = function() {
+    // @ts-ignore supply overload args
+    const newRoute = this.addRoute(...arguments)
+    newRoute.method = "PUT"
+    return newRoute
+  }
+
+  /**
+   * Add Route with method "DELETE"
+   * @returns route: Route - added route object
+   */
+  delete: typeof this.addRoute = function() {
+    // @ts-ignore supply overload args
+    const newRoute = this.addRoute(...arguments)
+    newRoute.method = "DELETE"
+    return newRoute
+  }
+
+  /**
+   * Add Routes
+   * @param routes: Route[] - middleware can be Middlewares or Middleware 
+   * @returns number - routes.length
+   */
+  addRoutes(routes: Route[]): number {
+    routes.forEach(route => this.addRoute(route))
+    return this.routes.length
+  }
+
+  /**
+   * Remove Route from Peko server
+   * @param route: Route["path"] of route to remove
+   * @returns 
+   */
+  removeRoute(route: Route["path"]): number {
+    const routeToRemove = this.routes.find(r => r.path === route)
+    if (routeToRemove) {
+      this.routes.splice(this.routes.indexOf(routeToRemove), 1)
     }
-  
-    /**
-     * Remove Route from Peko server
-     * @param route: Route["path"] of route to remove
-     * @returns 
-     */
-    removeRoute(route: Route["path"]): number {
-      const routeToRemove = this.routes.find(r => r.path === route)
-      if (routeToRemove) {
-        this.routes.splice(this.routes.indexOf(routeToRemove), 1)
-      }
-      
-      return this.routes.length
-    }
-  
-    /**
-     * Remove Routes
-     * @param routes: Route["path"] of routes to remove
-     * @returns 
-     */
-    removeRoutes(routes: Route["path"][]): number {
-      routes.forEach(route => this.removeRoute(route))
-      return this.routes.length
-    }
+    
+    return this.routes.length
+  }
+
+  /**
+   * Remove Routes
+   * @param routes: Route["path"] of routes to remove
+   * @returns 
+   */
+  removeRoutes(routes: Route["path"][]): number {
+    routes.forEach(route => this.removeRoute(route))
+    return this.routes.length
+  }
 }

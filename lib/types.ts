@@ -1,4 +1,4 @@
-import { RequestContext } from "./server.ts"
+import { RequestContext } from "./Server.ts"
 
 export interface Route { 
   path: `/${string}`
