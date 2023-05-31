@@ -1,6 +1,7 @@
-import * as Peko from "https://deno.land/x/peko/mod.ts"
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import * as Peko from "../../mod.ts"
 
-const server = new Peko.Server()
+const app = new Peko.App()
 const crypto = new Peko.Crypto("SUPER_SECRET_KEY_123") // <-- replace from env
 const user = {                    // <-- replace with db / auth provider query
   username: "test-user",
@@ -13,8 +14,8 @@ const validateUser = async (username: string, password: string) => {
     && await crypto.hash(password) === user.password 
 }
 
-server.use(Peko.logger(console.log))
-server.post("/login", async (ctx) => {
+app.use(Peko.logger(console.log))
+app.post("/login", async (ctx) => {
   const { username, password } = await ctx.request.json()
 
   if (!await validateUser(username, password)) {
@@ -37,14 +38,14 @@ server.post("/login", async (ctx) => {
   })
 })
 
-server.get(
+app.get(
   "/verify", 
   Peko.authenticator(crypto), 
   () => new Response("You are authenticated!")
 )
 
 const html = String
-server.get("/", Peko.ssrHandler(() => html`<!doctype html>
+app.get("/", Peko.ssrHandler(() => html`<!doctype html>
   <html lang="en">
   <head>
     <title>Peko auth example</title>
@@ -132,4 +133,4 @@ server.get("/", Peko.ssrHandler(() => html`<!doctype html>
   </html>
 `))
 
-server.listen()
+serve((req) => app.requestHandler(req))

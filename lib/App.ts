@@ -5,7 +5,8 @@ import { Middleware, Route } from "./types.ts"
 export class RequestContext {
   app: App
   request: Request
-  state: Record<string, unknown>
+  // deno-lint-ignore no-explicit-any
+  state: Record<string, any>
 
   constructor(app: App, request: Request, state?: Record<string, unknown>) {
     this.app = app

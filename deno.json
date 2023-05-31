@@ -1,7 +1,7 @@
 {
   "tasks": {
-    "start": "deno run --allow-net --allow-read --allow-env examples/preact/index.ts",
-    "start:dev": "deno run --allow-net --allow-read --allow-env --watch examples/preact/index.ts",
+    "start": "deno run -A examples/react/app.ts",
+    "start:dev": "deno run -A --watch examples/react/app.ts",
     "test": "deno test --allow-read --allow-net",
     "profile": "deno run --allow-read --allow-net tests/scripts/profile.ts"
   },

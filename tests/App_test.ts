@@ -7,7 +7,7 @@ import {
 } from "./mocks/middleware.ts"
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
 
-Deno.test("SERVER", async (t) => {
+Deno.test("APP", async (t) => {
   const app = new App()
   app.middleware = []
 
