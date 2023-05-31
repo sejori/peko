@@ -2,8 +2,6 @@ import { Server } from "../Server.ts"
 import { Route } from "../types.ts"
 
 type ProfileConfig = {
-  mode?: "serve" | "handle"
-  url?: string
   count?: number
   excludedRoutes?: Route[]
 }
@@ -28,10 +26,8 @@ class Profiler {
    * @returns results: ProfileResults
    */
   static async run(server: Server, config?: ProfileConfig) {
-    const url = (config && config.url) || `http://${server.hostname}:${server.port}`
     const count = (config && config.count) || 100
     const excludedRoutes = (config && config.excludedRoutes) || []
-    const mode = (config && config.mode) || "serve"
 
     const results: ProfileResults = {}
 
@@ -40,12 +36,10 @@ class Profiler {
 
       if (!excludedRoutes.includes(route)) {
         const promises = new Array(count).fill(0).map(async () => {
-          const routeUrl = new URL(`${url}${route.path}`)
+          const routeUrl = new URL(`http://profile.peko/${route.path}`)
           
           const start = Date.now()
-          const response = mode === "serve" 
-            ? await fetch(routeUrl)
-            : await server.requestHandler(new Request(routeUrl))
+          const response = await server.requestHandler(new Request(routeUrl))
           const end = Date.now()
 
           return results[route.path].requests.push({

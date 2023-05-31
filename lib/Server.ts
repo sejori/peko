@@ -17,8 +17,6 @@ export class RequestContext {
 }
 
 export class Server extends Router {
-  port = 7777
-  hostname = "0.0.0.0"
   middleware: PromiseMiddleware[] = []
   routers: Router[] = [] 
   
@@ -26,15 +24,9 @@ export class Server extends Router {
     return [ this, ...this.routers].map(router => router.routes).flat()
   }
 
-  constructor(config?: { 
-    port?: number, 
-    hostname?: string, 
-  }) {
+  constructor(routes?: Route[]) {
     super()
-    if (!config) return
-    const { port, hostname } = config
-    if (port) this.port = port
-    if (hostname) this.hostname = hostname
+    if (routes) this.addRoutes(routes)
   }
 
   /**

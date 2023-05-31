@@ -1,15 +1,9 @@
 import { assert } from "https://deno.land/std@0.190.0/testing/asserts.ts"
-import { Server as StdServer } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Server } from "../../lib/Server.ts"
 import Profiler from "../../lib/utils/Profiler.ts"
 
 Deno.test("UTIL: Profiler", async (t) => {
   const server = new Server()
-  const stdServer = new StdServer({
-    port: 3000,
-    handler: (req) => server.requestHandler(req)
-  })
-  stdServer.listenAndServe()
 
   server.addRoute("/hello", () => {
     return new Response("Hello, World!")
@@ -21,7 +15,6 @@ Deno.test("UTIL: Profiler", async (t) => {
 
   await t.step("profiles handled requests", async () => {
     const results = await Profiler.run(server, {
-      mode: "handle",
       count: 10,
       excludedRoutes: [],
     })
@@ -40,31 +33,4 @@ Deno.test("UTIL: Profiler", async (t) => {
     await Promise.all(results["/hello"].requests.map(request => request.response.body?.cancel()))
     await Promise.all(results["/goodbye"].requests.map(request => request.response.body?.cancel()))
   })
-
-  await t.step("profiles served requests", async () => {
-    // can't await listen so timeout necessary
-    await new Promise(res => setTimeout(res, 100))
-
-    const results = await Profiler.run(server, {
-      mode: "serve",
-      count: 10,
-      excludedRoutes: [],
-    })
-  
-    assert(typeof results === "object")
-    assert(Object.keys(results).length === 2)
-  
-    assert(typeof results["/hello"].avgTime === "number")
-    assert(Array.isArray(results["/hello"].requests))
-    assert(results["/hello"].requests.length === 10)
-  
-    assert(typeof results["/goodbye"].avgTime === "number")
-    assert(Array.isArray(results["/goodbye"].requests))
-    assert(results["/goodbye"].requests.length === 10)
-
-    await Promise.all(results["/hello"].requests.map(request => request.response.body?.cancel()))
-    await Promise.all(results["/goodbye"].requests.map(request => request.response.body?.cancel()))
-  })
-
-  stdServer.close()
 });
