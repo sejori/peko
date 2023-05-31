@@ -9,6 +9,7 @@ Deno.test("UTIL: Profiler", async (t) => {
     port: 3000,
     handler: (req) => server.requestHandler(req)
   })
+  stdServer.listenAndServe()
 
   server.addRoute("/hello", () => {
     return new Response("Hello, World!")
@@ -41,10 +42,8 @@ Deno.test("UTIL: Profiler", async (t) => {
   })
 
   await t.step("profiles served requests", async () => {
-    stdServer.listenAndServe()
-
     // can't await listen so timeout necessary
-    await new Promise(res => setTimeout(res, 500))
+    await new Promise(res => setTimeout(res, 100))
 
     const results = await Profiler.run(server, {
       mode: "serve",
@@ -65,7 +64,7 @@ Deno.test("UTIL: Profiler", async (t) => {
 
     await Promise.all(results["/hello"].requests.map(request => request.response.body?.cancel()))
     await Promise.all(results["/goodbye"].requests.map(request => request.response.body?.cancel()))
-
-    stdServer.close()
   })
+
+  stdServer.close()
 });
