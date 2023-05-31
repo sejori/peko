@@ -1,11 +1,11 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../lib/Server.ts"
+import { App, RequestContext } from "../../lib/App.ts"
 import { cacher } from "../../lib/middleware/cacher.ts"
 import { testHandler } from "../mocks/middleware.ts"
 import { ResponseCache } from "../../lib/utils/ResponseCache.ts"
 
 Deno.test("MIDDLEWARE: Cacher", async (t) => {
-  const server = new Server()
+  const app = new App()
   const successString = "Success!"
   const CACHE_LIFETIME = 100
   const cache = new ResponseCache({
@@ -18,7 +18,7 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
   }
   
   await t.step("Response created and cached as expected", async () => {
-    const ctx = new RequestContext(server, new Request("http://localhost"), { ...testData })
+    const ctx = new RequestContext(app, new Request("http://localhost"), { ...testData })
     const response1 = await cacher(cache)(ctx, () => new Response(successString))
     assert(!ctx.state.responseFromCache && ctx.state.foo === testData.foo)
 
@@ -32,7 +32,7 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
 
   await t.step("Cached response invalidated as expected", async () => {
     await new Promise(res => setTimeout(res, CACHE_LIFETIME))
-    const ctx = new RequestContext(server, new Request("http://localhost"), { ...testData })
+    const ctx = new RequestContext(app, new Request("http://localhost"), { ...testData })
     const response = await cacher(cache)(ctx, () => new Response(successString))
     const body = await response?.text()
 
@@ -41,7 +41,7 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
   })
 
   await t.step("memoize - preserve handler logic", async () => {
-    const ctx = new RequestContext(server, new Request("http://localhost"), { thing: "different" })
+    const ctx = new RequestContext(app, new Request("http://localhost"), { thing: "different" })
     const testRes = await testHandler(ctx)
     const memRes = await memHandler(ctx, () => testHandler(ctx))
     assert(memRes)
@@ -56,7 +56,7 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
     const ETag = "1234567890"
     
     // consider testing for correct key generation as logic is set to include path + params
-    const ctx = new RequestContext(server, new Request("http://localhost/static-content?test-thing=hello", {
+    const ctx = new RequestContext(app, new Request("http://localhost/static-content?test-thing=hello", {
       headers: new Headers({ "if-none-match": ETag })
     }))
 

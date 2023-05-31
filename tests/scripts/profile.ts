@@ -1,4 +1,4 @@
-import { Server } from "../../lib/Server.ts"
+import { App } from "../../lib/App.ts"
 import {
   testMiddleware2,
   testMiddleware3,
@@ -7,17 +7,17 @@ import {
 } from "../mocks/middleware.ts"
 import Profiler from "../../lib/utils/Profiler.ts"
 
-const server = new Server()
+const app = new App()
 
-server.addRoute("/test", [
+app.addRoute("/test", [
   testMiddleware1,
   testMiddleware2,
   testMiddleware3
 ], testHandler)
 
-server.addRoute("/bench", () => new Response("Hello, bench!"))
+app.addRoute("/bench", () => new Response("Hello, bench!"))
 
-const handleResults = await Profiler.run(server, {
+const handleResults = await Profiler.run(app, {
   count: 100
 })
 

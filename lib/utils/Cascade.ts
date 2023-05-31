@@ -1,4 +1,4 @@
-import { RequestContext } from "../Server.ts"
+import { RequestContext } from "../App.ts"
 import { Middleware, Result, Next, Route } from "../types.ts"
 
 export type PromiseMiddleware = (ctx: RequestContext, next: Next) => Promise<Result>
@@ -13,8 +13,8 @@ export class Cascade {
 
   constructor(public ctx: RequestContext, private route?: Route) {
     this.toCall = this.route
-      ? [...this.ctx.server.middleware, ...this.route.middleware as PromiseMiddleware[], this.route.handler as PromiseMiddleware]
-      : [...this.ctx.server.middleware]
+      ? [...this.ctx.app.middleware, ...this.route.middleware as PromiseMiddleware[], this.route.handler as PromiseMiddleware]
+      : [...this.ctx.app.middleware]
   }
 
   static promisify = (fcn: Middleware): PromiseMiddleware => {

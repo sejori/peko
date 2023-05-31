@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server } from "../../lib/Server.ts"
+import { App } from "../../lib/App.ts"
 import { Router } from "../../lib/utils/Router.ts"
 import {
   testMiddleware1,
@@ -28,7 +28,7 @@ Deno.test("ROUTER", async (t) => {
   })
 
   await t.step ("routers on server can be subsequently editted", () => {
-    const server = new Server()
+    const app = new App()
 
     const aRouter = new Router([
       { path: "/route", handler: testHandler },
@@ -36,11 +36,10 @@ Deno.test("ROUTER", async (t) => {
       { path: "/route3", handler: testHandler }
     ])
 
-    server.use(aRouter)
-
+    app.use(aRouter)
     aRouter.removeRoute("/route")
 
-    assert(!aRouter.routes.find(route => route.path === "/route"))
+    assert(!app.allRoutes.find(route => route.path === "/route"))
     assert(aRouter.routes.length === 2)
   })
 

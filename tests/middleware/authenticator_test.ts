@@ -1,12 +1,12 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../lib/Server.ts"
+import { App, RequestContext } from "../../lib/App.ts"
 import { authenticator } from "../../lib/middleware/authenticator.ts"
 import { Crypto } from "../../lib/utils/Crypto.ts"
 
 Deno.test("MIDDLEWARE: Authenticator", async (t) => {
   const successString = "Authorized!"
   const crypto = new Crypto("test_key")
-  const server = new Server()
+  const app = new App()
 
   const testPayload = { iat: Date.now(), exp: Date.now() + 1000, data: { foo: "bar" }}
   const token = await crypto.sign(testPayload)
@@ -15,7 +15,7 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
   request.headers.set("Authorization", `Bearer ${token}`)
   
   await t.step("Response authorized as expected", async () => {
-    const ctx = new RequestContext(server, request)
+    const ctx = new RequestContext(app, request)
     const response = await authenticator(crypto)(ctx, () => new Response(successString))
 
     assert(await response?.text() === successString)
@@ -24,7 +24,7 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
   }) 
 
   await t.step("Response unauthorized as expected", async () => {
-    const ctx = new RequestContext(server, new Request("http://localhost"))
+    const ctx = new RequestContext(app, new Request("http://localhost"))
     const response = await authenticator(crypto)(ctx, () => new Response(successString))
 
     assert(response?.status === 401)
@@ -35,7 +35,7 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
     const request2 = new Request('https://localhost:7777')
     request2.headers.set("Cookies", `Bearer ${token}`)
 
-    const ctx = new RequestContext(server, request)
+    const ctx = new RequestContext(app, request)
     const response = await authenticator(crypto)(ctx, () => new Response(successString))
   
     assert(response?.status === 200)

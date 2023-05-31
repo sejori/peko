@@ -1,20 +1,20 @@
 import { assert } from "https://deno.land/std@0.190.0/testing/asserts.ts"
-import { Server } from "../../lib/Server.ts"
+import { App } from "../../lib/App.ts"
 import Profiler from "../../lib/utils/Profiler.ts"
 
 Deno.test("UTIL: Profiler", async (t) => {
-  const server = new Server()
+  const app = new App()
 
-  server.addRoute("/hello", () => {
+  app.addRoute("/hello", () => {
     return new Response("Hello, World!")
   })
 
-  server.addRoute("/goodbye", () => {
+  app.addRoute("/goodbye", () => {
     return new Response("Goodbye, World!")
   })
 
   await t.step("profiles handled requests", async () => {
-    const results = await Profiler.run(server, {
+    const results = await Profiler.run(app, {
       count: 10,
       excludedRoutes: [],
     })

@@ -1,4 +1,4 @@
-import { Server } from "../Server.ts"
+import { App } from "../App.ts"
 import { Route } from "../types.ts"
 
 type ProfileConfig = {
@@ -25,13 +25,13 @@ class Profiler {
    * @param config 
    * @returns results: ProfileResults
    */
-  static async run(server: Server, config?: ProfileConfig) {
+  static async run(app: App, config?: ProfileConfig) {
     const count = (config && config.count) || 100
     const excludedRoutes = (config && config.excludedRoutes) || []
 
     const results: ProfileResults = {}
 
-    for (const route of server.routes) {
+    for (const route of app.routes) {
       results[route.path] = { avgTime: 0, requests: [] }
 
       if (!excludedRoutes.includes(route)) {
@@ -39,7 +39,7 @@ class Profiler {
           const routeUrl = new URL(`http://profile.peko/${route.path}`)
           
           const start = Date.now()
-          const response = await server.requestHandler(new Request(routeUrl))
+          const response = await app.requestHandler(new Request(routeUrl))
           const end = Date.now()
 
           return results[route.path].requests.push({

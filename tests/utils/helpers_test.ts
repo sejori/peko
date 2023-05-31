@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server } from "../../lib/Server.ts"
+import { App } from "../../lib/App.ts"
 import {
   mergeHeaders,
   routesFromDir
@@ -19,7 +19,7 @@ Deno.test("UTIL: helpers", async (t) => {
   }) 
 
   await t.step("routesFromDir returns all file routes with supplied middleware and handler", async () => {
-    const server = new Server()
+    const app = new App()
     const request = new Request('https://localhost:7777/tests/utils/helpers_test.ts')
 
     let text = ''
@@ -37,9 +37,9 @@ Deno.test("UTIL: helpers", async (t) => {
     assert(routes.find(route => route.path.includes("mocks")))
     assert(routes.find(route => route.path.includes("utils")))
 
-    server.addRoutes(routes)
+    app.addRoutes(routes)
 
-    const response = await server.requestHandler(request)
+    const response = await app.requestHandler(request)
     const fileText = await response.text()
 
     assert(fileText == await Deno.readTextFile(new URL("./helpers_test.ts", import.meta.url)))

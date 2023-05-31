@@ -3,12 +3,12 @@ import { Cascade, PromiseMiddleware } from "./utils/Cascade.ts"
 import { Middleware, Route } from "./types.ts"
 
 export class RequestContext {
-  server: Server
+  app: App
   request: Request
   state: Record<string, unknown>
 
-  constructor(server: Server, request: Request, state?: Record<string, unknown>) {
-    this.server = server
+  constructor(app: App, request: Request, state?: Record<string, unknown>) {
+    this.app = app
     this.request = request
     this.state = state
       ? state 
@@ -16,7 +16,7 @@ export class RequestContext {
   }
 }
 
-export class Server extends Router {
+export class App extends Router {
   middleware: PromiseMiddleware[] = []
   routers: Router[] = [] 
   

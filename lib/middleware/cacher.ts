@@ -1,4 +1,4 @@
-import type { RequestContext } from "../Server.ts";
+import type { RequestContext } from "../App.ts";
 import { Middleware } from "../types.ts";
 import { ResponseCache } from "../utils/ResponseCache.ts";
 
