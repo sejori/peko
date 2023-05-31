@@ -9,8 +9,8 @@
 <p align="center">
     <span>
         &nbsp;
-        <a href="https://github.com/sebringrose/peko/blob/main/overview.md#server">
-            Server
+        <a href="https://github.com/sebringrose/peko/blob/main/overview.md#app">
+            App
         </a>
         &nbsp;
     </span>
@@ -56,27 +56,26 @@
 
 <h1>Stateless HTTP(S) apps that are:</h1>
 
-- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library
+- <strong>Featherweight</strong> - Designed for optimal cold-starts in serverless cloud environments
+- <strong>Cross-platform</strong> - Utilises browser-native JS and node/fs APIs supported by many engines
+- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API with library of middleware, handlers and utils
+- <strong>Production-ready</strong> - Fully-tested TypeScript source-code + application profiling utility
 
-- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + full-stack tooling
-
-- <strong>Production-ready</strong> - High test coverage + stable APIs + server profiling
-
-- <strong>Community-driven</strong> - Popular tool integrations + contributions encouraged 
 
 <h2>Getting started</h2>
 
 ```js
+import { serve } from "https://deno.land/std/http/server.ts";
 import * as Peko from "https://deno.land/x/peko/mod.ts"; 
-// import from ".../peko/lib/Server.ts" for featherweight mode
+// or import App from ".../peko/lib/App.ts"
 
-const server = new Peko.Server();
+const app = new Peko.App();
 
 server.use(Peko.logger(console.log));
 
 server.get("/hello", () => new Response("Hello world!"));
 
-server.listen(7777, () => console.log("Peko server started - let's go!"));
+serve(req => app.requestHandler(req));
 ```
 
 <h2>App showcase</h2>
@@ -111,15 +110,15 @@ Peko apps are designed to boot from scratch at request time and disappear once t
 
 This paradigm is often referred to as "serverless" or "edge computing" on cloud platforms, which offer code execution on shared server hardware. This is [much more resource efficient](https://developer.ibm.com/blogs/the-future-is-serverless/) than traditional server provisioning.
 
-Because our stateless apps cold-start it is important to keep their codebases small. The preact demo app only imports Peko and Preact as external dependencies and is very fast as a result - [https://peko.deno.dev](https://peko.deno.dev)!
+Because our stateless apps cold-start it is important to keep their codebases small. The react demo app only imports Peko and React as external dependencies and is very fast as a result - [https://peko.deno.dev](https://peko.deno.dev)!
 
 <strong>Note:</strong> In reality a single app instance will serve multiple requests, we just can't guarantee it. This is why caching is still an effective optimization strategy but in-memory user sessions are not an effective authentication strategy.
 
 <h2 id="cool">Motivations</h2>
 
-The modern JavaScript edge rocks because the client-server gap practically disappears. We can share modules across the client and cloud. If we want TS source we can [emit](https://github.com/denoland/deno_emit) JS. This eliminates much of the bloat in traditional JS server-side systems, increasing project simplicity while making our software faster and more efficient.
+The modern JavaScript edge rocks because the client-server gap practically disappears. We can share modules across the client and cloud. This eliminates much of the bloat in traditional JS server-side systems, increasing project simplicity while making our software faster and more efficient.
 
-This is made possible by engines such as Deno that are built to the [ECMAScript](https://tc39.es/) specification</a> (support for URL module imports is the secret sauce). UI libraries like [Preact](https://github.com/preactjs/preact) combined with [htm](https://github.com/developit/htm) offer lightning fast client-side hydration with a browser-friendly markup syntax. Deno also has native TypeScript support, a rich runtime API and loads of community tools for your back-end needs.
+This is made possible by engines such as Deno and Bun that are built to the [ECMAScript](https://tc39.es/) specification</a> (support for URL module imports is the secret sauce).
 
 If you are interested in contributing please submit a PR or get in contact ^^
 

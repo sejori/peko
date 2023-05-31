@@ -23,5 +23,5 @@ export * from "./lib/utils/ResponseCache.ts"
 export * from "./lib/utils/Crypto.ts"
 export * from "./lib/utils/helpers.ts"
 
-import { App } from "./lib/App.ts"
+import App from "./lib/App.ts"
 export default App

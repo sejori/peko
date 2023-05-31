@@ -64,3 +64,5 @@ export class App extends Router {
     return await new Cascade(ctx, route).start()
   }
 }
+
+export default App
