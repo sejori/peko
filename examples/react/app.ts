@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { bundle } from "https://deno.land/x/emit@0.23.0/mod.ts"
+import { transpile } from "https://deno.land/x/emit@0.23.0/mod.ts"
 import * as Peko from "../../mod.ts"
 import {
   Index,
@@ -22,9 +22,10 @@ app.addRoutes(await Peko.routesFromDir(
       transform: async (contents) => {
         // bundle and transpile .ts src files for browser
         if (!path.includes(".ts")) return contents
-        console.log("Emitting ts bundle: " + url.href)
-        const { code } = await bundle(url)
-        return code
+        console.log("Emitting ts file: " + url.href)
+    
+        const result = await transpile(url)
+        return result.get(url.href)!
       },
       headers: path.includes(".ts")
         ? new Headers({ "Content-Type": "application/javascript" })

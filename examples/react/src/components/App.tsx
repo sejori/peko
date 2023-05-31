@@ -9,7 +9,7 @@ const App = () => {
   
   useEffect(() => {
     // @ts-ignore: EventSource browser API
-    const sse = new EventSource("/sse")
+    const sse = new EventSource("/api/sse")
     sse.onmessage = (e: MessageEvent) => {
       const eventData = JSON.parse(e.data)
       setLatestEvent(eventData.detail)
