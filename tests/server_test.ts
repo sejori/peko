@@ -85,4 +85,16 @@ Deno.test("SERVER", async (t) => {
 
     assert(body["middleware1"] && body["middleware2"] && body["middleware3"])
   })
+
+  await t.step("params discovered in RequestContext creation", async () => {
+    const newServer = new Server();
+
+    newServer.addRoute("/hello/:id/world/:name", (ctx) => {
+      return new Response(JSON.stringify({ id: ctx.params["id"], name: ctx.params["name"] }))
+    })
+
+    const res = await newServer.requestHandler(new Request("http://localhost:7777/hello/123/world/bruno"))
+    const json = await res.json()
+    assert(json.id === "123" && json.name === "bruno")
+  })
 })

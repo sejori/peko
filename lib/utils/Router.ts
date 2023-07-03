@@ -1,8 +1,37 @@
 import { Middleware, Handler, Route } from "../types.ts"
 import { Cascade } from "./Cascade.ts"
 
+export class _Route implements Route {
+  path: `/${string}`
+  params: Record<string, number> = {}
+  regexPath: RegExp
+  method?: "GET" | "POST" | "PUT" | "DELETE"
+  middleware?: Middleware[] | Middleware
+  handler: Handler
+
+  constructor(routeObj: Route) {
+    if (!routeObj.path) throw new Error("Route is missing path")
+    if (!routeObj.handler) throw new Error("Route is missing handler")
+
+    this.path = routeObj.path
+    this.path.split("/").forEach((str, i) => {
+      if (str[0] === ":") this.params[str.slice(1)] = i
+    });
+    this.regexPath = this.params 
+      ? new RegExp(this.path.replaceAll(/(?<=\/):(.)*?(?=\/|$)/g, "(.)*"))
+      : new RegExp(this.path)
+
+    this.method = routeObj.method || "GET"
+    this.handler = Cascade.promisify(routeObj.handler!) as Handler
+    this.middleware = [routeObj.middleware]
+      .flat()
+      .filter(Boolean)
+      .map((mware) => Cascade.promisify(mware!))
+  }
+}
+
 export class Router {
-  constructor(public routes: Route[] = []) {}
+  constructor(public routes: _Route[] = []) {}
 
   static applyDefaults(routeObj: Partial<Route>): Route {
     if (!routeObj.path) throw new Error("Route is missing path")
@@ -11,9 +40,9 @@ export class Router {
     routeObj.method = routeObj.method || "GET"
     routeObj.handler = Cascade.promisify(routeObj.handler!) as Handler
     routeObj.middleware = [routeObj.middleware]
-        .flat()
-        .filter(Boolean)
-        .map((mware) => Cascade.promisify(mware!))
+      .flat()
+      .filter(Boolean)
+      .map((mware) => Cascade.promisify(mware!))
 
     return routeObj as Route
   }
@@ -45,7 +74,7 @@ export class Router {
       throw new Error(`Route with path ${routeObj.path} already exists!`)
     }
     
-    const fullRoute = Router.applyDefaults(routeObj)
+    const fullRoute = new _Route(routeObj as Route)
     this.routes.push(fullRoute)
 
     return fullRoute

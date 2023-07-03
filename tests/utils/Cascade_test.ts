@@ -1,6 +1,7 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
 import { Server, RequestContext } from "../../lib/Server.ts"
 import { Cascade } from "../../lib/utils/Cascade.ts"
+import { _Route } from "../../lib/utils/Router.ts"
 import { 
   testMiddleware1,
   testMiddleware2,
@@ -11,8 +12,7 @@ import {
 Deno.test("UTIL: Cascade", async (t) => {
   const testServer = new Server()
   const testContext = new RequestContext(testServer, new Request("http://localhost"))
-
-  const cascade = new Cascade(testContext, {
+  testContext._route = new _Route({
     path: "/",
     middleware: [
       testMiddleware1,
@@ -22,6 +22,8 @@ Deno.test("UTIL: Cascade", async (t) => {
     ],
     handler: testHandler
   })
+
+  const cascade = new Cascade(testContext)
   
   const result = await cascade.start()
 

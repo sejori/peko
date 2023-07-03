@@ -1,30 +1,46 @@
 import { Server as stdServer } from "https://deno.land/std@0.174.0/http/server.ts"
-import { Router } from "./utils/Router.ts"
+import { Router, _Route } from "./utils/Router.ts"
 import { Cascade, PromiseMiddleware } from "./utils/Cascade.ts"
-import { Middleware, Route } from "./types.ts"
+import { Middleware } from "./types.ts"
 
 export class RequestContext {
-  server: Server
-  request: Request
+  url: URL
+  _route: _Route | undefined
   state: Record<string, unknown>
+  params: Record<string, unknown> = {}
 
-  constructor(server: Server, request: Request, state?: Record<string, unknown>) {
-    this.server = server
-    this.request = request
-    this.state = state
-      ? state 
-      : {}
+  constructor(
+    public server: Server, 
+    public request: Request, 
+    state?: Record<string, unknown>
+  ) {
+    this.url = new URL(request.url)
+    this.state = state ? state : {}
+  }
+
+  get route () {
+    return this._route
+  }
+
+  set route (r: _Route | undefined) {
+    this._route = r;
+    if (r?.params) {
+      const pathBits = this.url.pathname.split("/")
+      for (const param in r.params) {
+        this.params[param] = pathBits[r.params[param]]
+      }
+    }
   }
 }
 
 export class Server extends Router {
   stdServer: stdServer | undefined
   port = 7777
-  hostname = "0.0.0.0"
+  hostname = "127.0.0.1"
   middleware: PromiseMiddleware[] = []
   routers: Router[] = [] 
   
-  public get allRoutes(): Route[] {
+  public get allRoutes(): _Route[] {
     return [ this, ...this.routers].map(router => router.routes).flat()
   }
 
@@ -93,14 +109,13 @@ export class Server extends Router {
    */
   async requestHandler(request: Request): Promise<Response> {
     const ctx: RequestContext = new RequestContext(this, request)
-    const requestURL = new URL(ctx.request.url)
 
-    const route = this.allRoutes.find(route => 
-      route.path === requestURL.pathname && 
+    ctx.route = this.allRoutes.find(route => 
+      route.regexPath.test(ctx.url.pathname) && 
       route.method === request.method
     )
-    
-    return await new Cascade(ctx, route).start()
+
+    return await new Cascade(ctx).start()
   }
 
   /**
