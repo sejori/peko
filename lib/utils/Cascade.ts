@@ -1,5 +1,5 @@
 import { RequestContext } from "../Server.ts"
-import { Middleware, Result, Next, Route } from "../types.ts"
+import { Middleware, Result, Next } from "../types.ts"
 
 export type PromiseMiddleware = (ctx: RequestContext, next: Next) => Promise<Result>
 
@@ -11,9 +11,9 @@ export class Cascade {
   called = 0
   toCall: PromiseMiddleware[]
 
-  constructor(public ctx: RequestContext, private route?: Route) {
-    this.toCall = this.route
-      ? [...this.ctx.server.middleware, ...this.route.middleware as PromiseMiddleware[], this.route.handler as PromiseMiddleware]
+  constructor(public ctx: RequestContext) {
+    this.toCall = this.ctx.route
+      ? [...this.ctx.server.middleware, ...this.ctx.route.middleware as PromiseMiddleware[], this.ctx.route.handler as PromiseMiddleware]
       : [...this.ctx.server.middleware]
   }
 

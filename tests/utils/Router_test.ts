@@ -30,7 +30,8 @@ Deno.test("ROUTER", async (t) => {
   await t.step ("routers on server can be subsequently editted", () => {
     const server = new Server()
 
-    const aRouter = new Router([
+    const aRouter = new Router()
+    aRouter.addRoutes([
       { path: "/route", handler: testHandler },
       { path: "/route2", handler: testHandler },
       { path: "/route3", handler: testHandler }
@@ -69,5 +70,13 @@ Deno.test("ROUTER", async (t) => {
     assert(postRoute.method === "POST")
     assert(putRoute.method === "PUT")
     assert(deleteRoute.method === "DELETE")
+  })
+
+  await t.step("Params correctly stored", () => {
+    const router = new Router()
+    router.addRoute("/hello/:id/world/:name", () => new Response("Hi!"))
+
+    assert(router.routes[0].params["id"] === 2)
+    assert(router.routes[0].params["name"] === 4)
   })
 })
