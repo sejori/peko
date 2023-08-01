@@ -1,4 +1,4 @@
-import { Server } from "../../lib/Server.ts"
+import { Router } from "../../lib/Router.ts"
 import {
   testMiddleware2,
   testMiddleware3,
@@ -7,23 +7,27 @@ import {
 } from "../mocks/middleware.ts"
 import Profiler from "../../lib/utils/Profiler.ts"
 
-const server = new Server()
+const router = new Router()
 
-server.addRoute("/test", [
+router.addRoute("/test", [
   testMiddleware1,
   testMiddleware2,
   testMiddleware3
 ], testHandler)
 
-server.addRoute("/bench", () => new Response("Hello, bench!"))
+router.addRoute("/bench", () => new Response("Hello, bench!"))
 
-server.listen(8000, () => {})
+const abortController = new AbortController()
+Deno.serve({
+  port: 7777,
+  signal: abortController.signal
+}, router.requestHandler)
 
-const handleResults = await Profiler.run(server, {
+const handleResults = await Profiler.run(router, {
   mode: "handle",
   count: 100
 })
-const serveResults = await Profiler.run(server, {
+const serveResults = await Profiler.run(router, {
   mode: "serve",
   count: 100
 })
@@ -35,4 +39,4 @@ console.log("serve results")
 console.log("/test: " + serveResults["/test"].avgTime)
 console.log("/bench: " + serveResults["/bench"].avgTime)
 
-server.close()
+abortController.abort()

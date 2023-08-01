@@ -46,8 +46,10 @@ export class _Route implements Route {
 }
 
 export class Router {
-  middleware: Middleware[] = []
-  constructor(public routes: _Route[] = []) {}
+  constructor(
+    public routes: _Route[] = [],
+    public middleware: Middleware[] = []
+  ) {}
 
   /**
    * Generate Response by running route middleware/handler with Cascade.
@@ -56,7 +58,10 @@ export class Router {
    */
   async requestHandler(request: Request): Promise<Response> {
     const ctx = new RequestContext(this, request)
-    return await new Cascade(ctx, this.middleware).run()
+    const res = await new Cascade(ctx, this.middleware).run()
+    return res
+      ? res
+      : new Response("", { status: 404 })
   }
 
   /**
@@ -94,17 +99,19 @@ export class Router {
           ? { path: arg1, handler: arg2 as Handler }
           : { path: arg1, ...arg2 as Partial<Route> }
         : { path: arg1, middleware: arg2 as Middleware | Middleware[], handler: arg3 }
-
-    if (this.routes.find(existing => existing.path === routeObj.path)) {
-      throw new Error(`Route with path ${routeObj.path} already exists!`)
-    }
     
     const fullRoute = new _Route(routeObj as Route)
-    this.routes.push(fullRoute)
-    this.middleware.push((ctx) => {
-      if (fullRoute.regexPath.test(ctx.url.pathname) && 
-        fullRoute.method === ctx.request.method) {
 
+    if (this.routes.find(existing => existing.regexPath.toString() === fullRoute.regexPath.toString())) {
+      throw new Error(`Route with path ${routeObj.path} already exists!`)
+    }
+
+    this.routes.push(fullRoute)
+    this.middleware.push(function RouteMiddleware(ctx) {
+      if (
+        fullRoute.regexPath.test(ctx.url.pathname) && 
+        fullRoute.method === ctx.request.method
+      ) {
         if (fullRoute?.params) {
           const pathBits = ctx.url.pathname.split("/")
           for (const param in fullRoute.params) {
@@ -114,8 +121,6 @@ export class Router {
   
         return new Cascade(ctx, [...fullRoute.middleware, fullRoute.handler]).run()
       }
-
-      return undefined
     })
 
     return fullRoute
