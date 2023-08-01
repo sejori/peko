@@ -1,9 +1,9 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../lib/Server.ts"
+import { Router, RequestContext } from "../../lib/Router.ts"
 import { ssrHandler } from "../../lib/handlers/ssr.ts"
 
 Deno.test("HANDLER: Server-side render", async (t) => {
-  const server = new Server()
+  const server = new Router()
   const ctx = new RequestContext(server, new Request("http://localhost"))
   const decoder = new TextDecoder()
   const cacheControl = "max-age=60, stale-while-revalidate=10"

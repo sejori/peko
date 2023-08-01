@@ -1,4 +1,4 @@
-import { RequestContext } from "../Server.ts"
+import { RequestContext } from "../Router.ts"
 import { Middleware, Result, Next } from "../types.ts"
 
 export type PromiseMiddleware = (ctx: RequestContext, next: Next) => Promise<Result>
@@ -7,15 +7,16 @@ export type PromiseMiddleware = (ctx: RequestContext, next: Next) => Promise<Res
  * Utility class for running middleware functions as a cascade
  */
 export class Cascade {
-  response: Response | undefined
+  _response: Response | undefined
   called = 0
-  toCall: PromiseMiddleware[]
 
-  constructor(public ctx: RequestContext) {
-    this.toCall = this.ctx.route
-      ? [...this.ctx.server.middleware, ...this.ctx.route.middleware as PromiseMiddleware[], this.ctx.route.handler as PromiseMiddleware]
-      : [...this.ctx.server.middleware]
+  get response(): Response {
+    return this._response
+      ? this._response
+      : new Response("", { status: 404 })
   }
+
+  constructor(public ctx: RequestContext, public middleware: Middleware[]) {}
 
   static promisify = (fcn: Middleware): PromiseMiddleware => {
     return fcn.constructor.name === "AsyncFunction"
@@ -25,24 +26,25 @@ export class Cascade {
       })
   }
 
-  async run(fcn: PromiseMiddleware): Promise<Response | undefined> {
-    if (!fcn) return this.response
+  async run(): Promise<Response> {
+    console.log("cascade mware: ", this.middleware)
+    if (!this.middleware[this.called]) return this.response
 
     try {
-      const response = await fcn(this.ctx, async () => await this.run(this.toCall[++this.called]))
-      if (response) this.response = response
-      if (!this.response) await this.run(this.toCall[++this.called])
+      const response = await this.middleware[this.called](this.ctx, async () => {
+        this.called++
+        return await this.run()
+      })
+
+      if (response) this._response = response
+      if (!this.response) {
+        this.called++
+        await this.run()
+      }
     } catch (error) {
       throw error
     }
 
     return this.response
-  }
-
-  async start() {
-    await this.run(this.toCall[this.called])
-    return this.response
-      ? this.response
-      : new Response("", { status: 404 })
   }
 }

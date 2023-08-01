@@ -1,20 +1,20 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server } from "../../lib/Server.ts"
-import Profiler from "../../lib/utils/Profiler.ts"
+import { Router } from "../../lib/Router.ts"
+import { Profiler } from "../../lib/utils/Profiler.ts"
 
 Deno.test("UTIL: Profiler", async (t) => {
-  const server = new Server()
+  const router = new Router()
 
-  server.addRoute("/hello", () => {
+  router.addRoute("/hello", () => {
     return new Response("Hello, World!")
   })
 
-  server.addRoute("/goodbye", () => {
+  router.addRoute("/goodbye", () => {
     return new Response("Goodbye, World!")
   })
 
   await t.step("profiles handled requests", async () => {
-    const results = await Profiler.run(server, {
+    const results = await Profiler.run(router, {
       mode: "handle",
       count: 10,
       excludedRoutes: [],
@@ -36,12 +36,13 @@ Deno.test("UTIL: Profiler", async (t) => {
   })
 
   await t.step("profiles served requests", async () => {
-    server.listen(8000, () => {})
+    const abortController = new AbortController()
+    Deno.serve({ signal: abortController.signal }, router.requestHandler)
 
     // can't await listen so timeout necessary
     await new Promise(res => setTimeout(res, 500))
 
-    const results = await Profiler.run(server, {
+    const results = await Profiler.run(router, {
       mode: "serve",
       count: 10,
       excludedRoutes: [],
@@ -61,6 +62,6 @@ Deno.test("UTIL: Profiler", async (t) => {
     await Promise.all(results["/hello"].requests.map(request => request.response.body?.cancel()))
     await Promise.all(results["/goodbye"].requests.map(request => request.response.body?.cancel()))
 
-    server.close()
+    abortController.abort()
   })
 });

@@ -1,10 +1,10 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server } from "../../lib/Server.ts"
+import { Router } from "../../lib/Router.ts"
 import {
   mergeHeaders,
   routesFromDir
 } from "../../lib/utils/helpers.ts"
-import { staticHandler } from "../../mod.ts"
+import { staticHandler } from "../../lib/handlers/static.ts"
 
 Deno.test("UTIL: helpers", async (t) => {  
   await t.step("mergeHeaders", () => {
@@ -19,7 +19,7 @@ Deno.test("UTIL: helpers", async (t) => {
   }) 
 
   await t.step("routesFromDir returns all file routes with supplied middleware and handler", async () => {
-    const server = new Server()
+    const server = new Router()
     const request = new Request('https://localhost:7777/tests/utils/helpers_test.ts')
 
     let text = ''
@@ -36,14 +36,19 @@ Deno.test("UTIL: helpers", async (t) => {
     assert(routes.find(route => route.path.includes("middleware")))
     assert(routes.find(route => route.path.includes("mocks")))
     assert(routes.find(route => route.path.includes("utils")))
+    assert(routes.find(route => route.path.includes("scripts")))
 
     server.addRoutes(routes)
 
     const response = await server.requestHandler(request)
     const fileText = await response.text()
+    console.log(text)
 
-    assert(fileText == await Deno.readTextFile(new URL("./helpers_test.ts", import.meta.url)))
+    console.log(response)
+    console.log(fileText)
+
     assert(text === "I was set")
+    assert(fileText == await Deno.readTextFile(new URL("./helpers_test.ts", import.meta.url)))
   }) 
 
   // TODO: sitemap test

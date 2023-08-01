@@ -1,9 +1,9 @@
 import { contentType } from "https://deno.land/std@0.174.0/media_types/mod.ts";
 import { fromFileUrl } from "https://deno.land/std@0.174.0/path/mod.ts"
-import { RequestContext } from "../Server.ts"
-import { Handler, HandlerOptions } from "../types.ts"
+import { RequestContext } from "../Router.ts"
 import { Crypto } from "../utils/Crypto.ts"
 import { mergeHeaders } from "../utils/helpers.ts"
+import { Handler, HandlerOptions } from "../types.ts"
 
 const crypto = new Crypto(Array.from({length: 10}, () => Math.floor(Math.random() * 9)).toString())
 export interface staticHandlerOptions extends HandlerOptions {

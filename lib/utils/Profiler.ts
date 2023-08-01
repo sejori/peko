@@ -1,4 +1,4 @@
-import { Server } from "../Server.ts"
+import { Router } from "../Router.ts"
 import { Route } from "../types.ts"
 
 type ProfileConfig = {
@@ -20,22 +20,22 @@ type ProfileResults = Record<
   }
 >
 
-class Profiler {
+export class Profiler {
   /**
    * Benchmark performance of all server routes one at a time
-   * @param server 
+   * @param router 
    * @param config 
    * @returns results: ProfileResults
    */
-  static async run(server: Server, config?: ProfileConfig) {
-    const url = (config && config.url) || `http://${server.hostname}:${server.port}`
+  static async run(router: Router, config?: ProfileConfig) {
+    const url = (config && config.url) || `http://localhost:7777`
     const count = (config && config.count) || 100
     const excludedRoutes = (config && config.excludedRoutes) || []
     const mode = (config && config.mode) || "serve"
 
     const results: ProfileResults = {}
 
-    for (const route of server.routes) {
+    for (const route of router.routes) {
       results[route.path] = { avgTime: 0, requests: [] }
 
       if (!excludedRoutes.includes(route)) {
@@ -45,7 +45,7 @@ class Profiler {
           const start = Date.now()
           const response = mode === "serve" 
             ? await fetch(routeUrl)
-            : await server.requestHandler(new Request(routeUrl))
+            : await router.requestHandler(new Request(routeUrl))
           const end = Date.now()
 
           return results[route.path].requests.push({
