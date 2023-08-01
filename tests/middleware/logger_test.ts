@@ -18,7 +18,6 @@ Deno.test("MIDDLEWARE: Logger", async (t) => {
     await logFcn(ctx, () => new Response(successString))
     
     // TODO test this string
-    console.log(logOutput)
     assert(logOutput)
   })
 })

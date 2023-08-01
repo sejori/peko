@@ -42,10 +42,6 @@ Deno.test("UTIL: helpers", async (t) => {
 
     const response = await server.requestHandler(request)
     const fileText = await response.text()
-    console.log(text)
-
-    console.log(response)
-    console.log(fileText)
 
     assert(text === "I was set")
     assert(fileText == await Deno.readTextFile(new URL("./helpers_test.ts", import.meta.url)))
