@@ -1,12 +1,12 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../lib/Server.ts"
+import { Router, RequestContext } from "../../lib/Router.ts"
 import { authenticator } from "../../lib/middleware/authenticator.ts"
 import { Crypto } from "../../lib/utils/Crypto.ts"
 
 Deno.test("MIDDLEWARE: Authenticator", async (t) => {
   const successString = "Authorized!"
   const crypto = new Crypto("test_key")
-  const server = new Server()
+  const server = new Router()
 
   const testPayload = { iat: Date.now(), exp: Date.now() + 1000, data: { foo: "bar" }}
   const token = await crypto.sign(testPayload)

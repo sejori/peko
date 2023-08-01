@@ -1,12 +1,27 @@
-import { Middleware, Handler, Route } from "../types.ts"
-import { Cascade } from "./Cascade.ts"
+import { Cascade } from "./utils/Cascade.ts"
+import { Middleware, Handler, Route } from "./types.ts"
+
+export class RequestContext {
+  url: URL
+  state: Record<string, unknown>
+  params: Record<string, unknown> = {}
+
+  constructor(
+    public router: Router, 
+    public request: Request, 
+    state?: Record<string, unknown>
+  ) {
+    this.url = new URL(request.url)
+    this.state = state ? state : {}
+  }
+}
 
 export class _Route implements Route {
   path: `/${string}`
   params: Record<string, number> = {}
   regexPath: RegExp
   method?: "GET" | "POST" | "PUT" | "DELETE"
-  middleware?: Middleware[] | Middleware
+  middleware: Middleware[] = []
   handler: Handler
 
   constructor(routeObj: Route) {
@@ -31,20 +46,30 @@ export class _Route implements Route {
 }
 
 export class Router {
+  middleware: Middleware[] = []
   constructor(public routes: _Route[] = []) {}
 
-  static applyDefaults(routeObj: Partial<Route>): Route {
-    if (!routeObj.path) throw new Error("Route is missing path")
-    if (!routeObj.handler) throw new Error("Route is missing handler")
+  /**
+   * Generate Response by running route middleware/handler with Cascade.
+   * @param request: Request
+   * @returns Promise<Response>
+   */
+  async requestHandler(request: Request): Promise<Response> {
+    const ctx = new RequestContext(this, request)
+    return await new Cascade(ctx, this.middleware).run()
+  }
 
-    routeObj.method = routeObj.method || "GET"
-    routeObj.handler = Cascade.promisify(routeObj.handler!) as Handler
-    routeObj.middleware = [routeObj.middleware]
-      .flat()
-      .filter(Boolean)
-      .map((mware) => Cascade.promisify(mware!))
-
-    return routeObj as Route
+  /**
+   * Add global middleware or another router's middleware
+   * @param middleware: Middleware[] | Middleware | Router
+   * @returns number - server.middleware.length
+   */
+  use(middleware: Middleware | Middleware[]) {
+    if (Array.isArray(middleware)) {
+      middleware.forEach(mware => this.use(mware))
+      return middleware.length
+    }
+    return this.middleware.push(Cascade.promisify(middleware))
   }
 
   /**
@@ -76,6 +101,22 @@ export class Router {
     
     const fullRoute = new _Route(routeObj as Route)
     this.routes.push(fullRoute)
+    this.middleware.push((ctx) => {
+      if (fullRoute.regexPath.test(ctx.url.pathname) && 
+        fullRoute.method === ctx.request.method) {
+
+        if (fullRoute?.params) {
+          const pathBits = ctx.url.pathname.split("/")
+          for (const param in fullRoute.params) {
+            ctx.params[param] = pathBits[fullRoute.params[param]]
+          }
+        }
+  
+        return new Cascade(ctx, [...fullRoute.middleware, fullRoute.handler]).run()
+      }
+
+      return undefined
+    })
 
     return fullRoute
   }
@@ -126,34 +167,34 @@ export class Router {
   /**
    * Add Routes
    * @param routes: Route[] - middleware can be Middlewares or Middleware 
-   * @returns number - routes.length
+   * @returns Route[] - added routes
    */
-  addRoutes(routes: Route[]): number {
-    routes.forEach(route => this.addRoute(route))
-    return this.routes.length
+  addRoutes(routes: Route[]): Route[] {
+    return routes.map(route => this.addRoute(route))
   }
 
   /**
    * Remove Route from Peko server
    * @param route: Route["path"] of route to remove
-   * @returns 
+   * @returns Route - removed route
    */
-  removeRoute(route: Route["path"]): number {
+  removeRoute(route: Route["path"]): Route | undefined {
     const routeToRemove = this.routes.find(r => r.path === route)
     if (routeToRemove) {
       this.routes.splice(this.routes.indexOf(routeToRemove), 1)
     }
     
-    return this.routes.length
+    return routeToRemove
   }
 
   /**
    * Remove Routes
    * @param routes: Route["path"] of routes to remove
-   * @returns 
+   * @returns Array<Route | undefined> - removed routes
    */
-  removeRoutes(routes: Route["path"][]): number {
-    routes.forEach(route => this.removeRoute(route))
-    return this.routes.length
+  removeRoutes(routes: Route["path"][]): Array<Route | undefined> {
+    return routes.map(route => this.removeRoute(route))
   }
 }
+
+export default Router
