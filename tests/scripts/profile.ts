@@ -1,11 +1,11 @@
 import { Router } from "../../lib/Router.ts"
+import Profiler from "../../lib/utils/Profiler.ts"
 import {
   testMiddleware2,
   testMiddleware3,
   testHandler,
   testMiddleware1
 } from "../mocks/middleware.ts"
-import Profiler from "../../lib/utils/Profiler.ts"
 
 const router = new Router()
 
@@ -15,13 +15,13 @@ router.addRoute("/test", [
   testMiddleware3
 ], testHandler)
 
-router.addRoute("/bench", () => new Response("Hello, bench!"))
+router.get("/bench", () => new Response("Hello, bench!"))
 
 const abortController = new AbortController()
 Deno.serve({
   port: 7777,
   signal: abortController.signal
-}, router.requestHandler)
+}, (req) => router.requestHandler(req))
 
 const handleResults = await Profiler.run(router, {
   mode: "handle",
