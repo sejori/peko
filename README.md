@@ -85,9 +85,11 @@ const router = new Peko.Router();
 
 router.use(Peko.logger(console.log));
 
-router.addRoute("/shorthand-route", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, () => new Response("Hello world!"));
+router.get("/shorthand-route", () => new Response("Hello world!"));
 
-router.get({
+router.post("/shorthand-route-ext", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, (req) => new Response(req.body));
+
+router.addRoute({
     path: "/object-route",
     middleware: async (ctx, next) => { await next(); console.log(ctx.request.headers); }, // can also be array of middleware
     handler: () => new Response("Hello world!")
