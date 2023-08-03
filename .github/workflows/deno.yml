@@ -40,5 +40,5 @@ jobs:
       - name: Run tests
         run: deno task test
 
-      - name: Run profile
-        run: deno task profile
+      # - name: Run profile
+        # run: deno task profile

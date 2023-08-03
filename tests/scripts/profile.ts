@@ -19,10 +19,10 @@ router.get("/bench", () => new Response("Hello, bench!"))
 
 const abortController = new AbortController()
 
-new Promise(() => Deno.serve({
+Deno.serve({
   port: 7777,
   signal: abortController.signal
-}, (req) => router.requestHandler(req)))
+}, (req) => router.requestHandler(req))
 
 const handleResults = await Profiler.run(router, {
   mode: "handle",
