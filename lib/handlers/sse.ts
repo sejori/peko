@@ -1,5 +1,5 @@
-import { Handler, HandlerOptions } from "../types.ts"
 import { mergeHeaders } from "../utils/helpers.ts"
+import { Handler, HandlerOptions } from "../types.ts"
 
 const encoder = new TextEncoder()
 

@@ -1,5 +1,5 @@
-import { Middleware } from "../types.ts"
 import { Crypto } from "../utils/Crypto.ts"
+import { Middleware } from "../types.ts"
 
 /**
  * Auth middleware, uses Crypto utility class to verify JWTs

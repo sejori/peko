@@ -1,7 +1,7 @@
-import { RequestContext } from "../Server.ts"
-import { Handler, HandlerOptions } from "../types.ts"
+import { RequestContext } from "../Router.ts"
 import { Crypto } from "../utils/Crypto.ts"
 import { mergeHeaders } from "../utils/helpers.ts"
+import { Handler, HandlerOptions } from "../types.ts"
 
 export type Render = (ctx: RequestContext) => BodyInit | Promise<BodyInit>
 export interface ssrHandlerOptions extends HandlerOptions {

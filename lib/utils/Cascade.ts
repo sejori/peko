@@ -1,21 +1,16 @@
-import { RequestContext } from "../Server.ts"
+import { RequestContext } from "../Router.ts"
 import { Middleware, Result, Next } from "../types.ts"
 
 export type PromiseMiddleware = (ctx: RequestContext, next: Next) => Promise<Result>
 
 /**
- * Utility class for running middleware functions as a cascade
+ * Utility class for running middleware functions in a cascade
  */
 export class Cascade {
-  response: Response | undefined
+  result: Result
   called = 0
-  toCall: PromiseMiddleware[]
 
-  constructor(public ctx: RequestContext) {
-    this.toCall = this.ctx.route
-      ? [...this.ctx.server.middleware, ...this.ctx.route.middleware as PromiseMiddleware[], this.ctx.route.handler as PromiseMiddleware]
-      : [...this.ctx.server.middleware]
-  }
+  constructor(public ctx: RequestContext, public middleware: Middleware[]) {}
 
   static promisify = (fcn: Middleware): PromiseMiddleware => {
     return fcn.constructor.name === "AsyncFunction"
@@ -25,24 +20,17 @@ export class Cascade {
       })
   }
 
-  async run(fcn: PromiseMiddleware): Promise<Response | undefined> {
-    if (!fcn) return this.response
-
-    try {
-      const response = await fcn(this.ctx, async () => await this.run(this.toCall[++this.called]))
-      if (response) this.response = response
-      if (!this.response) await this.run(this.toCall[++this.called])
-    } catch (error) {
-      throw error
+  async run(): Promise<Result> {    
+    if (this.middleware[this.called]) {
+      try {
+        const res = await this.middleware[this.called++](this.ctx, () => this.run.call(this))      
+        if (res) this.result = res
+        else return await this.run()
+      } catch (error) {
+        throw error
+      }
     }
-
-    return this.response
-  }
-
-  async start() {
-    await this.run(this.toCall[this.called])
-    return this.response
-      ? this.response
-      : new Response("", { status: 404 })
+    
+    return this.result
   }
 }

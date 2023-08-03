@@ -1,4 +1,4 @@
-import { RequestContext } from "./Server.ts"
+import { RequestContext } from "./Router.ts"
 
 export interface Route { 
   path: `/${string}`
@@ -7,7 +7,7 @@ export interface Route {
   handler: Handler
 }
 
-export type Result = void | Response
+export type Result = void | Response | undefined
 export type Next = () => Promise<Result> | Result
 
 export type Middleware = (ctx: RequestContext, next: Next) => Promise<Result> | Result
