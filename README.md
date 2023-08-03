@@ -66,26 +66,7 @@
 
 <h1>Overview</h1>
 
-<h2 id="types">Types</h2>
-
-### [**Router**](https://deno.land/x/peko/mod.ts?s=Router)
-The main class of Peko, provides `requestHandler` method to generate `Response` from `Request` via configured routes and middleware. 
-
-### [**Route**](https://deno.land/x/peko/mod.ts?s=Route)
-Objects with `path`, `method`, `middleware`, and `handler` properties. Requests are matched to a regex generated from the given path. Dynamic parameters are supported in the `/users/:userid` syntax.
-
-### [**RequestContext**](https://deno.land/x/peko/mod.ts?s=RequestContext)
-An object containing `url`, `params` and `state` properties that is provided to all middleware and handler functions associated to a router or matched route. 
-
-### [**Middleware**](https://deno.land/x/peko/mod.ts?s=Middleware)
-Functions that receives a RequestContext and a next fcn. Should update `ctx.state`, perform side-effects or return a response.
-
-### [**Handler**](https://deno.land/x/peko/mod.ts?s=Handler)
-The final request handling function on a `Route`. Must generate and return a response using the provided request context.
-
-<h2 id="routing">Routing</h2>
-
-Routes and middleware are added to a Router instance with `.use`, `.addRoute` or `.get/post/put/delete`.
+Routes and middleware are added to a Router instance with `.use`, `.addRoute` or `.get/post/put/delete`. The router is then used with your web server of choice, e.g. `Deno.serve`!
 
 ```js
 import * as Peko from "https://deno.land/x/peko/mod.ts";
@@ -108,6 +89,23 @@ router.addRoutes([ /* array of route objects */ ])
 
 Deno.serve((req) => router.requestHandler(req))
 ```
+
+<h2 id="types">Types</h2>
+
+### [**Router**](https://deno.land/x/peko/mod.ts?s=Router)
+The main class of Peko, provides `requestHandler` method to generate `Response` from `Request` via configured routes and middleware. 
+
+### [**Route**](https://deno.land/x/peko/mod.ts?s=Route)
+Objects with `path`, `method`, `middleware`, and `handler` properties. Requests are matched to a regex generated from the given path. Dynamic parameters are supported in the `/users/:userid` syntax.
+
+### [**RequestContext**](https://deno.land/x/peko/mod.ts?s=RequestContext)
+An object containing `url`, `params` and `state` properties that is provided to all middleware and handler functions associated to a router or matched route. 
+
+### [**Middleware**](https://deno.land/x/peko/mod.ts?s=Middleware)
+Functions that receives a RequestContext and a next fcn. Should update `ctx.state`, perform side-effects or return a response.
+
+### [**Handler**](https://deno.land/x/peko/mod.ts?s=Handler)
+The final request handling function on a `Route`. Must generate and return a response using the provided request context.
 
 <h2 id="request-handling">Request handling</h2>
 
