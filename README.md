@@ -66,7 +66,7 @@
 
 <h1>Overview</h1>
 
-Routes and middleware are added to a Router instance with `.use`, `.addRoute` or `.get/post/put/delete`. The router is then used with your web server of choice, e.g. `Deno.serve`!
+Routes and middleware are added to a `Router` instance with `.use`, `.addRoute` or `.get/post/put/delete`. The router is then used with your web server of choice, e.g. `Deno.serve`!
 
 ```js
 import * as Peko from "https://deno.land/x/peko/mod.ts";
