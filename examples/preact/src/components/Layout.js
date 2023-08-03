@@ -27,7 +27,7 @@ const Layout = ({ navColor, navLink, children }) => {
         <a style=${footerLinkStyle} href="/">Home</a>
         <a style=${footerLinkStyle} href="/about">About</a>
       </div>
-      <p style="margin: 10px; text-align: center">Made by <a href="https://thesebsite.com">Seb R</a></p>
+      <p style="margin: 10px; text-align: center">Made by <a href="https://thesebsite.com">Sejori</a></p>
     </footer>
   `   
 }
