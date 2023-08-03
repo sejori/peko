@@ -3,7 +3,7 @@
  */
 
 // Core classes, functions & types
-export * from "./lib/Server.ts"
+export * from "./lib/Router.ts"
 export * from "./lib/types.ts"
 
 // Handlers
@@ -17,11 +17,10 @@ export * from "./lib/middleware/cacher.ts"
 export * from "./lib/middleware/authenticator.ts"
 
 // Utils
-export * from "./lib/utils/Router.ts"
 export * from "./lib/utils/Cascade.ts"
 export * from "./lib/utils/ResponseCache.ts"
 export * from "./lib/utils/Crypto.ts"
 export * from "./lib/utils/helpers.ts"
 
-import { Server } from "./lib/Server.ts"
-export default Server
+import { Router } from "./lib/Router.ts"
+export default Router

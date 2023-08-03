@@ -7,11 +7,17 @@ const Home = () => {
     <${Layout} navLink="about" navColor="#101727">
       <h2>Features</h2>
       <ul>
-        <li>Simple and familiar syntax, built on top of Deno's <a href="https://deno.land/std/http/server.ts?s=Server">std/http</a>.</li>
+        <li>Simple and familiar syntax, supports any modern JS/TS environment.</li>
         <li>Library of request <a href="#handlers">handlers</a>, <a href="#middleware">middleware</a> and <a href="#utils">utils</a>.</li>
         <li>Cascades <a target="_blank" href="https://github.com/sebringrose/peko/blob/main/server.ts">Request Context</a> through middleware stack for data flow and post-response operations.</li>
         <li>100% TypeScript complete with tests.</li>
       </ul>
+
+      <h2>Guides</h2>
+      <ol>
+        <li><a href="https://github.com/sebringrose/peko/blob/main/react.md">How to build a full-stack React application with Peko and Deno</a></li>
+        <li>Want to build a lightweight HTML or Preact app? Check out the <a href="https://github.com/sebringrose/peko/blob/main/examples">examples</a>!</li>
+      </ol>
 
       <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
         <div>
@@ -36,8 +42,10 @@ const Home = () => {
         <div>
           <h2 id="utils">Utils</h2>
           <ul>
-            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/middleware/Crypto.ts">Crypto - JWT/hashing</a></li>
-            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/middleware/ResponseCache.ts">Response cache</a></li>
+            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/utils/Crypto.ts">Crypto - JWT/hashing</a></li>
+            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/utils/ResponseCache.ts">Response cache</a></li>
+            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/utils/Profiler.ts">Profiler</a></li>
+            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/utils/helpers.ts">routesFromDir</a></li>
           </ul>
         </div>
       </div>

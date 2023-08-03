@@ -1,11 +1,11 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../lib/Server.ts"
+import { Router, RequestContext } from "../../lib/Router.ts"
 import { cacher } from "../../lib/middleware/cacher.ts"
 import { testHandler } from "../mocks/middleware.ts"
 import { ResponseCache } from "../../lib/utils/ResponseCache.ts"
 
 Deno.test("MIDDLEWARE: Cacher", async (t) => {
-  const server = new Server()
+  const server = new Router()
   const successString = "Success!"
   const CACHE_LIFETIME = 100
   const cache = new ResponseCache({

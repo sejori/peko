@@ -1,30 +1,36 @@
-import { Server } from "../../lib/Server.ts"
+import { Router } from "../../lib/Router.ts"
+import Profiler from "../../lib/utils/Profiler.ts"
 import {
   testMiddleware2,
   testMiddleware3,
   testHandler,
   testMiddleware1
 } from "../mocks/middleware.ts"
-import Profiler from "../../lib/utils/Profiler.ts"
 
-const server = new Server()
+const router = new Router()
 
-server.addRoute("/test", [
+router.addRoute("/test", [
   testMiddleware1,
   testMiddleware2,
   testMiddleware3
 ], testHandler)
 
-server.addRoute("/bench", () => new Response("Hello, bench!"))
+router.get("/bench", () => new Response("Hello, bench!"))
 
-server.listen(8000, () => {})
+const abortController = new AbortController()
 
-const handleResults = await Profiler.run(server, {
+Deno.serve({
+  port: 7777,
+  signal: abortController.signal
+}, (req) => router.requestHandler(req))
+
+const handleResults = await Profiler.run(router, {
   mode: "handle",
   count: 100
 })
-const serveResults = await Profiler.run(server, {
+const serveResults = await Profiler.run(router, {
   mode: "serve",
+  url: "http://localhost:7777",
   count: 100
 })
 
@@ -35,4 +41,4 @@ console.log("serve results")
 console.log("/test: " + serveResults["/test"].avgTime)
 console.log("/bench: " + serveResults["/bench"].avgTime)
 
-server.close()
+abortController.abort()

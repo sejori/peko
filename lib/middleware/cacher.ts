@@ -1,6 +1,6 @@
-import type { RequestContext } from "../Server.ts";
-import { Middleware } from "../types.ts";
+import type { RequestContext } from "../Router.ts";
 import { ResponseCache } from "../utils/ResponseCache.ts";
+import { Middleware } from "../types.ts";
 
 // default key generator
 const defaultKeygen = (ctx: RequestContext) => {

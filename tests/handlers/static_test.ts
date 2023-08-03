@@ -1,9 +1,9 @@
 import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
-import { Server, RequestContext } from "../../lib/Server.ts"
+import { Router, RequestContext } from "../../lib/Router.ts"
 import { staticHandler } from "../../lib/handlers/static.ts"
 
 Deno.test("HANDLER: Static", async (t) => {
-  const server = new Server()
+  const server = new Router()
   const ctx = new RequestContext(server, new Request("http://localhost"))
   const fileURL = new URL(import.meta.url)
   const decoder = new TextDecoder()

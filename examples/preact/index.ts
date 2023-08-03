@@ -1,20 +1,20 @@
-import { Server, logger } from "https://deno.land/x/peko/mod.ts"
+import { Router, logger } from "../../mod.ts" //"https://deno.land/x/peko/mod.ts"
 import pages from "./routes/pages.ts"
 import assets from "./routes/assets.ts"
 import APIs from "./routes/APIs.ts"
 
 // initialize server
-const server = new Server()
-server.use(logger(console.log))
+const router = new Router()
+router.use(logger(console.log))
 
 // SSR'ed app page routes
-server.addRoutes(pages)
+router.addRoutes(pages)
 
 // Static assets
-server.addRoutes(assets)
+router.addRoutes(assets)
 
 // Custom API functions
-server.addRoutes(APIs)
+router.addRoutes(APIs)
 
-// Start Peko server :^)
-server.listen()
+// Start Deno server with Peko router :^)
+Deno.serve((req) => router.requestHandler(req))
