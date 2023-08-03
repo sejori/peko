@@ -39,9 +39,6 @@ Deno.test("UTIL: Profiler", async (t) => {
     const abortController = new AbortController()
     Deno.serve({ signal: abortController.signal }, (req) => router.requestHandler(req))
 
-    // can't await listen so timeout necessary
-    // await new Promise(res => setTimeout(res, 500))
-
     const results = await Profiler.run(router, {
       mode: "serve",
       url: "http://localhost:8000",
