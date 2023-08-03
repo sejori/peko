@@ -33,8 +33,8 @@ export class _Route implements Route {
       if (str[0] === ":") this.params[str.slice(1)] = i
     });
     this.regexPath = this.params 
-      ? new RegExp(this.path.replaceAll(/(?<=\/):(.)*?(?=\/|$)/g, "(.)*"))
-      : new RegExp(this.path)
+      ? new RegExp(`^${this.path.replaceAll(/(?<=\/):(.)*?(?=\/|$)/g, "(.)*")}\/?$`)
+      : new RegExp(`^${this.path}\/?$`)
 
     this.method = routeObj.method || "GET"
     this.handler = Cascade.promisify(routeObj.handler!) as Handler
