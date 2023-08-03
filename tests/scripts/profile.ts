@@ -29,6 +29,7 @@ const handleResults = await Profiler.run(router, {
 })
 const serveResults = await Profiler.run(router, {
   mode: "serve",
+  url: "http://localhost:7777",
   count: 100
 })
 
