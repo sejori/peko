@@ -22,7 +22,7 @@ export const mergeHeaders = (base: Headers, source: Headers) => {
  * @param _depth: used internally to correct paths, don't set
  * @returns routes: Route[]
  */
-export const routesFromDir = async (dirUrl: URL, routeGen: (path: `/${string}`, url: URL) => Route, _depth = 1): Promise<Route[]> => {
+export const routesFromDir = async (dirUrl: URL, routeGen: (path: `/${string}`, url: URL) => Promise<Route> | Route, _depth = 1): Promise<Route[]> => {
   if (!(await Deno.stat(dirUrl)).isDirectory) throw new Error("URL does not point to directory.")
   const routes: Route[] = []
 
@@ -37,7 +37,7 @@ export const routesFromDir = async (dirUrl: URL, routeGen: (path: `/${string}`, 
       for (let i=1; i<=_depth; i++) dirPath = `/${pieces[pieces.length-i]}${dirPath}`
 
       const filePath: `/${string}` = `${dirPath}${file.name}`
-      routes.push(routeGen(filePath, fileUrl))
+      routes.push(await routeGen(filePath, fileUrl))
     }
   }
 
