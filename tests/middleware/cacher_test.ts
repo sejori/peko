@@ -1,4 +1,4 @@
-import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
+import { assert } from "https://deno.land/std@0.198.0/testing/asserts.ts"
 import { Router, RequestContext } from "../../lib/Router.ts"
 import { cacher } from "../../lib/middleware/cacher.ts"
 import { testHandler } from "../mocks/middleware.ts"
@@ -30,8 +30,6 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
     const ctx_custom = new RequestContext(router, new Request("http://localhost"), { ...testData })
     const default_response1 = await defaultCacher(ctx_default, () => new Response(successString))
     const custom_response1 = await customCacher(ctx_custom, () => new Response(successString))
-    console.log(ctx_default)
-    console.log(ctx_custom)
     assert(!ctx_default.state.responseFromCache)
     assert(ctx_default.state.foo === testData.foo)
     assert(!ctx_custom.state.responseFromCache)
