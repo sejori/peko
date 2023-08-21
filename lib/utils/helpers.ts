@@ -23,12 +23,22 @@ export const mergeHeaders = (base: Headers, source: Headers) => {
  * @param _depth: used internally to correct paths, don't set
  * @returns routes: Route[]
  */
-export const routesFromDir = async (dirUrl: URL, routeGen: (path: `/${string}`, url: URL) => Promise<Route> | Route, _depth = 0): Promise<Route[]> => {
-  if (!(await stat(dirUrl.pathname)).isDirectory()) throw new Error("URL does not point to directory.")
+export const routesFromDir = async (
+  dirUrl: URL, 
+  routeGen: (path: `/${string}`, url: URL) => Promise<Route> | Route, 
+  _depth = 0
+): Promise<Route[]> => {
+  if (!(await stat(dirUrl.pathname)).isDirectory()) {
+    throw new Error("URL does not point to directory.")
+  }
+
   const routes: Route[] = []
 
   for (const file of await readdir(dirUrl)) {
-    const fileUrl = new URL(file, `${dirUrl.protocol}${dirUrl.hostname}${dirUrl.pathname}${dirUrl.pathname[dirUrl.pathname.length-1] !== "/" && "/"}`)
+    const fileUrl = new URL(
+      file, 
+      `${dirUrl.protocol}${dirUrl.hostname}${dirUrl.pathname}${dirUrl.pathname[dirUrl.pathname.length-1] !== "/" && "/"}`
+    )
     const pathPieces = fileUrl.pathname.split("/").filter(Boolean)
 
     if (!pathPieces[pathPieces.length-1].includes(".")) {
