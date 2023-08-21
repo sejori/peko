@@ -149,9 +149,27 @@ router.use(async (_, next) => {
 In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. Peko provides a `ResponseCache` utility for this with configurable item lifetime. The `cacher` middleware wraps it and provides drop in handler memoization and response caching for your routes.
 
 ```js
-const cache = new Peko.ResponseCache({ lifetime: 5000 });
+router.addRoute("/get-time", Peko.cacher({ itemLifetime: 5000 }), () => new Response(Date.now()));
+```
 
-router.addRoute("/do-stuff", Peko.cacher(cache), () => new Response(Date.now()));
+The cacher stores response items in memory by default, but it can be extended to use any key value storage by supplying the `store` options parameter!
+
+```js
+import { CacheItem } from "https://deno.land/x/peko/mod.ts"
+
+const itemMap: Map<string, CacheItem> = new Map()
+
+router.addRoute("/get-time", {
+    middleware: Peko.cacher({ 
+        itemLifetime: 5000,
+        store: {
+            get: (key) => itemMap.get(key),
+            set: (key, value) => itemMap.set(key, value),
+            delete: (key) => itemMap.delete(key)
+        }
+    }), 
+    handler: () => new Response(Date.now())
+})
 ```
 
 And that's it! Check out the API docs for deeper info. Otherwise happy coding 🤓
