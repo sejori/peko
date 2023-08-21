@@ -161,12 +161,14 @@ router.addRoute("/get-time", Peko.cacher({ itemLifetime: 5000 }), () => new Resp
 The cacher stores response items in memory by default, but it can be extended to use any key value storage by supplying the `store` options parameter!
 
 ```js
-import { CacheItem } from "https://deno.land/x/peko/mod.ts"
+import { Router, CacheItem, cacher } from "https://deno.land/x/peko/mod.ts"
+
+const router = new Router();
 
 const itemMap: Map<string, CacheItem> = new Map()
 
 router.addRoute("/get-time", {
-    middleware: Peko.cacher({ 
+    middleware: cacher({ 
         itemLifetime: 5000,
         store: {
             get: (key) => itemMap.get(key),
