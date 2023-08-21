@@ -1,4 +1,4 @@
-import { assert } from "https://deno.land/std@0.174.0/testing/asserts.ts"
+import { assert } from "https://deno.land/std@0.198.0/testing/asserts.ts"
 import { Router, RequestContext } from "../../lib/Router.ts"
 import { logger } from "../../lib/middleware/logger.ts"
 
