@@ -1,14 +1,12 @@
 import {
   Route, 
   staticHandler,
-  cacher,
-  ResponseCache
+  cacher
 } from "../../../mod.ts"
 
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
 import { fromFileUrl } from "https://deno.land/std@0.174.0/path/mod.ts"
 
-const cache = new ResponseCache()
 const env = Deno.env.toObject()
 const filenames = await recursiveReaddir(fromFileUrl(new URL(`../src`, import.meta.url)))
 
@@ -17,7 +15,7 @@ const assets: Route[] = filenames.map(file => {
 
   return {
     path: `/${fileRoute}`,
-    middleware: env.ENVIRONMENT === "production" ? cacher(cache) : [],
+    middleware: env.ENVIRONMENT === "production" ? cacher() : [],
     handler: staticHandler(new URL(`../src/${fileRoute}`, import.meta.url), {
       headers: new Headers({
         "Cache-Control": env.ENVIRONMENT === "production"
