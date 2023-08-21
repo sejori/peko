@@ -35,7 +35,7 @@ export class _Route implements Route {
     this.path.split("/").forEach((str, i) => {
       if (str[0] === ":") this.params[str.slice(1)] = i
     })
-    
+
     this.regexPath = this.params 
       ? new RegExp(`^${this.path.replaceAll(/(?<=\/):(.)*?(?=\/|$)/g, "(.)*")}\/?$`)
       : new RegExp(`^${this.path}\/?$`)
@@ -56,11 +56,11 @@ export class Router {
   ) {}
 
   /**
-   * Generate Response by running route middleware/handler with Cascade.
+   * Running Request through middleware cascade for Response.
    * @param request: Request
    * @returns Promise<Response>
    */
-  async requestHandler(request: Request): Promise<Response> {
+  async handle(request: Request): Promise<Response> {
     const ctx = new RequestContext(this, request)
     const res = await new Cascade(ctx, this.middleware).run()
     return res

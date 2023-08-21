@@ -22,7 +22,7 @@ const abortController = new AbortController()
 Deno.serve({
   port: 7777,
   signal: abortController.signal
-}, (req) => router.requestHandler(req))
+}, (req) => router.handle(req))
 
 const handleResults = await Profiler.run(router, {
   mode: "handle",

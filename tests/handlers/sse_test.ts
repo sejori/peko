@@ -1,6 +1,6 @@
 import { assert } from "https://deno.land/std@0.198.0/testing/asserts.ts"
 import { Router, RequestContext } from "../../lib/Router.ts"
-import { sseHandler } from "../../lib/handlers/sse.ts"
+import { sse } from "../../lib/handlers/sse.ts"
 
 Deno.test("HANDLER: Server-sent events", async (t) => {
   const router = new Router()
@@ -12,7 +12,7 @@ Deno.test("HANDLER: Server-sent events", async (t) => {
   }
   
   await t.step("Response created and event data emitted as expected", async () => {
-    const response = await sseHandler(eventTarget)(ctx)
+    const response = await sse(eventTarget)(ctx)
     const reader = response.body?.getReader()
 
     const dataEvent = new CustomEvent("send", { detail: testData })

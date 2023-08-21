@@ -15,7 +15,7 @@ export interface ssrHandlerOptions extends HandlerOptions {
  * @param opts: (optional) ssrHandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const ssrHandler = (render: Render, opts: ssrHandlerOptions = {}): Handler => async (ctx: RequestContext) => {
+export const ssr = (render: Render, opts: ssrHandlerOptions = {}): Handler => async function SSRHandler(ctx: RequestContext) {
   if (!opts.crypto) {
     opts.crypto = new Crypto(crypto.randomUUID())
   }
