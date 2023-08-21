@@ -111,16 +111,22 @@ The final request handling function on a `Route`. Must generate and return a res
 
 <h2 id="request-handling">Request handling</h2>
 
-Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). Upon receiving a request the `Server` will construct a [RequestContext](https://deno.land/x/peko/server.ts?s=RequestContext) and cascade it through any global middleware, then route middleware and finally the route handler. Global and route middleware are invoked in the order they are added. If a response is returned by any middleware along the chain no subsequent middleware/handler will run.
+Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). 
+
+Upon receiving a request a `Router` will construct a [RequestContext](https://deno.land/x/peko/server.ts?s=RequestContext) and cascade it through global middleware, route middleware and the route handler. 
+
+Middleware are invoked in the order they are added. If a response is returned no subsequent middleware/handler will execute.
 
 Peko comes with a library of utilities, middleware and handlers for common route use-cases, such as:
-- server-side-rendering
-- opening WebSockets/server-sent events
-- JWT signing/verifying & authentication
-- logging
-- caching
+- server-side rendering apps to HTML
+- streaming server-sent events
+- hashing and JWT authentication
+- logging requests
+- caching responses
 
 See `handlers`, `mmiddleware` or `utils` for source, or dive into `examples` for demo implementations. 
+
+### `next: () => Promise<Response>`
 
 The second argument to any middleware is the `next` fcn. This returns a promise that resolves to the first response returned by any subsequent middleware/handler. This is useful for error-handling as well as post-response operations such as editing headers or logging. See the below snippet or `middleware/logger.ts` for examples.
 
