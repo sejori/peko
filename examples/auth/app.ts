@@ -44,7 +44,7 @@ router.get(
   () => new Response("You are authenticated!")
 )
 
-router.get("/asdf", Peko.ssrHandler(() => html`<!doctype html>
+router.get("/", Peko.ssr(() => html`<!doctype html>
   <html lang="en">
   <head>
     <title>Peko auth example</title>
@@ -132,4 +132,4 @@ router.get("/asdf", Peko.ssrHandler(() => html`<!doctype html>
   </html>
 `))
 
-Deno.serve((req) => router.requestHandler(req))
+Deno.serve((req) => router.handle(req))

@@ -10,7 +10,7 @@ const encoder = new TextEncoder()
  * @param opts: (optional) HandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const sseHandler = (target: EventTarget, opts: HandlerOptions = {}): Handler => () => {
+export const sse = (target: EventTarget, opts: HandlerOptions = {}): Handler => function SSEHandler () {
   let lexicalController: ReadableStreamDefaultController<unknown>
   const enqueueEvent = (e: Event) => {
     lexicalController.enqueue(encoder.encode(

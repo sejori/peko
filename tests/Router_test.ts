@@ -23,10 +23,10 @@ Deno.test("ROUTER: ADDING/REMOVING ROUTES", async (t) => {
     const request3 = new Request("http://localhost:7777/route3")
     const request4 = new Request("http://localhost:7777/route4")
 
-    const response1 = await router.requestHandler(request1)
-    const response2 = await router.requestHandler(request2)
-    const response3 = await router.requestHandler(request3)
-    const response4 = await router.requestHandler(request4)
+    const response1 = await router.handle(request1)
+    const response2 = await router.handle(request2)
+    const response3 = await router.handle(request3)
+    const response4 = await router.handle(request4)
 
     assert(response1.status === 200)
     assert(response2.status === 200)
@@ -106,14 +106,14 @@ Deno.test("ROUTER: HANDLING REQUESTS", async (t) => {
       return new Response(JSON.stringify({ id: ctx.params["id"], name: ctx.params["name"] }))
     })
 
-    const res = await newRouter.requestHandler(new Request("http://localhost:7777/hello/123/world/bruno"))
+    const res = await newRouter.handle(new Request("http://localhost:7777/hello/123/world/bruno"))
     const json = await res.json()
     assert(json.id === "123" && json.name === "bruno")
   })
 
   await t.step("no route found triggers basic 404", async () => {    
     const request = new Request("http://localhost:7777/404")
-    const response = await router.requestHandler(request)
+    const response = await router.handle(request)
     assert(response.status === 404)
   })
 
@@ -124,7 +124,7 @@ Deno.test("ROUTER: HANDLING REQUESTS", async (t) => {
     })
 
     const request = new Request("http://localhost:7777/404")
-    const response = await router.requestHandler(request)
+    const response = await router.handle(request)
 
     assert(response.status === 404)
     assert(await response.text() === "Uh-oh!")
@@ -141,7 +141,7 @@ Deno.test("ROUTER: HANDLING REQUESTS", async (t) => {
     router.get("/error-test", () => { throw new Error("Oopsie!") })
 
     const request = new Request("http://localhost:7777/error-test")
-    const response = await router.requestHandler(request)
+    const response = await router.handle(request)
 
     assert(response.status === 500)
     assert(await response.text() === "Error! :(")
@@ -155,7 +155,7 @@ Deno.test("ROUTER: HANDLING REQUESTS", async (t) => {
     })
 
     const request = new Request("http://localhost:7777/test")
-    const response = await router.requestHandler(request)
+    const response = await router.handle(request)
 
     const body = await response.json()
 
