@@ -37,7 +37,7 @@ Deno.test("UTIL: Profiler", async (t) => {
 
   await t.step("profiles served requests", async () => {
     const abortController = new AbortController()
-    Deno.serve({ signal: abortController.signal }, (req) => router.requestHandler(req))
+    Deno.serve({ signal: abortController.signal }, (req) => router.handle(req))
 
     const results = await Profiler.run(router, {
       mode: "serve",

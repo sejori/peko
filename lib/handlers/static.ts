@@ -19,7 +19,7 @@ export interface staticHandlerOptions extends HandlerOptions {
  * @param opts: (optional) staticHandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const staticHandler = (fileURL: URL, opts: staticHandlerOptions = {}): Handler => async (_ctx: RequestContext) => {
+export const staticFiles = (fileURL: URL, opts: staticHandlerOptions = {}): Handler => async function staticHandler (_ctx: RequestContext) {
   const filePath = decodeURI(fileURL.pathname)
 
   const body = await readFile(fromFileUrl(fileURL))

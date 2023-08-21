@@ -89,13 +89,13 @@ router.addRoute({
 
 router.addRoutes([ /* array of route objects */ ])
 
-Deno.serve((req) => router.requestHandler(req))
+Deno.serve((req) => router.handle(req))
 ```
 
 <h2 id="types">Types</h2>
 
 ### [**Router**](https://deno.land/x/peko/mod.ts?s=Router)
-The main class of Peko, provides `requestHandler` method to generate `Response` from `Request` via configured routes and middleware. 
+The main class of Peko, provides `handle` method to generate `Response` from `Request` via configured routes and middleware. 
 
 ### [**Route**](https://deno.land/x/peko/mod.ts?s=Route)
 Objects with `path`, `method`, `middleware`, and `handler` properties. Requests are matched to a regex generated from the given path. Dynamic parameters are supported in the `/users/:userid` syntax.
@@ -111,7 +111,9 @@ The final request handling function on a `Route`. Must generate and return a res
 
 <h2 id="request-handling">Request handling</h2>
 
-Each route must have a <code>handler</code> function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). 
+Each route must have a `handler` function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). Routes can also `middleware`.
+
+### ctx: RequestContext
 
 Upon receiving a request a `Router` will construct a [RequestContext](https://deno.land/x/peko/server.ts?s=RequestContext) and cascade it through global middleware, route middleware and the route handler. 
 
@@ -124,7 +126,7 @@ Peko comes with a library of utilities, middleware and handlers for common route
 - logging requests
 - caching responses
 
-See `handlers`, `mmiddleware` or `utils` for source, or dive into `examples` for demo implementations. 
+See `handlers`, `middleware` or `utils` for source, or dive into `examples` for demo implementations. 
 
 ### `next: () => Promise<Response>`
 

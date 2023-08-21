@@ -17,4 +17,4 @@ router.addRoutes(assets)
 router.addRoutes(APIs)
 
 // Start Deno server with Peko router :^)
-Deno.serve((req) => router.requestHandler(req))
+Deno.serve((req) => router.handle(req))
