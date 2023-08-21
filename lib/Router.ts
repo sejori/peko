@@ -28,10 +28,14 @@ export class _Route implements Route {
     if (!routeObj.path) throw new Error("Route is missing path")
     if (!routeObj.handler) throw new Error("Route is missing handler")
 
-    this.path = routeObj.path
+    this.path = routeObj.path[routeObj.path.length-1] === "/"
+      ? routeObj.path.slice(0, -1) as Route["path"]
+      : routeObj.path
+
     this.path.split("/").forEach((str, i) => {
       if (str[0] === ":") this.params[str.slice(1)] = i
-    });
+    })
+    
     this.regexPath = this.params 
       ? new RegExp(`^${this.path.replaceAll(/(?<=\/):(.)*?(?=\/|$)/g, "(.)*")}\/?$`)
       : new RegExp(`^${this.path}\/?$`)
