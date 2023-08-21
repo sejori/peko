@@ -6,7 +6,7 @@ type RSAData = { name: "RSA", hash: "SHA-256" | "SHA-384" | "SHA-512" }
 type AlgData = HMACData | RSAData
 
 /**
- * Crypto class, generates hashes and signs and verifies JWTs using CyptoKey (generated from string or provided).
+ * Crypto class, generates hashes and signs/verifies JWTs using provided key.
  * @param key: CryptoKey | string
  */
 export class Crypto {
@@ -21,7 +21,12 @@ export class Crypto {
   /**
    * Create CryptoKey from rawKey string to be used in crypto methods
    */
-  static async createCryptoKey(key: string, algData: AlgData, usage: KeyUsage[], extractable = false): Promise<CryptoKey> {
+  static async createCryptoKey(
+    key: string, 
+    algData: AlgData, 
+    usage: KeyUsage[], 
+    extractable = false
+  ): Promise<CryptoKey> {
     if (algData.name === "HMAC") {
       return await crypto.subtle.importKey(
         "raw",
