@@ -5,7 +5,7 @@ import {
 } from "../../../mod.ts"
 
 import { recursiveReaddir } from "https://deno.land/x/recursive_readdir@v2.0.0/mod.ts"
-import { fromFileUrl } from "https://deno.land/std@0.174.0/path/mod.ts"
+import { fromFileUrl } from "https://deno.land/std@0.198.0/path/mod.ts"
 
 const env = Deno.env.toObject()
 const filenames = await recursiveReaddir(fromFileUrl(new URL(`../src`, import.meta.url)))
