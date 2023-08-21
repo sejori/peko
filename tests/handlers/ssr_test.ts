@@ -1,6 +1,6 @@
 import { assert } from "https://deno.land/std@0.198.0/testing/asserts.ts"
 import { Router, RequestContext } from "../../lib/Router.ts"
-import { ssrHandler } from "../../lib/handlers/ssr.ts"
+import { ssr } from "../../lib/handlers/ssr.ts"
 
 Deno.test("HANDLER: Server-side render", async (t) => {
   const server = new Router()
@@ -10,7 +10,7 @@ Deno.test("HANDLER: Server-side render", async (t) => {
   let response: Response
   
   await t.step("Response body created from render function as expected", async () => {
-    response = await ssrHandler(() => '<p>I am HTML!</p>', {
+    response = await ssr(() => '<p>I am HTML!</p>', {
       headers: new Headers({ 
         "cache-control": cacheControl
       }) 

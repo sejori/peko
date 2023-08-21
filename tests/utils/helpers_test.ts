@@ -4,7 +4,7 @@ import {
   mergeHeaders,
   routesFromDir
 } from "../../lib/utils/helpers.ts"
-import { staticHandler } from "../../lib/handlers/static.ts"
+import { staticFiles } from "../../lib/handlers/static.ts"
 
 Deno.test("UTIL: helpers", async (t) => {  
   await t.step("mergeHeaders", () => {
@@ -28,7 +28,7 @@ Deno.test("UTIL: helpers", async (t) => {
       (path, url) => ({
         path: path,
         middleware: () => { text = "I was set" },
-        handler: staticHandler(url)
+        handler: staticFiles(url)
       })
     )
 
@@ -40,7 +40,7 @@ Deno.test("UTIL: helpers", async (t) => {
 
     router.addRoutes(routes)
 
-    const response = await router.requestHandler(request)
+    const response = await router.handle(request)
     const fileText = await response.text()
 
     assert(text === "I was set")

@@ -1,6 +1,6 @@
 import {
   Route, 
-  staticHandler,
+  staticFiles,
   cacher
 } from "../../../mod.ts"
 
@@ -16,7 +16,7 @@ const assets: Route[] = filenames.map(file => {
   return {
     path: `/${fileRoute}`,
     middleware: env.ENVIRONMENT === "production" ? cacher() : [],
-    handler: staticHandler(new URL(`../src/${fileRoute}`, import.meta.url), {
+    handler: staticFiles(new URL(`../src/${fileRoute}`, import.meta.url), {
       headers: new Headers({
         "Cache-Control": env.ENVIRONMENT === "production"
           ? "max-age=86400, stale-while-revalidate=604800"
