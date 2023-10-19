@@ -41,7 +41,7 @@ jobs:
         run: deno task test
 
       # - name: Run profile
-        # run: deno task profile
+      #   run: deno task profile
 
   test-bun:
     runs-on: ubuntu-latest
@@ -51,7 +51,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Bun.sh
-        - uses: oven-sh/setup-bun@v1
+          uses: oven-sh/setup-bun@v1
           with:
             bun-version: latest
 
