@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises"
-import { contentType } from "https://deno.land/std@0.198.0/media_types/mod.ts";
-import { fromFileUrl } from "https://deno.land/std@0.198.0/path/mod.ts"
+import { contentType } from "../deno_std@0.204.0/media_types/mod.ts";
+import { fromFileUrl } from "../deno_std@0.204.0/path/mod.ts"
 import { RequestContext } from "../Router.ts"
 import { Crypto } from "../utils/Crypto.ts"
 import { mergeHeaders } from "../utils/helpers.ts"
