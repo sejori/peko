@@ -1,0 +1,24 @@
+{
+  "name": "peko",
+  "version": "2.1.0",
+  "description": "Featherweight HTTP routing + utils for stateless apps 🐣",
+  "main": "mod.ts",
+  "directories": {
+    "example": "examples",
+    "lib": "lib",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sejori/peko.git"
+  },
+  "author": "Seb Ringrose <sebringrose@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sejori/peko/issues"
+  },
+  "homepage": "https://github.com/sejori/peko#readme"
+}
