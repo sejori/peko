@@ -1,7 +1,7 @@
 import { 
   RequestContext, 
   Route,
-  sseHandler
+  sse
 } from "../../../mod.ts"
 
 const demoEventTarget = new EventTarget()
@@ -12,7 +12,7 @@ setInterval(() => {
 export const APIs: Route[] = [
   {
     path: "/sse",
-    handler: sseHandler(demoEventTarget)
+    handler: sse(demoEventTarget)
   },
   {
     path: "/api/parrot",

@@ -37,8 +37,6 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
 
     const default_response2 = await defaultCacher(ctx_default, () => new Response(successString))
     const custom_response2 = await customCacher(ctx_custom, () => new Response(successString))
-    console.log(ctx_default)
-    console.log(ctx_custom)
     assert(ctx_default.state.responseFromCache)
     assert(ctx_default.state.foo === testData.foo)
     assert(ctx_custom.state.responseFromCache)

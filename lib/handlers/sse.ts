@@ -10,31 +10,33 @@ const encoder = new TextEncoder()
  * @param opts: (optional) HandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const sseHandler = (target: EventTarget, opts: HandlerOptions = {}): Handler => () => {
-  let lexicalController: ReadableStreamDefaultController<unknown>
-  const enqueueEvent = (e: Event) => {
-    lexicalController.enqueue(encoder.encode(
-      `data: ${JSON.stringify({ 
-        timeStamp: e.timeStamp, 
-        detail: (e as CustomEvent).detail 
-      })}\n\n`
-    ))
-  }
-  
-  const body = new ReadableStream({
-    start(controller) {
-      lexicalController = controller
-      target.addEventListener("send", enqueueEvent)
-    },
-    cancel() {
-      target.removeEventListener("send", enqueueEvent)
+export const sse = (target: EventTarget, opts: HandlerOptions = {}): Handler => {
+  return function SSEHandler () {
+    let lexicalController: ReadableStreamDefaultController<unknown>
+    const enqueueEvent = (e: Event) => {
+      lexicalController.enqueue(encoder.encode(
+        `data: ${JSON.stringify({ 
+          timeStamp: e.timeStamp, 
+          detail: (e as CustomEvent).detail 
+        })}\n\n`
+      ))
     }
-  })
+    
+    const body = new ReadableStream({
+      start(controller) {
+        lexicalController = controller
+        target.addEventListener("send", enqueueEvent)
+      },
+      cancel() {
+        target.removeEventListener("send", enqueueEvent)
+      }
+    })
 
-  const headers = new Headers({
-    "Content-Type": "text/event-stream",
-  })
-  if (opts.headers) mergeHeaders(headers, opts.headers)
+    const headers = new Headers({
+      "Content-Type": "text/event-stream",
+    })
+    if (opts.headers) mergeHeaders(headers, opts.headers)
 
-  return new Response(body, { headers })
+    return new Response(body, { headers })
+  }
 }

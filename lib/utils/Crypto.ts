@@ -1,4 +1,4 @@
-import { encode as encodeB64, decode as decodeB64 } from "https://deno.land/std@0.198.0/encoding/base64.ts"
+import { encodeBase64, decodeBase64 } from "../deno_std@0.204.0/encoding/base64.ts"
 const encoder = new TextEncoder()
 
 type HMACData = { name: "HMAC", hash: "SHA-256" | "SHA-384" | "SHA-512" }
@@ -6,7 +6,7 @@ type RSAData = { name: "RSA", hash: "SHA-256" | "SHA-384" | "SHA-512" }
 type AlgData = HMACData | RSAData
 
 /**
- * Crypto class, generates hashes and signs and verifies JWTs using CyptoKey (generated from string or provided).
+ * Crypto class, generates hashes and signs/verifies JWTs using provided key.
  * @param key: CryptoKey | string
  */
 export class Crypto {
@@ -21,7 +21,12 @@ export class Crypto {
   /**
    * Create CryptoKey from rawKey string to be used in crypto methods
    */
-  static async createCryptoKey(key: string, algData: AlgData, usage: KeyUsage[], extractable = false): Promise<CryptoKey> {
+  static async createCryptoKey(
+    key: string, 
+    algData: AlgData, 
+    usage: KeyUsage[], 
+    extractable = false
+  ): Promise<CryptoKey> {
     if (algData.name === "HMAC") {
       return await crypto.subtle.importKey(
         "raw",
@@ -52,7 +57,7 @@ export class Crypto {
   async hash(contents: BodyInit): Promise<string> {
     const temp = new Response(contents) // how to array buffer all the things
     const hashBuffer = await crypto.subtle.digest(this.algData.hash, await temp.arrayBuffer())
-    return encodeB64(hashBuffer)
+    return encodeBase64(hashBuffer)
   }
 
   /**
@@ -70,15 +75,15 @@ export class Crypto {
       typ: "JWT"
     }
 
-    const b64Header = encodeB64(JSON.stringify(header))
-    const b64Payload = encodeB64(JSON.stringify(payload))
+    const b64Header = encodeBase64(JSON.stringify(header))
+    const b64Payload = encodeBase64(JSON.stringify(payload))
 
     const signatureBuffer = await crypto.subtle.sign(
       key.algorithm, 
       key, 
       encoder.encode(`${b64Header}.${b64Payload}`)
     )
-    const signature = encodeB64(signatureBuffer)
+    const signature = encodeBase64(signatureBuffer)
 
     return `${b64Header}.${b64Payload}.${signature}`
   }
@@ -100,7 +105,7 @@ export class Crypto {
     const verified = await crypto.subtle.verify(
       key.algorithm, 
       key, 
-      decodeB64(b64Signature),
+      decodeBase64(b64Signature),
       encoder.encode(`${b64Header}.${b64Payload}`)
     )
 

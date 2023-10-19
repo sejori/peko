@@ -45,7 +45,7 @@ export class Profiler {
           const start = Date.now()
           const response = mode === "serve" 
             ? await fetch(routeUrl)
-            : await router.requestHandler(new Request(routeUrl))
+            : await router.handle(new Request(routeUrl))
           const end = Date.now()
 
           return results[route.path].requests.push({
