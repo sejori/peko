@@ -109,7 +109,7 @@ The final request handling function on a `Route`. Must generate and return a res
 
 <h2 id="request-handling">Request handling</h2>
 
-Each route must have a `handler` function that generates a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response). Routes can also `middleware`.
+Each route must have a `handler` function that returns/resolves to a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response) and can optionally have `middleware` too.
 
 ### ctx: RequestContext
 
@@ -152,13 +152,13 @@ router.use(async (_, next) => {
 
 <h2 id="response-caching">Response caching</h2>
 
-In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. Peko provides a `ResponseCache` utility for this with configurable item lifetime. The `cacher` middleware wraps it and provides drop in handler memoization and response caching for your routes.
+In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The configurable `cacher` middleware provides drop in handler memoization and response caching for your routes.
 
 ```js
 router.addRoute("/get-time", Peko.cacher({ itemLifetime: 5000 }), () => new Response(Date.now()));
 ```
 
-The cacher stores response items in memory by default, but it can be extended to use any key value storage by supplying the `store` options parameter!
+The cacher stores response items in memory by default, but it can be extended to use any key value storage by supplying the `store` options parameter.
 
 ```js
 import { Router, CacheItem, cacher } from "https://deno.land/x/peko/mod.ts"
@@ -185,11 +185,6 @@ And that's it! Check out the API docs for deeper info. Otherwise happy coding ðŸ
 <h2>App showcase</h2>
 
 PR to add your project ðŸ™Œ
-
-### [iiisun.art](https://iiisun.art) - artistic storefront 
-- **Stack:** React, ImageMagick_deno
-- **Features:** CI resized-image precaching, Gelato & Stripe integrations, Parallax CSS
-- [source](https://github.com/sebringrose/third-sun/blob/main/server.ts)
 
 ### [shineponics.org](https://shineponics.org) - smart-farming PaaS 
 - **Stack:** React, Google Cloud Platform
@@ -222,6 +217,6 @@ Because our stateless apps cold-start it is important to keep their codebases sm
 
 The modern JavaScript edge rocks because the client-server gap practically disappears. We can share modules across the client and cloud. If we want TS source we can [emit](https://github.com/denoland/deno_emit) JS. This eliminates much of the bloat in traditional JS server-side systems, increasing project simplicity while making our software faster and more efficient.
 
-This is made possible by engines such as Deno that are built to the [ECMAScript](https://tc39.es/) specification</a>. UI libraries like [Preact](https://github.com/preactjs/preact) combined with [htm](https://github.com/developit/htm) offer lightning fast client-side hydration with a browser-friendly markup syntax. Deno also has native TypeScript support, a rich runtime API and loads of community tools for your back-end needs.
+This is made possible by engines such as Deno that are built to the [ECMAScript](https://tc39.es/) specification</a> and can run TypeScript natively. UI libraries like [Preact](https://github.com/preactjs/preact) combined with [htm](https://github.com/developit/htm) offer lightning fast client-side hydration with a browser-friendly markup syntax.
 
 If you are interested in contributing please submit a PR or get in contact ^^
