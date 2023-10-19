@@ -56,19 +56,17 @@
 
 <h1>Stateless HTTP(S) apps that are:</h1>
 
-- <strong>Featherweight</strong> - Browser-native JavaScript + Deno std library
-
-- <strong>Functional</strong> - [Express](https://github.com/expressjs/express)-like API + full-stack tooling
+- <strong>Featherweight</strong> - Functional API built with ECMAScript + Deno std library
 
 - <strong>Production-ready</strong> - High test coverage + stable APIs + server profiling
 
-- <strong>Community-driven</strong> - Popular tool integrations + contributions encouraged 
+- <strong>Community-driven</strong> - Compatible with Deno, Bun & Node + contributions encouraged 
 
 <h1>Overview</h1>
 
 Routes and middleware are added to a `Router` instance with `.use`, `.addRoute` or `.get/post/put/delete`. 
 
-The router is then used with your web server of choice, e.g. `Deno.serve`!
+The router is then used with your web server of choice, e.g. `Deno.serve` or `Bun.serve`.
 
 ```js
 import * as Peko from "https://deno.land/x/peko/mod.ts";
