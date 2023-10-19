@@ -222,6 +222,6 @@ Because our stateless apps cold-start it is important to keep their codebases sm
 
 The modern JavaScript edge rocks because the client-server gap practically disappears. We can share modules across the client and cloud. If we want TS source we can [emit](https://github.com/denoland/deno_emit) JS. This eliminates much of the bloat in traditional JS server-side systems, increasing project simplicity while making our software faster and more efficient.
 
-This is made possible by engines such as Deno that are built to the [ECMAScript](https://tc39.es/) specification</a> (support for URL module imports is the secret sauce). UI libraries like [Preact](https://github.com/preactjs/preact) combined with [htm](https://github.com/developit/htm) offer lightning fast client-side hydration with a browser-friendly markup syntax. Deno also has native TypeScript support, a rich runtime API and loads of community tools for your back-end needs.
+This is made possible by engines such as Deno that are built to the [ECMAScript](https://tc39.es/) specification</a>. UI libraries like [Preact](https://github.com/preactjs/preact) combined with [htm](https://github.com/developit/htm) offer lightning fast client-side hydration with a browser-friendly markup syntax. Deno also has native TypeScript support, a rich runtime API and loads of community tools for your back-end needs.
 
 If you are interested in contributing please submit a PR or get in contact ^^
