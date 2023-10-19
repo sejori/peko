@@ -1,6 +1,6 @@
 import { 
   Route, 
-  ssrHandler, 
+  ssr, 
   cacher
 } from "../../../mod.ts"
 
@@ -18,7 +18,7 @@ export const pages: Route[] = [
     path: "/",
     // use cacher to serve responses from cache in prod env
     middleware: env.ENVIRONMENT === "production" ? cacher() : [],
-    handler: ssrHandler(() => {
+    handler: ssr(() => {
       const appHTML = renderToString(Home(), null, null)
       return htmlTemplate({
         appHTML,
@@ -52,7 +52,7 @@ export const pages: Route[] = [
         }
       }
     ],
-    handler: ssrHandler((ctx) => {
+    handler: ssr((ctx) => {
       const appHTML = renderToString(About(ctx.state), null, null)
       return htmlTemplate({
         appHTML,

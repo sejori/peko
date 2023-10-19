@@ -1,3 +1,4 @@
+import { readdir, stat } from "node:fs/promises"
 import { Route } from "../types.ts"
 
 /**
@@ -22,22 +23,31 @@ export const mergeHeaders = (base: Headers, source: Headers) => {
  * @param _depth: used internally to correct paths, don't set
  * @returns routes: Route[]
  */
-export const routesFromDir = async (dirUrl: URL, routeGen: (path: `/${string}`, url: URL) => Promise<Route> | Route, _depth = 1): Promise<Route[]> => {
-  if (!(await Deno.stat(dirUrl)).isDirectory) throw new Error("URL does not point to directory.")
+export const routesFromDir = async (
+  dirUrl: URL, 
+  routeGen: (path: `/${string}`, url: URL) => Promise<Route> | Route, 
+  _depth = 0
+): Promise<Route[]> => {
+  if (!(await stat(dirUrl.pathname)).isDirectory()) {
+    throw new Error("URL does not point to directory.")
+  }
+
   const routes: Route[] = []
 
-  for await (const file of Deno.readDir(dirUrl)) {
-    const fileUrl = new URL(`file://${dirUrl.pathname}/${file.name}`)
-    if (file.isDirectory) {
+  for (const file of await readdir(dirUrl)) {
+    const fileUrl = new URL(
+      file, 
+      `${dirUrl.protocol}${dirUrl.hostname}${dirUrl.pathname}${dirUrl.pathname[dirUrl.pathname.length-1] !== "/" && "/"}`
+    )
+    const pathPieces = fileUrl.pathname.split("/").filter(Boolean)
+
+    if (!pathPieces[pathPieces.length-1].includes(".")) {
       const subDirRoutes = await routesFromDir(fileUrl, routeGen, _depth+1)
       routes.splice(0, 0, ...subDirRoutes)
     } else {
-      const pieces = dirUrl.pathname.split("/").filter(Boolean)
-      let dirPath: `/${string}` = '/'
-      for (let i=1; i<=_depth; i++) dirPath = `/${pieces[pieces.length-i]}${dirPath}`
-
-      const filePath: `/${string}` = `${dirPath}${file.name}`
-      routes.push(await routeGen(filePath, fileUrl))
+      let routePath: `/${string}` = '/'
+      for (let i=1; i<=_depth+2; i++) routePath = `/${pathPieces[pathPieces.length-i]}${routePath}`
+      routes.push(await routeGen(routePath, fileUrl))
     }
   }
 

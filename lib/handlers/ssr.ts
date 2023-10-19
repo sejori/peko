@@ -15,17 +15,19 @@ export interface ssrHandlerOptions extends HandlerOptions {
  * @param opts: (optional) ssrHandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const ssrHandler = (render: Render, opts: ssrHandlerOptions = {}): Handler => async (ctx: RequestContext) => {
-  if (!opts.crypto) {
-    opts.crypto = new Crypto(crypto.randomUUID())
+export const ssr = (render: Render, opts: ssrHandlerOptions = {}): Handler => {
+  return async function SSRHandler(ctx: RequestContext) {
+    if (!opts.crypto) {
+      opts.crypto = new Crypto(crypto.randomUUID())
+    }
+
+    const hashString = await opts.crypto.hash(await render(ctx))
+    const headers = new Headers({
+      "Content-Type": "text/html; charset=utf-8",
+      "ETag": hashString
+    })
+    if (opts.headers) mergeHeaders(headers, opts.headers)
+
+    return new Response(await render(ctx), { headers })
   }
-
-  const hashString = await opts.crypto.hash(await render(ctx))
-  const headers = new Headers({
-    "Content-Type": "text/html; charset=utf-8",
-    "ETag": hashString
-  })
-  if (opts.headers) mergeHeaders(headers, opts.headers)
-
-  return new Response(await render(ctx), { headers })
 }

@@ -28,10 +28,14 @@ export class _Route implements Route {
     if (!routeObj.path) throw new Error("Route is missing path")
     if (!routeObj.handler) throw new Error("Route is missing handler")
 
-    this.path = routeObj.path
+    this.path = routeObj.path[routeObj.path.length-1] === "/"
+      ? routeObj.path.slice(0, -1) as Route["path"]
+      : routeObj.path
+
     this.path.split("/").forEach((str, i) => {
       if (str[0] === ":") this.params[str.slice(1)] = i
-    });
+    })
+
     this.regexPath = this.params 
       ? new RegExp(`^${this.path.replaceAll(/(?<=\/):(.)*?(?=\/|$)/g, "(.)*")}\/?$`)
       : new RegExp(`^${this.path}\/?$`)
@@ -52,11 +56,11 @@ export class Router {
   ) {}
 
   /**
-   * Generate Response by running route middleware/handler with Cascade.
+   * Running Request through middleware cascade for Response.
    * @param request: Request
    * @returns Promise<Response>
    */
-  async requestHandler(request: Request): Promise<Response> {
+  async handle(request: Request): Promise<Response> {
     const ctx = new RequestContext(this, request)
     const res = await new Cascade(ctx, this.middleware).run()
     return res
