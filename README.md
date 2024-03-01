@@ -56,11 +56,11 @@
 
 <h1>Designed for apps on the edge:</h1>
 
-- <strong>Featherweight</strong> - Functional API built with Web Standards + zero dependencies
+- <strong>Fast</strong> - Regex route matcher. Works out-of-the-box with Deno, Bun & Cloudflare Workers 🏎️💨
 
-- <strong>Production-ready</strong> - Static files, auth, server-sent events + test coverage + server profiling util
+- <strong>Featherweight</strong> - Functional API built with Web Standards & zero dependencies 🌐🪶
 
-- <strong>Community-driven</strong> - Works out-of-the-box with Deno, Bun, Node & Cloudflare Workers
+- <strong>Feature-rich</strong> - Static files, auth, server-sent events & server profiling utils 🤹🔐
 
 <h1>Overview</h1>
 
