@@ -54,11 +54,11 @@
     </span>
 </p>
 
-<h1>Stateless HTTP(S) apps that are:</h1>
+<h1>Designed for apps on the edge:</h1>
 
-- <strong>Featherweight</strong> - Functional API built with ECMAScript + Deno std library
+- <strong>Featherweight</strong> - Functional API built with Web Standards
 
-- <strong>Production-ready</strong> - High test coverage + stable APIs + server profiling
+- <strong>Production-ready</strong> - High test coverage + server profiling util
 
 - <strong>Community-driven</strong> - Compatible with Deno, Bun & Node + contributions encouraged 
 
