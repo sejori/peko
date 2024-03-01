@@ -1,43 +1,49 @@
-import { readFile } from "node:fs/promises"
-import { contentType } from "../deno_std@0.204.0/media_types/mod.ts";
-import { fromFileUrl } from "../deno_std@0.204.0/path/mod.ts"
-import { RequestContext } from "../Router.ts"
-import { Crypto } from "../utils/Crypto.ts"
-import { mergeHeaders } from "../utils/helpers.ts"
-import { Handler, HandlerOptions, BodyInit } from "../types.ts"
+import { RequestContext } from "../Router.ts";
+import { Crypto } from "../utils/Crypto.ts";
+import { mergeHeaders } from "../utils/helpers.ts";
+import { Handler, HandlerOptions, BodyInit } from "../types.ts";
 
-const crypto = new Crypto(Array.from({length: 10}, () => {
-  return Math.floor(Math.random() * 9)
-}).toString())
+const crypto = new Crypto(
+  Array.from({ length: 10 }, () => {
+    return Math.floor(Math.random() * 9);
+  }).toString()
+);
 
 export interface staticHandlerOptions extends HandlerOptions {
-  transform?: (contents: ArrayBuffer) => Promise<BodyInit> | BodyInit
+  includeFetchHeaders?: boolean;
+  transform?: (
+    contents: ReadableStream<Uint8Array>
+  ) => Promise<BodyInit> | BodyInit;
 }
 
 /**
  * Generates Response body from file URL and Content-Type and ETAG headers.
  * Optionally: provide custom headers and/or body transform fcn.
- * 
+ *
  * @param fileURL: URL object of file address
  * @param opts: (optional) staticHandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const staticFiles = (fileURL: URL, opts: staticHandlerOptions = {}): Handler => {
-  return async function staticHandler (_ctx: RequestContext) {
-    const filePath = decodeURI(fileURL.pathname)
+export const staticFiles = (
+  fileURL: URL,
+  opts: staticHandlerOptions = {}
+): Handler => {
+  return async function staticHandler(_ctx: RequestContext) {
+    const hashString = await crypto.hash(fileURL.toString());
+    const { body, headers } = await fetch(fileURL);
 
-    const body = await readFile(fromFileUrl(fileURL))
-    const hashString = await crypto.hash(body.toString())
-    const ctHeader = contentType(filePath.slice(filePath.lastIndexOf(".")))
+    const responseHeaders = new Headers({
+      ...(opts.includeFetchHeaders !== false &&
+        Object.fromEntries(headers.entries())),
+      ETag: hashString,
+    });
 
-    const headers = new Headers({
-      "ETag": hashString,
-      "Content-Type": ctHeader ? ctHeader : "text/plain"
-    })
+    if (opts.headers) mergeHeaders(responseHeaders, opts.headers);
+    if (body && opts.transform)
+      return new Response(await opts.transform(body), {
+        headers: responseHeaders,
+      });
 
-    if (opts.headers) mergeHeaders(headers, opts.headers)
-    if (opts.transform) return new Response(await opts.transform(body), { headers })
-
-    return new Response(body, { headers })
-  }
-}
+    return new Response(body, { headers });
+  };
+};
