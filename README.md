@@ -56,11 +56,11 @@
 
 <h1>Designed for apps on the edge:</h1>
 
-- <strong>Featherweight</strong> - Functional API built with Web Standards
+- <strong>Featherweight</strong> - Functional API built with Web Standards + zero dependencies
 
-- <strong>Production-ready</strong> - High test coverage + server profiling util
+- <strong>Production-ready</strong> - Static files, auth, server-sent events + test coverage + server profiling util
 
-- <strong>Community-driven</strong> - Compatible with Deno, Bun & Node + contributions encouraged 
+- <strong>Community-driven</strong> - Works out-of-the-box with Deno, Bun, Node & Cloudflare Workers
 
 <h1>Overview</h1>
 
