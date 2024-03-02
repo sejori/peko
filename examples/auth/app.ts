@@ -1,4 +1,4 @@
-import * as Peko from "../../index"; // "https://deno.land/x/peko/mod.ts"
+import * as Peko from "../../index.ts"; // "https://deno.land/x/peko/mod.ts"
 
 const html = String;
 const router = new Peko.Router();
@@ -148,4 +148,4 @@ router.get(
   )
 );
 
-Deno.serve((req) => router.handle(req));
+export default router;
