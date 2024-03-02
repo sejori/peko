@@ -8,8 +8,8 @@ const Layout = ({ navColor, navLink, children }) => {
           height="200px"
           width="1000px"
           style="max-width:100%; margin: 1rem;"
-          src="/assets/logo_dark_alpha.webp"
-          alt="peko-chick"
+          src="https://raw.githubusercontent.com/sejori/peko/examples/preact/assets/logo_dark_alpha.webp"
+          alt="peko-logo"
         />
         <h1 style="text-align: center;">
           Featherweight HTTP routing and utilities
@@ -25,7 +25,7 @@ const Layout = ({ navColor, navLink, children }) => {
       <div class="container row">
         <a style=${footerLinkStyle} href="https://github.com/sebringrose/peko">
           <img
-            src="https://github.githubassets.com/images/modules/logos_page/Octocat.png"
+            src="https://raw.githubusercontent.com/edent/SuperTinyIcons/master/images/svg/github.svg"
             width="100"
             height="100"
             alt="GitHub"
