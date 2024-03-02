@@ -1,6 +1,6 @@
-import { html } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
+import { html } from "htm/preact";
 
-import Layout from "../components/Layout.js"
+import Layout from "../components/Layout.js";
 
 const Home = () => {
   return html`
@@ -50,7 +50,7 @@ const Home = () => {
         </div>
       </div>
     </${Layout}>
-  `
-}
+  `;
+};
 
-export default Home
+export default Home;

@@ -1,4 +1,4 @@
-import { Middleware } from "../types.ts"
+import { Middleware } from "../types.ts";
 
 /**
  * Generic request info logging middleware. Awaits next() so log happens post request handling.
@@ -6,16 +6,20 @@ import { Middleware } from "../types.ts"
  * @returns Middleware
  */
 export const logger = (log: (input: unknown) => unknown): Middleware => {
-  return async function logMiddleware (ctx, next) {
+  return async function logMiddleware(ctx, next) {
     const start = new Date();
 
     const response = await next();
 
-    const responseTime = `${Date.now() - start.valueOf()}ms`
-    const status = response ? response.status : "404 (No Reponse)"
-    const cached = ctx.state.responseFromCache
-    const request = ctx.request
+    const responseTime = `${Date.now() - start.valueOf()}ms`;
+    const status = response ? response.status : "404 (No Reponse)";
+    const cached = ctx.state.responseFromCache;
+    const request = ctx.request;
 
-    await log(`[${start}] ${status} ${request.method} ${request.url} ${responseTime}${cached ? " (CACHED)" : ""}`)
-  }
-}
+    await log(
+      `[${start}] ${status} ${request.method} ${request.url} ${responseTime}${
+        cached ? " (CACHED)" : ""
+      }`
+    );
+  };
+};

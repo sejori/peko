@@ -1,58 +1,35 @@
-import { readdir, stat } from "node:fs/promises"
-import { Route } from "../types.ts"
-
 /**
  * Merge source headers into base headers and return base
  * @param base: Headers
  * @param source: Headers
- * @returns 
+ * @returns
  */
 export const mergeHeaders = (base: Headers, source: Headers) => {
   for (const pair of source) {
-    base.set(pair[0], pair[1])
+    base.set(pair[0], pair[1]);
   }
 
-  return base
-}
+  return base;
+};
 
-/**
- * Recursively create an array of routes with the static handler 
- * for all files/sub-directories in the provided directory.
- * @param dirUrl: URL
- * @param routeGen: (path: string, url: URL) => Route
- * @param _depth: used internally to correct paths, don't set
- * @returns routes: Route[]
- */
-export const routesFromDir = async (
-  dirUrl: URL, 
-  routeGen: (path: `/${string}`, url: URL) => Promise<Route> | Route, 
-  _depth = 0
-): Promise<Route[]> => {
-  if (!(await stat(dirUrl.pathname)).isDirectory()) {
-    throw new Error("URL does not point to directory.")
+export const bufferToBase64 = (buffer: ArrayBuffer) => {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
   }
+  return btoa(binary);
+};
 
-  const routes: Route[] = []
-
-  for (const file of await readdir(dirUrl)) {
-    const fileUrl = new URL(
-      file, 
-      `${dirUrl.protocol}${dirUrl.hostname}${dirUrl.pathname}${dirUrl.pathname[dirUrl.pathname.length-1] !== "/" && "/"}`
-    )
-    const pathPieces = fileUrl.pathname.split("/").filter(Boolean)
-
-    if (!pathPieces[pathPieces.length-1].includes(".")) {
-      const subDirRoutes = await routesFromDir(fileUrl, routeGen, _depth+1)
-      routes.splice(0, 0, ...subDirRoutes)
-    } else {
-      let routePath: `/${string}` = '/'
-      for (let i=1; i<=_depth+2; i++) routePath = `/${pathPieces[pathPieces.length-i]}${routePath}`
-      routes.push(await routeGen(routePath, fileUrl))
-    }
+export const base64ToBuffer = (base64: string) => {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
   }
-
-  return routes
-}
+  return bytes.buffer;
+};
 
 // TODO: sitemap generator
 // export const generateSitemap = (server: Server) => {

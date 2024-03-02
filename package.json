@@ -1,7 +1,7 @@
 {
   "name": "peko",
-  "version": "2.1.0",
-  "description": "Featherweight HTTP routing + utils for stateless apps 🐣",
+  "version": "2.2.0",
+  "description": "Featherweight apps on the edge, built with Web Standards 🐣⚡",
   "main": "mod.ts",
   "directories": {
     "example": "examples",
@@ -9,7 +9,12 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "deno run --allow-net --allow-read --allow-env scripts/deno.ts",
+    "start:dev": "deno run --allow-net --allow-read --allow-env --watch scripts/deno.ts",
+    "test": "deno test --allow-read --allow-net",
+    "profile": "deno run --allow-read --allow-net tests/scripts/profile.ts",
+    "test:bun": "bun run scripts/bun.ts",
+    "test:wrangler": "wrangler dev scripts/cloudflareWorker.ts"
   },
   "repository": {
     "type": "git",
@@ -20,5 +25,14 @@
   "bugs": {
     "url": "https://github.com/sejori/peko/issues"
   },
-  "homepage": "https://github.com/sejori/peko#readme"
+  "homepage": "https://github.com/sejori/peko#readme",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240222.0",
+    "wrangler": "^3.30.1"
+  },
+  "dependencies": {
+    "htm": "^3.1.1",
+    "preact": "^10.19.6",
+    "preact-render-to-string": "^6.4.0"
+  }
 }
