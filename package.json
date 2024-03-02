@@ -12,7 +12,9 @@
     "start": "deno run --allow-net --allow-read --allow-env examples/preact/index.ts",
     "start:dev": "deno run --allow-net --allow-read --allow-env --watch examples/preact/index.ts",
     "test": "deno test --allow-read --allow-net",
-    "profile": "deno run --allow-read --allow-net tests/scripts/profile.ts"
+    "profile": "deno run --allow-read --allow-net tests/scripts/profile.ts",
+    "test:bun": "bun run tests/scripts/bun.ts",
+    "test:wrangler": "wrangler dev tests/scripts/cloudflareWorker.ts"
   },
   "repository": {
     "type": "git",
@@ -25,6 +27,7 @@
   },
   "homepage": "https://github.com/sejori/peko#readme",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240222.0"
+    "@cloudflare/workers-types": "^4.20240222.0",
+    "wrangler": "^3.30.1"
   }
 }

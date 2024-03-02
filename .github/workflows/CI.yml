@@ -57,3 +57,16 @@ jobs:
 
       - name: Bun run
         run: bun run tests/scripts/bun.ts
+
+  test-cloudflare-workers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v3
+
+      - name: Setup Wrangler
+        uses: cloudflare/wrangler-action@v3
+
+      - name: Wrangler run dev
+        run: wrangler dev tests/scripts/cloudflareWorker.ts

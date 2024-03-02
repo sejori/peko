@@ -14,14 +14,10 @@ router.get(
   testHandler
 );
 
-const server = Bun.serve({
-  port: 7777,
-  fetch(req) {
-    return router.handle(req);
+export default {
+  fetch(request: Request) {
+    return router.handle(request);
   },
-});
+} satisfies ExportedHandler;
 
-console.log("Bun server running with Peko router <3");
-console.log(await (await fetch("http://localhost:7777/")).json());
-
-server.stop();
+console.log("Cloudflare Worker running with Peko router <3");
