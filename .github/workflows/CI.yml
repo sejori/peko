@@ -18,7 +18,7 @@ permissions:
   contents: read
 
 jobs:
-  test-deno:
+  unit-test-deno:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,9 +30,8 @@ jobs:
         with:
           deno-version: v1.x
 
-      # Uncomment this step to verify the use of 'deno fmt' on each commit.
-      # - name: Verify formatting
-      #   run: deno fmt --check
+      - name: Verify formatting
+        run: deno fmt --check
 
       - name: Run linter
         run: deno lint
@@ -43,7 +42,7 @@ jobs:
       # - name: Run profile
       #   run: deno task profile
 
-  test-bun:
+  test-run-bun:
     runs-on: ubuntu-latest
 
     steps:
@@ -59,4 +58,23 @@ jobs:
         run: bun install
 
       - name: Bun run
-        run: bun run scripts/bun.ts
+        run: npm run test:bun
+
+      - name: Bun stop
+        run: xargs kill < <(lsof -i :7777 -t)
+
+  test-run-wrangler:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v3
+
+      - name: Setup Wrangler
+        run: npm install -g @cloudflare/wrangler
+
+      - name: Wrangler dev
+        run: npm run test:cfw
+
+      - name: Wrangler stop
+        run: xargs kill < <(lsof -i :8787 -t)

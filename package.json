@@ -14,7 +14,7 @@
     "test": "deno test --allow-read --allow-net",
     "profile": "deno run --allow-read --allow-net tests/scripts/profile.ts",
     "test:bun": "bun run scripts/bun.ts",
-    "test:wrangler": "wrangler dev scripts/cloudflareWorker.ts"
+    "test:cfw": "wrangler dev scripts/cfw.ts"
   },
   "repository": {
     "type": "git",
