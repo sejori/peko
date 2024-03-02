@@ -22,10 +22,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup repo
+      - name: setup repo
         uses: actions/checkout@v3
 
-      - name: Setup Deno
+      - name: setup Deno
         uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
@@ -33,10 +33,10 @@ jobs:
       # - name: Verify formatting
       #   run: deno fmt --check
 
-      - name: Run linter
+      - name: run linter
         run: deno lint
 
-      - name: Run tests
+      - name: run tests
         run: deno task test
 
       # - name: Run profile
@@ -46,29 +46,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup repo
+      - name: setup repo
         uses: actions/checkout@v3
 
-      - name: Setup Bun.sh
+      - name: setup Bun.sh
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
-      - name: Bun intall
+      - name: bun intall
         run: bun install
 
-      - name: Bun run
+      - name: bun run
         run: npm run test:bun
 
   test-run-wrangler:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup repo
+      - name: setup repo
         uses: actions/checkout@v3
 
-      - name: Setup Wrangler
+      - name: npm intall
+        run: npm install
+
+      - name: setup Wrangler
         run: npm install -g wrangler
 
-      - name: Wrangler dev
+      - name: wrangler dev
         run: npm run test:cfw
