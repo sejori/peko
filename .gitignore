@@ -2,7 +2,8 @@
 **/.DS_Store
 
 # Cloudflare workers
-.wrangler/*
+.wrangler
 
+.vscode
 coverage/
 node_modules
