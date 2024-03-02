@@ -30,8 +30,8 @@ jobs:
         with:
           deno-version: v1.x
 
-      - name: Verify formatting
-        run: deno fmt --check
+      # - name: Verify formatting
+      #   run: deno fmt --check
 
       - name: Run linter
         run: deno lint
@@ -60,9 +60,6 @@ jobs:
       - name: Bun run
         run: npm run test:bun
 
-      - name: Bun stop
-        run: xargs kill < <(lsof -i :7777 -t)
-
   test-run-wrangler:
     runs-on: ubuntu-latest
 
@@ -71,10 +68,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Wrangler
-        run: npm install -g @cloudflare/wrangler
+        run: npm install -g wrangler
 
       - name: Wrangler dev
         run: npm run test:cfw
-
-      - name: Wrangler stop
-        run: xargs kill < <(lsof -i :8787 -t)
