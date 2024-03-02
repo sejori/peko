@@ -1,23 +1,27 @@
-import { assert } from "https://deno.land/std@0.198.0/testing/asserts.ts"
-import { Router, RequestContext } from "../../lib/Router.ts"
-import { logger } from "../../lib/middleware/logger.ts"
+import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
+import { Router, RequestContext } from "../../lib/Router.ts";
+import { logger } from "../../lib/middleware/logger.ts";
 
 Deno.test("MIDDLEWARE: Logger", async (t) => {
-  const successString = "Success!"
+  const successString = "Success!";
 
-  let logOutput: unknown
-  const server = new Router()
+  let logOutput: unknown;
+  const server = new Router();
 
   const testData = {
-    foo: "bar"
-  }
-  
+    foo: "bar",
+  };
+
   await t.step("Response string and event logged as expected", async () => {
-    const ctx = new RequestContext(server, new Request("http://localhost"), { ...testData })
-    const logFcn = logger((stuff) => { logOutput = stuff })
-    await logFcn(ctx, () => new Response(successString))
-    
+    const ctx = new RequestContext(server, new Request("http://localhost"), {
+      ...testData,
+    });
+    const logFcn = logger((stuff) => {
+      logOutput = stuff;
+    });
+    await logFcn(ctx, () => new Response(successString));
+
     // TODO test this string
-    assert(logOutput)
-  })
-})
+    assert(logOutput);
+  });
+});

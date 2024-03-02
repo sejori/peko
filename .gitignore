@@ -1,5 +1,9 @@
 # MacOS gross history thingy
 **/.DS_Store
 
+# Cloudflare workers
+.wrangler
+
+.vscode
 coverage/
 node_modules
