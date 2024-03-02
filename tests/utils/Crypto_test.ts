@@ -1,4 +1,4 @@
-import { assert } from "https://deno.land/std@0.198.0/testing/asserts.ts";
+import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import {
   encode,
   decode,

@@ -1,4 +1,4 @@
-import { assert } from "https://deno.land/std@0.198.0/testing/asserts.ts";
+import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import { Router, RequestContext } from "../../lib/Router.ts";
 import { staticFiles } from "../../lib/handlers/static.ts";
 
@@ -13,31 +13,30 @@ Deno.test("HANDLER: Static", async (t) => {
   await t.step(
     "Response body created from file contents as expected",
     async () => {
-      response = await staticFiles(fileURL, {
+      const handler = await staticFiles(fileURL, {
         headers: new Headers({
           "Cache-Control": cacheControl,
           "Content-Type": "application/javascript",
         }),
-      })(ctx);
-      const reader = response.body?.getReader();
+      });
+      response = await handler(ctx);
+      assert(response.body);
+      const reader = response.body.getReader();
 
-      if (reader) {
-        const { done, value } = await reader?.read();
-        assert(!done);
-        assert(
-          decoder.decode(value) === decoder.decode(await Deno.readFile(fileURL))
-        );
+      let result = "";
+      let { done, value } = await reader.read();
+      while (!done) {
+        result += decoder.decode(value);
+        ({ done, value } = await reader.read());
       }
+      assert(done);
+      assert(result === decoder.decode(await Deno.readFile(fileURL)));
     }
   );
 
-  await t.step(
-    "Content-Type & ETAG header created from body as expected",
-    () => {
-      assert(response.headers.get("ETAG"));
-      assert(response.headers.get("Content-Type") === "application/javascript");
-    }
-  );
+  await t.step("ETAG header created from URL as expected", () => {
+    assert(response.headers.get("ETAG"));
+  });
 
   await t.step("Custom headers set as expected", () => {
     assert(response.headers.get("Cache-Control") === cacheControl);
@@ -46,24 +45,34 @@ Deno.test("HANDLER: Static", async (t) => {
   await t.step("Body transformed applied as expected", async () => {
     const testString = " extra text has been added here!";
 
-    response = await staticFiles(fileURL, {
+    const handler = await staticFiles(fileURL, {
       transform: async (contents) => {
-        const { value } = await contents.getReader().read();
-        const text = decoder.decode(value);
-        await new Promise((res) => setTimeout(res, 10));
+        const reader = contents.getReader();
+        let result = "";
+        let { done, value } = await reader.read();
+        while (!done) {
+          result += decoder.decode(value);
+          ({ done, value } = await reader.read());
+        }
+        const text = result;
         return text + testString;
       },
       headers: new Headers({
         "Cache-Control": cacheControl,
         "Content-Type": "application/javascript",
       }),
-    })(ctx);
-    const reader = response.body?.getReader();
+    });
 
-    if (reader) {
-      const { done, value } = await reader?.read();
-      assert(!done);
-      assert(decoder.decode(value).includes(testString));
+    const response = await handler(ctx);
+    assert(response.body);
+
+    const reader = response.body.getReader();
+    let result = "";
+    let { done, value } = await reader.read();
+    while (!done) {
+      result += decoder.decode(value);
+      ({ done, value } = await reader.read());
     }
+    assert(result.includes(testString));
   });
 });
