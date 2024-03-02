@@ -16,7 +16,7 @@ export interface ssrHandlerOptions extends HandlerOptions {
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
 export const ssr = (render: Render, opts: ssrHandlerOptions = {}): Handler => {
-  const pekoCrypto = opts?.crypto || new Crypto(crypto.randomUUID());
+  const pekoCrypto = opts?.crypto || new Crypto("peko_ssr");
 
   return async function SsrHandler(ctx: RequestContext) {
     const hashString = await pekoCrypto.hash(await render(ctx));

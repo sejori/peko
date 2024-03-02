@@ -1,16 +1,19 @@
-import { RequestContext, Route, sse } from "../../../index";
+import { RequestContext, Route, sse } from "../../../index.ts";
 
 const demoEventTarget = new EventTarget();
-setInterval(() => {
-  demoEventTarget.dispatchEvent(
-    new CustomEvent("send", { detail: Math.random() })
-  );
-}, 2500);
 
 export const APIs: Route[] = [
   {
     path: "/sse",
-    handler: sse(demoEventTarget),
+    handler: (ctx: RequestContext) => {
+      setInterval(() => {
+        demoEventTarget.dispatchEvent(
+          new CustomEvent("send", { detail: Math.random() })
+        );
+      }, 2500);
+
+      return sse(demoEventTarget)(ctx);
+    },
   },
   {
     path: "/api/parrot",
