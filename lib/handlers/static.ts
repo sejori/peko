@@ -1,4 +1,3 @@
-import { RequestContext } from "../Router.ts";
 import { Crypto } from "../utils/Crypto.ts";
 import { mergeHeaders } from "../utils/helpers.ts";
 import { Handler, HandlerOptions, BodyInit } from "../types.ts";
