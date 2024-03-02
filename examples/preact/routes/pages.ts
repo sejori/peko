@@ -1,13 +1,16 @@
-import { Route, ssr, cacher } from "../../../index";
-
-import { renderToString } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+import { Route, ssr, cacher } from "../../../index.ts";
+import { renderToString } from "preact-render-to-string";
 
 // Preact page components and HTML template for ssrHandler render logic
 import Home from "../src/pages/Home.js";
 import About from "../src/pages/About.js";
 import htmlTemplate from "../document.ts";
 
-const env = Deno.env.toObject();
+const env: Record<string, string> =
+  (typeof Deno !== "undefined" && Deno.env.toObject()) ||
+  (typeof process !== "undefined" && process.env) ||
+  (typeof env !== "undefined" && env) ||
+  {};
 
 export const pages: Route[] = [
   {
@@ -48,7 +51,7 @@ export const pages: Route[] = [
       (ctx) => {
         ctx.state = {
           request_time: `${Date.now()}`,
-          ...Deno.env.toObject(),
+          ...env,
         };
       },
     ],
