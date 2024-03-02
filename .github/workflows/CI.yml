@@ -55,5 +55,8 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Bun intall
+        run: bun install
+
       - name: Bun run
         run: bun run scripts/bun.ts
