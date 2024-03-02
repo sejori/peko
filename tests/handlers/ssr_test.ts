@@ -17,14 +17,18 @@ Deno.test("HANDLER: Server-side render", async (t) => {
           "cache-control": cacheControl,
         }),
       })(ctx);
+      assert(response.body);
+      const reader = response.body.getReader();
 
-      const reader = response.body?.getReader();
-
-      if (reader) {
-        const { done, value } = await reader?.read();
-        assert(!done);
-        assert(decoder.decode(value) === "<p>I am HTML!</p>");
+      let result = "";
+      let { done, value } = await reader.read();
+      while (!done) {
+        result += decoder.decode(value);
+        ({ done, value } = await reader.read());
       }
+
+      assert(result === "<p>I am HTML!</p>");
+      assert(done);
     }
   );
 

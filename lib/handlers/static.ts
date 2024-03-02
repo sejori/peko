@@ -48,7 +48,7 @@ export const staticFiles = async (
     ),
   });
 
-  return function staticHandler(_ctx: RequestContext) {
+  return function staticHandler() {
     return response;
   };
 };

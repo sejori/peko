@@ -1,3 +1,5 @@
+import { base64ToBuffer, bufferToBase64 } from "./helpers.ts";
+
 const encoder = new TextEncoder();
 
 type HMACData = { name: "HMAC"; hash: "SHA-256" | "SHA-384" | "SHA-512" };
@@ -59,9 +61,9 @@ export class Crypto {
   }
 
   /**
-   * Generate hash from string
-   * @param contents: string
-   * @returns hashHex: string
+   * Generate hash from BodyInit contents
+   * @param contents: BodyInit
+   * @returns hash: string
    */
   async hash(contents: BodyInit): Promise<string> {
     const temp = new Response(contents); // how to array buffer all the things
@@ -69,7 +71,8 @@ export class Crypto {
       this.algData.hash,
       await temp.arrayBuffer()
     );
-    return new String(hashBuffer).toString();
+
+    return bufferToBase64(hashBuffer);
   }
 
   /**
@@ -96,7 +99,7 @@ export class Crypto {
       key,
       encoder.encode(`${b64Header}.${b64Payload}`)
     );
-    const signature = btoa(new String(signatureBuffer).toString());
+    const signature = bufferToBase64(signatureBuffer);
 
     return `${b64Header}.${b64Payload}.${signature}`;
   }
@@ -119,7 +122,7 @@ export class Crypto {
     const verified = await crypto.subtle.verify(
       key.algorithm,
       key,
-      encoder.encode(atob(b64Signature)),
+      base64ToBuffer(b64Signature),
       encoder.encode(`${b64Header}.${b64Payload}`)
     );
 
