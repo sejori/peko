@@ -60,6 +60,9 @@ jobs:
       - name: bun run
         run: npm run test:bun
 
+      - name: bun stop
+        run: kill -9 <(lsof -i :7777 -t)
+
   test-run-wrangler:
     runs-on: ubuntu-latest
 
@@ -75,3 +78,6 @@ jobs:
 
       - name: wrangler dev
         run: npm run test:cfw
+
+      - name: wrangler stop
+        run: kill -9 <(lsof -i :7777 -t)
