@@ -10,40 +10,45 @@ const crypto = new Crypto(
 );
 
 export interface staticHandlerOptions extends HandlerOptions {
-  includeFetchHeaders?: boolean;
+  fetchHeaders?: Headers;
+  headers?: Headers;
   transform?: (
     contents: ReadableStream<Uint8Array>
   ) => Promise<BodyInit> | BodyInit;
 }
 
 /**
- * Generates Response body from file URL and Content-Type and ETAG headers.
+ * Responds Response body from file URL with ETAG header.
  * Optionally: provide custom headers and/or body transform fcn.
  *
- * @param fileURL: URL object of file address
+ * @param fileUrl: URL object of file address
  * @param opts: (optional) staticHandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const staticFiles = (
-  fileURL: URL,
+export const staticFiles = async (
+  fileUrl: URL,
   opts: staticHandlerOptions = {}
-): Handler => {
-  return async function staticHandler(_ctx: RequestContext) {
-    const hashString = await crypto.hash(fileURL.toString());
-    const { body, headers } = await fetch(fileURL);
+): Promise<Handler> => {
+  const hashString = await crypto.hash(fileUrl.toString());
+  const transform = opts.transform
+    ? opts.transform
+    : (body: ReadableStream<Uint8Array>) => body;
 
-    const responseHeaders = new Headers({
-      ...(opts.includeFetchHeaders !== false &&
-        Object.fromEntries(headers.entries())),
-      ETag: hashString,
-    });
+  const { body, headers } = await fetch(fileUrl, {
+    headers: opts.fetchHeaders,
+  });
 
-    if (opts.headers) mergeHeaders(responseHeaders, opts.headers);
-    if (body && opts.transform)
-      return new Response(await opts.transform(body), {
-        headers: responseHeaders,
-      });
+  const response = new Response(body ? await transform(body) : null, {
+    headers: mergeHeaders(
+      new Headers({
+        ...Object.fromEntries(opts?.headers?.entries() || []),
+        ETag: hashString,
+      }),
+      headers
+    ),
+  });
 
-    return new Response(body, { headers });
+  return function staticHandler(_ctx: RequestContext) {
+    return response;
   };
 };

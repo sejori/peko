@@ -1,33 +1,36 @@
-import { assert } from "https://deno.land/std@0.198.0/testing/asserts.ts"
-import { Router, RequestContext } from "../../lib/Router.ts"
-import { sse } from "../../lib/handlers/sse.ts"
+import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
+import { Router, RequestContext } from "../../lib/Router.ts";
+import { sse } from "../../lib/handlers/sse.ts";
 
 Deno.test("HANDLER: Server-sent events", async (t) => {
-  const router = new Router()
-  const ctx = new RequestContext(router, new Request("http://localhost"))
-  const eventTarget = new EventTarget()
-  const decoder = new TextDecoder()
+  const router = new Router();
+  const ctx = new RequestContext(router, new Request("http://localhost"));
+  const eventTarget = new EventTarget();
+  const decoder = new TextDecoder();
   const testData = {
-    foo: "bar"
-  }
-  
-  await t.step("Response created and event data emitted as expected", async () => {
-    const response = await sse(eventTarget)(ctx)
-    const reader = response.body?.getReader()
+    foo: "bar",
+  };
 
-    const dataEvent = new CustomEvent("send", { detail: testData })
-    const dob = dataEvent.timeStamp;
-    eventTarget.dispatchEvent(dataEvent);
+  await t.step(
+    "Response created and event data emitted as expected",
+    async () => {
+      const response = await sse(eventTarget)(ctx);
+      const reader = response.body?.getReader();
 
-    if (reader) {
-      const { value } = await reader?.read()
-      const stringValue = decoder.decode(value)
-      const JSONValue = JSON.parse(stringValue.slice(6))
+      const dataEvent = new CustomEvent("send", { detail: testData });
+      const dob = dataEvent.timeStamp;
+      eventTarget.dispatchEvent(dataEvent);
 
-      assert(stringValue.slice(0,6) === "data: ")
-      assert(stringValue.slice(-2) === "\n\n")
-      assert(JSONValue.detail.foo && JSONValue.detail.foo === "bar")
-      assert(JSONValue.timeStamp === dob)
+      if (reader) {
+        const { value } = await reader?.read();
+        const stringValue = decoder.decode(value);
+        const JSONValue = JSON.parse(stringValue.slice(6));
+
+        assert(stringValue.slice(0, 6) === "data: ");
+        assert(stringValue.slice(-2) === "\n\n");
+        assert(JSONValue.detail.foo && JSONValue.detail.foo === "bar");
+        assert(JSONValue.timeStamp === dob);
+      }
     }
-  }) 
-})
+  );
+});

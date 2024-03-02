@@ -1,16 +1,27 @@
-import { RequestContext } from "./Router.ts"
+import { RequestContext } from "./Router.ts";
 
-export interface Route { 
-  path: `/${string}`
-  method?: "GET" | "POST" | "PUT" | "DELETE"
-  middleware?: Middleware[] | Middleware
-  handler: Handler
+export interface Route {
+  path: `/${string}`;
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  middleware?: Middleware[] | Middleware;
+  handler: Handler;
 }
 
-export type Result = void | Response | undefined
-export type Next = () => Promise<Result> | Result
+export type Result = void | Response | undefined;
+export type Next = () => Promise<Result> | Result;
 
-export type Middleware = (ctx: RequestContext, next: Next) => Promise<Result> | Result
-export type Handler = (ctx: RequestContext) => Promise<Response> | Response
-export type HandlerOptions = { headers?: Headers }
-export type BodyInit = string | Blob | BufferSource | FormData | URLSearchParams | ReadableStream<Uint8Array>
+export type Middleware = (
+  ctx: RequestContext,
+  next: Next
+) => Promise<Result> | Result;
+export type Handler = (ctx: RequestContext) => Promise<Response> | Response;
+export type HandlerOptions = { headers?: Headers };
+
+export type BodyInit =
+  | string
+  | Blob
+  | BufferSource
+  | FormData
+  | URLSearchParams
+  | ReadableStream<Uint8Array>
+  | null;
