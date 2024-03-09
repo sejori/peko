@@ -2,7 +2,7 @@
     <img 
         width="420px"
         style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/assets/twemoji_chick.svg" alt="peko-logo" 
+        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/assets/twemoji_chick.svg" alt="peko-chick" 
     />
 </p>
 
@@ -220,3 +220,6 @@ The modern JavaScript edge rocks because the client-server gap practically disap
 This is made possible by engines such as Deno that are built to the [ECMAScript](https://tc39.es/) specification</a> and can run TypeScript natively. UI libraries like [Preact](https://github.com/preactjs/preact) combined with [htm](https://github.com/developit/htm) offer lightning fast client-side hydration with a browser-friendly markup syntax.
 
 If you are interested in contributing please submit a PR or get in contact ^^
+
+## Credits:
+Chick logo from [Twemoji](https://github.com/twitter/twemoji)
