@@ -6,7 +6,7 @@ import {
   cacher,
   ssr,
   file,
-} from "../../index.ts"; //"https://deno.land/x/peko/mod.ts"
+} from "../../mod.ts"; //"https://deno.land/x/peko/mod.ts"
 import { renderToString } from "preact-render-to-string";
 
 // Preact page components and HTML template for ssrHandler render logic

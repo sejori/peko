@@ -16,12 +16,15 @@ permissions:
   contents: read
 
 jobs:
-  deploy-cfw:
+  deploy-cloudflare-worker:
     runs-on: ubuntu-latest
 
     steps:
       - name: Setup repo
         uses: actions/checkout@v3
+
+      - name: setup pnpm
+        run: npm install -g pnpm
 
       - name: Setup Wrangler
         uses: cloudflare/wrangler-action@v3
