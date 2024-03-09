@@ -1,9 +1,23 @@
-<p align="center">
+<p align="center" style="font-size: 72px;">
     <img 
-        width="420px"
+        width="270px"
         style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sebringrose/peko/main/examples/preact/src/assets/logo_light_alpha.png" alt="peko-logo" 
+        src="https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/twemoji_chick.svg" alt="peko-chick" 
     />
+</p>
+
+<h1 align="center">
+    Peko
+</h1>
+
+<p align="center">
+    <strong>Fast</strong> - Regex route matcher. Works out-of-the-box with Deno, Bun & Cloudflare Workers 🏎️💨
+</p>
+<p align="center">
+    <strong>Featherweight</strong> - Functional API built with Web Standards & zero dependencies 🌐🪶<br>
+</p>
+<p align="center">
+    <strong>Feature-rich</strong> - Static files, auth, server-sent events & server profiling utils 🤹🔐
 </p>
 
 <p align="center">
@@ -36,31 +50,6 @@
         &nbsp;
     </span>
 </p>
-
-<p align="center">
-    <span>
-        &nbsp;
-            <a href="https://doc.deno.land/https://deno.land/x/peko/mod.ts">
-                API DOCS
-            </a>
-        &nbsp;
-    </span>
-    <span>
-        &nbsp;
-            <a href="https://github.com/sebringrose/pekommunity">
-                COMMUNITY TOOLS
-            </a>
-        &nbsp;
-    </span>
-</p>
-
-<h1>Designed for apps on the edge:</h1>
-
-- <strong>Fast</strong> - Regex route matcher. Works out-of-the-box with Deno, Bun & Cloudflare Workers 🏎️💨
-
-- <strong>Featherweight</strong> - Functional API built with Web Standards & zero dependencies 🌐🪶
-
-- <strong>Feature-rich</strong> - Static files, auth, server-sent events & server profiling utils 🤹🔐
 
 <h1>Overview</h1>
 
@@ -220,3 +209,6 @@ The modern JavaScript edge rocks because the client-server gap practically disap
 This is made possible by engines such as Deno that are built to the [ECMAScript](https://tc39.es/) specification</a> and can run TypeScript natively. UI libraries like [Preact](https://github.com/preactjs/preact) combined with [htm](https://github.com/developit/htm) offer lightning fast client-side hydration with a browser-friendly markup syntax.
 
 If you are interested in contributing please submit a PR or get in contact ^^
+
+## Credits:
+Chick logo from [Twemoji](https://github.com/twitter/twemoji)
