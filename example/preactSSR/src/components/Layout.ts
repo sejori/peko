@@ -1,6 +1,14 @@
 import { html } from "htm/preact";
 
-const Layout = ({ navColor, navLink, children }) => {
+const Layout = ({
+  navColor,
+  navLink,
+  children,
+}: {
+  navColor: string;
+  navLink: string;
+  children: unknown;
+}) => {
   return html`
     <nav style=${navStyle(navColor)}>
       <div class="container align-center">
@@ -12,12 +20,9 @@ const Layout = ({ navColor, navLink, children }) => {
           alt="peko-logo"
         />
         <h1 style="text-align: center;">
-          Featherweight HTTP routing and utilities
+          Featherweight <a href="/${navLink}" style=${navLinkStyle}>apps</a>
         </h1>
-        <h2 style="text-align: center;">
-          for <a href="/${navLink}" style=${navLinkStyle}>apps</a> on the
-          stateless edge 🐣⚡
-        </h2>
+        <h2 style="text-align: center;">on the edge 🐣⚡</h2>
       </div>
     </nav>
     <main style="padding: 1rem;" class="container">${children}</main>
@@ -57,7 +62,7 @@ const Layout = ({ navColor, navLink, children }) => {
   `;
 };
 
-const navStyle = (navColor) => `
+const navStyle = (navColor: string) => `
   width: 100%;
   display: flex;
   flex-direction: column;

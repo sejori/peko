@@ -1,71 +1,73 @@
-import { Router } from "../Router.ts"
-import { Route } from "../types.ts"
+import { Router } from "../Router.ts";
+import { Route } from "../types.ts";
 
 type ProfileConfig = {
-  mode?: "serve" | "handle"
-  url?: string
-  count?: number
-  excludedRoutes?: Route[]
-}
+  mode?: "serve" | "handle";
+  url?: string;
+  count?: number;
+  excludedRoutes?: Route[];
+};
 
 type ProfileResults = Record<
-  Route["path"], 
+  Route["path"],
   {
-    avgTime: number
-    requests: { 
-      path: string
-      response: Response
-      ms: number 
-    }[]
+    avgTime: number;
+    requests: {
+      path: string;
+      response: Response;
+      ms: number;
+    }[];
   }
->
+>;
 
 export class Profiler {
   /**
    * Benchmark performance of all server routes one at a time
-   * @param router 
-   * @param config 
+   * @param router
+   * @param config
    * @returns results: ProfileResults
    */
   static async run(router: Router, config?: ProfileConfig) {
-    const url = (config && config.url) || `http://localhost:7777`
-    const count = (config && config.count) || 100
-    const excludedRoutes = (config && config.excludedRoutes) || []
-    const mode = (config && config.mode) || "serve"
+    const url = (config && config.url) || `http://localhost:7777`;
+    const count = (config && config.count) || 100;
+    const excludedRoutes = (config && config.excludedRoutes) || [];
+    const mode = (config && config.mode) || "serve";
 
-    const results: ProfileResults = {}
+    const results: ProfileResults = {};
 
     for (const route of router.routes) {
-      results[route.path] = { avgTime: 0, requests: [] }
+      results[route.path] = { avgTime: 0, requests: [] };
 
       if (!excludedRoutes.includes(route)) {
         const promises = new Array(count).fill(0).map(async () => {
-          const routeUrl = new URL(`${url}${route.path}`)
-          
-          const start = Date.now()
-          const response = mode === "serve" 
-            ? await fetch(routeUrl)
-            : await router.handle(new Request(routeUrl))
-          const end = Date.now()
+          const routeUrl = new URL(`${url}${route.path}`);
+
+          const start = performance.now();
+          const response =
+            mode === "serve"
+              ? await fetch(routeUrl)
+              : await router.handle(new Request(routeUrl));
+          const end = performance.now();
 
           return results[route.path].requests.push({
             path: routeUrl.pathname,
             response,
-            ms: end-start
-          })
-        })
+            ms: end - start,
+          });
+        });
 
-        await Promise.all(promises)
+        await Promise.all(promises);
 
         // calc avg.
-        results[route.path].avgTime = results[route.path].requests
-          .map(data => data.ms)
-          .reduce((a,b) => a+b) / results[route.path].requests.length
+        results[route.path].avgTime =
+          results[route.path].requests
+            .map((data) => data.ms)
+            .reduce((a, b) => a + b) / results[route.path].requests.length;
       }
     }
 
-    return results
+    return results;
   }
 }
 
-export default Profiler
+export default Profiler;

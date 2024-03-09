@@ -1,6 +1,6 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import { Router, RequestContext } from "../../lib/Router.ts";
-import { staticFiles } from "../../lib/handlers/static.ts";
+import { file } from "../../lib/handlers/static.ts";
 
 Deno.test("HANDLER: Static", async (t) => {
   const server = new Router();
@@ -13,7 +13,7 @@ Deno.test("HANDLER: Static", async (t) => {
   await t.step(
     "Response body created from file contents as expected",
     async () => {
-      const handler = await staticFiles(fileURL, {
+      const handler = await file(fileURL, {
         headers: new Headers({
           "Cache-Control": cacheControl,
           "Content-Type": "application/javascript",
@@ -45,7 +45,7 @@ Deno.test("HANDLER: Static", async (t) => {
   await t.step("Body transformed applied as expected", async () => {
     const testString = " extra text has been added here!";
 
-    const handler = await staticFiles(fileURL, {
+    const handler = await file(fileURL, {
       transform: async (contents) => {
         const reader = contents.getReader();
         let result = "";

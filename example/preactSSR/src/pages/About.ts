@@ -1,9 +1,9 @@
 import { html } from "htm/preact";
 
-import Layout from "../components/Layout.js";
-import App from "../components/App.js";
+import Layout from "../components/Layout.ts";
+import App from "../components/App.ts";
 
-const About = (props) => {
+const About = (props: Record<string, unknown>) => {
   return html`
     <${Layout} navLink="" navColor="blueviolet">
       <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
