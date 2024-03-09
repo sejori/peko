@@ -5,7 +5,7 @@ const testRouter = getTestRouter();
 const abortController = new AbortController();
 Deno.serve(
   {
-    port: 7778,
+    port: 7777,
     signal: abortController.signal,
   },
   (req) => testRouter.handle(req)

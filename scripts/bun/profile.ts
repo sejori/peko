@@ -3,7 +3,7 @@ import { getTestRouter } from "../../tests/mocks/middleware.ts";
 
 const testRouter = getTestRouter();
 const server = Bun.serve({
-  port: 9797,
+  port: 8080,
   fetch(req) {
     return testRouter.handle(req);
   },
@@ -15,7 +15,7 @@ const handleResults = await Profiler.run(testRouter, {
 });
 const serveResults = await Profiler.run(testRouter, {
   mode: "serve",
-  url: "http://localhost:7777",
+  url: "http://localhost:8080",
   count: 100,
 });
 
