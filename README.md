@@ -4,8 +4,11 @@
         style="margin: 1rem auto;"
         src="https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/twemoji_chick.svg" alt="peko-chick" 
     />
-    Peko
 </p>
+
+<h1 align="center">
+    Peko
+</h1>
 
 <p align="center">
     <span>
