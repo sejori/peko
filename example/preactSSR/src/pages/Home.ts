@@ -24,7 +24,7 @@ const Home = () => {
           <h2 id="handlers">Handlers</h2>
           <ul>
             <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/ssr.ts">Server-side render</a></li>
-            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/static.ts">Static assets</a></li>
+            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/file.ts">Static files</a></li>
             <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/sse.ts">Server-sent events</a></li>
           </ul>
         </div>

@@ -1,8 +1,8 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import { Router, RequestContext } from "../../lib/Router.ts";
-import { file } from "../../lib/handlers/static.ts";
+import { file } from "../../lib/handlers/file.ts";
 
-Deno.test("HANDLER: Static", async (t) => {
+Deno.test("HANDLER: File", async (t) => {
   const server = new Router();
   const ctx = new RequestContext(server, new Request("http://localhost"));
   const fileURL = new URL(import.meta.url);
