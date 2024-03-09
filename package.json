@@ -8,13 +8,17 @@
     "lib": "lib",
     "test": "tests"
   },
+  "type": "module",
   "scripts": {
-    "start": "deno run --allow-net --allow-read --allow-env scripts/deno.ts",
-    "start:dev": "deno run --allow-net --allow-read --allow-env --watch scripts/deno.ts",
+    "start": "deno run --allow-net --allow-read --allow-env scripts/deno/main.ts",
     "test": "deno test --allow-read --allow-net",
-    "profile": "deno run --allow-read --allow-net tests/scripts/profile.ts",
-    "test:bun": "bun run scripts/bun.ts",
-    "test:cfw": "wrangler dev scripts/cfw.ts"
+    "profile:deno": "deno run --allow-read --allow-net scripts/deno/profile.ts",
+    "profile:bun": "bun run scripts/bun/profile.ts",
+    "profile:start:wrangler": "wrangler dev scripts/wrangler/testApp.ts",
+    "profile:wrangler": "node --loader ts-node/esm scripts/wrangler/profile.ts",
+    "start:dev:deno": "deno run --allow-net --allow-read --allow-env --watch scripts/deno/main.ts",
+    "start:dev:bun": "bun run --watch scripts/bun/main.ts",
+    "start:dev:wrangler": "wrangler dev scripts/wrangler/main.ts"
   },
   "repository": {
     "type": "git",
@@ -28,9 +32,11 @@
   "homepage": "https://github.com/sejori/peko#readme",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240222.0",
+    "ts-node": "^10.9.2",
     "wrangler": "^3.30.1"
   },
   "dependencies": {
+    "esbuild": "^0.20.1",
     "htm": "^3.1.1",
     "preact": "^10.19.6",
     "preact-render-to-string": "^6.4.0"

@@ -18,6 +18,21 @@ permissions:
   contents: read
 
 jobs:
+  profile-deno:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: setup repo
+        uses: actions/checkout@v3
+
+      - name: setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Run profile
+        run: deno task profile
+
   unit-test-deno:
     runs-on: ubuntu-latest
 
@@ -39,9 +54,6 @@ jobs:
       - name: run tests
         run: deno task test
 
-      # - name: Run profile
-      #   run: deno task profile
-
   test-run-bun:
     runs-on: ubuntu-latest
 
@@ -58,7 +70,9 @@ jobs:
         run: bun install
 
       - name: bun run
-        run: npm run test:bun && kill -9 <(lsof -i :7777 -t)
+        run: npm run test:bun
+        after_script:
+          - pkill bun
 
   test-run-wrangler:
     runs-on: ubuntu-latest
@@ -74,4 +88,6 @@ jobs:
         run: npm install -g wrangler
 
       - name: wrangler dev
-        run: npm run test:cfw && kill -9 <(lsof -i :7777 -t)
+        run: npm run test:cfw
+        after_script:
+          - pkill node
