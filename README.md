@@ -1,3 +1,23 @@
+<p align="center" style="font-size: 72px;">
+    <img 
+        width="270px"
+        style="margin: 1rem auto;"
+        src="https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/twemoji_chick.svg" alt="peko-chick" 
+    />
+</p>
+
+<h1 align="center">
+    Peko
+</h1>
+
+<p align="center">
+    <ul>
+        <li><strong>Fast</strong> - Regex route matcher. Works out-of-the-box with Deno, Bun & Cloudflare Workers 🏎️💨</li>
+        <li><strong>Featherweight</strong> - Functional API built with Web Standards & zero dependencies 🌐🪶</li>
+        <li><strong>Feature-rich</strong> - Static files, auth, server-sent events & server profiling utils 🤹🔐</li>
+    </ul>
+</p>
+
 <p align="center">
     <span>
         &nbsp;
@@ -27,26 +47,6 @@
         </a>
         &nbsp;
     </span>
-</p>
-
-<p align="center" style="font-size: 72px;">
-    <img 
-        width="270px"
-        style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/twemoji_chick.svg" alt="peko-chick" 
-    />
-</p>
-
-<h1 align="center">
-    Peko
-</h1>
-
-<p align="center">
-    <ul>
-        <li><strong>Fast</strong> - Regex route matcher. Works out-of-the-box with Deno, Bun & Cloudflare Workers 🏎️💨</li>
-        <li><strong>Featherweight</strong> - Functional API built with Web Standards & zero dependencies 🌐🪶</li>
-        <li><strong>Feature-rich</strong> - Static files, auth, server-sent events & server profiling utils 🤹🔐</li>
-    </ul>
 </p>
 
 <h1>Overview</h1>
