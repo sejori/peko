@@ -71,8 +71,9 @@ jobs:
 
       - name: bun run
         run: npm run test:bun
-        after_script:
-          - pkill bun
+
+    after_script:
+      - pkill bun
 
   test-run-wrangler:
     runs-on: ubuntu-latest
@@ -89,5 +90,6 @@ jobs:
 
       - name: wrangler dev
         run: npm run test:cfw
-        after_script:
-          - pkill node
+
+    after_script:
+      - pkill node
