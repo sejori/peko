@@ -11,11 +11,9 @@
 </h1>
 
 <p align="center">
-    <ul>
-        <span><li><strong>Fast</strong> - Regex route matcher. Works out-of-the-box with Deno, Bun & Cloudflare Workers 🏎️💨</li></span>
-        <span><li><strong>Featherweight</strong> - Functional API built with Web Standards & zero dependencies 🌐🪶</li></span>
-        <span><li><strong>Feature-rich</strong> - Static files, auth, server-sent events & server profiling utils 🤹🔐</li></span>
-    </ul>
+    <strong>Fast</strong> - Regex route matcher. Works out-of-the-box with Deno, Bun & Cloudflare Workers 🏎️💨<br>
+    <strong>Featherweight</strong> - Functional API built with Web Standards & zero dependencies 🌐🪶<br>
+    <strong>Feature-rich</strong> - Static files, auth, server-sent events & server profiling utils 🤹🔐
 </p>
 
 <p align="center">
