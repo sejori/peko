@@ -4,6 +4,7 @@
         style="margin: 1rem auto;"
         src="https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/twemoji_chick.svg" alt="peko-chick" 
     />
+    <h1>Peko</h1>
 </p>
 
 <p align="center">
@@ -53,8 +54,6 @@
         &nbsp;
     </span>
 </p>
-
-<h1>Designed for apps on the edge:</h1>
 
 - <strong>Fast</strong> - Regex route matcher. Works out-of-the-box with Deno, Bun & Cloudflare Workers 🏎️💨
 
