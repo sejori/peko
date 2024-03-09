@@ -10,6 +10,12 @@
     Peko
 </h1>
 
+<ul align="center">
+    <li><strong>Fast</strong> - Regex route matcher. Works out-of-the-box with Deno, Bun & Cloudflare Workers 🏎️💨</li>
+    <li><strong>Featherweight</strong> - Functional API built with Web Standards & zero dependencies 🌐🪶</li>
+    <li><strong>Feature-rich</strong> - Static files, auth, server-sent events & server profiling utils 🤹🔐</li>
+</ul>
+
 <p align="center">
     <span>
         &nbsp;
@@ -41,13 +47,7 @@
     </span>
 </p>
 
-<p align="center">
-    <ul>
-        <li><strong>Fast</strong> - Regex route matcher. Works out-of-the-box with Deno, Bun & Cloudflare Workers 🏎️💨</li>
-        <li><strong>Featherweight</strong> - Functional API built with Web Standards & zero dependencies 🌐🪶</li>
-        <li><strong>Feature-rich</strong> - Static files, auth, server-sent events & server profiling utils 🤹🔐</li>
-    </ul>
-    
+<p align="center">    
     <span>
         &nbsp;
             <a href="https://doc.deno.land/https://deno.land/x/peko/mod.ts">
