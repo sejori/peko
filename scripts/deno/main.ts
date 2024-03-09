@@ -1,4 +1,4 @@
-import router from "../examples/preact/router.ts";
+import router from "../../example/preactSSR/router.ts";
 
 // Start Deno server with Peko router :^)
 Deno.serve((req) => router.handle(req));

@@ -2,13 +2,8 @@ import { Crypto } from "../utils/Crypto.ts";
 import { mergeHeaders } from "../utils/helpers.ts";
 import { Handler, HandlerOptions, BodyInit } from "../types.ts";
 
-const crypto = new Crypto(
-  Array.from({ length: 10 }, () => {
-    return Math.floor(Math.random() * 9);
-  }).toString()
-);
-
 export interface staticHandlerOptions extends HandlerOptions {
+  crypto?: Crypto;
   fetchHeaders?: Headers;
   headers?: Headers;
   transform?: (
@@ -24,11 +19,12 @@ export interface staticHandlerOptions extends HandlerOptions {
  * @param opts: (optional) staticHandlerOptions
  * @returns Handler: (ctx: RequestContext) => Promise<Response>
  */
-export const staticFiles = async (
+export const file = async (
   fileUrl: URL,
   opts: staticHandlerOptions = {}
 ): Promise<Handler> => {
-  const hashString = await crypto.hash(fileUrl.toString());
+  const pekoCrypto = opts?.crypto || new Crypto("peko_static");
+  const hashString = await pekoCrypto.hash(fileUrl.toString());
   const transform = opts.transform
     ? opts.transform
     : (body: ReadableStream<Uint8Array>) => body;

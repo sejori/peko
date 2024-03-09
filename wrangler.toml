@@ -1,3 +1,3 @@
 name = "peko"
-main = "scripts/cloudflareWorker.ts"
+main = "scripts/wrangler/main.ts"
 compatibility_date = "2024-02-23"

@@ -1,6 +1,6 @@
 import { html } from "htm/preact";
 
-import Layout from "../components/Layout.js";
+import Layout from "../components/Layout.ts";
 
 const Home = () => {
   return html`
@@ -26,7 +26,6 @@ const Home = () => {
             <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/ssr.ts">Server-side render</a></li>
             <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/static.ts">Static assets</a></li>
             <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/sse.ts">Server-sent events</a></li>
-            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/handlers/ws.ts">WebSockets</a></li>
           </ul>
         </div>
 
@@ -43,9 +42,7 @@ const Home = () => {
           <h2 id="utils">Utils</h2>
           <ul>
             <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/utils/Crypto.ts">Crypto - JWT/hashing</a></li>
-            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/utils/ResponseCache.ts">Response cache</a></li>
             <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/utils/Profiler.ts">Profiler</a></li>
-            <li><a target="_blank" href="https://github.com/sebringrose/peko/blob/main/utils/helpers.ts">routesFromDir</a></li>
           </ul>
         </div>
       </div>
