@@ -1,6 +1,6 @@
-<p align="center" style="font-size: '72px'">
+<p align="center" style="font-size: 72px;">
     <img 
-        width="420px"
+        width="270px"
         style="margin: 1rem auto;"
         src="https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/twemoji_chick.svg" alt="peko-chick" 
     />
