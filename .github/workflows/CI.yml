@@ -28,6 +28,9 @@ jobs:
       - name: setup pnpm
         run: npm install -g pnpm
 
+      - name: setup packages
+        run: pnpm install
+
       - name: setup Deno
         uses: denoland/setup-deno@v1
         with:
@@ -45,6 +48,9 @@ jobs:
 
       - name: setup pnpm
         run: npm install -g pnpm
+
+      - name: setup packages
+        run: pnpm install
 
       - name: setup Bun
         uses: oven-sh/setup-bun@v1
