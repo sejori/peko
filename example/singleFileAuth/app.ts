@@ -1,4 +1,4 @@
-import * as Peko from "../../index.ts"; // "https://deno.land/x/peko/mod.ts"
+import * as Peko from "../../lib/mod.ts"; // "https://deno.land/x/peko/mod.ts"
 
 const html = String;
 const router = new Peko.Router();
