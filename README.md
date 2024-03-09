@@ -1,15 +1,3 @@
-<p align="center" style="font-size: 72px;">
-    <img 
-        width="270px"
-        style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/twemoji_chick.svg" alt="peko-chick" 
-    />
-</p>
-
-<h1 align="center">
-    Peko
-</h1>
-
 <p align="center">
     <span>
         &nbsp;
@@ -57,6 +45,18 @@
         &nbsp;
     </span>
 </p>
+
+<p align="center" style="font-size: 72px;">
+    <img 
+        width="270px"
+        style="margin: 1rem auto;"
+        src="https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/twemoji_chick.svg" alt="peko-chick" 
+    />
+</p>
+
+<h1 align="center">
+    Peko
+</h1>
 
 <p align="center">
     <ul>
