@@ -1,7 +1,7 @@
 import { useState } from "preact/hooks";
 import { html } from "htm/preact";
 
-const List = ({ data }) => {
+const List = ({ data }: { data: string[] }) => {
   // takes a data prop
   // how many clicks have we counted? Default to 0
   const [count, setCount] = useState(0);
@@ -16,7 +16,7 @@ const List = ({ data }) => {
       <ul>
         ${data &&
         data.map(
-          (i) => html`
+          (i: string) => html`
             <li>${i}: <button onClick=${handleClick}>Click me</button></li>
           `
         )}

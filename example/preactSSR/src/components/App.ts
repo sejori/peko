@@ -1,7 +1,7 @@
 import { useState, useEffect } from "preact/hooks";
 import { html } from "htm/preact";
-import List from "./List.js";
-import { useLocalState } from "../hooks/localstate.js";
+import List from "./List.ts";
+import { useLocalState } from "../hooks/localstate.ts";
 
 const App = () => {
   const [dataArray, setDataArray] = useLocalState("dataArray");
@@ -31,7 +31,7 @@ const App = () => {
       <button
         style=${btnLgStyle}
         onClick=${() =>
-          setDataArray((dataArray) => [
+          setDataArray((dataArray: string[]) => [
             ...dataArray,
             `Item ${dataArray.length}`,
           ])}
@@ -41,7 +41,9 @@ const App = () => {
       <button
         style=${btnLgStyle}
         onClick=${() =>
-          setDataArray((dataArray) => dataArray.slice(0, dataArray.length - 1))}
+          setDataArray((dataArray: string[]) =>
+            dataArray.slice(0, dataArray.length - 1)
+          )}
       >
         remove item
       </button>

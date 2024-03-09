@@ -1,6 +1,14 @@
 import { html } from "htm/preact";
 
-const Layout = ({ navColor, navLink, children }) => {
+const Layout = ({
+  navColor,
+  navLink,
+  children,
+}: {
+  navColor: string;
+  navLink: string;
+  children: unknown;
+}) => {
   return html`
     <nav style=${navStyle(navColor)}>
       <div class="container align-center">
@@ -54,7 +62,7 @@ const Layout = ({ navColor, navLink, children }) => {
   `;
 };
 
-const navStyle = (navColor) => `
+const navStyle = (navColor: string) => `
   width: 100%;
   display: flex;
   flex-direction: column;

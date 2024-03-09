@@ -1,4 +1,9 @@
-export default (tags: Record<string, string>) => `<!DOCTYPE html>
+export default (input: {
+  title: string;
+  entrypoint: string;
+  ssrHTML: string;
+  serverState?: Record<string, unknown>;
+}) => `<!DOCTYPE html>
   <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -6,10 +11,13 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/assets/twemoji_chick.svg">
     
-    ${tags && tags.title}
-    <meta name="description" content="The Featherweight Deno SSR Library">
+    <title>${input.title}</title>
+    <meta name="description" content="Featherweight apps on the edge">
+    <meta name="keywords" content="deno, edge, serverless, preact, peko, cloudflare, bun, typescript, server">
 
-    ${tags && tags.modulepreload}
+    <script modulepreload="true" type="module" src="${
+      input.entrypoint
+    }"></script>
 
     <style>
       html, body, #root {
@@ -45,9 +53,15 @@ export default (tags: Record<string, string>) => `<!DOCTYPE html>
   </head>
   <body>
     <div id="root">
-      ${tags.appHTML}
+      ${input.ssrHTML}
     </div>
 
-    ${tags && tags.hydrationScript}
+    <script type="module">
+          import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+          import About from "${input.entrypoint}";
+          hydrate(About(${JSON.stringify(
+            input.serverState
+          )}), document.getElementById("root"))
+        </script
   </body>
-  </html>`
+  </html>`;

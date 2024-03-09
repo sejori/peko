@@ -1,12 +1,12 @@
 import { useState, useEffect } from "preact/hooks";
 
 // INITIAL STATE
-const initialState = {
+const initialState: Record<string, unknown> = {
   dataArray: ["Item 0", "Item 1", "Item 2"],
 };
 
 // listeners object stores arrays of all state variable setters for each key
-const listeners = {};
+const listeners: Record<string, ((x: unknown) => unknown)[]> = {};
 Object.keys(initialState).forEach((key) => (listeners[key] = []));
 
 /**
@@ -14,7 +14,7 @@ Object.keys(initialState).forEach((key) => (listeners[key] = []));
  * @param {string} key state variable name
  * @returns [state, setState]
  */
-const useLocalState = (key) => {
+const useLocalState = (key: string) => {
   // return regular state if no localStorage (server-side renders)
   if (typeof localStorage === "undefined") return useState(initialState[key]);
 
@@ -51,7 +51,7 @@ const getLocalState = () => {
  * @param {string} key state variable name
  * @returns {*} state variable value
  */
-const getLocalStateValue = (key) => {
+const getLocalStateValue = (key: string) => {
   const localState = getLocalState();
   if (localState[key]) return localState[key];
   throw new Error(
@@ -64,7 +64,7 @@ const getLocalStateValue = (key) => {
  * @param {string} key state variable name
  * @param {*} value state variable value
  */
-const setLocalStateValue = (key, value) => {
+const setLocalStateValue = (key: string, value: unknown) => {
   // update all state listeners before setting in case we cannot set localStorage
   // (e.g. private browsing iOS Safari)
   listeners[key].forEach((setState) => setState(value));

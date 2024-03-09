@@ -1,7 +1,7 @@
-import router from "../examples/preact/router.ts";
+import router from "../../example/preactSSR/router.ts";
 
 Bun.serve({
-  port: 7777,
+  port: 8080,
   fetch(req) {
     return router.handle(req);
   },
