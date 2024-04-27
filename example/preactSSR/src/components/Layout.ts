@@ -1,4 +1,4 @@
-import { html } from "htm/preact";
+import { html } from "npm:htm/preact";
 
 const Layout = ({
   navColor,

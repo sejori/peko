@@ -7,7 +7,7 @@ import {
   ssr,
   file,
 } from "../../mod.ts"; //"https://deno.land/x/peko/mod.ts"
-import { renderToString } from "preact-render-to-string";
+import { renderToString } from "npm:preact-render-to-string";
 
 // Preact page components and HTML template for ssrHandler render logic
 import Home from "./src/pages/Home.ts";
