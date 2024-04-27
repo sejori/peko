@@ -14,10 +14,10 @@
     <strong>Fast</strong> - Regex route matcher. Works out-of-the-box with Deno, Bun & Cloudflare Workers 🏎️💨
 </p>
 <p align="center">
-    <strong>Featherweight</strong> - Functional API built with Web Standards & zero dependencies 🌐🪶<br>
+    <strong>Featherweight</strong> - Functional API built with Web Standards & zero dependencies 🪶<br>
 </p>
 <p align="center">
-    <strong>Feature-rich</strong> - Static files, auth, server-sent events & server profiling utils 🤹🔐
+    <strong>Feature-rich</strong> - Static files, auth, server-sent events & server profiling utils 🤹
 </p>
 
 <p align="center">
