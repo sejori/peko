@@ -13,11 +13,7 @@ const Home = () => {
         <li>100% TypeScript complete with tests.</li>
       </ul>
 
-      <h2>Guides</h2>
-      <ol>
-        <li><a href="https://github.com/sebringrose/peko/blob/main/react.md">How to build a full-stack React application with Peko and Deno</a></li>
-        <li>Want to build a lightweight HTML or Preact app? Check out the <a href="https://github.com/sebringrose/peko/blob/main/examples">examples</a>!</li>
-      </ol>
+      <p>Want to build a full-stack app with Peko? Check out the <a href="https://github.com/sebringrose/peko/blob/main/examples">examples</a>!</p>
 
       <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
         <div>

@@ -13,10 +13,9 @@ const Layout = ({
     <nav style=${navStyle(navColor)}>
       <div class="container align-center">
         <img
-          height="200px"
-          width="1000px"
-          style="max-width:100%; margin: 1rem;"
-          src="https://raw.githubusercontent.com/sejori/peko/examples/preact/assets/logo_dark_alpha.webp"
+          height="270px"
+          style="margin: 1rem;"
+          src="https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/logo_dark_alpha.webp"
           alt="peko-logo"
         />
         <h1 style="text-align: center;">
