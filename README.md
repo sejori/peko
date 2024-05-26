@@ -110,7 +110,7 @@ Must return/resolve to a `Response` (e.g. Render HTML or return JSON payload).
 <h2 id="recipes">Recipes</h2>
 
 ### Library utilities
-Check the [examples](https://github.com/sejori/peko/examples) to see implementations of:
+Check the [examples](https://github.com/sejori/peko/tree/main/example) to see implementations of:
 - server-side rendering Preact to HTML
 - streaming server-sent events to web client
 - JWT authentication middleware
