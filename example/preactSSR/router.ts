@@ -7,7 +7,7 @@ import {
   ssr,
   file,
 } from "../../mod.ts"; //"https://deno.land/x/peko/mod.ts"
-import { renderToString } from "preact-render-to-string";
+import { renderToString } from "npm:preact-render-to-string";
 
 // Preact page components and HTML template for ssrHandler render logic
 import Home from "./src/pages/Home.ts";
@@ -15,11 +15,18 @@ import About from "./src/pages/About.ts";
 import htmlTemplate from "./document.ts";
 
 // esbuild bundling for app TS files
-import * as esbuild from "esbuild";
+import * as esbuild from "npm:esbuild-wasm";
+let initialized = false;
+if (!initialized) {
+  await esbuild.initialize({});
+  initialized = true;
+}
 
 const env: Record<string, string> =
   (typeof Deno !== "undefined" && Deno.env.toObject()) ||
+  // @ts-ignore - cross-platform env support
   (typeof process !== "undefined" && process.env) ||
+  // @ts-ignore - cross-platform env support
   (typeof env !== "undefined" && env) ||
   {};
 
@@ -75,7 +82,7 @@ router.get("/assets/:filename", cacher(), async (ctx) =>
   (
     await file(
       new URL(
-        `https://raw.githubusercontent.com/sejori/peko/main/example/preact/assets/${ctx.params.filename}`
+        `https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/${ctx.params.filename}`
       ),
       {
         headers: new Headers({
@@ -92,11 +99,11 @@ router.get("/assets/:filename", cacher(), async (ctx) =>
 
 // BUNDLED TS FILES
 // dynamic URL param for filename, always cache
-router.get("/src/:filename", cacher(), async (ctx) =>
+router.get("/src/:dirname/:filename", cacher(), async (ctx) =>
   (
     await file(
       new URL(
-        `https://raw.githubusercontent.com/sejori/peko/main/example/preact/src/${ctx.params.filename}`
+        `https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/src/${ctx.params.dirname}/${ctx.params.filename}`
       ),
       {
         transform: async (contents) => {

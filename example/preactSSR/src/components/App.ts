@@ -1,5 +1,5 @@
-import { useState, useEffect } from "preact/hooks";
-import { html } from "htm/preact";
+import { useState, useEffect } from "npm:preact/hooks";
+import { html } from "npm:htm/preact";
 import List from "./List.ts";
 import { useLocalState } from "../hooks/localstate.ts";
 
