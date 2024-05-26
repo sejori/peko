@@ -169,6 +169,16 @@ router.addRoute("/get-time", {
 })
 ```
 
+### Bundling and transpiling
+
+Don't do this at runtime. It is slow and the tooling is not supported across runtimes.
+
+Use a CLI such as [`esbuild`](https://esbuild.github.io/) and integrate into CI.
+
+```
+
+```
+
 <h2 id="deployment">Deployment</h2>
 
 - [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖)
