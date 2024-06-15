@@ -1,24 +1,25 @@
 import { Type, Schema, Int } from "../../lib/utils/Schema.ts";
 
-const user = new Type({
-  name: "User",
-  fields: {
+const user = new Type(
+  "User",
+  {
     id: String,
     userName: String,
-    email: String,
+    // email: String,
     age: {
-      type: Number,
+      type: Int,
       validator: (value) => value > 18,
       res: "",
     },
   },
-  resolver: async (ids) => [
+  async () => [
     {
       id: "1",
       userName: "peko",
+      email: "seb@test.com",
     },
-  ],
-});
+  ]
+);
 
 // const content = new Type(
 //   "Content",
