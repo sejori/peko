@@ -1,63 +1,90 @@
 import { RequestContext } from "../Router";
 import { Middleware } from "../types";
 
-// default scalar types
-export class ID extends String {}
-export class Int extends Number {}
-export class Float extends Number {}
-type Scalar =
-  | BooleanConstructor
-  | DateConstructor
-  | typeof Float
-  | typeof ID
-  | typeof Int
-  | NumberConstructor
-  | StringConstructor;
-type DTOFields = {
-  [K: string]: Scalar | DTO<DTOFields> | Field<Scalar | DTO<DTOFields>>;
+type FieldType =
+  (typeof Schema.defaultScalers)[keyof typeof Schema.defaultScalers];
+
+type Field<T extends FieldType> = {
+  type: typeof Schema.defaultScalers;
+  nullable?: boolean;
+  resolver?: (ctx: RequestContext) => Promise<InstanceType<T>[]>;
+  validator?: (value: InstanceType<T>) => boolean;
 };
 
-export class DTO<T extends DTOFields> {
-  public name: string;
-  public fields: T;
-  constructor(input: (typeof DTO)["prototype"]) {
-    Object.assign(this, input);
+type Fields = {
+  [key: string]: FieldType | Field<FieldType>;
+};
+
+type ResolvedFields<T extends Fields> = {
+  [K in keyof T as T[K] extends { resolver: any } ? never : K]: T[K] extends {
+    type: infer U;
+  }
+    ? U extends new (...args: any[]) => any
+      ? InstanceType<U>
+      : U
+    : T[K];
+};
+
+export class DTO<T extends Fields> {
+  constructor(public name: string, public fields: T) {}
+}
+
+export class Type<T extends Fields> extends DTO<T> {
+  constructor(
+    name: string,
+    fields: T,
+    public resolver: (
+      ctx: RequestContext
+    ) => Promise<ResolvedFields<T>> | ResolvedFields<T>
+  ) {
+    super(name, fields);
   }
 }
 
-export class Type<T extends DTOFields> extends DTO<T> {
-  public resolver: (ctx: RequestContext) => Promise<DTOResolvedType<T>[]>;
-  constructor(input: {
-    name: string;
-    fields: T;
-    resolver: (ctx: RequestContext) => Promise<DTOResolvedType<T>[]>;
-  }) {
-    super(input);
-    Object.assign(this, input);
-  }
-}
-
-export class Query<I extends DTO<DTOFields>, O extends Type<DTOFields>> {
+export class Query<
+  IFields extends Fields,
+  OFields extends Fields,
+  I extends DTO<IFields>,
+  O extends Type<OFields>
+> extends Type<OFields> {
   public type = "query";
-  public name: string;
-  public input: I;
-  public output: O;
-  public middleware: Middleware[];
-  public resolver: (ctx: RequestContext) => Promise<O[]> | O[];
-  constructor(input: (typeof Query)["prototype"]) {
-    Object.assign(this, input);
+
+  constructor(
+    name: string,
+    public input: I,
+    public output: O,
+    public resolver: (
+      ctx: RequestContext
+    ) => Promise<ResolvedFields<OFields>> | ResolvedFields<OFields>,
+    public middleware: Middleware[]
+  ) {
+    super(name, output.fields, resolver);
   }
 }
 
 export class Mutation<
-  I extends DTO<DTOFields>,
-  O extends Type<DTOFields>
-> extends Query<I, O> {
+  IFields extends Fields,
+  OFields extends Fields,
+  I extends DTO<IFields>,
+  O extends Type<OFields>
+> extends Query<IFields, OFields, I, O> {
   public type = "mutation";
 }
 
 export class Schema {
-  constructor(public queries: Query<DTO<DTOFields>, Type<DTOFields>>[]) {}
+  constructor(
+    public queries: Query<Fields, Fields, DTO<Fields>, Type<Fields>>[]
+  ) {}
+
+  static defaultScalers = {
+    ID: class ID extends String {},
+    Int: class Int extends Number {},
+    Float: class Float extends Number {},
+    Boolean,
+    Date,
+    Number,
+    String,
+  };
 
   toString() {
     return `
@@ -101,22 +128,3 @@ export class Schema {
     `;
   }
 }
-
-type Field<T> = {
-  type: T;
-  nullable?: boolean;
-  resolver?: (ctx: RequestContext) => Promise<InstanceType<T>[]>;
-  validator?: (value: InstanceType<T>) => boolean;
-};
-type DTOResolvedType<T extends DTOFields> = {
-  [K in keyof T["fields"]]: T["fields"][K] extends {
-    resolver: (ctx: RequestContext) => Promise<DTOResolvedType<T>[]>;
-  }
-    ? never
-    : T["fields"][K] extends Field<Scalar>
-    ? InstanceType<T["fields"][K]["type"]>
-    : T["fields"][K] extends new (...args: any[]) => any
-    ? InstanceType<T["fields"][K]>
-    : T["fields"][K];
-};
-type InstanceType<T> = T extends new (...args: any[]) => infer R ? R : never;
