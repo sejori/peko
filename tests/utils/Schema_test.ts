@@ -1,4 +1,31 @@
-import { Type, Schema, Int } from "../../lib/utils/Schema.ts";
+import {
+  Type,
+  Field,
+  Schema,
+  Int,
+  FieldRecord,
+  FieldMap,
+} from "../../lib/utils/Schema.ts";
+
+function createFields<T extends FieldRecord>(fields: FieldMap<T>) {
+  return fields;
+}
+
+const fields = createFields({
+  age: {
+    type: Number,
+    resolver: async (ctx) => [5],
+  },
+  name: {
+    type: String,
+    resolver: async (ctx) => ["steve"],
+  },
+});
+
+const field: Field<NumberConstructor> = {
+  type: Number,
+  resolver: async (ctx) => [5],
+};
 
 const user = new Type(
   "User",
@@ -9,7 +36,7 @@ const user = new Type(
     age: {
       type: Int,
       validator: (value) => value > 18,
-      res: "",
+      resolver: async (ctx) => 5,
     },
   },
   async () => [

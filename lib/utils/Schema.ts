@@ -1,21 +1,26 @@
 import { RequestContext } from "../Router";
 import { Middleware } from "../types";
 
+// additional default scalars
+export class ID extends String {}
+export class Int extends Number {}
+export class Float extends Number {}
+
 type FieldType =
   (typeof Schema.defaultScalers)[keyof typeof Schema.defaultScalers];
 
-type Field<T extends FieldType> = {
-  type: typeof Schema.defaultScalers;
+export interface Field<T extends FieldType> {
+  type: T;
   nullable?: boolean;
   resolver?: (ctx: RequestContext) => Promise<InstanceType<T>[]>;
   validator?: (value: InstanceType<T>) => boolean;
+}
+export type FieldRecord = Record<string, FieldType | Field<FieldType>>;
+export type FieldMap<T extends FieldRecord> = {
+  [K in keyof T]: T[K] extends Field<FieldType> ? Field<T[K]["type"]> : T[K];
 };
 
-type Fields = {
-  [key: string]: FieldType | Field<FieldType>;
-};
-
-type ResolvedFields<T extends Fields> = {
+type ResolvedFields<T extends FieldMap<FieldRecord>> = {
   [K in keyof T as T[K] extends { resolver: any } ? never : K]: T[K] extends {
     type: infer U;
   }
@@ -25,14 +30,14 @@ type ResolvedFields<T extends Fields> = {
     : T[K];
 };
 
-export class DTO<T extends Fields> {
-  constructor(public name: string, public fields: T) {}
+export class DTO<T extends FieldRecord> {
+  constructor(public name: string, public fields: FieldMap<T>) {}
 }
 
-export class Type<T extends Fields> extends DTO<T> {
+export class Type<T extends FieldRecord> extends DTO<T> {
   constructor(
     name: string,
-    fields: T,
+    fields: FieldMap<T>,
     public resolver: (
       ctx: RequestContext
     ) => Promise<ResolvedFields<T>> | ResolvedFields<T>
@@ -42,8 +47,8 @@ export class Type<T extends Fields> extends DTO<T> {
 }
 
 export class Query<
-  IFields extends Fields,
-  OFields extends Fields,
+  IFields extends FieldRecord,
+  OFields extends FieldRecord,
   I extends DTO<IFields>,
   O extends Type<OFields>
 > extends Type<OFields> {
@@ -63,8 +68,8 @@ export class Query<
 }
 
 export class Mutation<
-  IFields extends Fields,
-  OFields extends Fields,
+  IFields extends FieldRecord,
+  OFields extends FieldRecord,
   I extends DTO<IFields>,
   O extends Type<OFields>
 > extends Query<IFields, OFields, I, O> {
@@ -73,18 +78,15 @@ export class Mutation<
 
 export class Schema {
   constructor(
-    public queries: Query<Fields, Fields, DTO<Fields>, Type<Fields>>[]
+    public queries: Query<
+      FieldRecord,
+      FieldRecord,
+      DTO<FieldRecord>,
+      Type<FieldRecord>
+    >[]
   ) {}
 
-  static defaultScalers = {
-    ID: class ID extends String {},
-    Int: class Int extends Number {},
-    Float: class Float extends Number {},
-    Boolean,
-    Date,
-    Number,
-    String,
-  };
+  static defaultScalers = { ID, Int, Float, Boolean, Date, Number, String };
 
   toString() {
     return `
