@@ -1,33 +1,23 @@
 import { RequestContext } from "../Router";
 import { Middleware } from "../types";
-
-// additional default scalars
 export class ID extends String {}
 export class Int extends Number {}
 export class Float extends Number {}
+export const defaultScalars = { ID, Int, Float, Boolean, Date, String };
 
-type FieldType =
-  (typeof Schema.defaultScalers)[keyof typeof Schema.defaultScalers];
-
-export interface Field<T extends FieldType> {
+type FieldType = (typeof defaultScalars)[keyof typeof defaultScalars];
+interface Field<T extends FieldType> {
   type: T;
   nullable?: boolean;
   resolver?: (ctx: RequestContext) => Promise<InstanceType<T>[]>;
   validator?: (value: InstanceType<T>) => boolean;
 }
-export type FieldRecord = Record<string, FieldType | Field<FieldType>>;
-export type FieldMap<T extends FieldRecord> = {
+type FieldRecord = Record<string, FieldType | Field<FieldType>>;
+type FieldMap<T extends FieldRecord> = {
   [K in keyof T]: T[K] extends Field<FieldType> ? Field<T[K]["type"]> : T[K];
 };
-
-type ResolvedFields<T extends FieldMap<FieldRecord>> = {
-  [K in keyof T as T[K] extends { resolver: any } ? never : K]: T[K] extends {
-    type: infer U;
-  }
-    ? U extends new (...args: any[]) => any
-      ? InstanceType<U>
-      : U
-    : T[K];
+type ResolvedFields<T extends FieldRecord> = {
+  [K in keyof T]: T[K] extends Field<FieldType> ? T[K]["type"] : T[K];
 };
 
 export class DTO<T extends FieldRecord> {
@@ -37,10 +27,10 @@ export class DTO<T extends FieldRecord> {
 export class Type<T extends FieldRecord> extends DTO<T> {
   constructor(
     name: string,
-    fields: FieldMap<T>,
-    public resolver: (
-      ctx: RequestContext
-    ) => Promise<ResolvedFields<T>> | ResolvedFields<T>
+    fields: FieldMap<T>
+    // public resolver: (
+    //   ctx: RequestContext
+    // ) => Promise<ResolvedFields<T>> | ResolvedFields<T>
   ) {
     super(name, fields);
   }
@@ -58,12 +48,16 @@ export class Query<
     name: string,
     public input: I,
     public output: O,
-    public resolver: (
-      ctx: RequestContext
-    ) => Promise<ResolvedFields<OFields>> | ResolvedFields<OFields>,
+    // public resolver: (
+    //   ctx: RequestContext
+    // ) => Promise<ResolvedFields<OFields>> | ResolvedFields<OFields>,
     public middleware: Middleware[]
   ) {
-    super(name, output.fields, resolver);
+    super(
+      name,
+      output.fields
+      // resolver
+    );
   }
 }
 
@@ -77,16 +71,23 @@ export class Mutation<
 }
 
 export class Schema {
+  public scalars = {
+    ...defaultScalars,
+  };
+
   constructor(
     public queries: Query<
       FieldRecord,
       FieldRecord,
       DTO<FieldRecord>,
       Type<FieldRecord>
-    >[]
-  ) {}
-
-  static defaultScalers = { ID, Int, Float, Boolean, Date, Number, String };
+    >[],
+    additionalScalars: Record<string, Function> = {}
+  ) {
+    Object.keys(additionalScalars).forEach(
+      (key) => (this.scalars[key] = additionalScalars[key])
+    );
+  }
 
   toString() {
     return `

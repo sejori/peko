@@ -1,52 +1,30 @@
-import {
-  Type,
-  Field,
-  Schema,
-  Int,
-  FieldRecord,
-  FieldMap,
-} from "../../lib/utils/Schema.ts";
+import { Type, DTO, Int } from "../../lib/utils/Schema.ts";
 
-function createFields<T extends FieldRecord>(fields: FieldMap<T>) {
-  return fields;
-}
-
-const fields = createFields({
+const createUser = new DTO("userCreate", {
+  username: String,
   age: {
-    type: Number,
-    resolver: async (ctx) => [5],
-  },
-  name: {
-    type: String,
-    resolver: async (ctx) => ["steve"],
+    type: Int,
+    validator: (x) => typeof x === "number" && x > 18,
+    resolver: async () => [19],
   },
 });
 
-const field: Field<NumberConstructor> = {
-  type: Number,
-  resolver: async (ctx) => [5],
-};
+// type UserInput = ResolvedFields<typeof createUser.fields>;
+// const userInput: UserInput = {
+//   username: "geoff",
+//   age: 5,
+// };
 
-const user = new Type(
-  "User",
-  {
-    id: String,
-    userName: String,
-    // email: String,
-    age: {
-      type: Int,
-      validator: (value) => value > 18,
-      resolver: async (ctx) => 5,
-    },
+const user = new Type("User", {
+  id: String,
+  username: String,
+  // email: String,
+  age: {
+    type: Int,
+    validator: (x) => typeof x === "number" && x > 18,
+    resolver: async (ctx) => [19],
   },
-  async () => [
-    {
-      id: "1",
-      userName: "peko",
-      email: "seb@test.com",
-    },
-  ]
-);
+});
 
 // const content = new Type(
 //   "Content",
