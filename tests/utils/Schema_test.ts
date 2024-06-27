@@ -7,59 +7,97 @@ import {
   Schema,
   Mutation,
   Query,
+  ResolveType,
 } from "../../lib/utils/Schema.ts";
 
 Deno.test("UTIL: Profiler", async (t) => {
-  const email = new Field(String, {
+  const emailField = new Field(String, {
     validator: (x) => x.includes("@") && x.includes("."),
   });
 
-  const age = new Field(Int, {
+  const ageField = new Field(Int, {
+    nullable: true,
     validator: (x) => typeof x === "number" && x > 0,
   });
 
   const userInput = new Input("CreateUser", {
     fields: {
-      email,
-      age,
+      email: emailField,
+      age: ageField,
     },
   });
 
   const user = new Type("User", {
     fields: {
-      email,
-      age,
+      email: emailField,
+      age: ageField,
     },
-    resolver: async (ctx) => [
-      {
-        email: "test@test.com",
-        age: 20,
-      },
-    ],
   });
 
-  const registerUser = new Mutation("RegisterUser", {
-    input: userInput,
-    output: user,
-    resolver: async (ctx) => [
-      {
-        email: "test@test.com",
-        age: 20,
-      },
-    ],
-  });
+  const mockUser: ResolveType<typeof user> = {
+    email: "test@test.com",
+    age: 20,
+  };
 
   const content = new Type("Content", {
     fields: {
       title: new Field(String),
       content: new Field(String),
     },
-    resolver: async (ctx) => [
-      {
-        title: "Hello",
-        content: "World",
-      },
-    ],
+  });
+
+  const mockContent: ResolveType<typeof content> = {
+    title: "Hello",
+    content: "World",
+  };
+
+  const post = new Type("Post", {
+    fields: {
+      author: new Field(user, {
+        resolver: async (posts) => [mockUser],
+      }),
+      content: new Field(content, {
+        resolver: async (posts) => [mockContent],
+      }),
+      // TODO: enums
+      status: new Field(String, {
+        validator: (item) => ["draft", "published"].includes(item.toString()),
+      }),
+      likes: new Field([user], {
+        resolver: async (posts) => [[mockUser]],
+      }),
+    },
+  });
+
+  const mockPost: ResolveType<typeof post> = {
+    author: mockUser,
+    content: mockContent,
+    status: "published",
+    likes: [mockUser],
+  };
+
+  const comment = new Type("Comment", {
+    fields: {
+      author: new Field(user, {
+        resolver: async (comments) => [mockUser],
+      }),
+      post: new Field(post, {
+        resolver: async (comments) => [mockPost],
+      }),
+      text: new Field(String),
+    },
+  });
+
+  const mockComment: ResolveType<typeof comment> = {
+    author: mockUser,
+    post: mockPost,
+    text: "Hello",
+  };
+
+  const registerUser = new Mutation("RegisterUser", {
+    input: userInput,
+    output: user,
+    resolver: async (ctx) => mockUser,
   });
 
   const createContent = new Mutation("CreateContent", {
@@ -67,49 +105,7 @@ Deno.test("UTIL: Profiler", async (t) => {
       fields: content.config.fields,
     }),
     output: content,
-    resolver: async (ctx) => [
-      {
-        title: "Hello",
-        content: "World",
-      },
-    ],
-  });
-
-  const post = new Type("Post", {
-    fields: {
-      author: new Field(user, {
-        resolver: async (posts) => [
-          {
-            email: "test@test.com",
-            age: 20,
-          },
-        ],
-      }),
-      content: new Field(content, {
-        resolver: async (posts) => [
-          {
-            title: "Hello",
-            content: "World",
-          },
-        ],
-      }),
-      status: new Field(String, {
-        validator: (item) => ["draft", "published"].includes(item.toString()),
-      }),
-    },
-    resolver: async (ids) => [
-      {
-        author: {
-          email: "test@test.com",
-          age: 20,
-        },
-        content: {
-          title: "Hello",
-          content: "World",
-        },
-        status: "published",
-      },
-    ],
+    resolver: async (ctx) => mockContent,
   });
 
   const postContent = new Mutation("PostContent", {
@@ -117,68 +113,7 @@ Deno.test("UTIL: Profiler", async (t) => {
       fields: post.config.fields,
     }),
     output: post,
-    resolver: async (ctx) => [
-      {
-        author: {
-          email: "test@test.com",
-          age: 20,
-        },
-        content: {
-          title: "Hello",
-          content: "World",
-        },
-        status: "published",
-      },
-    ],
-  });
-
-  const comment = new Type("Comment", {
-    fields: {
-      author: new Field(user, {
-        resolver: async (comments) => [
-          {
-            email: "test@test.com",
-            age: 20,
-          },
-        ],
-      }),
-      post: new Field(post, {
-        resolver: async (comments) => [
-          {
-            author: {
-              email: "test@test.com",
-              age: 20,
-            },
-            content: {
-              title: "Hello",
-              content: "World",
-            },
-            status: "published",
-          },
-        ],
-      }),
-      text: new Field(String),
-    },
-    resolver: async (ids) => [
-      {
-        author: {
-          email: "",
-          age: 20,
-        },
-        post: {
-          author: {
-            email: "test@test.com",
-            age: 20,
-          },
-          content: {
-            title: "Hello",
-            content: "World",
-          },
-          status: "published",
-        },
-        text: "Hello",
-      },
-    ],
+    resolver: async (ctx) => mockPost,
   });
 
   const commentOnPost = new Mutation("CommentOnPost", {
@@ -186,26 +121,7 @@ Deno.test("UTIL: Profiler", async (t) => {
       fields: comment.config.fields,
     }),
     output: comment,
-    resolver: async (ctx) => [
-      {
-        author: {
-          email: "",
-          age: 20,
-        },
-        post: {
-          author: {
-            email: "test@test.com",
-            age: 20,
-          },
-          content: {
-            title: "Hello",
-            content: "World",
-          },
-          status: "published",
-        },
-        text: "Hello",
-      },
-    ],
+    resolver: async (ctx) => mockComment,
   });
 
   const getComments = new Query("GetComments", {
@@ -214,30 +130,11 @@ Deno.test("UTIL: Profiler", async (t) => {
         post: new Field(post),
       },
     }),
-    output: comment,
-    resolver: async (ctx) => [
-      {
-        author: {
-          email: "",
-          age: 20,
-        },
-        post: {
-          author: {
-            email: "test@test.com",
-            age: 20,
-          },
-          content: {
-            title: "Hello",
-            content: "World",
-          },
-          status: "published",
-        },
-        text: "Hello",
-      },
-    ],
+    output: [comment],
+    resolver: async (ctx) => [mockComment],
   });
 
-  await t.step("creates a correct schema", async () => {
+  await t.step("creates the correct schema string", async () => {
     const schema = new Schema([
       registerUser,
       createContent,
