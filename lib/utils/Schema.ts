@@ -1,70 +1,84 @@
 import { RequestContext } from "../Router";
 import { Middleware } from "../types";
+
 export class ID extends String {}
 export class Int extends Number {}
 export class Float extends Number {}
 export const defaultScalars = { ID, Int, Float, Boolean, Date, String };
 
 type Scalars = (typeof defaultScalars)[keyof typeof defaultScalars];
-type FieldType = Scalars | Type<Fields>;
-interface FieldConfig<T extends FieldType> {
-  validator?: (
-    x: ResolveType<T>
-  ) => boolean | { pass: boolean; message: string };
-  resolver?: (x: RequestContext) => Promise<ResolveType<T>[]>;
-}
-interface InputConfig<F extends Fields> {
-  fields: F;
-}
-interface TypeConfig<F extends Fields> {
-  fields: F;
-  resolver: (ctx: RequestContext) => Promise<ResolvedFields<F>[]>;
-}
-interface QueryConfig<I extends Input<Fields>, O extends Type<Fields>> {
-  input: I;
-  output: O;
-  resolver: (
-    ctx: RequestContext
-  ) => Promise<ResolvedFields<O["config"]["fields"]>[]>;
-  middleware?: Middleware[];
-}
 
-export class Field<T extends FieldType> {
+type FieldType = Scalars | Type<Fields>;
+
+type Fields = {
+  [key: string]: Field<FieldType | FieldType[]>;
+};
+
+export class Field<T extends FieldType | FieldType[]> {
   constructor(public type: T, public config: FieldConfig<T> = {}) {}
 }
 
-type Fields = {
-  [key: string]: Field<FieldType>;
-};
-type ResolvedFields<Fields> = {
-  [P in keyof Fields]: Fields[P] extends Field<infer FieldType>
-    ? ResolveType<FieldType>
-    : never;
-};
-type ResolveType<T> = T extends Type<infer Fields>
+interface FieldConfig<T extends FieldType | FieldType[]> {
+  nullable?: boolean;
+  validator?: (
+    x: ResolveType<T>
+  ) => boolean | { pass: boolean; message: string };
+  resolver?: (
+    x: RequestContext
+  ) => Promise<
+    T extends FieldType[] ? ResolveType<T[0]>[][] : ResolveType<T>[]
+  >;
+}
+
+export type ResolveType<T> = T extends Type<infer Fields>
   ? ResolvedFields<Fields>
   : T extends Scalars
   ? InstanceType<T>
   : never;
 
-export class Input<F extends Fields> {
-  constructor(public name: string, public config: InputConfig<F>) {}
+type ResolvedFields<Fields> = {
+  [P in keyof Fields]: Fields[P] extends Field<infer F>
+    ? F extends FieldType[]
+      ? ResolveType<F[0]>[]
+      : ResolveType<F>
+    : never;
+};
+
+export class DTO<F extends Fields> {
+  constructor(public name: string, public config: DTOConfig<F>) {}
+}
+export class Input<F extends Fields> extends DTO<F> {}
+export class Type<F extends Fields> extends DTO<F> {}
+
+interface DTOConfig<F extends Fields> {
+  fields: F;
 }
 
-export class Type<F extends Fields> {
-  constructor(public name: string, public config: TypeConfig<F>) {}
-}
-
-export class Query<I extends Input<Fields>, O extends Type<Fields>> {
+export class Query<
+  I extends Input<Fields>,
+  O extends Type<Fields> | Type<Fields>[]
+> {
   public type = "query";
   constructor(public name: string, public config: QueryConfig<I, O>) {}
 }
 
 export class Mutation<
   I extends Input<Fields>,
-  O extends Type<Fields>
+  O extends Type<Fields> | Type<Fields>[]
 > extends Query<I, O> {
   public type = "mutation";
+}
+
+interface QueryConfig<
+  I extends Input<Fields>,
+  O extends Type<Fields> | Type<Fields>[]
+> {
+  input: I;
+  output: O;
+  resolver: (
+    ctx: RequestContext
+  ) => Promise<O extends FieldType[] ? ResolveType<O[0]>[] : ResolveType<O>>;
+  middleware?: Middleware[];
 }
 
 export class Schema {
@@ -73,7 +87,7 @@ export class Schema {
   };
 
   constructor(
-    public operations: Query<Input<Fields>, Type<Fields>>[],
+    public operations: Query<Input<Fields>, Type<Fields> | Type<Fields>[]>[],
     additionalScalars: Record<string, Function> = {}
   ) {
     Object.keys(additionalScalars).forEach(
@@ -91,7 +105,14 @@ export class Schema {
     schema += "type Query {\n";
     schema += this.operations
       .filter((query) => query.type == "query")
-      .map((query) => `  ${query.name}: ${query.config.output.name}`)
+      .map(
+        (query) =>
+          `  ${query.name}: ${
+            query.config.output instanceof Array
+              ? query.config.output[0].name
+              : query.config.output.name
+          }!`
+      )
       .join("\n");
     schema += "\n";
     schema += "}\n\n";
@@ -99,7 +120,14 @@ export class Schema {
     schema += "type Mutation {\n";
     schema += this.operations
       .filter((query) => query.type == "mutation")
-      .map((query) => `  ${query.name}: ${query.config.output.name}`)
+      .map(
+        (query) =>
+          `  ${query.name}: ${
+            query.config.output instanceof Array
+              ? `[${query.config.output[0].name}]`
+              : query.config.output.name
+          }!`
+      )
       .join("\n");
     schema += "\n";
     schema += "}\n\n";
@@ -107,14 +135,36 @@ export class Schema {
     this.operations.forEach((query) => {
       schema += `input ${query.config.input.name} {\n`;
       schema += Object.entries(query.config.input.config.fields)
-        .map((field) => `  ${field[0]}: ${field[1].type.name}`)
+        .map(
+          (field) =>
+            `  ${field[0]}: ${
+              field[1].type instanceof Array
+                ? `[${field[1].type[0].name}]`
+                : field[1].type.name
+            }${field[1].config.nullable ? "" : "!"}`
+        )
         .join("\n");
       schema += "\n";
       schema += "}\n\n";
 
-      schema += `type ${query.config.output.name} {\n`;
-      schema += Object.entries(query.config.output.config.fields)
-        .map((field) => `  ${field[0]}: ${field[1].type.name}`)
+      schema += `type ${
+        query.config.output instanceof Array
+          ? `${query.config.output[0].name}`
+          : query.config.output.name
+      } {\n`;
+      schema += Object.entries(
+        query.config.output instanceof Array
+          ? query.config.output[0].config.fields
+          : query.config.output.config.fields
+      )
+        .map(
+          (field) =>
+            `  ${field[0]}: ${
+              field[1].type instanceof Array
+                ? `[${field[1].type[0].name}]`
+                : field[1].type.name
+            }${field[1].config.nullable ? "" : "!"}`
+        )
         .join("\n");
       schema += "\n";
       schema += "}\n\n";
