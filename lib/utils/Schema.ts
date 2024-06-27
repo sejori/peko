@@ -5,44 +5,46 @@ export class ID extends String {}
 export class Int extends Number {}
 export class Float extends Number {}
 export const defaultScalars = { ID, Int, Float, Boolean, Date, String };
+export type Scalars = (typeof defaultScalars)[keyof typeof defaultScalars];
+export class Enum<T extends Record<string, string>> {
+  constructor(public name: string, public values: T) {}
+}
 
-type Scalars = (typeof defaultScalars)[keyof typeof defaultScalars];
-
-type FieldType = Scalars | Type<Fields>;
-
+type GroupedTypes = Scalars | Enum<Record<string, string>> | Type<Fields>;
+type FieldType = GroupedTypes | GroupedTypes[];
 type Fields = {
-  [key: string]: Field<FieldType | FieldType[]>;
+  [key: string]: Field<FieldType>;
 };
 
-export class Field<T extends FieldType | FieldType[]> {
+export class Field<T extends FieldType> {
   constructor(public type: T, public config: FieldConfig<T> = {}) {}
 }
 
-interface FieldConfig<T extends FieldType | FieldType[]> {
+interface FieldConfig<T extends FieldType> {
   nullable?: boolean;
   validator?: (
-    x: ResolveType<T>
+    x: ResolvedType<T>
   ) => boolean | { pass: boolean; message: string };
-  resolver?: (
-    x: RequestContext
-  ) => Promise<
-    T extends FieldType[] ? ResolveType<T[0]>[][] : ResolveType<T>[]
-  >;
+  resolver?: (x: RequestContext) => Promise<ResolvedField<Field<T>>[]>;
 }
 
-export type ResolveType<T> = T extends Type<infer Fields>
+type ResolvedFields<Fields> = {
+  [P in keyof Fields]: ResolvedField<Fields[P]>;
+};
+
+type ResolvedField<T> = T extends Field<infer F>
+  ? F extends GroupedTypes[]
+    ? ResolvedType<F[0]>[]
+    : ResolvedType<F>
+  : never;
+
+export type ResolvedType<T> = T extends Type<infer Fields>
   ? ResolvedFields<Fields>
   : T extends Scalars
   ? InstanceType<T>
+  : T extends Enum<Record<string, string>>
+  ? T["values"][keyof T["values"]]
   : never;
-
-type ResolvedFields<Fields> = {
-  [P in keyof Fields]: Fields[P] extends Field<infer F>
-    ? F extends FieldType[]
-      ? ResolveType<F[0]>[]
-      : ResolveType<F>
-    : never;
-};
 
 export class DTO<F extends Fields> {
   constructor(public name: string, public config: DTOConfig<F>) {}
@@ -75,9 +77,7 @@ interface QueryConfig<
 > {
   input: I;
   output: O;
-  resolver: (
-    ctx: RequestContext
-  ) => Promise<O extends FieldType[] ? ResolveType<O[0]>[] : ResolveType<O>>;
+  resolver: (ctx: RequestContext) => Promise<ResolvedField<Field<O>>>;
   middleware?: Middleware[];
 }
 
