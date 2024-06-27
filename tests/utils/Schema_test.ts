@@ -1,13 +1,14 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import {
   Type,
+  Enum,
   Field,
   Int,
   Input,
   Schema,
   Mutation,
   Query,
-  ResolveType,
+  ResolvedType,
 } from "../../lib/utils/Schema.ts";
 
 Deno.test("UTIL: Profiler", async (t) => {
@@ -34,7 +35,7 @@ Deno.test("UTIL: Profiler", async (t) => {
     },
   });
 
-  const mockUser: ResolveType<typeof user> = {
+  const mockUser: ResolvedType<typeof user> = {
     email: "test@test.com",
     age: 20,
   };
@@ -46,10 +47,15 @@ Deno.test("UTIL: Profiler", async (t) => {
     },
   });
 
-  const mockContent: ResolveType<typeof content> = {
+  const mockContent: ResolvedType<typeof content> = {
     title: "Hello",
     content: "World",
   };
+
+  enum PostStatus {
+    draft = "draft",
+    published = "published",
+  }
 
   const post = new Type("Post", {
     fields: {
@@ -59,20 +65,17 @@ Deno.test("UTIL: Profiler", async (t) => {
       content: new Field(content, {
         resolver: async (posts) => [mockContent],
       }),
-      // TODO: enums
-      status: new Field(String, {
-        validator: (item) => ["draft", "published"].includes(item.toString()),
-      }),
+      status: new Field(new Enum("PostStatus", PostStatus)),
       likes: new Field([user], {
         resolver: async (posts) => [[mockUser]],
       }),
     },
   });
 
-  const mockPost: ResolveType<typeof post> = {
+  const mockPost: ResolvedType<typeof post> = {
     author: mockUser,
     content: mockContent,
-    status: "published",
+    status: PostStatus.published,
     likes: [mockUser],
   };
 
@@ -88,7 +91,7 @@ Deno.test("UTIL: Profiler", async (t) => {
     },
   });
 
-  const mockComment: ResolveType<typeof comment> = {
+  const mockComment: ResolvedType<typeof comment> = {
     author: mockUser,
     post: mockPost,
     text: "Hello",
