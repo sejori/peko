@@ -21,13 +21,6 @@ Deno.test("UTIL: Profiler", async (t) => {
     validator: (x) => typeof x === "number" && x > 0,
   });
 
-  const userInput = new Input("CreateUser", {
-    fields: {
-      email: emailField,
-      age: ageField,
-    },
-  });
-
   const user = new Type("User", {
     fields: {
       email: emailField,
@@ -98,13 +91,18 @@ Deno.test("UTIL: Profiler", async (t) => {
   };
 
   const registerUser = new Mutation("RegisterUser", {
-    input: userInput,
+    input: new Input("CreateUserInput", {
+      fields: {
+        email: emailField,
+        age: ageField,
+      },
+    }),
     output: user,
     resolver: async (ctx) => mockUser,
   });
 
   const createContent = new Mutation("CreateContent", {
-    input: new Input("CreateContent", {
+    input: new Input("CreateContentInput", {
       fields: content.config.fields,
     }),
     output: content,
