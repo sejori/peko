@@ -53,14 +53,14 @@ Deno.test("UTIL: Profiler", async (t) => {
   const post = new Type("Post", {
     fields: {
       author: new Field(user, {
-        resolver: async (posts) => [mockUser],
+        resolver: async (ctx) => [mockUser],
       }),
       content: new Field(content, {
-        resolver: async (posts) => [mockContent],
+        resolver: async (ctx) => [mockContent],
       }),
       status: new Field(new Enum("PostStatus", PostStatus)),
       likes: new Field([user], {
-        resolver: async (posts) => [[mockUser]],
+        resolver: async (ctx) => [[mockUser]],
       }),
     },
   });
@@ -75,10 +75,10 @@ Deno.test("UTIL: Profiler", async (t) => {
   const comment = new Type("Comment", {
     fields: {
       author: new Field(user, {
-        resolver: async (comments) => [mockUser],
+        resolver: async (ctx) => [mockUser],
       }),
       post: new Field(post, {
-        resolver: async (comments) => [mockPost],
+        resolver: async (ctx) => [mockPost],
       }),
       text: new Field(String),
     },
@@ -91,47 +91,55 @@ Deno.test("UTIL: Profiler", async (t) => {
   };
 
   const registerUser = new Mutation("RegisterUser", {
-    input: new Input("CreateUserInput", {
-      fields: {
-        email: emailField,
-        age: ageField,
-      },
-    }),
-    output: user,
+    args: {
+      email: emailField,
+      age: ageField,
+    },
+    data: user,
     resolver: async (ctx) => mockUser,
   });
 
   const createContent = new Mutation("CreateContent", {
-    input: new Input("CreateContentInput", {
-      fields: content.config.fields,
-    }),
-    output: content,
+    args: {
+      content: new Field(
+        new Input("CreateContentInput", {
+          fields: content.config.fields,
+        })
+      ),
+    },
+    data: content,
     resolver: async (ctx) => mockContent,
   });
 
   const postContent = new Mutation("PostContent", {
-    input: new Input("PostContent", {
-      fields: post.config.fields,
-    }),
-    output: post,
+    args: {
+      content: new Field(
+        new Input("PostContentInput", {
+          fields: post.config.fields,
+        })
+      ),
+    },
+    data: post,
     resolver: async (ctx) => mockPost,
   });
 
-  const commentOnPost = new Mutation("CommentOnPost", {
-    input: new Input("CommentOnPost", {
-      fields: comment.config.fields,
-    }),
-    output: comment,
+  const commentOnPost = new Mutation("CommentOnPostInput", {
+    args: {
+      comment: new Field(
+        new Input("CommentOnPost", {
+          fields: comment.config.fields,
+        })
+      ),
+    },
+    data: comment,
     resolver: async (ctx) => mockComment,
   });
 
   const getComments = new Query("GetComments", {
-    input: new Input("GetComments", {
-      fields: {
-        post: new Field(post),
-      },
-    }),
-    output: [comment],
+    args: {
+      post: new Field(post),
+    },
+    data: [comment],
     resolver: async (ctx) => [mockComment],
   });
 
