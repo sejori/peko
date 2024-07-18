@@ -1,5 +1,5 @@
-import { RequestContext } from "../Router";
-import { Middleware } from "../types";
+import { RequestContext } from "../Router.ts";
+import { Middleware } from "../types.ts";
 
 export class ID extends String {}
 export class Int extends Number {}
