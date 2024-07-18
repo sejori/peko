@@ -4,7 +4,7 @@ import { Middleware, Result, Next } from "../types.ts";
 export type PromiseMiddleware = (
   ctx: RequestContext,
   next: Next
-) => Promise<Result>;
+) => Promise<unknown>;
 
 /**
  * Utility class for running middleware functions in a cascade
@@ -34,7 +34,7 @@ export class Cascade {
         const res = await this.middleware[this.called++](this.ctx, () =>
           this.run.call(this)
         );
-        if (res) this.result = res;
+        if (res instanceof Response) this.result = res;
         else return await this.run();
       } catch (error) {
         throw error;

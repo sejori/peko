@@ -2,7 +2,7 @@ import router from "../../example/preactSSR/router.ts";
 
 export default {
   fetch(request: Request) {
-    return router.handle(request);
+    return router.use((ctx) => (ctx.state.env = env)).handle(request);
   },
 } satisfies ExportedHandler;
 

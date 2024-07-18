@@ -7,13 +7,13 @@ export interface Route {
   handler: Handler;
 }
 
-export type Result = void | Response | undefined;
-export type Next = () => Promise<Result> | Result;
-
 export type Middleware = (
   ctx: RequestContext,
   next: Next
-) => Promise<Result> | Result;
+) => Promise<unknown> | unknown;
+export type Next = () => Promise<Result> | Result;
+export type Result = void | Response | undefined;
+
 export type Handler = (ctx: RequestContext) => Promise<Response> | Response;
 export type HandlerOptions = { headers?: Headers };
 

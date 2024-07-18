@@ -5,7 +5,8 @@ Deno.serve(
   {
     port: 7777,
   },
-  (req) => router.handle(req)
+  (req) =>
+    router.use((ctx) => (ctx.state.env = Deno.env.toObject())).handle(req)
 );
 
 console.log("Deno server running with Peko router <3");

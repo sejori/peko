@@ -9,46 +9,38 @@ import {
 } from "../../mod.ts"; //"https://deno.land/x/peko/mod.ts"
 import { renderToString } from "preact-render-to-string";
 
-// Preact page components and HTML template for ssrHandler render logic
 import Home from "./src/pages/Home.ts";
 import About from "./src/pages/About.ts";
 import htmlTemplate from "./document.ts";
 
-// esbuild bundling for app TS files
+// note: bundling is inefficient and should be done in a build step
 import * as esbuild from "esbuild";
-
-const env: Record<string, string> =
-  (typeof Deno !== "undefined" && Deno.env.toObject()) ||
-  (typeof process !== "undefined" && process.env) ||
-  (typeof env !== "undefined" && env) ||
-  {};
 
 const router = new Router();
 router.use(logger(console.log));
 
-// FRONTEND PAGES
 router.get("/", {
-  // use cacher to serve responses from cache in prod env
-  middleware: env.ENVIRONMENT === "production" ? cacher() : [],
-  handler: ssr(
-    () => {
-      const ssrHTML = renderToString(Home(), null);
-      return htmlTemplate({
-        title: "Peko",
-        ssrHTML,
-        entrypoint: "/src/pages/Home.ts",
-      });
-    },
-    {
-      headers: new Headers({
-        // instruct browser to cache page in prod env
-        "Cache-Control":
-          env.ENVIRONMENT === "production"
-            ? "max-age=86400, stale-while-revalidate=86400"
-            : "no-store",
-      }),
-    }
-  ),
+  middleware: cacher(),
+  handler: (ctx) =>
+    ssr(
+      () => {
+        const ssrHTML = renderToString(Home(), null);
+        return htmlTemplate({
+          title: "Peko",
+          ssrHTML,
+          entrypoint: "/src/pages/Home.ts",
+        });
+      },
+      {
+        headers: new Headers({
+          // instruct browser to cache page in prod env
+          "Cache-Control":
+            ctx.state.env.ENVIRONMENT === "production"
+              ? "max-age=86400, stale-while-revalidate=86400"
+              : "no-store",
+        }),
+      }
+    )(ctx),
 });
 
 router.get(
@@ -56,7 +48,7 @@ router.get(
   (ctx) => {
     ctx.state = {
       request_time: `${Date.now()}`,
-      ...env,
+      ...ctx.state.env,
     };
   },
   ssr((ctx) => {
@@ -81,7 +73,7 @@ router.get("/assets/:filename", cacher(), async (ctx) =>
         headers: new Headers({
           // instruct browser to cache file in prod env
           "Cache-Control":
-            env.ENVIRONMENT === "production"
+            ctx.state.env.ENVIRONMENT === "production"
               ? "max-age=86400, stale-while-revalidate=86400"
               : "no-store",
         }),
@@ -128,7 +120,7 @@ router.get("/src/:filename", cacher(), async (ctx) =>
           "Content-Type": "application/javascript",
           // instruct browser to cache file in prod env
           "Cache-Control":
-            env.ENVIRONMENT === "production"
+            ctx.state.env.ENVIRONMENT === "production"
               ? "max-age=86400, stale-while-revalidate=86400"
               : "no-store",
         }),

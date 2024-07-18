@@ -1,6 +1,6 @@
 import { RequestContext } from "../Router.ts";
 import { mergeHeaders } from "../utils/helpers.ts";
-import { Schema } from "../utils/Schema";
+import { Schema } from "../utils/Schema.ts";
 import { Handler, HandlerOptions } from "../types.ts";
 
 export interface graphQLHandlerOptions extends HandlerOptions {
