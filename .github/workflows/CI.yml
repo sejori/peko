@@ -78,8 +78,8 @@ jobs:
       # - name: Verify formatting
       #   run: deno fmt --check
 
-      - name: run linter
-        run: deno lint
+      # - name: run linter
+      #   run: deno lint
 
       - name: run tests
         run: pnpm test

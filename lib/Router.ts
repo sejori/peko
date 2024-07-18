@@ -3,8 +3,9 @@ import { Middleware, Handler, Route } from "./types.ts";
 
 export class RequestContext {
   url: URL;
-  state: Record<string, unknown>;
-  params: Record<string, unknown> = {};
+  // deno-lint-ignore no-explicit-any -- this is a generic state object
+  state: Record<string, any>;
+  params: Record<string, string> = {};
 
   constructor(
     public router: Router,
@@ -77,9 +78,10 @@ export class Router {
   use(middleware: Middleware | Middleware[]) {
     if (Array.isArray(middleware)) {
       middleware.forEach((mware) => this.use(mware));
-      return middleware.length;
+    } else {
+      this.middleware.push(Cascade.promisify(middleware));
     }
-    return this.middleware.push(Cascade.promisify(middleware));
+    return this;
   }
 
   /**
