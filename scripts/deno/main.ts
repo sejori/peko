@@ -1,5 +1,10 @@
 import router from "../../example/preactSSR/router.ts";
 
+router.middleware.unshift((ctx) => {
+  console.log("heelo");
+  ctx.state.env = Deno.env.toObject();
+});
+
 // Start Deno server with Peko router :^)
 Deno.serve(
   {

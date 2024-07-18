@@ -1,0 +1,11 @@
+{
+  "name": "@sejori/peko",
+  "description": "Featherweight apps on the edge, built with Web Standards 🐣⚡",
+  "version": "2.2.0",
+  "exports": "./mod.ts",
+  "imports": {
+    "esbuild": "https://deno.land/x/esbuild@v0.23.0/mod.js",
+    "htm": "https://ga.jspm.io/npm:htm@3.1.1/dist/htm.mjs",
+    "preact": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
+  }
+}

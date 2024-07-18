@@ -1,4 +1,4 @@
-import { html } from "htm/preact";
+import { html } from "preact";
 
 const Layout = ({
   navColor,
@@ -16,7 +16,7 @@ const Layout = ({
           height="200px"
           width="1000px"
           style="max-width:100%; margin: 1rem;"
-          src="https://raw.githubusercontent.com/sejori/peko/examples/preact/assets/logo_dark_alpha.webp"
+          src="https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/logo_dark_alpha.webp"
           alt="peko-logo"
         />
         <h1 style="text-align: center;">
