@@ -7,13 +7,11 @@ import {
   ssr,
   file,
 } from "../../mod.ts"; //"https://deno.land/x/peko/mod.ts"
-import { renderToString } from "preact-render-to-string";
+import { renderToString } from "preact";
 
 import Home from "./src/pages/Home.ts";
 import About from "./src/pages/About.ts";
 import htmlTemplate from "./document.ts";
-
-// note: bundling is inefficient and should be done in a build step
 import * as esbuild from "esbuild";
 
 const router = new Router();
@@ -21,8 +19,8 @@ router.use(logger(console.log));
 
 router.get("/", {
   middleware: cacher(),
-  handler: (ctx) =>
-    ssr(
+  handler: (ctx) => {
+    return ssr(
       () => {
         const ssrHTML = renderToString(Home(), null);
         return htmlTemplate({
@@ -40,7 +38,8 @@ router.get("/", {
               : "no-store",
         }),
       }
-    )(ctx),
+    )(ctx);
+  },
 });
 
 router.get(

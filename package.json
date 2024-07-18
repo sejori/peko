@@ -1,5 +1,5 @@
 {
-  "name": "peko",
+  "name": "@sejori/peko",
   "version": "2.2.0",
   "description": "Featherweight apps on the edge, built with Web Standards 🐣⚡",
   "main": "mod.ts",
@@ -10,13 +10,13 @@
   },
   "type": "module",
   "scripts": {
-    "start": "deno run --allow-net --allow-read --allow-env --unstable-sloppy-imports scripts/deno/main.ts",
-    "test": "deno test --allow-read --allow-net --unstable-sloppy-imports",
-    "profile:deno": "deno run --allow-read --allow-net --unstable-sloppy-imports scripts/deno/profile.ts",
+    "start": "deno run --allow-net --allow-read --allow-env ----allow-run scripts/deno/main.ts",
+    "test": "deno test --allow-read --allow-net",
+    "profile:deno": "deno run --allow-read --allow-net scripts/deno/profile.ts",
     "profile:bun": "bun run scripts/bun/profile.ts",
     "profile:start:wrangler": "wrangler dev scripts/wrangler/testApp.ts",
     "profile:wrangler": "node --loader ts-node/esm scripts/wrangler/profile.ts",
-    "start:dev:deno": "deno run --allow-net --allow-read --allow-env --watch  --unstable-sloppy-imports scripts/deno/main.ts",
+    "start:dev:deno": "deno run -A --watch scripts/deno/main.ts",
     "start:dev:bun": "bun run --watch scripts/bun/main.ts",
     "start:dev:wrangler": "wrangler dev scripts/wrangler/main.ts"
   },
