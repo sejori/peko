@@ -1,6 +1,5 @@
 import { RequestContext } from "../Router.ts";
 import { mergeHeaders } from "../utils/helpers.ts";
-// import { parseAST } from "../utils/Graph";
 import { Schema } from "../utils/Schema";
 import { Handler, HandlerOptions } from "../types.ts";
 
