@@ -1,6 +1,6 @@
 import { RequestContext } from "../Router.ts";
 import { mergeHeaders } from "../utils/helpers.ts";
-import { parseAST } from "../utils/Graph";
+// import { parseAST } from "../utils/Graph";
 import { Schema } from "../utils/Schema";
 import { Handler, HandlerOptions } from "../types.ts";
 
@@ -13,13 +13,15 @@ export const graphQL = (
   opts: graphQLHandlerOptions
 ): Handler => {
   return async function GraphQLHandler(ctx: RequestContext) {
-    const ast = parseAST(await ctx.request.json());
-    const headers = new Headers({
-      "Content-Type": "application/json",
-    });
+    // THIS IS WIP
 
-    return new Response(await schema.run(ast), {
-      headers: opts.headers ? mergeHeaders(headers, opts.headers) : headers,
+    return new Response("WIP", {
+      headers: mergeHeaders(
+        new Headers({
+          "Content-Type": "application/json",
+        }),
+        opts.headers
+      ),
     });
   };
 };
