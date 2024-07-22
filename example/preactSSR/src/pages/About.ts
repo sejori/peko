@@ -1,4 +1,4 @@
-import { html } from "preact";
+import { html } from "htm/preact";
 
 import Layout from "../components/Layout.ts";
 import App from "../components/App.ts";
@@ -21,12 +21,10 @@ const About = (props: Record<string, unknown>) => {
       <p>
         This website is appified with the Preact JavaScript library.
         It even uses localStorage to store state locally between page loads 🤯.
-        Check out the 👉 <a href="https://github.com/sebringrose/peko/tree/main/examples/preact">source code here</a> 👈.
+        Check out the 👉 <a href="https://github.com/sejori/peko/tree/main/example/preactSSR">source code here</a> 👈.
       </p>
 
       <${App} />
-
-      <p>Psst... Hey devs, the edge can do a lot more than just serve static files. Try POSTing some text to <code>/api/parrot</code>.</p>
     </${Layout}>
   `;
 };
