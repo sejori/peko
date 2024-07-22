@@ -2,3 +2,10 @@ name = "peko"
 main = "scripts/wrangler/main.ts"
 node_compat = true
 compatibility_date = "2024-02-23"
+
+[vars]
+ENVIRONMENT = 'production'
+
+[env.dev.vars]
+ENVIRONMENT = 'dev'
+
