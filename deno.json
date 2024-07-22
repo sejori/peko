@@ -4,7 +4,6 @@
   "version": "2.2.0",
   "exports": "./mod.ts",
   "imports": {
-    "esbuild": "https://deno.land/x/esbuild@v0.23.0/mod.js",
     "htm/preact": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string",
     "preact": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string",
     "preact/hooks": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string",
