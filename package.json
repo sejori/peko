@@ -20,7 +20,7 @@
     "dev:build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/preactSSR/dist/pages --external:esbuild --external:htm/preact --external:preact --external:preact/hooks --external:preact-render-to-string --watch=forever ./example/preactSSR/src/pages/*.ts",
     "dev:deno": "deno run -A --watch scripts/deno/main.ts",
     "dev:bun": "bun run --watch scripts/bun/main.ts",
-    "dev:wrangler": "wrangler dev scripts/wrangler/main.ts"
+    "dev:wrangler": "wrangler -e dev dev scripts/wrangler/main.ts"
   },
   "repository": {
     "type": "git",
