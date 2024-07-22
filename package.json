@@ -10,6 +10,7 @@
   },
   "type": "module",
   "scripts": {
+    "build": "esbuild --bundle --minify --sourcemap --target=es2020 --platform=browser --outdir=./example/preactSSR/dist ./example/preactSSR/src/pages/*.ts",
     "start": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/main.ts",
     "test": "deno test --allow-read --allow-net",
     "profile:deno": "deno run --allow-read --allow-net scripts/deno/profile.ts",
@@ -31,12 +32,12 @@
   },
   "homepage": "https://github.com/sejori/peko#readme",
   "dependencies": {
-    "esbuild": "^0.23.0",
     "htm": "^3.1.1",
     "preact": "^10.22.1",
     "preact-render-to-string": "^6.5.6"
   },
   "devDependencies": {
+    "esbuild": "^0.23.0",
     "@cloudflare/workers-types": "^4.20240718.0",
     "ts-node": "^10.9.2",
     "wrangler": "^3.65.1"

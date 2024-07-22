@@ -12,7 +12,6 @@ import { renderToString } from "preact-render-to-string";
 import Home from "./src/pages/Home.ts";
 import About from "./src/pages/About.ts";
 import htmlTemplate from "./document.ts";
-import * as esbuild from "esbuild";
 
 const router = new Router();
 router.use(logger(console.log));
@@ -85,37 +84,15 @@ router.get("/assets/:filename", cacher(), async (ctx) =>
   )(ctx)
 );
 
-// TS transpilation example
+// Return transformed source code example
 // dynamic URL param for filename, always cache, transform with esbuild
 router.get("/src/:dirname/:filename", cacher(), async (ctx) => {
   return (
     await file(
       new URL(
-        `https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/src/${ctx.params.dirname}/${ctx.params.filename}`
+        `https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/dist/${ctx.params.dirname}/${ctx.params.filename}`
       ),
       {
-        transform: async (contents) => {
-          const reader = contents.getReader();
-          let result = "";
-          let { done, value } = await reader.read();
-          while (!done) {
-            result += new TextDecoder().decode(value);
-            ({ done, value } = await reader.read());
-          }
-          const esbuildResult = await esbuild.build({
-            bundle: false,
-            write: false,
-            stdin: {
-              contents: result,
-              loader: "ts",
-            },
-            format: "esm",
-            target: "es2022",
-          });
-
-          const bundle = esbuildResult.outputFiles[0].text;
-          return bundle;
-        },
         headers: new Headers({
           "Content-Type": "application/javascript",
           // instruct browser to cache file in prod env
