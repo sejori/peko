@@ -10,7 +10,7 @@
   },
   "type": "module",
   "scripts": {
-    "build": "esbuild --bundle --minify --sourcemap --target=es2020 --platform=browser --outdir=./example/preactSSR/dist ./example/preactSSR/src/pages/*.ts",
+    "build": "esbuild --bundle --minify --sourcemap --target=es2020 --platform=browser --outdir=./example/preactSSR/dist/pages ./example/preactSSR/src/pages/*.ts",
     "start": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/main.ts",
     "test": "deno test --allow-read --allow-net",
     "profile:deno": "deno run --allow-read --allow-net scripts/deno/profile.ts",
