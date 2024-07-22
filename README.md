@@ -30,14 +30,14 @@
     </span>
     <span>
         &nbsp;
-        <a href="#recipes">
+        <a href="#getting-started">
             Recipes
         </a>
         &nbsp;
     </span>
         <span>
         &nbsp;
-        <a href="#deployment">
+        <a href="#recipes">
             Deployment
         </a>
         &nbsp;
@@ -91,6 +91,34 @@ router.addRoutes([
 Deno.serve((req) => router.handle(req));
 ```
 
+<h2 id="getting-started">Getting started</h2>
+
+- `git clone https://github.com/sejori/peko` && `cd peko`
+
+Check `example` directory to see implementations of:
+
+- server-side rendering Preact to HTML
+- streaming server-sent events to web client
+- logging requests
+- caching responses
+- JWT authentication middleware
+
+**Deno [Live Deploy](https://peko.deno.dev)**
+- Process 1: `deno task dev:build`
+- Process 2: `deno task dev:deno`
+
+**Cloudflare Workers [Live Deploy](https://peko.sejori.workers.dev)**
+- `npm i`
+- Process 1: `npm run dev:build`
+- Process 2: `npm run dev:wrangler`
+
+**Bun:**
+Bun is currently not deployed but it is profiled against Deno, check the GitHub actions to see results.
+
+- `bun install`
+- Process 1: `bun dev:build`
+- Process 2: `bun dev:bun`
+
 <h2 id="types">Types</h2>
 
 ### [**Router**](https://deno.land/x/peko/mod.ts?s=Router)
@@ -126,33 +154,6 @@ The final request handling function on a `Route`, receives `RequestContext` argu
 Must return/resolve to a `Response` (e.g. Render HTML or return JSON payload).
 
 <h2 id="recipes">Recipes</h2>
-
-### Examples
-
-Check the [examples](https://github.com/sejori/peko/tree/main/example) to see implementations of:
-
-- server-side rendering Preact to HTML
-- streaming server-sent events to web client
-- JWT authentication middleware
-- logging requests
-- caching responses
-
-### Deno
-
-- Process 1: `deno task dev:build`
-- Process 2: `deno task dev:deno`
-
-### Wrangler (Node with Cloudflare Worker target):
-
-- `npm i`
-- Process 1: `npm run dev:build`
-- Process 2: `npm run dev:wrangler`
-
-### Bun:
-
-- `bun install`
-- Process 1: `bun dev:build`
-- Process 2: `bun dev:bun`
 
 ### Error handling
 
@@ -213,11 +214,6 @@ router.addRoute("/get-time", {
 });
 ```
 
-<h2 id="deployment">Deployment</h2>
-
-- [Deno Deploy](https://dash.deno.com/projects) (fork and deploy the examples if you fancy 💖)
-- Docker (coming soon...)
-
 <h2 id="showcase">Showcase</h2>
 
 PR to add your project 🙌
@@ -240,9 +236,11 @@ PR to add your project 🙌
 
 ### Apps on the edge
 
-The modern JavaScript edge rocks because the client-server gap practically disappears. We can share modules across the client and cloud. If we want TS source we can [emit](https://github.com/denoland/deno_emit) JS. This eliminates much of the bloat in traditional JS server-side systems, increasing project simplicity while making our software faster and more efficient.
+The modern JavaScript edge rocks because the client-server gap practically disappears. We can share modules across the client and cloud. 
 
-This is made possible by engines such as Deno that are built to the [ECMAScript](https://tc39.es/) specification</a> and can run TypeScript natively. UI libraries like [Preact](https://github.com/preactjs/preact) combined with [htm](https://github.com/developit/htm) offer lightning fast client-side hydration with a browser-friendly markup syntax.
+This eliminates much of the bloat in traditional JS server-side systems, increasing project simplicity while making our software faster and more efficient.
+
+This is made possible by engines such as Cloudflare Workers, Deno and Bun that are built to the [ECMAScript](https://tc39.es/) specification</a>. 
 
 If you are interested in contributing please submit a PR or get in contact ^^
 
@@ -250,11 +248,11 @@ If you are interested in contributing please submit a PR or get in contact ^^
 
 Peko apps are designed to boot from scratch at request time and disappear once the request is served. Therefore, storing data in memory between requests (stateful logic) is not reliable. Instead we should use stateless logic and store data within the client or external services.
 
-This paradigm is often referred to as "serverless" or "edge computing" on cloud platforms, which offer code execution on shared server hardware. This is [much more resource efficient](https://developer.ibm.com/blogs/the-future-is-serverless/) than traditional server provisioning.
+This paradigm is often referred to as "serverless" or "edge computing" on cloud platforms, which offer code execution on shared server hardware (a.k.a JavaScript isolates). This is [much more resource efficient](https://developer.ibm.com/blogs/the-future-is-serverless/) than traditional server provisioning.
 
-Because stateless apps can "cold-start" it is important to keep their codebases small. The preact demo app only imports Peko and Preact as external dependencies and is very fast as a result - [https://peko.deno.dev](https://peko.deno.dev)!
+Because stateless apps can "cold-start" it is important to keep their codebases small. The preact demo app only imports Peko, Preact and Htm as dependencies and is very fast as a result - [https://peko.deno.dev](https://peko.deno.dev)!
 
-<strong>Note:</strong> In reality a single app instance will serve multiple requests, we just can't guarantee it. This is why caching is still an effective optimization strategy but in-memory user sessions are not an effective authentication strategy.
+**Note:** In reality a single app instance will serve multiple requests, we just can't guarantee it. This is why caching is still an effective optimization strategy but in-memory user sessions are not an effective authentication strategy.
 
 ## Credits:
 
