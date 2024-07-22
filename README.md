@@ -53,7 +53,7 @@
 
 <h2 id="overview">Overview</h2>
 
-Routes and middleware are added to a `Router` instance with `.use`, `.addRoute` or `.get/post/put/delete`. 
+Routes and middleware are added to a `Router` instance with `.use`, `.addRoute` or `.get/post/put/delete`.
 
 The router is then used with your web server of choice, e.g. `Deno.serve` or `Bun.serve`.
 
@@ -66,56 +66,93 @@ router.use(Peko.logger(console.log));
 
 router.get("/shorthand-route", () => new Response("Hello world!"));
 
-router.post("/shorthand-route-ext", async (ctx, next) => { await next(); console.log(ctx.request.headers); }, (req) => new Response(req.body));
+router.post(
+  "/shorthand-route-ext",
+  async (ctx, next) => {
+    await next();
+    console.log(ctx.request.headers);
+  },
+  (req) => new Response(req.body)
+);
 
 router.addRoute({
-    path: "/object-route",
-    middleware: async (ctx, next) => { await next(); console.log(ctx.request.headers); }, // can also be array of middleware
-    handler: () => new Response("Hello world!")
-})
+  path: "/object-route",
+  middleware: async (ctx, next) => {
+    await next();
+    console.log(ctx.request.headers);
+  }, // can also be array of middleware
+  handler: () => new Response("Hello world!"),
+});
 
-router.addRoutes([ /* array of route objects */ ])
+router.addRoutes([
+  /* array of route objects */
+]);
 
-Deno.serve((req) => router.handle(req))
+Deno.serve((req) => router.handle(req));
 ```
 
 <h2 id="types">Types</h2>
 
 ### [**Router**](https://deno.land/x/peko/mod.ts?s=Router)
+
 The main class/entrypoint of Peko.
 
-The `handle` method generates a [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response) from a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request) argument via configured routes and middleware. 
+The `handle` method generates a [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response) from a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request) argument via configured routes and middleware.
 
 ### [**Route**](https://deno.land/x/peko/mod.ts?s=Route)
-Routes are added to a `Router` and matched to a `Request` via their `path` property. Once matched, the route's `middleware` and `handlers` are invoked to process the `Request` (after global middleware on the `Router`). 
+
+Routes are added to a `Router` and matched to a `Request` via their `path` property. Once matched, the route's `middleware` and `handlers` are invoked to process the `Request` (after global middleware on the `Router`).
 
 Dynamic path parameters are supported in the `/users/:userid` syntax.
 
 ### [**RequestContext**](https://deno.land/x/peko/mod.ts?s=RequestContext)
+
 An object containing request data that is passed into middleware and handlers in the `Request` process lifecycle.
 
 The `state` property is an object designed to transfer information between middleware/handlers.
 
 ### [**Middleware**](https://deno.land/x/peko/mod.ts?s=Middleware)
+
 Functions that receive `RequestContext` and `next`. They are designed to:
+
 - Return a `Response` and end the `Request` processing lifecycle (e.g. returning a `401`)
 - Call `await next()` to access the final response (e.g. logging)
 - Edit the context's `state` (e.g. rendering geolocation to HTML)
 
 ### [**Handler**](https://deno.land/x/peko/mod.ts?s=Handler)
+
 The final request handling function on a `Route`, receives `RequestContext` argument.
 
 Must return/resolve to a `Response` (e.g. Render HTML or return JSON payload).
 
 <h2 id="recipes">Recipes</h2>
 
-### Library utilities
+### Examples
+
 Check the [examples](https://github.com/sejori/peko/tree/main/example) to see implementations of:
+
 - server-side rendering Preact to HTML
 - streaming server-sent events to web client
 - JWT authentication middleware
 - logging requests
 - caching responses
+
+### Deno
+
+- Process 1: `deno task dev:build`
+- Process 2: `deno task dev:deno`
+
+### Wrangler (Node with Cloudflare Worker target):
+
+- `npm i`
+- Process 1: `npm run dev:build`
+- Process 2: `npm run dev:wrangler`
+
+### Bun:
+
+- `bun install`
+- Process 1: `bun dev:build`
+- Process 2: `bun dev:bun`
 
 ### Error handling
 
@@ -123,19 +160,22 @@ If no matching route is found for a request an empty 404 response is sent. If an
 
 ```js
 router.use(async (_, next) => {
-    const response = await next();
-    if (!response) return new Response("Would you look at that? Nothing's here!", { status: 404 });
+  const response = await next();
+  if (!response)
+    return new Response("Would you look at that? Nothing's here!", {
+      status: 404,
+    });
 });
 ```
 
 ```js
 router.use(async (_, next) => {
-    try {
-        await next();
-    } catch(e) {
-        console.log(e);
-        return new Response("Oh no! An error occured :(", { status: 500 });
-    }
+  try {
+    await next();
+  } catch (e) {
+    console.log(e);
+    return new Response("Oh no! An error occured :(", { status: 500 });
+  }
 });
 ```
 
@@ -144,29 +184,33 @@ router.use(async (_, next) => {
 In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The configurable `cacher` middleware provides drop in handler memoization and response caching for your routes.
 
 ```js
-router.addRoute("/get-time", Peko.cacher({ itemLifetime: 5000 }), () => new Response(Date.now()));
+router.addRoute(
+  "/get-time",
+  Peko.cacher({ itemLifetime: 5000 }),
+  () => new Response(Date.now())
+);
 ```
 
 The cacher stores response items in memory by default, but it can be extended to use any key value storage by supplying the `store` options parameter (e.g. Cloudflare Workers KV).
 
 ```js
-import { Router, CacheItem, cacher } from "https://deno.land/x/peko/mod.ts"
+import { Router, CacheItem, cacher } from "https://deno.land/x/peko/mod.ts";
 
 const router = new Router();
 
-const itemMap: Map<string, CacheItem> = new Map()
+const itemMap: Map<string, CacheItem> = new Map();
 
 router.addRoute("/get-time", {
-    middleware: cacher({ 
-        itemLifetime: 5000,
-        store: {
-            get: (key) => itemMap.get(key),
-            set: (key, value) => itemMap.set(key, value),
-            delete: (key) => itemMap.delete(key)
-        }
-    }), 
-    handler: () => new Response(Date.now())
-})
+  middleware: cacher({
+    itemLifetime: 5000,
+    store: {
+      get: (key) => itemMap.get(key),
+      set: (key, value) => itemMap.set(key, value),
+      delete: (key) => itemMap.delete(key),
+    },
+  }),
+  handler: () => new Response(Date.now()),
+});
 ```
 
 <h2 id="deployment">Deployment</h2>
@@ -178,12 +222,14 @@ router.addRoute("/get-time", {
 
 PR to add your project 🙌
 
-### [shineponics.org](https://shineponics.org)
+### [shineponics.deno.dev](https://shineponics.deno.dev)
+
 - **Stack:** React, Google Cloud Platform
 - **Features:** Google Sheet analytics, GCP email list, Markdown rendering
 - [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
 
-### [thesebsite.com](https://thesebsite.com)
+### [thesebsite.deno.dev](https://thesebsite.deno.dev)
+
 - **Stack:** HTML5
 - **Features:** UI TS scripts transpiled to JS and cached for browser
 - [source](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
@@ -211,4 +257,5 @@ Because stateless apps can "cold-start" it is important to keep their codebases 
 <strong>Note:</strong> In reality a single app instance will serve multiple requests, we just can't guarantee it. This is why caching is still an effective optimization strategy but in-memory user sessions are not an effective authentication strategy.
 
 ## Credits:
+
 Chick logo from [Twemoji](https://github.com/twitter/twemoji)

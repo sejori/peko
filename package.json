@@ -17,7 +17,7 @@
     "profile:bun": "bun run scripts/bun/profile.ts",
     "profile:wrangler": "node --loader ts-node/esm scripts/wrangler/profile.ts",
     "start:wrangler": "wrangler dev scripts/wrangler/testApp.ts",
-    "dev:build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/preactSSR/dist/pages --external:esbuild --external:htm/preact --external:preact --external:preact/hooks --external:preact-render-to-string --watch ./example/preactSSR/src/pages/*.ts",
+    "dev:build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/preactSSR/dist/pages --external:esbuild --external:htm/preact --external:preact --external:preact/hooks --external:preact-render-to-string --watch=forever ./example/preactSSR/src/pages/*.ts",
     "dev:deno": "deno run -A --watch scripts/deno/main.ts",
     "dev:bun": "bun run --watch scripts/bun/main.ts",
     "dev:wrangler": "wrangler dev scripts/wrangler/main.ts"
