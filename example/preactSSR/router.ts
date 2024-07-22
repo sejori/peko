@@ -7,7 +7,7 @@ import {
   ssr,
   file,
 } from "../../mod.ts"; //"https://deno.land/x/peko/mod.ts"
-import { renderToString } from "preact";
+import { renderToString } from "preact-render-to-string";
 
 import Home from "./src/pages/Home.ts";
 import About from "./src/pages/About.ts";
@@ -17,12 +17,13 @@ import * as esbuild from "esbuild";
 const router = new Router();
 router.use(logger(console.log));
 
+// SSR example, with cache bc static page
 router.get("/", {
   middleware: cacher(),
   handler: (ctx) => {
     return ssr(
       () => {
-        const ssrHTML = renderToString(Home(), null);
+        const ssrHTML = renderToString(Home(), null, null);
         return htmlTemplate({
           title: "Peko",
           ssrHTML,
@@ -42,6 +43,8 @@ router.get("/", {
   },
 });
 
+// SSR example, no cache because dynamic content
+// (About page renders server state into HTML)
 router.get(
   "/about",
   (ctx) => {
@@ -51,22 +54,23 @@ router.get(
     };
   },
   ssr((ctx) => {
-    const ssrHTML = renderToString(About(ctx.state), null);
+    const ssrHTML = renderToString(About(ctx.state), null, null);
     return htmlTemplate({
       title: "Peko | About",
       ssrHTML,
       entrypoint: "/src/pages/About.ts",
+      serverState: ctx.state,
     });
   })
 );
 
-// STATIC FILES
+// Static file example
 // dynamic URL param for filename, always cache
 router.get("/assets/:filename", cacher(), async (ctx) =>
   (
     await file(
       new URL(
-        `https://raw.githubusercontent.com/sejori/peko/main/example/preact/assets/${ctx.params.filename}`
+        `https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/${ctx.params.filename}`
       ),
       {
         headers: new Headers({
@@ -81,13 +85,13 @@ router.get("/assets/:filename", cacher(), async (ctx) =>
   )(ctx)
 );
 
-// BUNDLED TS FILES
-// dynamic URL param for filename, always cache
-router.get("/src/:filename", cacher(), async (ctx) =>
-  (
+// TS transpilation example
+// dynamic URL param for filename, always cache, transform with esbuild
+router.get("/src/:dirname/:filename", cacher(), async (ctx) => {
+  return (
     await file(
       new URL(
-        `https://raw.githubusercontent.com/sejori/peko/main/example/preact/src/${ctx.params.filename}`
+        `https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/src/${ctx.params.dirname}/${ctx.params.filename}`
       ),
       {
         transform: async (contents) => {
@@ -99,20 +103,17 @@ router.get("/src/:filename", cacher(), async (ctx) =>
             ({ done, value } = await reader.read());
           }
           const esbuildResult = await esbuild.build({
-            bundle: true,
+            bundle: false,
             write: false,
             stdin: {
               contents: result,
+              loader: "ts",
             },
             format: "esm",
             target: "es2022",
-            loader: {
-              ".ts": "ts",
-            },
           });
 
           const bundle = esbuildResult.outputFiles[0].text;
-          console.log(bundle);
           return bundle;
         },
         headers: new Headers({
@@ -125,12 +126,11 @@ router.get("/src/:filename", cacher(), async (ctx) =>
         }),
       }
     )
-  )(ctx)
-);
+  )(ctx);
+});
 
-// API FUNCTIONALITY
+// Server-sent events example
 const demoEventTarget = new EventTarget();
-// shorthand route adding
 router.get("/sse", (ctx: RequestContext) => {
   setInterval(() => {
     demoEventTarget.dispatchEvent(
@@ -140,7 +140,8 @@ router.get("/sse", (ctx: RequestContext) => {
 
   return sse(demoEventTarget)(ctx);
 });
-// full route object adding
+
+// .addRoute example
 router.addRoute({
   path: "/api/parrot",
   method: "POST",
