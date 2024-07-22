@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact";
+import { useState, useEffect } from "preact/hooks";
 
 // INITIAL STATE
 const initialState: Record<string, unknown> = {

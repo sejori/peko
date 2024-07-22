@@ -1,4 +1,5 @@
-import { html, useState } from "preact";
+import { useState } from "preact/hooks";
+import { html } from "htm/preact";
 
 const List = ({ data }: { data: string[] }) => {
   // takes a data prop
