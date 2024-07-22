@@ -85,12 +85,13 @@ router.get("/assets/:filename", cacher(), async (ctx) =>
 );
 
 // Return transformed source code example
-// dynamic URL param for filename, always cache, transform with esbuild
+// dynamic URL param for filename, always cache, transformed with esbuild at build time
 router.get("/src/:dirname/:filename", cacher(), async (ctx) => {
+  const transformedFilename = ctx.params.filename.replace(".ts", ".js");
   return (
     await file(
       new URL(
-        `https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/dist/${ctx.params.dirname}/${ctx.params.filename}`
+        `https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/dist/${ctx.params.dirname}/${transformedFilename}`
       ),
       {
         headers: new Headers({
