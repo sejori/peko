@@ -1,7 +1,7 @@
 import { useState, useEffect } from "preact/hooks";
 import { html } from "htm/preact";
 import List from "./List.ts";
-import { useLocalState } from "../hooks/localstate.ts";
+import { useLocalState } from "../hooks/useLocalState.ts";
 
 const App = () => {
   const [dataArray, setDataArray] = useLocalState("dataArray");
