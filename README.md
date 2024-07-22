@@ -31,14 +31,14 @@
     <span>
         &nbsp;
         <a href="#getting-started">
-            Recipes
+            Getting Started
         </a>
         &nbsp;
     </span>
         <span>
         &nbsp;
         <a href="#recipes">
-            Deployment
+            Recipes
         </a>
         &nbsp;
     </span>
