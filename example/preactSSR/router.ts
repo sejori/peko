@@ -90,9 +90,14 @@ router.get("/src/:dirname/:filename", cacher(), async (ctx) => {
   const transformedFilename = ctx.params.filename.replace(".ts", ".js");
   return (
     await file(
-      new URL(
-        `https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/dist/${ctx.params.dirname}/${transformedFilename}`
-      ),
+      ctx.state.env.ENVIRONMENT === "production"
+        ? new URL(
+            `https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/dist/${ctx.params.dirname}/${transformedFilename}`
+          )
+        : new URL(
+            `./dist/${ctx.params.dirname}/${transformedFilename}`,
+            import.meta.url
+          ),
       {
         headers: new Headers({
           "Content-Type": "application/javascript",
