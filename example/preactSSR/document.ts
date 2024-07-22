@@ -14,7 +14,18 @@ export default (input: {
     <title>${input.title}</title>
     <meta name="description" content="Featherweight apps on the edge">
     <meta name="keywords" content="deno, edge, serverless, preact, peko, cloudflare, bun, typescript, server">
-
+    
+    <script type="importmap">
+     {
+        "imports": {
+          "esbuild": "https://deno.land/x/esbuild@v0.23.0/mod.js",
+          "htm/preact": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string",
+          "preact": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string",
+          "preact/hooks": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string",
+          "preact-render-to-string": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
+        }
+      }
+    </script>
     <script modulepreload="true" type="module" src="${
       input.entrypoint
     }"></script>
@@ -56,12 +67,13 @@ export default (input: {
       ${input.ssrHTML}
     </div>
 
+
     <script type="module">
-          import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-          import About from "${input.entrypoint}";
-          hydrate(About(${JSON.stringify(
-            input.serverState
-          )}), document.getElementById("root"))
-        </script
+      import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
+      import About from "${input.entrypoint}";
+      hydrate(About(${JSON.stringify(
+        input.serverState
+      )}), document.getElementById("root"))
+    </script
   </body>
   </html>`;
