@@ -830,6 +830,7 @@
     }
   },
   "remote": {
+    "https://ga.jspm.io/npm:react-dom@18.3.1/dev.server.browser.js": "051e1348d0dd2640fcefd363e29bf654a7ce380bb867c49473fe069eda1f6c9b",
     "https://ga.jspm.io/npm:react@18.3.1/index.js": "f5b97f589f772e87d591bc650e022f22f9fddff7e3e4e456a3f3a97ba2fa4fd5"
   },
   "workspace": {
