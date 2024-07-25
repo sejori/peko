@@ -13,13 +13,15 @@ const About = (props: Record<string, ReactNode>) => {
         }}
       >
         <p style={{ margin: "5px" }}>
-          <strong>Request time:</strong> {props.request_time}
+          <strong>Request time: </strong>
+          {props.request_time}
         </p>
         <p style={{ margin: "5px" }}>
-          <strong>Hydration time:</strong> ${Date.now()}
+          <strong>Hydration time: </strong>
+          {Date.now()}
         </p>
         <p style={{ margin: "5px" }}>
-          <strong>Served from:</strong> $
+          <strong>Served from: </strong>
           {props.DENO_REGION ? props.DENO_REGION : "localhost"}
         </p>
       </div>

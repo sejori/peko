@@ -1,6 +1,6 @@
 import { Handler, file } from "../../../mod.ts";
 
-const base = `https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR`;
+const base = `https://raw.githubusercontent.com/sejori/peko/main/example/reactSSR/`;
 
 export const githubHandler =
   (path: string, type?: string): Handler =>
@@ -9,7 +9,7 @@ export const githubHandler =
       await file(
         ctx.state.env.ENVIRONMENT === "production"
           ? new URL(`${base}${path}`)
-          : new URL("../" + path, import.meta.url),
+          : new URL(".." + path, import.meta.url),
         {
           headers: new Headers({
             ...(type && { "Content-Type": type }),

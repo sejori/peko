@@ -10,14 +10,14 @@
   },
   "type": "module",
   "scripts": {
-    "build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/preactSSR/dist/pages --external:esbuild --external:htm/preact --external:preact --external:preact/hooks --external:preact-render-to-string ./example/preactSSR/src/pages/*.ts",
+    "build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/reactSSR/dist/pages --external:react --external:react-dom ./example/reactSSR/src/pages/*.tsx",
     "start": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/main.ts",
     "test": "deno test --allow-read --allow-net",
     "profile:deno": "deno run --allow-read --allow-net scripts/deno/profile.ts",
     "profile:bun": "bun run scripts/bun/profile.ts",
     "profile:wrangler": "node --loader ts-node/esm scripts/wrangler/profile.ts",
     "start:wrangler": "wrangler dev scripts/wrangler/testApp.ts",
-    "dev:build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/preactSSR/dist/pages --external:esbuild --external:htm/preact --external:preact --external:preact/hooks --external:preact-render-to-string --watch=forever ./example/preactSSR/src/pages/*.ts",
+    "dev:build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/reactSSR/dist/pages --watch=forever --external:react --external:react-dom ./example/reactSSR/src/pages/*.tsx",
     "dev:deno": "deno run -A --watch scripts/deno/main.ts",
     "dev:bun": "bun run --watch scripts/bun/main.ts",
     "dev:wrangler": "wrangler -e dev dev scripts/wrangler/main.ts"
