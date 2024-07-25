@@ -1,0 +1,24 @@
+{
+  "imports": {
+    "react": "https://ga.jspm.io/npm:react@18.3.1/index.js",
+    "react-dom/client": "https://ga.jspm.io/npm:react-dom@18.3.1/client.js"
+  },
+  "scopes": {
+    "https://ga.jspm.io/": {
+      "react-dom": "https://ga.jspm.io/npm:react-dom@18.3.1/index.js",
+      "scheduler": "https://ga.jspm.io/npm:scheduler@0.23.2/index.js"
+    }
+  },
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "node",
+    "noEmit": true,
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["dom", "esnext", "deno.ns"],
+    "types": ["@cloudflare/workers-types"],
+    "jsx": "react",
+    "jsxImportSource": "react",
+    "allowSyntheticDefaultImports": true
+  }
+}
