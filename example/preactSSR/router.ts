@@ -1,23 +1,23 @@
 import { Router, logger, cacher } from "../../mod.ts"; //"https://deno.land/x/peko/mod.ts"
-import { preactHandler } from "./handlers/preact.handler.ts";
+import { reactHandler } from "./handlers/react.handler.ts";
 import { githubHandler } from "./handlers/github.handler.ts";
 import { reqTime } from "./middleware/reqTime.middleware.ts";
 import { randomEventHandler } from "./handlers/rdmEvent.handler.ts";
 import { parrotHandler } from "./handlers/parrot.handler.ts";
-import About from "./src/pages/About.ts";
-import Home from "./src/pages/Home.ts";
+import About from "./src/pages/About.tsx";
+import Home from "./src/pages/Home.tsx";
 
 const router = new Router();
 router.use(logger(console.log));
 
 // SSR, with cache because static page
-router.get("/", cacher(), preactHandler(Home, "Peko", "/src/pages/Home.ts"));
+router.get("/", cacher(), reactHandler(Home, "Peko", "/src/pages/Home.ts"));
 
 // SSR, no cache because dynamic content
 router.get(
   "/about",
   reqTime,
-  preactHandler(About, "Peko | About", "/src/pages/About.ts")
+  reactHandler(About, "Peko | About", "/src/pages/About.ts")
 );
 
 // Static, URL param for filename, always cache

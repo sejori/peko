@@ -1,10 +1,13 @@
 {
   "compilerOptions": {
     "allowImportingTsExtensions": true,
+    "moduleResolution": "node",
+    "noEmit": true,
     "target": "esnext",
     "module": "esnext",
-    "lib": ["esnext"],
+    "lib": ["dom", "esnext"],
     "types": ["@cloudflare/workers-types"],
-    "noEmit": true
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true
   }
 }
