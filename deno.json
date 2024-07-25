@@ -6,6 +6,7 @@
   "scopes": {
     "https://ga.jspm.io/": {
       "react-dom": "https://ga.jspm.io/npm:react-dom@18.3.1/index.js",
+      "react-dom/server": "https://ga.jspm.io/npm:react-dom@18.3.1/dev.server.browser.js",
       "scheduler": "https://ga.jspm.io/npm:scheduler@0.23.2/index.js"
     }
   },
