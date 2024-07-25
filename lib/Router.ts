@@ -1,7 +1,7 @@
 import { Cascade } from "./utils/Cascade.ts";
 import { Middleware, Handler, Route } from "./types.ts";
 
-export class RequestContext<T extends object = object> {
+export class RequestContext<T extends object = Record<string, unknown>> {
   url: URL;
   state: T;
   params: Record<string, string> = {};
