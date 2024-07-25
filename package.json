@@ -33,13 +33,13 @@
   },
   "homepage": "https://github.com/sejori/peko#readme",
   "dependencies": {
-    "htm": "^3.1.1",
-    "preact": "^10.22.1",
-    "preact-render-to-string": "^6.5.6"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "esbuild": "^0.23.0",
+    "@types/react": "^18.3.3",
     "@cloudflare/workers-types": "^4.20240718.0",
+    "esbuild": "^0.23.0",
     "ts-node": "^10.9.2",
     "wrangler": "^3.65.1"
   }

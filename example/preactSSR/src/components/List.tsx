@@ -1,5 +1,4 @@
-import { useState } from "preact/hooks";
-import { html } from "htm/preact";
+import React, { useState } from "react";
 
 const List = ({ data }: { data: string[] }) => {
   // takes a data prop
@@ -11,21 +10,23 @@ const List = ({ data }: { data: string[] }) => {
     setCount(count + 1);
   };
 
-  return html`
+  return (
     <div>
       <ul>
-        ${data &&
-        data.map(
-          (i: string) => html`
-            <li>${i}: <button onClick=${handleClick}>Click me</button></li>
-          `
-        )}
+        {data &&
+          data.map((i) => (
+            <li key={i}>
+              {i} <button onClick={handleClick}>Click me</button>
+            </li>
+          ))}
       </ul>
       <p>
-        <strong>${count} ${count === 1 ? "click" : "clicks"} counted</strong>
+        <strong>
+          {count} {count === 1 ? "click" : "clicks"} counted
+        </strong>
       </p>
     </div>
-  `;
+  );
 };
 
 export default List;

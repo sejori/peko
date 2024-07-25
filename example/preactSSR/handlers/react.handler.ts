@@ -1,8 +1,8 @@
-import { renderToString } from "preact-render-to-string";
+import { renderToString } from "react-dom/server";
 import { Handler, ssr } from "../../../mod.ts";
 import htmlTemplate from "../src/document.ts";
 
-export const preactHandler =
+export const reactHandler =
   (
     component: (props: Record<string, unknown>) => unknown,
     title: string,
