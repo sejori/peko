@@ -10,14 +10,14 @@ const Layout = ({
   children: ReactNode;
 }) => {
   return (
-    <>
+    <main>
       <nav style={navStyle(navColor)}>
         <div className="container align-center">
           <img
             height="200px"
             width="1000px"
             style={{ maxWidth: "100%", margin: "1rem" }}
-            src="https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/logo_dark_alpha.webp"
+            src="/assets/logo_dark_alpha.webp"
             alt="peko-logo"
           />
           <h1 style={{ textAlign: "center" }}>
@@ -30,9 +30,9 @@ const Layout = ({
         </div>
       </nav>
 
-      <main style={{ padding: "1rem" }} className="container">
+      <div style={{ padding: "1rem" }} className="container">
         {children}
-      </main>
+      </div>
 
       <footer style={footerStyle}>
         <div className="container row">
@@ -71,7 +71,7 @@ const Layout = ({
           Made by <a href="https://thesebsite.com">Sejori</a>
         </p>
       </footer>
-    </>
+    </main>
   );
 };
 
