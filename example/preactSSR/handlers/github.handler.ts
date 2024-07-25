@@ -1,13 +1,13 @@
-import { Handler, file } from "../../../mod.ts";
+import { Handler, RequestContext, file } from "../../../mod.ts";
 
 const base = `https://raw.githubusercontent.com/sejori/peko/main/example/reactSSR/`;
 
 export const githubHandler =
   (path: string, type?: string): Handler =>
-  async (ctx) =>
+  async (ctx: RequestContext<{ env?: { ENVIRONMENT: string } }>) =>
     (
       await file(
-        ctx.state.env.ENVIRONMENT === "production"
+        ctx.state.env?.ENVIRONMENT === "production"
           ? new URL(`${base}${path}`)
           : new URL(".." + path, import.meta.url),
         {
@@ -15,7 +15,7 @@ export const githubHandler =
             ...(type && { "Content-Type": type }),
             // instruct browser to cache file in prod env
             "Cache-Control":
-              ctx.state.env.ENVIRONMENT === "production"
+              ctx.state.env?.ENVIRONMENT === "production"
                 ? "max-age=86400, stale-while-revalidate=86400"
                 : "no-store",
           }),
