@@ -4,13 +4,12 @@
  * @param source: Headers
  * @returns
  */
-export const mergeHeaders = (
-  base: Headers,
-  source: Headers = new Headers()
-) => {
-  for (const pair of source) {
-    base.set(pair[0], pair[1]);
-  }
+export const mergeHeaders = (base: Headers, ...sources: Headers[]) => {
+  sources.forEach((source) =>
+    source.forEach((value, key) => {
+      base.set(key, value);
+    })
+  );
 
   return base;
 };

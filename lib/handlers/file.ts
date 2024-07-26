@@ -36,10 +36,8 @@ export const file = async (
   const response = new Response(body ? await transform(body) : null, {
     headers: mergeHeaders(
       new Headers(headers),
-      new Headers({
-        ...Object.fromEntries(opts?.headers?.entries() || []),
-        ETag: hashString,
-      })
+      new Headers({ ETag: hashString }),
+      new Headers(opts.headers)
     ),
   });
 

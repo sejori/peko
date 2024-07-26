@@ -1,12 +1,18 @@
 {
-  "name": "@sejori/peko",
-  "description": "Featherweight apps on the edge 🐣⚡",
-  "version": "2.2.0",
-  "exports": "./mod.ts",
   "imports": {
-    "htm/preact": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string",
-    "preact": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string",
-    "preact/hooks": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string",
-    "preact-render-to-string": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom/server": "https://esm.sh/react-dom@18.3.1/server"
+  },
+  "scopes": {
+    "https://ga.jspm.io/": {
+      "react-dom": "https://esm.sh/react-dom@18.3.1/server",
+      "scheduler": "https://esm.sh/scheduler@0.23.2"
+    }
+  },
+  "compilerOptions": {
+    "lib": ["dom", "esnext", "deno.ns"],
+    "types": ["@cloudflare/workers-types"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "https://esm.sh/react@18.3.1"
   }
 }

@@ -9,7 +9,12 @@ Deno.test("UTIL: helpers", async (t) => {
     const source = new Headers({
       Authorization: "Bearer asdf",
     });
-    mergeHeaders(base, source);
-    assert(base.has("Content-Type") && base.has("Authorization"));
+    const source2 = new Headers({
+      ETAG: "1234",
+    });
+    mergeHeaders(base, source, source2);
+    assert(
+      base.has("Content-Type") && base.has("Authorization") && base.has("ETAG")
+    );
   });
 });

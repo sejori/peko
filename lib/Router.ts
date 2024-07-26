@@ -1,19 +1,14 @@
 import { Cascade } from "./utils/Cascade.ts";
 import { Middleware, Handler, Route } from "./types.ts";
 
-export class RequestContext {
+export class RequestContext<T extends object = Record<string, unknown>> {
   url: URL;
-  // deno-lint-ignore no-explicit-any -- this is a generic state object
-  state: Record<string, any>;
+  state: T;
   params: Record<string, string> = {};
 
-  constructor(
-    public router: Router,
-    public request: Request,
-    state?: Record<string, unknown>
-  ) {
+  constructor(public router: Router, public request: Request, state?: T) {
     this.url = new URL(request.url);
-    this.state = state ? state : {};
+    this.state = state ? state : ({} as T);
   }
 }
 

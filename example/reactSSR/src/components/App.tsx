@@ -1,6 +1,5 @@
-import { useState, useEffect } from "preact/hooks";
-import { html } from "htm/preact";
-import List from "./List.ts";
+import { useState, useEffect } from "react";
+import List from "./List.tsx";
 import { useLocalState } from "../hooks/useLocalState.ts";
 
 const App = () => {
@@ -22,39 +21,43 @@ const App = () => {
     return () => sse.close();
   }, []);
 
-  return html`
-    <div style="margin: 2rem 0;">
-      <p><strong>Latest random number from server: </strong> ${latestEvent}</p>
+  return (
+    <div style={{ margin: "2rem 0" }}>
+      <p>
+        <strong>Latest random number from server: </strong> {latestEvent}
+      </p>
 
-      <${List} data=${dataArray} />
+      <List data={dataArray} />
 
       <button
-        style=${btnLgStyle}
-        onClick=${() =>
+        style={btnLgStyle}
+        onClick={() =>
           setDataArray((dataArray: string[]) => [
             ...dataArray,
             `Item ${dataArray.length}`,
-          ])}
+          ])
+        }
       >
         add item
       </button>
       <button
-        style=${btnLgStyle}
-        onClick=${() =>
+        style={btnLgStyle}
+        onClick={() =>
           setDataArray((dataArray: string[]) =>
             dataArray.slice(0, dataArray.length - 1)
-          )}
+          )
+        }
       >
         remove item
       </button>
     </div>
-  `;
+  );
 };
 
-const btnLgStyle = `
-    margin: 0.5rem;  
-    padding: 0.5rem;
-    font-size: 1rem;
-`;
+const btnLgStyle = {
+  margin: "0.5rem",
+  padding: "0.5rem",
+  fontSize: "1rem",
+};
 
 export default App;
