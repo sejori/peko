@@ -19,6 +19,7 @@ export default (input: {
       {
         "imports": {
           "react": "https://ga.jspm.io/npm:react@18.3.1/dev.index.js",
+          "react/jsx-runtime": "https://ga.jspm.io/npm:react@18.3.1/dev.jsx-runtime.js",
           "react-dom/client": "https://ga.jspm.io/npm:react-dom@18.3.1/dev.client.js"
         },
         "scopes": {

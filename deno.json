@@ -1,17 +1,18 @@
 {
   "imports": {
-    "react": "https://ga.jspm.io/npm:react@18.3.1/index.js",
-    "react-dom/server": "https://ga.jspm.io/npm:react-dom@18.3.1/dev.server.browser.js"
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom/server": "https://esm.sh/react-dom@18.3.1/server"
   },
   "scopes": {
     "https://ga.jspm.io/": {
-      "react-dom": "https://ga.jspm.io/npm:react-dom@18.3.1/index.js",
-      "scheduler": "https://ga.jspm.io/npm:scheduler@0.23.2/index.js"
+      "react-dom": "https://esm.sh/react-dom@18.3.1/server",
+      "scheduler": "https://esm.sh/scheduler@0.23.2"
     }
   },
   "compilerOptions": {
     "lib": ["dom", "esnext", "deno.ns"],
     "types": ["@cloudflare/workers-types"],
-    "jsx": "react"
+    "jsx": "react-jsx",
+    "jsxImportSource": "https://esm.sh/react@18.3.1"
   }
 }

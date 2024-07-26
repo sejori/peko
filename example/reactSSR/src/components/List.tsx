@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const List = ({ data }: { data: string[] }) => {
   // takes a data prop
