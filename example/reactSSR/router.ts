@@ -11,13 +11,13 @@ const router = new Router();
 router.use(logger(console.log));
 
 // SSR, with cache because static page
-router.get("/", cacher(), reactHandler(Home, "Peko", "/src/pages/Home.ts"));
+router.get("/", cacher(), reactHandler(Home, "Peko", "/src/pages/Home.tsx"));
 
 // SSR, no cache because dynamic content
 router.get(
   "/about",
   reqTime,
-  reactHandler(About, "Peko | About", "/src/pages/About.ts")
+  reactHandler(About, "Peko | About", "/src/pages/About.tsx")
 );
 
 // Static, URL param for filename, always cache
@@ -28,7 +28,7 @@ router.get("/assets/:filename", cacher(), (ctx) =>
 // Transformed src at build-time with esbuild, always cache
 router.get("/src/:dirname/:filename", cacher(), (ctx) =>
   githubHandler(
-    `/dist/${ctx.params.dirname}/${ctx.params.filename.replace(".ts", ".js")}`,
+    `/dist/${ctx.params.dirname}/${ctx.params.filename.replace(".tsx", ".js")}`,
     "application/javascript"
   )(ctx)
 );
