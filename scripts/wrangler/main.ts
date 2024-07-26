@@ -1,4 +1,4 @@
-import router from "../../example/preactSSR/router.ts";
+import router from "../../example/reactSSR/router.ts";
 
 export default {
   fetch(request: Request, env: Record<string, string>) {

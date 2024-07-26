@@ -1,5 +1,4 @@
-import { RequestContext } from "../../mod.ts";
-import router from "../../example/preactSSR/router.ts";
+import router from "../../example/reactSSR/router.ts";
 
 declare global {
   interface Process {
@@ -16,7 +15,7 @@ declare global {
   }
 }
 
-router.middleware.unshift((ctx: RequestContext<{ env?: unknown }>) => {
+router.middleware.unshift((ctx) => {
   ctx.state.env = process.env;
 });
 
