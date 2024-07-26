@@ -7,7 +7,7 @@
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "types": ["@cloudflare/workers-types"],
-    "jsx": "react",
+    "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true
   }
 }
