@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import List from "./List.tsx";
-// import { useLocalState } from "../hooks/useLocalState.ts";
+import { useLocalState } from "../hooks/useLocalState.ts";
 
 const App = () => {
-  // const [dataArray, setDataArray] = useLocalState("dataArray");
-  const [dataArray, setDataArray] = useState(["Item 0", "Item 1", "Item 2"]);
+  const [dataArray, setDataArray] = useLocalState("dataArray");
   const [latestEvent, setLatestEvent] = useState(0);
 
   useEffect(() => {

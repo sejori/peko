@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 
 const Layout = ({
   navColor,
@@ -36,7 +36,7 @@ const Layout = ({
 
       <footer style={footerStyle}>
         <div className="container row">
-          <a style={footerLinkStyle} href="https://github.com/sebringrose/peko">
+          <a style={footerLinkStyle} href="https://github.com/sejori/peko">
             <img
               src="https://raw.githubusercontent.com/edent/SuperTinyIcons/master/images/svg/github.svg"
               width="100"
@@ -68,7 +68,7 @@ const Layout = ({
           </a>
         </div>
         <p style={{ margin: "10px", textAlign: "center" }}>
-          Made by <a href="https://thesebsite.com">Sejori</a>
+          Made by <a href="https://thesebsite.deno.dev">Sejori</a>
         </p>
       </footer>
     </main>

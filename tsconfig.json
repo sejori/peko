@@ -8,7 +8,6 @@
     "lib": ["dom", "esnext"],
     "types": ["@cloudflare/workers-types"],
     "jsx": "react",
-    "jsxImportSource": "react",
     "allowSyntheticDefaultImports": true
   }
 }

@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import Layout from "../components/Layout.tsx";
 import App from "../components/App.tsx";
 
