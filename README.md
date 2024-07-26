@@ -2,7 +2,7 @@
     <img 
         width="270px"
         style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sejori/peko/main/example/preactSSR/assets/twemoji_chick.svg" alt="peko-chick" 
+        src="https://raw.githubusercontent.com/sejori/peko/main/example/reactSSR/assets/twemoji_chick.svg" alt="peko-chick" 
     />
 </p>
 
@@ -104,10 +104,12 @@ Check `example` directory to see implementations of:
 - JWT authentication middleware
 
 **Deno [Live Deploy](https://peko.deno.dev)**
+
 - Process 1: `deno task dev:build`
 - Process 2: `deno task dev:deno`
 
 **Cloudflare Workers [Live Deploy](https://peko.sejori.workers.dev)**
+
 - `npm i`
 - Process 1: `npm run dev:build`
 - Process 2: `npm run dev:wrangler`
@@ -236,11 +238,11 @@ PR to add your project 🙌
 
 ### Apps on the edge
 
-The modern JavaScript edge rocks because the client-server gap practically disappears. We can share modules across the client and cloud. 
+The modern JavaScript edge rocks because the client-server gap practically disappears. We can share modules across the client and cloud.
 
 This eliminates much of the bloat in traditional JS server-side systems, increasing project simplicity while making our software faster and more efficient.
 
-This is made possible by engines such as Cloudflare Workers, Deno and Bun that are built to the [ECMAScript](https://tc39.es/) specification</a>. 
+This is made possible by engines such as Cloudflare Workers, Deno and Bun that are built to the [ECMAScript](https://tc39.es/) specification</a>.
 
 If you are interested in contributing please submit a PR or get in contact ^^
 
