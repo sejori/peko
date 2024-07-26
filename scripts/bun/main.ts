@@ -1,6 +1,22 @@
+import { RequestContext } from "../../mod.ts";
 import router from "../../example/preactSSR/router.ts";
 
-router.middleware.unshift((ctx) => {
+declare global {
+  interface Process {
+    env: { [key: string]: string | undefined };
+  }
+  const process: Process;
+  namespace Bun {
+    function serve(options: {
+      port: number;
+      fetch(req: Request): Promise<Response>;
+    }): {
+      stop(): void;
+    };
+  }
+}
+
+router.middleware.unshift((ctx: RequestContext<{ env?: unknown }>) => {
   ctx.state.env = process.env;
 });
 

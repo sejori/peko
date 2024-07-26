@@ -1,17 +1,17 @@
-import { renderToString } from "preact-render-to-string";
-import { Handler, ssr } from "../../../mod.ts";
+import { renderToString } from "react-dom/server";
+import { Handler, RequestContext, ssr } from "../../../mod.ts";
 import htmlTemplate from "../src/document.ts";
 
-export const preactHandler =
+export const reactHandler =
   (
     component: (props: Record<string, unknown>) => unknown,
     title: string,
     entrypoint: string
   ): Handler =>
-  (ctx) => {
+  (ctx: RequestContext<{ env?: { ENVIRONMENT: string } }>) => {
     return ssr(
       () => {
-        const ssrHTML = renderToString(component(ctx.state), null, null);
+        const ssrHTML = renderToString(component(ctx.state), null);
         return htmlTemplate({
           title,
           ssrHTML,
@@ -23,7 +23,7 @@ export const preactHandler =
         headers: new Headers({
           // instruct browser to cache page in prod env
           "Cache-Control":
-            ctx.state.env.ENVIRONMENT === "production"
+            ctx.state.env?.ENVIRONMENT === "production"
               ? "max-age=86400, stale-while-revalidate=86400"
               : "no-store",
         }),

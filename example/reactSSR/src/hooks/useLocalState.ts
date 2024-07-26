@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect } from "react";
 
 // INITIAL STATE
 const initialState: Record<string, unknown> = {
@@ -28,8 +28,10 @@ const useLocalState = (key: string) => {
       console.log(e);
     }
 
-    // remove setState from listener on component unmount
-    return () => listeners[key].filter((listener) => listener !== setState);
+    return () => {
+      // remove setState from listener on component unmount
+      listeners[key].filter((listener) => listener !== setState);
+    };
   }, [state]);
 
   return [state, setState];

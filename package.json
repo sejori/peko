@@ -10,14 +10,14 @@
   },
   "type": "module",
   "scripts": {
-    "build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/preactSSR/dist/pages --external:esbuild --external:htm/preact --external:preact --external:preact/hooks --external:preact-render-to-string ./example/preactSSR/src/pages/*.ts",
+    "build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/reactSSR/dist/pages --external:react --jsx=automatic  --tsconfig-raw={} ./example/reactSSR/src/pages/*.tsx",
     "start": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/main.ts",
     "test": "deno test --allow-read --allow-net",
     "profile:deno": "deno run --allow-read --allow-net scripts/deno/profile.ts",
     "profile:bun": "bun run scripts/bun/profile.ts",
     "profile:wrangler": "node --loader ts-node/esm scripts/wrangler/profile.ts",
     "start:wrangler": "wrangler dev scripts/wrangler/testApp.ts",
-    "dev:build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/preactSSR/dist/pages --external:esbuild --external:htm/preact --external:preact --external:preact/hooks --external:preact-render-to-string --watch=forever ./example/preactSSR/src/pages/*.ts",
+    "dev:build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/reactSSR/dist/pages --external:react --jsx=automatic  --tsconfig-raw={} --watch=forever ./example/reactSSR/src/pages/*.tsx",
     "dev:deno": "deno run -A --watch scripts/deno/main.ts",
     "dev:bun": "bun run --watch scripts/bun/main.ts",
     "dev:wrangler": "wrangler -e dev dev scripts/wrangler/main.ts"
@@ -33,13 +33,14 @@
   },
   "homepage": "https://github.com/sejori/peko#readme",
   "dependencies": {
-    "htm": "^3.1.1",
-    "preact": "^10.22.1",
-    "preact-render-to-string": "^6.5.6"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "esbuild": "^0.23.0",
     "@cloudflare/workers-types": "^4.20240718.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "esbuild": "^0.23.0",
     "ts-node": "^10.9.2",
     "wrangler": "^3.65.1"
   }

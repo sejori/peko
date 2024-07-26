@@ -14,15 +14,19 @@ export default (input: {
     <title>${input.title}</title>
     <meta name="description" content="Featherweight apps on the edge">
     <meta name="keywords" content="deno, edge, serverless, preact, peko, cloudflare, bun, typescript, server">
-    
+    <!-- Made with https://generator.jspm.io/ --> 
     <script type="importmap">
-     {
+      {
         "imports": {
-          "esbuild": "https://deno.land/x/esbuild@v0.23.0/mod.js",
-          "htm/preact": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string",
-          "preact": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string",
-          "preact/hooks": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string",
-          "preact-render-to-string": "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string"
+          "react": "https://ga.jspm.io/npm:react@18.3.1/dev.index.js",
+          "react/jsx-runtime": "https://ga.jspm.io/npm:react@18.3.1/dev.jsx-runtime.js",
+          "react-dom/client": "https://ga.jspm.io/npm:react-dom@18.3.1/dev.client.js"
+        },
+        "scopes": {
+          "https://ga.jspm.io/": {
+            "react-dom": "https://ga.jspm.io/npm:react-dom@18.3.1/dev.index.js",
+            "scheduler": "https://ga.jspm.io/npm:scheduler@0.23.2/dev.index.js"
+          }
         }
       }
     </script>
@@ -69,11 +73,14 @@ export default (input: {
 
 
     <script type="module">
-      import { hydrate } from "https://npm.reversehttp.com/preact,preact/hooks,htm/preact,preact-render-to-string";
-      import About from "${input.entrypoint}";
-      hydrate(About(${JSON.stringify(
-        input.serverState
-      )}), document.getElementById("root"))
+      import App from "${input.entrypoint}";
+      import { hydrateRoot } from 'react-dom/client';
+
+      hydrateRoot(
+        document.getElementById('root'),
+        App(${JSON.stringify(input.serverState)})
+      );
     </script
   </body>
-  </html>`;
+  </html>
+`;

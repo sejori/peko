@@ -1,4 +1,4 @@
-import router from "../../example/preactSSR/router.ts";
+import router from "../../example/reactSSR/router.ts";
 
 router.middleware.unshift((ctx) => {
   ctx.state.env = Deno.env.toObject();

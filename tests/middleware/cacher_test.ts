@@ -9,6 +9,7 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
   const successString = "Success!";
   const testData = {
     foo: "bar",
+    responseFromCache: false,
   };
 
   const defaultCacher = cacher();
