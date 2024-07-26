@@ -37,7 +37,7 @@ export const file = async (
     headers: mergeHeaders(
       new Headers(headers),
       new Headers({
-        ...Object.fromEntries(opts?.headers?.entries() || []),
+        ...(opts.headers || []),
         ETag: hashString,
       })
     ),
