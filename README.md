@@ -11,7 +11,7 @@
 </h1>
 
 <p align="center">
-    <strong>Fast</strong> - Regex route matcher. Works out-of-the-box with Deno, Bun & Cloudflare Workers 🏎️💨
+    <strong>Fast</strong> - Regex route matching and caching with Node, Deno, Bun & Cloudflare Worker support 🏎️💨
 </p>
 <p align="center">
     <strong>Featherweight</strong> - Functional API built with Web Standards & zero dependencies 🪶<br>
@@ -51,14 +51,19 @@
     </span>
 </p>
 
+```bash
+npm i @sejori/peko
+```
+
 <h2 id="overview">Overview</h2>
 
 Routes and middleware are added to a `Router` instance with `.use`, `.addRoute` or `.get/post/put/delete`.
 
 The router is then used with your web server of choice, e.g. `Deno.serve` or `Bun.serve`.
 
+
 ```js
-import * as Peko from "https://deno.land/x/peko/mod.ts";
+import * as Peko from "@sejori/peko"; // or https://deno.land/x/peko/mod.ts in Deno
 
 const router = new Peko.Router();
 
@@ -197,7 +202,7 @@ router.addRoute(
 The cacher stores response items in memory by default, but it can be extended to use any key value storage by supplying the `store` options parameter (e.g. Cloudflare Workers KV).
 
 ```js
-import { Router, CacheItem, cacher } from "https://deno.land/x/peko/mod.ts";
+import { Router, CacheItem, cacher } from "@sejori/peko";
 
 const router = new Router();
 
@@ -220,10 +225,10 @@ router.addRoute("/get-time", {
 
 PR to add your project 🙌
 
-### [shineponics.deno.dev](https://shineponics.deno.dev)
+### [shineon.systems](https://shineon.systems)
 
-- **Stack:** React, Google Cloud Platform
-- **Features:** Google Sheet analytics, GCP email list, Markdown rendering
+- **Stack:** React, Cloudflare Workers, KV and R2
+- **Features:** KV cache, R2 email list, Markdown rendering
 - [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
 
 ### [thesebsite.deno.dev](https://thesebsite.deno.dev)
