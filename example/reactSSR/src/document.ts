@@ -80,7 +80,7 @@ export default (input: {
         document.getElementById('root'),
         App(${JSON.stringify(input.serverState)})
       );
-    </script
+    </script>
   </body>
   </html>
 `;
