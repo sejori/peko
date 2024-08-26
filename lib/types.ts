@@ -1,10 +1,19 @@
 import { RequestContext } from "./Router.ts";
 
 export interface Route {
-  path: `/${string}`;
-  method?: "GET" | "POST" | "PUT" | "DELETE";
+  path: string;
+  method?: string;
   middleware?: Middleware[] | Middleware;
   handler: Handler;
+}
+
+export interface HttpRouteConfig extends Route {
+  path: `/${string}`;
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+}
+
+export interface GraphRouteConfig extends Route {
+  method?: "QUERY" | "MUTATION" | "RESOLVER";
 }
 
 export type Result = void | Response | undefined;

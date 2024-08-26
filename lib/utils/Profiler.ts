@@ -35,7 +35,7 @@ export class Profiler {
 
     const results: ProfileResults = {};
 
-    for (const route of router.routes) {
+    for (const route of router.httpRoutes) {
       results[route.path] = { avgTime: 0, requests: [] };
 
       if (!excludedRoutes.includes(route)) {
