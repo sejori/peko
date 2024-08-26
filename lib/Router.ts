@@ -1,5 +1,5 @@
 import { Cascade } from "./utils/Cascade.ts";
-import { Middleware, Handler, Route } from "./types.ts";
+import { Middleware, Handler, Route, HttpRouteConfig, GraphRouteConfig } from "./types.ts";
 
 export class RequestContext<T extends object = Record<string, unknown>> {
   url: URL;
@@ -12,7 +12,7 @@ export class RequestContext<T extends object = Record<string, unknown>> {
   }
 }
 
-export class _Route implements Route {
+export class HttpRoute implements Route {
   path: `/${string}`;
   params: Record<string, number> = {};
   regexPath: RegExp;
@@ -20,14 +20,11 @@ export class _Route implements Route {
   middleware: Middleware[] = [];
   handler: Handler;
 
-  constructor(routeObj: Route) {
-    if (!routeObj.path) throw new Error("Route is missing path");
-    if (!routeObj.handler) throw new Error("Route is missing handler");
-
+  constructor(routeObj: HttpRouteConfig) {
     this.path =
       routeObj.path[routeObj.path.length - 1] === "/"
-        ? (routeObj.path.slice(0, -1) as Route["path"])
-        : routeObj.path;
+        ? (routeObj.path.slice(0, -1) as HttpRoute["path"])
+        : (routeObj.path as HttpRoute["path"]);
 
     this.path.split("/").forEach((str, i) => {
       if (str[0] === ":") this.params[str.slice(1)] = i;
@@ -39,7 +36,27 @@ export class _Route implements Route {
         )
       : new RegExp(`^${this.path}\/?$`);
 
-    this.method = routeObj.method || "GET";
+    this.method = (routeObj.method as HttpRoute["method"]) || "GET";
+    this.handler = Cascade.promisify(routeObj.handler!) as Handler;
+    this.middleware = [routeObj.middleware]
+      .flat()
+      .filter(Boolean)
+      .map((mware) => Cascade.promisify(mware!));
+  }
+}
+
+export class GraphRoute implements Route {
+  path: string;
+  params: Record<string, number> = {};
+  regexPath: RegExp;
+  method?: "QUERY" | "MUTATION" | "RESOLVE";
+  middleware: Middleware[] = [];
+  handler: Handler;
+
+  constructor(routeObj: GraphRouteConfig) {
+    this.path = routeObj.path;
+    this.regexPath = new RegExp(`^${this.path}$`);
+    this.method = routeObj.method as GraphRoute["method"];
     this.handler = Cascade.promisify(routeObj.handler!) as Handler;
     this.middleware = [routeObj.middleware]
       .flat()
@@ -50,7 +67,8 @@ export class _Route implements Route {
 
 export class Router {
   constructor(
-    public routes: _Route[] = [],
+    public httpRoutes: HttpRoute[] = [],
+    public graphRoutes: GraphRoute[] = [],
     public middleware: Middleware[] = []
   ) {}
 
@@ -111,10 +129,10 @@ export class Router {
             handler: arg3,
           };
 
-    const fullRoute = new _Route(routeObj as Route);
+    const fullRoute = new HttpRoute(routeObj as HttpRouteConfig);
 
     if (
-      this.routes.find(
+      this.httpRoutes.find(
         (existing) =>
           existing.regexPath.toString() === fullRoute.regexPath.toString()
       )
@@ -122,7 +140,7 @@ export class Router {
       throw new Error(`Route with path ${routeObj.path} already exists!`);
     }
 
-    this.routes.push(fullRoute);
+    this.httpRoutes.push(fullRoute);
     this.middleware.push(function RouteMiddleware(ctx) {
       if (
         fullRoute.regexPath.test(ctx.url.pathname) &&
@@ -203,9 +221,9 @@ export class Router {
    * @returns Route - removed route
    */
   removeRoute(route: Route["path"]): Route | undefined {
-    const routeToRemove = this.routes.find((r) => r.path === route);
+    const routeToRemove = this.httpRoutes.find((r) => r.path === route);
     if (routeToRemove) {
-      this.routes.splice(this.routes.indexOf(routeToRemove), 1);
+      this.httpRoutes.splice(this.httpRoutes.indexOf(routeToRemove), 1);
     }
 
     return routeToRemove;

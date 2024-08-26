@@ -25,7 +25,7 @@ Deno.test("ROUTER: ADDING/REMOVING ROUTES", async (t) => {
         testHandler
       );
 
-      assert(router.routes.length === 4);
+      assert(router.httpRoutes.length === 4);
 
       const request1 = new Request("http://localhost:7777/route1");
       const request2 = new Request("http://localhost:7777/route2");
@@ -50,7 +50,7 @@ Deno.test("ROUTER: ADDING/REMOVING ROUTES", async (t) => {
     router.removeRoute("/route3");
     router.removeRoute("/route4");
 
-    assert(router.routes.length === 0);
+    assert(router.httpRoutes.length === 0);
   });
 
   await t.step("routers on server can be subsequently editted", () => {
@@ -65,8 +65,8 @@ Deno.test("ROUTER: ADDING/REMOVING ROUTES", async (t) => {
 
     aRouter.removeRoute("/route");
 
-    assert(!aRouter.routes.find((route) => route.path === "/route"));
-    assert(aRouter.routes.length === 2);
+    assert(!aRouter.httpRoutes.find((route) => route.path === "/route"));
+    assert(aRouter.httpRoutes.length === 2);
   });
 
   await t.step("http shorthand methods work correctly", () => {
@@ -89,7 +89,7 @@ Deno.test("ROUTER: ADDING/REMOVING ROUTES", async (t) => {
       handler: () => new Response("DELETE"),
     });
 
-    assert(router.routes.length === 4);
+    assert(router.httpRoutes.length === 4);
     assert(getRoute.method === "GET");
     assert(postRoute.method === "POST");
     assert(putRoute.method === "PUT");
@@ -100,8 +100,8 @@ Deno.test("ROUTER: ADDING/REMOVING ROUTES", async (t) => {
     const router = new Router();
     router.addRoute("/hello/:id/world/:name", () => new Response("Hi!"));
 
-    assert(router.routes[0].params["id"] === 2);
-    assert(router.routes[0].params["name"] === 4);
+    assert(router.httpRoutes[0].params["id"] === 2);
+    assert(router.httpRoutes[0].params["name"] === 4);
   });
 });
 
@@ -121,7 +121,7 @@ Deno.test("ROUTER: HANDLING REQUESTS", async (t) => {
     const res = await newRouter.handle(
       new Request("http://localhost:7777/hello/123/world/bruno")
     );
-    const json = await res.json();
+    const json = await res.json() as { id: string; name: string };
     assert(json.id === "123" && json.name === "bruno");
   });
 
