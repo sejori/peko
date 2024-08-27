@@ -1,4 +1,4 @@
-import { RequestContext } from "../Router.ts";
+import { RequestContext } from "../types.ts";
 import { Middleware, Result, Next } from "../types.ts";
 
 export type PromiseMiddleware = (

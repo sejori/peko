@@ -1,4 +1,4 @@
-import { RequestContext } from "../Router.ts";
+import { RequestContext } from "../routers/httpRouter.ts";
 
 export class CacheItem {
   key: string;

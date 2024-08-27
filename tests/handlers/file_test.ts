@@ -1,9 +1,10 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { Router, RequestContext } from "../../lib/Router.ts";
+import { HttpRouter } from "../../lib/routers/httpRouter.ts";
 import { file } from "../../lib/handlers/file.ts";
+import { RequestContext } from "../../lib/types.ts";
 
 Deno.test("HANDLER: File", async (t) => {
-  const server = new Router();
+  const server = new HttpRouter();
   const ctx = new RequestContext(server, new Request("http://localhost"));
   const fileURL = new URL(import.meta.url);
   const decoder = new TextDecoder();

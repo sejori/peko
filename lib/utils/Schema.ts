@@ -1,4 +1,4 @@
-import { RequestContext } from "../Router.ts";
+import { RequestContext } from "../types.ts";
 import { Middleware } from "../types.ts";
 
 export class ID extends String {}
