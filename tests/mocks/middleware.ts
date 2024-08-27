@@ -1,5 +1,5 @@
 import { Middleware, Handler } from "../../lib/types.ts";
-import { Router } from "../../lib/Router.ts";
+import { HttpRouter } from "../../lib/routers/httpRouter.ts";
 
 export const testMiddleware1: Middleware = async (ctx, next) => {
   const start = performance.now();
@@ -36,7 +36,7 @@ export const testHandler: Handler = async (ctx) => {
 };
 
 export const getTestRouter = () => {
-  const router = new Router();
+  const router = new HttpRouter();
   router.addRoute(
     "/test",
     [testMiddleware1, testMiddleware2, testMiddleware3],

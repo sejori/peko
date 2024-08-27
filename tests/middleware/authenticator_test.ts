@@ -1,12 +1,12 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { Router, RequestContext } from "../../lib/Router.ts";
+import { HttpRouter, RequestContext } from "../../lib/routers/httpRouter.ts";
 import { authenticator } from "../../lib/middleware/authenticator.ts";
 import { Crypto } from "../../lib/utils/Crypto.ts";
 
 Deno.test("MIDDLEWARE: Authenticator", async (t) => {
   const successString = "Authorized!";
   const crypto = new Crypto("test_key");
-  const server = new Router();
+  const server = new HttpRouter();
 
   const testPayload = {
     iat: Date.now(),
@@ -25,8 +25,8 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
       () => new Response(successString)
     );
 
-    assert((await response?.text()) === successString);
-    assert(response?.status === 200);
+    assert((response instanceof Response && await response.text()) === successString);
+    assert(response instanceof Response && response.status === 200);
     assert(JSON.stringify(ctx.state.auth) === JSON.stringify(testPayload));
   });
 
@@ -37,7 +37,7 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
       () => new Response(successString)
     );
 
-    assert(response?.status === 401);
+    assert(response instanceof Response && response.status === 401);
     assert(!ctx.state.auth);
   });
 
@@ -51,7 +51,7 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
       () => new Response(successString)
     );
 
-    assert(response?.status === 200);
+    assert(response instanceof Response && response.status === 200);
     assert(ctx.state.auth);
   });
 });

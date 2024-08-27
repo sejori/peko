@@ -1,15 +1,14 @@
-import { Router } from "../Router.ts";
-import { Route } from "../types.ts";
+import { BaseRouter, BaseRoute } from "../types.ts";
 
 type ProfileConfig = {
   mode?: "serve" | "handle";
   url?: string;
   count?: number;
-  excludedRoutes?: Route[];
+  excludedRoutes?: BaseRoute[];
 };
 
 type ProfileResults = Record<
-  Route["path"],
+BaseRoute["path"],
   {
     avgTime: number;
     requests: {
@@ -27,7 +26,7 @@ export class Profiler {
    * @param config
    * @returns results: ProfileResults
    */
-  static async run(router: Router, config?: ProfileConfig) {
+  static async run(router: BaseRouter, config?: ProfileConfig) {
     const url = (config && config.url) || `http://localhost:7777`;
     const count = (config && config.count) || 100;
     const excludedRoutes = (config && config.excludedRoutes) || [];
@@ -35,7 +34,7 @@ export class Profiler {
 
     const results: ProfileResults = {};
 
-    for (const route of router.httpRoutes) {
+    for (const route of router.routes) {
       results[route.path] = { avgTime: 0, requests: [] };
 
       if (!excludedRoutes.includes(route)) {

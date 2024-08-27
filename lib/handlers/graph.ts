@@ -1,4 +1,4 @@
-import { RequestContext } from "../Router.ts";
+import { RequestContext } from "../routers/httpRouter.ts";
 import { mergeHeaders } from "../utils/helpers.ts";
 import { Schema } from "../utils/Schema.ts";
 import { Handler, HandlerOptions } from "../types.ts";
