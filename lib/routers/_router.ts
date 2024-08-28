@@ -3,7 +3,6 @@ import { Cascade } from "../utils/Cascade.ts";
 
 export interface RouteConfig {
   path: string;
-  method?: string;
   middleware?: Middleware | Middleware[];
   handler: Handler;
 }
@@ -12,11 +11,9 @@ export class Route {
   path: string;
   middleware: Middleware[];
   handler: Handler;
-  method: string;
 
   constructor(routeObj: RouteConfig) {
     this.path = routeObj.path;
-    this.method = routeObj.method || "";
     this.handler = Cascade.promisify(routeObj.handler!) as Handler;
     this.middleware = [routeObj.middleware]
       .flat()
@@ -33,11 +30,11 @@ export class Route {
   }
 }
 
-export class Router {
+export class Router<Config extends RouteConfig = RouteConfig, R extends Route = Route> {
   Route = Route;
 
   constructor(
-    public routes: Route[] = [], // <- use this as a hashmap for routes
+    public routes: R[] = [], // <- use this as a hashmap for routes
     public middleware: Middleware[] = []
   ) {}
 
@@ -73,20 +70,20 @@ export class Router {
    * @param arg3?: Handler
    * @returns route: Route - added route object
    */
-  addRoute(route: RouteConfig): Route;
-  addRoute(route: RouteConfig["path"], data: Handler): Route;
+  addRoute(route: Config): R;
+  addRoute(route: Config["path"], data: Handler): R;
   addRoute(
-    route: RouteConfig["path"],
+    route: Config["path"],
     middleware: Middleware | Middleware[],
     handler: Handler
-  ): Route;
+  ): R;
   addRoute(
-    arg1: RouteConfig | Route["path"],
+    arg1: Config | Config["path"],
     arg2?: Middleware | Middleware[],
     arg3?: Handler
-  ): Route {
+  ): R {
     // overload resolution
-    const routeObj: RouteConfig =
+    const routeObj =
       typeof arg1 !== "string"
         ? arg1
         : arguments.length === 2
@@ -111,7 +108,7 @@ export class Router {
     }
 
     // add route to appropriate routes and middleware
-    this.routes.push(fullRoute);
+    this.routes.push(fullRoute as R);
     this.middleware.push(function RouteMiddleware(ctx) {
       if (fullRoute.match(ctx)) {
         return new Cascade(ctx, [
@@ -121,7 +118,7 @@ export class Router {
       }
     });
 
-    return fullRoute;
+    return fullRoute as R;
   }
 
   /**
@@ -129,7 +126,7 @@ export class Router {
    * @param routes: Route[] - middleware can be Middlewares or Middleware
    * @returns Route[] - added routes
    */
-  addRoutes(routes: RouteConfig[]): Route[] {
+  addRoutes(routes: Config[]): R[] {
     return routes.map((route) => this.addRoute(route));
   }
 
@@ -138,7 +135,7 @@ export class Router {
    * @param route: Route["path"] of route to remove
    * @returns Route - removed route
    */
-  removeRoute(route: Route["path"]): Route | undefined {
+  removeRoute(route: R["path"]): R | undefined {
     const routeToRemove = this.routes.find((r) => r.path === route);
     if (routeToRemove) {
       this.routes.splice(this.routes.indexOf(routeToRemove), 1);
@@ -152,7 +149,7 @@ export class Router {
    * @param routes: Route["path"] of routes to remove
    * @returns Array<Route | undefined> - removed routes
    */
-  removeRoutes(routes: Route["path"][]): Array<Route | undefined> {
+  removeRoutes(routes: R["path"][]): Array<R | undefined> {
     return routes.map((route) => this.removeRoute(route));
   }
 }

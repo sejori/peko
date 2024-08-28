@@ -14,9 +14,9 @@ export class GraphRoute extends Route {
   }
 }
 
-export class GraphRouter extends Router {
+export class GraphRouter<Config extends RouteConfig = GraphRouteConfig, R extends Route = GraphRoute> extends Router<Config, R> {
   constructor(
-    public routes: GraphRoute[] = [],
+    public routes: R[] = [],
     public middleware: Middleware[] = []
   ) {
     super();
