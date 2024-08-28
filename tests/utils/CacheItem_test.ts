@@ -1,6 +1,7 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { HttpRouter, RequestContext } from "../../lib/routers/httpRouter.ts";
+import { Router } from "../../lib/routers/_router.ts";
 import { CacheItem, defaultKeyGen } from "../../lib/utils/CacheItem.ts";
+import { RequestContext } from "../../lib/types.ts";
 
 Deno.test("UTIL: CacheItem", async (t) => {
   await t.step("constructor sets properties correctly", () => {
@@ -16,7 +17,7 @@ Deno.test("UTIL: CacheItem", async (t) => {
   });
 
   await t.step("defaultKeyGen generates correct key", () => {
-    const mockRouter = new HttpRouter();
+    const mockRouter = new Router();
     const mockRequest = new Request("http://localhost:3000/path?query=param");
     const mockState = { user: "Alice" };
 
