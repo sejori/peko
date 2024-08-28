@@ -13,34 +13,42 @@ Deno.test("ROUTER: Router managing routes", async (t) => {
   await t.step(
     "routes added with full route and string arg options",
     async () => {
-      router.addRoute("/route1", testHandler);
-      router.addRoute("/route2", testMiddleware1, testHandler);
+      router.addRoute("route1", testHandler);
+      router.addRoute("route2", testMiddleware1, testHandler);
+      router.addRoute("route3", {
+        middleware: [testMiddleware1, testMiddleware2],
+        handler: testHandler,
+      })
       router.addRoute(
-        "/route3",
+        "route4",
         [testMiddleware1, testMiddleware2],
         testHandler
       );
 
-      assert(router.routes.length === 3);
+      assert(router.routes.length === 4);
 
       const request1 = new Request("http://localhost:7777/route1");
       const request2 = new Request("http://localhost:7777/route2");
       const request3 = new Request("http://localhost:7777/route3");
+      const request4 = new Request("http://localhost:7777/route4");
 
       const response1 = await router.handle(request1);
       const response2 = await router.handle(request2);
       const response3 = await router.handle(request3);
+      const response4 = await router.handle(request4);
 
       assert(response1.status === 200);
       assert(response2.status === 200);
       assert(response3.status === 200);
+      assert(response4.status === 200);
     }
   );
 
   await t.step("routes removed", () => {
-    router.removeRoute("/route1");
-    router.removeRoute("/route2");
-    router.removeRoute("/route3");
+    router.removeRoute("route1");
+    router.removeRoute("route2");
+    router.removeRoute("route3");
+    router.removeRoute("route4");
 
     assert(router.routes.length === 0);
   });
@@ -48,16 +56,16 @@ Deno.test("ROUTER: Router managing routes", async (t) => {
   await t.step("routers on server can be subsequently editted", () => {
     const aRouter = new Router();
     aRouter.addRoutes([
-      { path: "/route", middleware: [], handler: testHandler },
-      { path: "/route2", handler: testHandler },
-      { path: "/route3", handler: testHandler },
+      { path: "route", middleware: [], handler: testHandler },
+      { path: "route2", handler: testHandler },
+      { path: "route3", handler: testHandler },
     ]);
 
     aRouter.use(aRouter.middleware);
 
-    aRouter.removeRoute("/route");
+    aRouter.removeRoute("route");
 
-    assert(!aRouter.routes.find((route) => route.path === "/route"));
+    assert(!aRouter.routes.find((route) => route.path === "route"));
     assert(aRouter.routes.length === 2);
   });
 });
@@ -106,7 +114,7 @@ Deno.test("ROUTER: Router - request handling", async (t) => {
 
   await t.step("all middleware and handlers run", async () => {
     router.addRoute({
-      path: "/test",
+      path: "test",
       middleware: [testMiddleware1, testMiddleware2, testMiddleware3],
       handler: testHandler,
     });
