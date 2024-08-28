@@ -8,6 +8,7 @@ import {
   testMiddleware3,
   testHandler,
 } from "../../tests/mocks/middleware.ts";
+import { Middleware } from "../../mod.ts";
 
 Deno.test("UTIL: Cascade", async (t) => {
   const testServer = new Router();
@@ -26,7 +27,7 @@ Deno.test("UTIL: Cascade", async (t) => {
   const result = await cascade.run();
 
   await t.step("promisify works", () => {
-    const testMW = () => new Response("hello");
+    const testMW: Middleware = () => new Response("hello");
     const testMWProm = Cascade.promisify(testMW);
     assert(testMWProm(testContext, () => {}) instanceof Promise);
   });
