@@ -74,7 +74,7 @@ export class Router<
    * @returns route: Route - added route object
    */
   addRoute(route: Config): R;
-  addRoute(route: Config["path"], data: Handler): R;
+  addRoute(route: Config["path"], data: Omit<Config, "path"> | Handler): R;
   addRoute(
     route: Config["path"],
     middleware: Middleware | Middleware[],
@@ -82,15 +82,17 @@ export class Router<
   ): R;
   addRoute(
     arg1: Config | Config["path"],
-    arg2?: Middleware | Middleware[],
+    arg2?: Middleware | Middleware[] | Omit<Config, "path"> | Handler,
     arg3?: Handler
   ): R {
     // overload resolution
     const routeObj =
       typeof arg1 !== "string"
         ? arg1
-        : arguments.length === 2
-        ? { path: arg1, handler: arg2 as Handler }
+        : arguments.length === 2 
+        ? arg2 instanceof Function
+          ? { path: arg1, handler: arg2 as Handler }
+          : { path: arg1, ...arg2 as Omit<Config, "path"> }
         : {
             path: arg1,
             middleware: arg2 as Middleware | Middleware[],
