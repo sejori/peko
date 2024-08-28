@@ -1,14 +1,14 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { HttpRouter } from "../lib/routers/httpRouter.ts";
+import { Router } from "../../lib/routers/_router.ts";
 import {
   testMiddleware2,
   testMiddleware3,
   testMiddleware1,
   testHandler,
-} from "./mocks/middleware.ts";
+} from "../mocks/middleware.ts";
 
 Deno.test("ROUTER: ADDING/REMOVING ROUTES", async (t) => {
-  const router = new HttpRouter();
+  const router = new Router();
 
   await t.step(
     "routes added with full route and string arg options",
@@ -46,7 +46,7 @@ Deno.test("ROUTER: ADDING/REMOVING ROUTES", async (t) => {
   });
 
   await t.step("routers on server can be subsequently editted", () => {
-    const aRouter = new HttpRouter();
+    const aRouter = new Router();
     aRouter.addRoutes([
       { path: "/route", middleware: [], handler: testHandler },
       { path: "/route2", handler: testHandler },
@@ -60,49 +60,14 @@ Deno.test("ROUTER: ADDING/REMOVING ROUTES", async (t) => {
     assert(!aRouter.routes.find((route) => route.path === "/route"));
     assert(aRouter.routes.length === 2);
   });
-
-  await t.step("http shorthand methods work correctly", () => {
-    const router = new HttpRouter();
-
-    const getRoute = router.get({
-      path: "/get",
-      handler: () => new Response("GET"),
-    });
-    const postRoute = router.post({
-      path: "/post",
-      handler: () => new Response("POST"),
-    });
-    const putRoute = router.put({
-      path: "/put",
-      handler: () => new Response("PUT"),
-    });
-    const deleteRoute = router.delete({
-      path: "/delete",
-      handler: () => new Response("DELETE"),
-    });
-
-    assert(router.routes.length === 4);
-    assert(getRoute.method === "GET");
-    assert(postRoute.method === "POST");
-    assert(putRoute.method === "PUT");
-    assert(deleteRoute.method === "DELETE");
-  });
-
-  await t.step("Params correctly stored", () => {
-    const router = new HttpRouter();
-    router.addRoute("/hello/:id/world/:name", () => new Response("Hi!"));
-
-    assert(router.routes[0].params["id"] === 2);
-    assert(router.routes[0].params["name"] === 4);
-  });
 });
 
 Deno.test("ROUTER: HANDLING REQUESTS", async (t) => {
-  const router = new HttpRouter();
+  const router = new Router();
   router.middleware = [];
 
   await t.step("params discovered in RequestContext creation", async () => {
-    const newRouter = new HttpRouter();
+    const newRouter = new Router();
 
     newRouter.addRoute("/hello/:id/world/:name", (ctx) => {
       return new Response(
@@ -144,7 +109,7 @@ Deno.test("ROUTER: HANDLING REQUESTS", async (t) => {
         return new Response("Error! :(", { status: 500 });
       }
     });
-    router.get("/error-test", () => {
+    router.addRoute("/error-test", () => {
       throw new Error("Oopsie!");
     });
 

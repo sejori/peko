@@ -1,5 +1,6 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { HttpRouter, RequestContext } from "../../lib/routers/httpRouter.ts";
+import { Router } from "../../lib/routers/_router.ts";
+import { RequestContext } from "../../lib/types.ts";
 import { Cascade } from "../../lib/utils/Cascade.ts";
 import {
   testMiddleware1,
@@ -9,7 +10,7 @@ import {
 } from "../../tests/mocks/middleware.ts";
 
 Deno.test("UTIL: Cascade", async (t) => {
-  const testServer = new HttpRouter();
+  const testServer = new Router();
   const testContext = new RequestContext(
     testServer,
     new Request("http://localhost")

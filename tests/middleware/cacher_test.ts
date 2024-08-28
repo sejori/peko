@@ -1,11 +1,12 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { HttpRouter, RequestContext } from "../../lib/routers/httpRouter.ts";
+import { Router } from "../../lib/routers/_router.ts";
 import { cacher } from "../../lib/middleware/cacher.ts";
 import { testHandler } from "../mocks/middleware.ts";
 import { CacheItem, defaultKeyGen } from "../../lib/utils/CacheItem.ts";
+import { RequestContext } from "../../lib/types.ts";
 
 Deno.test("MIDDLEWARE: Cacher", async (t) => {
-  const router = new HttpRouter();
+  const router = new Router();
   const successString = "Success!";
   const testData = {
     foo: "bar",
