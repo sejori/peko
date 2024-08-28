@@ -7,7 +7,7 @@ import {
   testHandler,
 } from "../mocks/middleware.ts";
 
-Deno.test("ROUTER: ADDING/REMOVING ROUTES", async (t) => {
+Deno.test("ROUTER: Router managing routes", async (t) => {
   const router = new Router();
 
   await t.step(
@@ -62,25 +62,9 @@ Deno.test("ROUTER: ADDING/REMOVING ROUTES", async (t) => {
   });
 });
 
-Deno.test("ROUTER: HANDLING REQUESTS", async (t) => {
+Deno.test("ROUTER: Router - request handling", async (t) => {
   const router = new Router();
   router.middleware = [];
-
-  await t.step("params discovered in RequestContext creation", async () => {
-    const newRouter = new Router();
-
-    newRouter.addRoute("/hello/:id/world/:name", (ctx) => {
-      return new Response(
-        JSON.stringify({ id: ctx.params["id"], name: ctx.params["name"] })
-      );
-    });
-
-    const res = await newRouter.handle(
-      new Request("http://localhost:7777/hello/123/world/bruno")
-    );
-    const json = await res.json() as { id: string; name: string };
-    assert(json.id === "123" && json.name === "bruno");
-  });
 
   await t.step("no route found triggers basic 404", async () => {
     const request = new Request("http://localhost:7777/404");

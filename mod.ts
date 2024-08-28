@@ -2,7 +2,7 @@
  * Featherweight apps on the edge
  */
 
-// Core classes, functions & types
+// Routers & types
 export * from "./lib/routers/httpRouter.ts";
 export * from "./lib/routers/schemaRouter.ts";
 export * from "./lib/types.ts";

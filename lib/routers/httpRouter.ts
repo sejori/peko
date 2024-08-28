@@ -47,9 +47,11 @@ export class HttpRoute extends Route {
   }
 }
 
-export class HttpRouter extends Router {
+export class HttpRouter<Config extends RouteConfig = HttpRouteConfig, R extends Route = HttpRoute> extends Router<Config, R> {
+  Route = HttpRoute;
+
   constructor(
-    public routes: HttpRoute[] = [],
+    public routes: R[] = [],
     public middleware: Middleware[] = []
   ) {
     super();
