@@ -4,17 +4,17 @@ import { Cascade } from "../utils/Cascade.ts";
 export interface RouteConfig {
   path: string;
   middleware?: Middleware | Middleware[];
-  handler: Handler;
+  handler?: Handler;
 }
 
 export class Route {
   path: string;
   middleware: Middleware[];
-  handler: Handler;
+  handler?: Handler;
 
   constructor(routeObj: RouteConfig) {
     this.path = routeObj.path;
-    this.handler = Cascade.promisify(routeObj.handler!) as Handler;
+    this.handler = routeObj.handler && Cascade.promisify(routeObj.handler);
     this.middleware = [routeObj.middleware]
       .flat()
       .filter(Boolean)
@@ -30,7 +30,10 @@ export class Route {
   }
 }
 
-export class Router<Config extends RouteConfig = RouteConfig, R extends Route = Route> {
+export class Router<
+  Config extends RouteConfig = RouteConfig,
+  R extends Route = Route
+> {
   Route = Route;
 
   constructor(
@@ -107,14 +110,17 @@ export class Router<Config extends RouteConfig = RouteConfig, R extends Route = 
       throw new Error(`Route with path ${routeObj.path} already exists!`);
     }
 
+    // assemble middleware
+    const mware = [
+      ...fullRoute.middleware,
+      ...(fullRoute.handler ? [fullRoute.handler] : []),
+    ];
+
     // add route to appropriate routes and middleware
     this.routes.push(fullRoute as R);
     this.middleware.push(function RouteMiddleware(ctx) {
       if (fullRoute.match(ctx)) {
-        return new Cascade(ctx, [
-          ...fullRoute.middleware,
-          fullRoute.handler,
-        ]).run();
+        return new Cascade(ctx, mware).run();
       }
     });
 
