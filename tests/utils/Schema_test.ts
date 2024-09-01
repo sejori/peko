@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { mockSchemaRouter } from "../mocks/schemaRouter.ts";
+import { mockSchemaRouter } from "../mocks/schema/_schemaRouter.ts";
 import { generateSchema } from "../../lib/utils/Schema.ts";
 
 Deno.test("ROUTER: SchemaRouter", async (t) => {
@@ -10,7 +10,7 @@ Deno.test("ROUTER: SchemaRouter", async (t) => {
       scalars: router.scalars,
       routes: router.routes,
     });
-    
+
     console.log(schemaString);
     assert(schemaString);
   });

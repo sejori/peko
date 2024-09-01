@@ -1,10 +1,6 @@
 import { Middleware, RequestContext } from "../types.ts";
-import { defaultScalars, DTO, Fields, ResolvedType } from "../utils/Schema.ts";
+import { Scalars, DTO, Fields, ResolvedType } from "../utils/Schema.ts";
 import { Router, Route, RouteConfig } from "./_router.ts";
-
-export type Resolver<O extends DTO<Fields> | DTO<Fields>[]> = (
-  ctx: RequestContext
-) => Promise<ResolvedType<O>> | ResolvedType<O>;
 
 export interface SchemaRouteConfig<O extends DTO<Fields> | DTO<Fields>[]>
   extends RouteConfig {
@@ -12,14 +8,14 @@ export interface SchemaRouteConfig<O extends DTO<Fields> | DTO<Fields>[]>
   args: Fields;
   data: O;
   middleware?: Middleware[];
-  resolver: Resolver<O>;
+  resolver: (ctx: RequestContext) => Promise<ResolvedType<O>> | ResolvedType<O>;
 }
 
 export class SchemaRoute<O extends DTO<Fields> | DTO<Fields>[]> extends Route {
   declare method: SchemaRouteConfig<O>["method"];
   args: Fields;
   data: O;
-  resolver: Resolver<O>;
+  resolver: (ctx: RequestContext) => Promise<ResolvedType<O>> | ResolvedType<O>;
 
   constructor(routeObj: SchemaRouteConfig<O>) {
     super(routeObj);
@@ -43,7 +39,7 @@ export class SchemaRouter<
     public routes: R[] = [],
     public middleware: Middleware[] = [],
     public scalars: Record<string, new (...args: unknown[]) => unknown> = {
-      ...defaultScalars,
+      ...Scalars,
     }
   ) {
     super();
