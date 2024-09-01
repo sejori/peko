@@ -4,14 +4,27 @@ import { RequestContext } from "../types.ts";
 export class ID extends String {}
 export class Int extends Number {}
 export class Float extends Number {}
+export const Scalars = { ID, Int, Float, Boolean, Date, String };
+type ScalarTypes = (typeof Scalars)[keyof typeof Scalars];
+
 export class Enum<T extends Record<string, string> = Record<string, string>> {
   constructor(public name: string, public values: T) {}
 }
-export const defaultScalars = { ID, Int, Float, Boolean, Date, String };
 
-type Scalars = (typeof defaultScalars)[keyof typeof defaultScalars];
-type GroupedTypes = Scalars | Enum<Record<string, string>> | DTO<Fields>;
-export type FieldType = GroupedTypes | GroupedTypes[];
+type SchemaTypes = ScalarTypes | Enum<Record<string, string>> | DTO<Fields>;
+type FieldType = SchemaTypes | SchemaTypes[];
+
+export class DTO<F extends Fields> {
+  constructor(public name: string, public fields: F) {}
+}
+
+export interface Fields {
+  [key: string]: Field<FieldType>;
+}
+
+export class Field<T extends FieldType> {
+  constructor(public type: T, public config: FieldConfig<T> = {}) {}
+}
 
 interface FieldConfig<T extends FieldType> {
   nullable?: boolean;
@@ -19,38 +32,28 @@ interface FieldConfig<T extends FieldType> {
     x: ResolvedType<T>
   ) => boolean | { pass: boolean; message: string };
   resolver?: (
-    x: RequestContext
-  ) => Promise<ResolvedField<Field<T>>[]> | ResolvedField<Field<T>>[];
-}
-export class Field<T extends FieldType> {
-  constructor(public type: T, public config: FieldConfig<T> = {}) {}
-}
-export interface Fields {
-  [key: string]: Field<FieldType>;
+    ctx: RequestContext
+  ) => Promise<ResolvedType<T>[]> | ResolvedType<T>[];
 }
 
-export class DTO<F extends Fields> {
-  constructor(public name: string, public fields: F) {}
-}
+export type ResolvedType<T> = T extends DTO<infer Fields>
+  ? ResolvedFields<Fields>
+  : T extends ScalarTypes
+  ? InstanceType<T>
+  : T extends Enum<Record<string, string>>
+  ? T["values"][keyof T["values"]]
+  : T extends Array<infer U>
+  ? ResolvedType<U>[]
+  : never;
 
 type ResolvedFields<Fields> = {
   [P in keyof Fields]: ResolvedField<Fields[P]>;
 };
 
 export type ResolvedField<T> = T extends Field<infer F>
-  ? F extends GroupedTypes[]
+  ? F extends SchemaTypes[]
     ? ResolvedType<F[0]>[]
     : ResolvedType<F>
-  : never;
-
-export type ResolvedType<T> = T extends DTO<infer Fields>
-  ? ResolvedFields<Fields>
-  : T extends Scalars
-  ? InstanceType<T>
-  : T extends Enum<Record<string, string>>
-  ? T["values"][keyof T["values"]]
-  : T extends Array<infer U> // New condition for handling arrays
-  ? ResolvedType<U>[]
   : never;
 
 export const generateSchema = ({
@@ -149,23 +152,22 @@ export const generateOperationsSchema = (
 export const generateDtosSchema = (
   routes: SchemaRoute<DTO<Fields>>[]
 ): string => {
-  const DTOs = new Set<{
-    dtoType: "input" | "type";
-    dto: DTO<Fields> | DTO<Fields>[];
-  }>();
   let dtoString = "";
 
   routes.forEach((route) => {
+    const results: string[] = [];
     Object.values(route.args).forEach((arg) => {
       if (arg.type instanceof DTO) {
-        DTOs.add({ dtoType: "input", dto: arg.type });
+        results.push(generateDtoSchema({ dtoType: "input", dto: arg.type }));
       }
     });
-    DTOs.add({ dtoType: "type", dto: route.data });
-  });
+    results.push(generateDtoSchema({ dtoType: "type", dto: route.data }));
 
-  DTOs.forEach((dto) => {
-    dtoString += generateDtoSchema(dto);
+    results.forEach((result) => {
+      if (!dtoString.includes(result)) {
+        dtoString += result;
+      }
+    });
   });
 
   return dtoString;
