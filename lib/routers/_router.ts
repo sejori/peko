@@ -1,18 +1,19 @@
-import { Handler, Middleware, RequestContext } from "../types.ts";
+import { RequestContext } from "../context.ts";
+import { Handler, Middleware } from "../types.ts";
 import { Cascade } from "../utils/Cascade.ts";
 
-export interface RouteConfig {
+export interface BaseRouteConfig {
   path: string;
   middleware?: Middleware | Middleware[];
   handler?: Handler;
 }
 
-export class Route {
+export class BaseRoute {
   path: string;
   middleware: Middleware[];
   handler?: Handler;
 
-  constructor(routeObj: RouteConfig) {
+  constructor(routeObj: BaseRouteConfig) {
     this.path = routeObj.path;
     this.handler = routeObj.handler && Cascade.promisify(routeObj.handler);
     this.middleware = [routeObj.middleware]
@@ -30,11 +31,11 @@ export class Route {
   }
 }
 
-export class Router<
-  Config extends RouteConfig = RouteConfig,
-  R extends Route = Route
+export class BaseRouter<
+  Config extends BaseRouteConfig = BaseRouteConfig,
+  R extends BaseRoute = BaseRoute
 > {
-  Route = Route;
+  Route = BaseRoute;
 
   constructor(
     public routes: R[] = [], // <- use this as a hashmap for routes
@@ -89,10 +90,10 @@ export class Router<
     const routeObj =
       typeof arg1 !== "string"
         ? arg1
-        : arguments.length === 2 
+        : arguments.length === 2
         ? arg2 instanceof Function
           ? { path: arg1, handler: arg2 as Handler }
-          : { path: arg1, ...arg2 as Omit<Config, "path"> }
+          : { path: arg1, ...(arg2 as Omit<Config, "path">) }
         : {
             path: arg1,
             middleware: arg2 as Middleware | Middleware[],

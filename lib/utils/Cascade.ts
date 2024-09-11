@@ -1,4 +1,5 @@
-import { RequestContext, Middleware, Result, Next, Handler } from "../types.ts";
+import { RequestContext } from "../context.ts";
+import { Middleware, Result, Next, Handler } from "../types.ts";
 
 export type PromiseHandler = (
   ctx: RequestContext,
