@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { Router } from "../../lib/routers/_router.ts";
+import { BaseRouter } from "../../lib/routers/_Router.ts";
 import {
   testMiddleware2,
   testMiddleware3,
@@ -7,8 +7,8 @@ import {
   testHandler,
 } from "../mocks/middleware.ts";
 
-Deno.test("ROUTER: Router managing routes", async (t) => {
-  const router = new Router();
+Deno.test("ROUTER: BaseRouter managing routes", async (t) => {
+  const router = new BaseRouter();
 
   await t.step(
     "routes added with full route and string arg options",
@@ -54,24 +54,24 @@ Deno.test("ROUTER: Router managing routes", async (t) => {
   });
 
   await t.step("routers on server can be subsequently editted", () => {
-    const aRouter = new Router();
-    aRouter.addRoutes([
+    const aBaseRouter = new BaseRouter();
+    aBaseRouter.addRoutes([
       { path: "route", middleware: [], handler: testHandler },
       { path: "route2", handler: testHandler },
       { path: "route3", handler: testHandler },
     ]);
 
-    aRouter.use(aRouter.middleware);
+    aBaseRouter.use(aBaseRouter.middleware);
 
-    aRouter.removeRoute("route");
+    aBaseRouter.removeRoute("route");
 
-    assert(!aRouter.routes.find((route) => route.path === "route"));
-    assert(aRouter.routes.length === 2);
+    assert(!aBaseRouter.routes.find((route) => route.path === "route"));
+    assert(aBaseRouter.routes.length === 2);
   });
 });
 
-Deno.test("ROUTER: Router - request handling", async (t) => {
-  const router = new Router();
+Deno.test("ROUTER: BaseRouter - request handling", async (t) => {
+  const router = new BaseRouter();
   router.middleware = [];
 
   await t.step("no route found triggers basic 404", async () => {

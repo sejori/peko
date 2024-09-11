@@ -1,4 +1,4 @@
-import { RequestContext } from "../types.ts";
+import { RequestContext } from "../context.ts";
 
 export class CacheItem {
   key: string;

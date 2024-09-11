@@ -1,15 +1,4 @@
-import { Router } from "./routers/_router.ts";
-
-export class RequestContext<T extends object = Record<string, unknown>> {
-  url: URL;
-  state: T;
-  params: Record<string, string> = {};
-
-  constructor(public router: Router, public request: Request, state?: T) {
-    this.url = new URL(request.url);
-    this.state = state ? state : ({} as T);
-  }
-}
+import { RequestContext } from "./context.ts";
 
 export type Result = void | Response | undefined;
 export type Next = () => Promise<Result> | Result;

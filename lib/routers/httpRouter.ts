@@ -1,13 +1,14 @@
-import { Middleware, Handler, RequestContext } from "../types.ts";
-import { Route, Router, RouteConfig } from "./_router.ts";
+import { RequestContext } from "../context.ts";
+import { Middleware, Handler } from "../types.ts";
+import { BaseRoute, BaseRouter, BaseRouteConfig } from "./_Router.ts";
 
-export interface HttpRouteConfig extends RouteConfig {
+export interface HttpRouteConfig extends BaseRouteConfig {
   path: `/${string}`;
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   handler: Handler;
 }
 
-export class HttpRoute extends Route {
+export class HttpRoute extends BaseRoute {
   declare path: `/${string}`;
   declare method: HttpRouteConfig["method"];
 
@@ -47,13 +48,13 @@ export class HttpRoute extends Route {
   }
 }
 
-export class HttpRouter<Config extends RouteConfig = HttpRouteConfig, R extends Route = HttpRoute> extends Router<Config, R> {
+export class HttpRouter<
+  Config extends HttpRouteConfig = HttpRouteConfig,
+  R extends HttpRoute = HttpRoute
+> extends BaseRouter<Config, R> {
   Route = HttpRoute;
 
-  constructor(
-    public routes: R[] = [],
-    public middleware: Middleware[] = []
-  ) {
+  constructor(public routes: R[] = [], public middleware: Middleware[] = []) {
     super();
   }
 
@@ -85,4 +86,3 @@ export class HttpRouter<Config extends RouteConfig = HttpRouteConfig, R extends 
     return newRoute;
   };
 }
-export { RequestContext };

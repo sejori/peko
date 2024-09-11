@@ -1,32 +1,32 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import { HttpRouter } from "../../lib/routers/httpRouter.ts";
 
-Deno.test("ROUTER: HttpRouter", async (t) => {
+Deno.test("ROUTER: HttpBaseRouter", async (t) => {
   await t.step("http shorthand methods work correctly", () => {
     const router = new HttpRouter();
 
-    const getRoute = router.get({
+    const getBaseRoute = router.get({
       path: "/get",
       handler: () => new Response("GET"),
     });
-    const postRoute = router.post({
+    const postBaseRoute = router.post({
       path: "/post",
       handler: () => new Response("POST"),
     });
-    const putRoute = router.put({
+    const putBaseRoute = router.put({
       path: "/put",
       handler: () => new Response("PUT"),
     });
-    const deleteRoute = router.delete({
+    const deleteBaseRoute = router.delete({
       path: "/delete",
       handler: () => new Response("DELETE"),
     });
 
     assert(router.routes.length === 4);
-    assert(getRoute.method === "GET");
-    assert(postRoute.method === "POST");
-    assert(putRoute.method === "PUT");
-    assert(deleteRoute.method === "DELETE");
+    assert(getBaseRoute.method === "GET");
+    assert(postBaseRoute.method === "POST");
+    assert(putBaseRoute.method === "PUT");
+    assert(deleteBaseRoute.method === "DELETE");
   });
 
   await t.step("Params correctly stored", () => {
@@ -38,15 +38,15 @@ Deno.test("ROUTER: HttpRouter", async (t) => {
   });
 
   await t.step("params discovered in RequestContext creation", async () => {
-    const newRouter = new HttpRouter();
+    const newBaseRouter = new HttpRouter();
 
-    newRouter.addRoute("/hello/:id/world/:name", (ctx) => {
+    newBaseRouter.addRoute("/hello/:id/world/:name", (ctx) => {
       return new Response(
         JSON.stringify({ id: ctx.params["id"], name: ctx.params["name"] })
       );
     });
 
-    const res = await newRouter.handle(
+    const res = await newBaseRouter.handle(
       new Request("http://localhost:7777/hello/123/world/bruno")
     );
     const json = await res.json() as { id: string; name: string };
