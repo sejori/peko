@@ -12,6 +12,7 @@
   "scripts": {
     "build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/reactSSR/dist/pages --external:react --jsx=automatic  --tsconfig-raw={} ./example/reactSSR/src/pages/*.tsx",
     "start": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/main.ts",
+    "start:auth": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/auth.ts",
     "test": "deno test --allow-read --allow-net",
     "profile:deno": "deno run --allow-read --allow-net scripts/deno/profile.ts",
     "profile:bun": "bun run scripts/bun/profile.ts",

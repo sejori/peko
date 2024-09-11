@@ -4,6 +4,7 @@
 
 // Routers & types
 export * from "./lib/routers/httpRouter.ts";
+export * from "./lib/context.ts";
 export * from "./lib/types.ts";
 
 // Handlers
