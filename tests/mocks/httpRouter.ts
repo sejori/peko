@@ -1,4 +1,4 @@
-import { HttpBaseRouter } from "../../lib/routers/httpBaseRouter.ts";
+import { HttpRouter } from "../../lib/routers/httpRouter.ts";
 import {
   testMiddleware2,
   testMiddleware3,
@@ -6,8 +6,8 @@ import {
   testMiddleware1,
 } from "./middleware.ts";
 
-export const mockHttpBaseRouter = () => {
-  const router = new HttpBaseRouter();
+export const testHttpRouter = () => {
+  const router = new HttpRouter();
   router.addRoute(
     "/test",
     [testMiddleware1, testMiddleware2, testMiddleware3],
