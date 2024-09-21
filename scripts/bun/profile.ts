@@ -1,7 +1,7 @@
 import Profiler from "../../lib/utils/Profiler.ts";
-import { getTestRouter } from "../../tests/mocks/middleware.ts";
+import { testHttpRouter } from "../../tests/mocks/httpRouter.ts";
 
-const testRouter = getTestRouter();
+const testRouter = testHttpRouter();
 const server = Bun.serve({
   port: 8080,
   fetch(req) {
