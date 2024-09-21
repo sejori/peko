@@ -1,5 +1,6 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { Router, RequestContext } from "../../lib/Router.ts";
+import { RequestContext } from "../../lib/context.ts";
+import { BaseRouter } from "../../lib/routers/_Router.ts";
 import { Cascade } from "../../lib/utils/Cascade.ts";
 import {
   testMiddleware1,
@@ -7,9 +8,10 @@ import {
   testMiddleware3,
   testHandler,
 } from "../../tests/mocks/middleware.ts";
+import { Middleware } from "../../mod.ts";
 
 Deno.test("UTIL: Cascade", async (t) => {
-  const testServer = new Router();
+  const testServer = new BaseRouter();
   const testContext = new RequestContext(
     testServer,
     new Request("http://localhost")
@@ -25,7 +27,7 @@ Deno.test("UTIL: Cascade", async (t) => {
   const result = await cascade.run();
 
   await t.step("promisify works", () => {
-    const testMW = () => new Response("hello");
+    const testMW: Middleware = () => new Response("hello");
     const testMWProm = Cascade.promisify(testMW);
     assert(testMWProm(testContext, () => {}) instanceof Promise);
   });

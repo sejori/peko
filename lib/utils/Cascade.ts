@@ -1,6 +1,9 @@
-import { RequestContext } from "../Router.ts";
-import { Middleware, Result, Next } from "../types.ts";
+import { RequestContext } from "../context.ts";
+import { Middleware, Result, Next, Handler } from "../types.ts";
 
+export type PromiseHandler = (
+  ctx: RequestContext,
+) => Promise<Response>;
 export type PromiseMiddleware = (
   ctx: RequestContext,
   next: Next
@@ -15,7 +18,9 @@ export class Cascade {
 
   constructor(public ctx: RequestContext, public middleware: Middleware[]) {}
 
-  static promisify(fcn: Middleware): PromiseMiddleware {
+  static promisify(fcn: Handler): PromiseHandler
+  static promisify(fcn: Middleware): PromiseMiddleware
+  static promisify(fcn: Handler | Middleware): PromiseHandler | PromiseMiddleware {
     return fcn.constructor.name === "AsyncFunction"
       ? (fcn as PromiseMiddleware)
       : (ctx, next) =>

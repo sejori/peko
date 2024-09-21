@@ -7,4 +7,3 @@ ENVIRONMENT = 'production'
 
 [env.dev.vars]
 ENVIRONMENT = 'dev'
-

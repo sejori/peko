@@ -1,11 +1,12 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { Router, RequestContext } from "../../lib/Router.ts";
+import { RequestContext } from "../../lib/context.ts";
+import { BaseRouter } from "../../lib/routers/_Router.ts";
 import { cacher } from "../../lib/middleware/cacher.ts";
 import { testHandler } from "../mocks/middleware.ts";
 import { CacheItem, defaultKeyGen } from "../../lib/utils/CacheItem.ts";
 
 Deno.test("MIDDLEWARE: Cacher", async (t) => {
-  const router = new Router();
+  const router = new BaseRouter();
   const successString = "Success!";
   const testData = {
     foo: "bar",
@@ -63,12 +64,12 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
     assert(ctx_custom.state.responseFromCache);
     assert(ctx_custom.state.foo === testData.foo);
 
-    const default_body1 = await default_response1?.text();
-    const default_body2 = await default_response2?.text();
+    const default_body1 = default_response1 && await default_response1.text();
+    const default_body2 = default_response2 && await default_response2.text();
     assert(default_body1 === successString && default_body2 === successString);
 
-    const custom_body1 = await custom_response1?.text();
-    const custom_body2 = await custom_response2?.text();
+    const custom_body1 = custom_response1 && await custom_response1.text();
+    const custom_body2 = custom_response2 && await custom_response2.text();
     assert(custom_body1 === successString);
     assert(custom_body2 === successString);
   });
@@ -79,7 +80,7 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
       ...testData,
     });
     const response = await customCacher(ctx, () => new Response(successString));
-    const body = await response?.text();
+    const body = response && await response.text();
 
     assert(!ctx.state.responseFromCache && ctx.state.foo === testData.foo);
     assert(body === successString);
@@ -94,9 +95,9 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
     assert(memRes);
 
     const testJSON = await testRes.json();
-    const memJSON2 = await memRes.json();
+    const memJSON2 = memRes && await memRes.json();
 
-    assert(testJSON.foo === memJSON2.foo);
+    assert(testJSON["foo"] === memJSON2["foo"]);
   });
 
   await t.step("return 304 with matching ETAG", async () => {

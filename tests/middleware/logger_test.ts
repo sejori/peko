@@ -1,12 +1,13 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { Router, RequestContext } from "../../lib/Router.ts";
+import { RequestContext } from "../../lib/context.ts";
+import { BaseRouter } from "../../lib/routers/_Router.ts";
 import { logger } from "../../lib/middleware/logger.ts";
 
 Deno.test("MIDDLEWARE: Logger", async (t) => {
   const successString = "Success!";
 
   let logOutput: unknown;
-  const server = new Router();
+  const server = new BaseRouter();
 
   const testData = {
     foo: "bar",
