@@ -1,7 +1,7 @@
 import * as Peko from "../../mod.ts"; // "https://deno.land/x/peko/mod.ts"
 
 const html = String;
-const router = new Peko.Router();
+const router = new Peko.HttpRouter();
 const crypto = new Peko.Crypto("SUPER_SECRET_KEY_123"); // <-- replace from env
 const user = {
   // <-- replace with db / auth provider query

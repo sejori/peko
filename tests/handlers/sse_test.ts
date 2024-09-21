@@ -1,9 +1,10 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { Router, RequestContext } from "../../lib/Router.ts";
+import { RequestContext } from "../../lib/context.ts";
+import { BaseRouter } from "../../lib/routers/_Router.ts";
 import { sse } from "../../lib/handlers/sse.ts";
 
 Deno.test("HANDLER: Server-sent events", async (t) => {
-  const router = new Router();
+  const router = new BaseRouter();
   const ctx = new RequestContext(router, new Request("http://localhost"));
   const eventTarget = new EventTarget();
   const decoder = new TextDecoder();

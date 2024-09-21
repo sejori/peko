@@ -1,11 +1,4 @@
-import { RequestContext } from "./Router.ts";
-
-export interface Route {
-  path: `/${string}`;
-  method?: "GET" | "POST" | "PUT" | "DELETE";
-  middleware?: Middleware[] | Middleware;
-  handler: Handler;
-}
+import { RequestContext } from "./context.ts";
 
 export type Result = void | Response | undefined;
 export type Next = () => Promise<Result> | Result;

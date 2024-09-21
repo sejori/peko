@@ -2,8 +2,9 @@
  * Featherweight apps on the edge
  */
 
-// Core classes, functions & types
-export * from "./lib/Router.ts";
+// Routers & types
+export * from "./lib/routers/httpRouter.ts";
+export * from "./lib/context.ts";
 export * from "./lib/types.ts";
 
 // Handlers
@@ -22,6 +23,3 @@ export * from "./lib/utils/Cascade.ts";
 export * from "./lib/utils/Crypto.ts";
 export * from "./lib/utils/helpers.ts";
 export * from "./lib/utils/Profiler.ts";
-
-import { Router } from "./lib/Router.ts";
-export default Router;

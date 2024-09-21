@@ -1,4 +1,4 @@
-import { Router, logger, cacher } from "../../mod.ts"; //"https://deno.land/x/peko/mod.ts"
+import { HttpRouter, logger, cacher } from "../../mod.ts"; //"https://deno.land/x/peko/mod.ts"
 import { reactHandler } from "./handlers/react.handler.ts";
 import { githubHandler } from "./handlers/github.handler.ts";
 import { reqTime } from "./middleware/reqTime.middleware.ts";
@@ -7,7 +7,7 @@ import { parrotHandler } from "./handlers/parrot.handler.ts";
 import About from "./src/pages/About.tsx";
 import Home from "./src/pages/Home.tsx";
 
-const router = new Router();
+const router = new HttpRouter();
 router.use(logger(console.log));
 
 // SSR, with cache because static page

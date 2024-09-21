@@ -1,9 +1,9 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { Router } from "../../lib/Router.ts";
+import { HttpRouter } from "../../lib/routers/httpRouter.ts";
 import { Profiler } from "../../lib/utils/Profiler.ts";
 
 Deno.test("UTIL: Profiler", async (t) => {
-  const router = new Router();
+  const router = new HttpRouter();
 
   router.addRoute("/hello", () => {
     return new Response("Hello, World!");
