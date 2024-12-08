@@ -1,6 +1,6 @@
 {
   "name": "@sejori/peko",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Featherweight apps on the edge 🐣⚡",
   "main": "mod.ts",
   "directories": {
@@ -33,15 +33,13 @@
     "url": "https://github.com/sejori/peko/issues"
   },
   "homepage": "https://github.com/sejori/peko#readme",
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240718.0",
+    "@cloudflare/workers-types": "^4.20241202.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "esbuild": "^0.23.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "ts-node": "^10.9.2",
     "wrangler": "^3.65.1"
   }
