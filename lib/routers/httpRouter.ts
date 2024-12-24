@@ -5,7 +5,7 @@ import { BaseRoute, BaseRouter, BaseRouteConfig } from "./_Router.ts";
 export interface HttpRouteConfig<S extends object = object> extends BaseRouteConfig<S> {
   path: `/${string}`;
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-  handler: Handler<S>;
+  handler?: Handler<S>;
 }
 
 export class HttpRoute<S extends object = object> extends BaseRoute<S> {
