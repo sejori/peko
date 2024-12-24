@@ -55,7 +55,7 @@ export class HttpRouter<
 > extends BaseRouter<S, Config, R> {
   Route = HttpRoute<S>;
 
-  constructor(public state?: S, public middleware: Middleware[] = [], public routes: R[] = []) {
+  constructor(public state?: S, public middleware: Middleware<S>[] = [], public routes: R[] = []) {
     super(state, middleware, routes);
   }
 
