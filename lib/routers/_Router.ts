@@ -39,7 +39,7 @@ export class BaseRouter<
   Route = BaseRoute<S>;
 
   constructor(
-    public state: S,
+    public state?: S,
     public middleware: Middleware<S>[] = [],
     public routes: R[] = [] // <- use this as a hashmap for routes
   ) {}
