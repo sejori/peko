@@ -49,13 +49,13 @@ export class HttpRoute<S extends object = object> extends BaseRoute<S> {
 }
 
 export class HttpRouter<
-  S extends object = object,
+  S extends object,
   Config extends HttpRouteConfig<S> = HttpRouteConfig<S>,
   R extends HttpRoute<S> = HttpRoute<S>
 > extends BaseRouter<S, Config, R> {
   Route = HttpRoute<S>;
 
-  constructor(public state: S, public middleware: Middleware[] = [], public routes: R[] = []) {
+  constructor(public state?: S, public middleware: Middleware[] = [], public routes: R[] = []) {
     super(state, middleware, routes);
   }
 
