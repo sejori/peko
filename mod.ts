@@ -3,7 +3,7 @@
  */
 
 // Routers & types
-export * from "./lib/routers/httpRouter.ts";
+export * from "./lib/http/HttpRouter.ts";
 export * from "./lib/context.ts";
 export * from "./lib/types.ts";
 
@@ -13,9 +13,9 @@ export * from "./lib/handlers/sse.ts";
 export * from "./lib/handlers/ssr.ts";
 
 // Middlewares
-export * from "./lib/middleware/authenticator.ts";
-export * from "./lib/middleware/cacher.ts";
-export * from "./lib/middleware/logger.ts";
+export * from "./lib/core/middleware/auth.ts";
+export * from "./lib/core/middleware/cache.ts";
+export * from "./lib/core/middleware/log.ts";
 
 // Utils
 export * from "./lib/utils/CacheItem.ts";
