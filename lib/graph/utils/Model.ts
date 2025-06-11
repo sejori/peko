@@ -1,12 +1,12 @@
 import { Constructor, Field, FieldInterface } from "./Field.ts";
 import { ValidationError } from "./ValidationError.ts";
 
-export type Schema = {
+export type Fields = {
   [key: string]: ReturnType<typeof Field>;
 };
 
-type InferFromSchema<TSchema extends Schema> = {
-  [K in keyof TSchema]: TSchema[K] extends FieldInterface<infer C, infer N>
+type InferFromFields<TFields extends Fields> = {
+  [K in keyof TFields]: TFields[K] extends FieldInterface<infer C, infer N>
     ? C extends Constructor<infer U>[] 
       ? N extends true 
         ? U[] | null
@@ -19,14 +19,14 @@ type InferFromSchema<TSchema extends Schema> = {
     : never
 };
 
-export function Model<TSchema extends Schema>(schema: TSchema) {
+export function Model<TFields extends Fields>(schema: TFields) {
   return class ModelClass {
     static schema = schema;
     _errors: {
       [key: string]: ValidationError[];
     } = {};
     
-    constructor(input: InferFromSchema<TSchema>) {
+    constructor(input: InferFromFields<TFields>) {
       for (const key in schema) {
         const fieldType = schema[key];
         const inputValue = input[key];
@@ -41,11 +41,13 @@ export function Model<TSchema extends Schema>(schema: TSchema) {
       }
     }
   } as {
-    new (input: InferFromSchema<TSchema>): {
+    new (input: InferFromFields<TFields>): {
       _errors: {
         [key: string]: ValidationError[];
       };
-    } & InferFromSchema<TSchema>;
-    schema: TSchema;
+    } & InferFromFields<TFields>;
+    schema: TFields;
   };
 }
+
+export type ModelType = ReturnType<typeof Model>[];

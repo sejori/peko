@@ -11,6 +11,7 @@ class PublicUser extends Model({
     })
   }),
   followsIds: Field([String], {
+    hidden: true,
     validator: (value) => ({
       valid: value.length > 3,
       message: "Username must be longer than 3 characters"

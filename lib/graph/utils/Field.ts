@@ -1,3 +1,4 @@
+import { RequestContext } from "../../core/context.ts";
 import { Model } from "./Model.ts";
 import { ValidationError } from "./ValidationError.ts";
 
@@ -7,6 +8,7 @@ export type Constructor<O = any> = new (...args: any[]) => O;
 export interface FieldOptions<T extends Constructor<unknown> | Constructor<unknown>[]> {
   description?: string;
   nullable?: boolean;
+  hidden?: boolean;
   defaultValue?: InstanceType<T extends Constructor<unknown>[] ? T[0] : T>;
   validator?: (
     value: InstanceType<T extends Constructor<unknown>[] ? T[0] : T>
@@ -123,6 +125,7 @@ export type Resolver<
   T extends Constructor | Constructor[],
   Nullable extends boolean = false
 > = (
+  ctx: RequestContext
 ) => Promise<
   Nullable extends true
     ? T extends Constructor[]
