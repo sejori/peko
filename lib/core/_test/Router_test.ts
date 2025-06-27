@@ -1,5 +1,5 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-import { BaseRouter } from "../BaseRouter.ts";
+import { Route, Router } from "../Router.ts";
 import {
   testMiddleware2,
   testMiddleware3,
@@ -9,24 +9,25 @@ import {
 } from "./mocks/middleware.ts";
 
 Deno.test("ROUTER: BaseRouter managing routes", async (t) => {
-  const router = new BaseRouter<CascadeTestContext>();
+  const router = new Router<CascadeTestContext>();
+  const addedRoutes: Route<CascadeTestContext>[] = [];
 
   await t.step(
     "routes added with full route and string arg options",
     async () => {
-      router.addRoute("route1", testHandler);
-      router.addRoute("route2", testMiddleware1, testHandler);
-      router.addRoute("route3", {
+      addedRoutes.push(router.addRoute("route1", testHandler));
+      addedRoutes.push(router.addRoute("route2", testMiddleware1, testHandler));
+      addedRoutes.push(router.addRoute("route3", {
         middleware: [testMiddleware1, testMiddleware2],
         handler: testHandler,
-      })
-      router.addRoute(
+      }))
+      addedRoutes.push(router.addRoute(
         "route4",
         [testMiddleware1, testMiddleware2],
         testHandler
-      );
+      ));
 
-      assert(router.routes.length === 4);
+      assert(Object.keys(router.routes).length === 4);
 
       const request1 = new Request("http://localhost:7777/route1");
       const request2 = new Request("http://localhost:7777/route2");
@@ -46,33 +47,35 @@ Deno.test("ROUTER: BaseRouter managing routes", async (t) => {
   );
 
   await t.step("routes removed", () => {
-    router.removeRoute("route1");
-    router.removeRoute("route2");
-    router.removeRoute("route3");
-    router.removeRoute("route4");
+    router.removeRoute(addedRoutes[0].routeKey);
+    router.removeRoute(addedRoutes[1].routeKey);
+    router.removeRoute(addedRoutes[2].routeKey);
+    router.removeRoute(addedRoutes[3].routeKey);
 
-    assert(router.routes.length === 0);
+    assert(Object.keys(router.routes).length === 0);
   });
 
   await t.step("routers on server can be subsequently editted", () => {
-    const aBaseRouter = new BaseRouter<CascadeTestContext>();
-    aBaseRouter.addRoutes([
+    const aBaseRouter = new Router<CascadeTestContext>();
+    const routes = aBaseRouter.addRoutes([
       { path: "route", middleware: [], handler: testHandler },
       { path: "route2", handler: testHandler },
       { path: "route3", handler: testHandler },
     ]);
 
+    const firstRouteKey = routes[0].routeKey;
+
     aBaseRouter.use(aBaseRouter.middleware);
 
-    aBaseRouter.removeRoute("route");
+    aBaseRouter.removeRoute(routes[0].routeKey);
 
-    assert(!aBaseRouter.routes.find((route) => route.path === "route"));
-    assert(aBaseRouter.routes.length === 2);
+    assert(!aBaseRouter.routes[firstRouteKey]);
+    assert(Object.keys(router.routes).length === 2);
   });
 });
 
 Deno.test("ROUTER: BaseRouter - request handling", async (t) => {
-  const router = new BaseRouter<CascadeTestContext>();
+  const router = new Router<CascadeTestContext>();
   router.middleware = [];
 
   await t.step("no route found triggers basic 404", async () => {

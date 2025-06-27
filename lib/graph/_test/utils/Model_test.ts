@@ -1,6 +1,7 @@
 import { assertEquals } from "jsr:@std/assert";
 import { Field, ResolvedField } from "../../utils/Field.ts";
 import { Model } from "../../utils/Model.ts";
+import { RequestContext } from "../../../core/context.ts";
 
 class PublicUser extends Model({
   id: Field(String),
@@ -71,7 +72,8 @@ Deno.test({
     });
     assertEquals(menu.summary, "Dinner Menu (2 portions)");
 
-    const followers = menu.user.follows.resolve();
+    const ctx = new RequestContext(new Request("http://localhost:7777"));
+    const followers = menu.user.follows.resolve(ctx);
     
     assertEquals(followers, Promise.resolve([
       new PublicUser({ id: "test1", username: "Usertest1", followsIds: ["test0"] }),

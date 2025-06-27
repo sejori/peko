@@ -1,7 +1,7 @@
 import { Middleware, Handler } from "../../types.ts";
-import { BaseState } from "../../context.ts";
+import { DefaultState } from "../../context.ts";
 
-export interface CascadeTestContext extends BaseState {
+export interface CascadeTestContext extends DefaultState {
   middleware1: {
     start: number;
     end?: number;

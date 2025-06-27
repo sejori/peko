@@ -1,15 +1,15 @@
 import { RequestContext } from "../core/context.ts";
 import { Middleware, Handler } from "../core/types.ts";
-import { BaseRoute, BaseRouter, BaseRouteConfig } from "../core/BaseRouter.ts";
-import { BaseState } from "../core/context.ts";
+import { Route, Router, RouteConfig, AddRouteOverloads } from "../core/Router.ts";
+import { DefaultState } from "../core/context.ts";
 
-export interface HttpRouteConfig<S extends BaseState = BaseState> extends BaseRouteConfig<S> {
+export interface HttpRouteConfig<S extends DefaultState = DefaultState> extends RouteConfig<S> {
   path: `/${string}`;
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   handler: Handler<S>;
 }
 
-export class HttpRoute<S extends BaseState = BaseState> extends BaseRoute<S> {
+export class HttpRoute<S extends DefaultState = DefaultState> extends Route<S> {
   declare path: `/${string}`;
   declare method: HttpRouteConfig<S>["method"];
 
@@ -50,45 +50,39 @@ export class HttpRoute<S extends BaseState = BaseState> extends BaseRoute<S> {
 }
 
 export class HttpRouter<
-  S extends BaseState = BaseState,
+  S extends DefaultState = DefaultState,
   Config extends HttpRouteConfig<S> = HttpRouteConfig<S>,
   R extends HttpRoute<S> = HttpRoute<S>
-> extends BaseRouter<S, Config, R> {
+> extends Router<S, Config, R> {
   override Route = HttpRoute<S>;
 
   constructor(
     public override state?: S, 
     public override middleware: Middleware<S>[] = [], 
-    public override routes: R[] = []
+    public override routes: Record<string, R> = {}
   ) {
     super(state, middleware, routes);
   }
 
-  get: typeof this.addRoute = function () {
-    // @ts-ignore supply overload args
-    const newRoute = this.addRoute(...arguments);
-    newRoute.method = "GET";
-    return newRoute;
-  };
+  private createMethod(method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE") {
+    return (
+        arg1: Config | Config["path"],
+        arg2?: Middleware<S> | Middleware<S>[] | Omit<Config, "path"> | Handler<S>,
+        arg3?: Handler<S>
+    ): R => {
+      // deno-lint-ignore no-explicit-any
+        const newRoute = this.addRoute(arg1 as any, arg2 as any, arg3 as any);
+        newRoute.method = method;
+        return newRoute;
+    };
+  }
 
-  post: typeof this.addRoute = function () {
-    // @ts-ignore supply overload args
-    const newRoute = this.addRoute(...arguments);
-    newRoute.method = "POST";
-    return newRoute;
-  };
-
-  put: typeof this.addRoute = function () {
-    // @ts-ignore supply overload args
-    const newRoute = this.addRoute(...arguments);
-    newRoute.method = "PUT";
-    return newRoute;
-  };
-
-  delete: typeof this.addRoute = function () {
-    // @ts-ignore supply overload args
-    const newRoute = this.addRoute(...arguments);
-    newRoute.method = "DELETE";
-    return newRoute;
-  };
+  GET = this.createMethod("GET") as AddRouteOverloads<S, Config, R>;
+  POST = this.createMethod("POST") as AddRouteOverloads<S, Config, R>;
+  PUT = this.createMethod("PUT") as AddRouteOverloads<S, Config, R>;
+  PATCH = this.createMethod("PATCH") as AddRouteOverloads<S, Config, R>;
+  DELETE = this.createMethod("DELETE") as AddRouteOverloads<S, Config, R>;
 }
+
+const test = new HttpRouter();
+test.GET('/test', () => new Response("GET response"));

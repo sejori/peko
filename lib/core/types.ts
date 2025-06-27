@@ -1,14 +1,14 @@
-import { BaseState, RequestContext } from "./context.ts";
+import { DefaultState, RequestContext } from "./context.ts";
 
 export type Result = void | Response | undefined;
 export type Next = () => Promise<Result> | Result;
 
-export type Middleware<S extends BaseState = BaseState> = (
+export type Middleware<S extends DefaultState = DefaultState> = (
   ctx: RequestContext<S>,
   next: Next
 ) => Promise<Result> | Result;
 
-export type Handler<S extends BaseState = BaseState> = 
+export type Handler<S extends DefaultState = DefaultState> = 
   (ctx: RequestContext<S>) => Promise<Response> | Response;
 export type HandlerOptions = { headers?: Headers };
 
