@@ -27,21 +27,20 @@ export class HttpRoute<S extends DefaultState = DefaultState> extends Route<S> {
   }
 
   override get regexPath() {
-    return this.params
-      ? new RegExp(
-          `^${this.path.replaceAll(/(?<=\/):(.)*?(?=\/|$)/g, "(.)*")}\/?$`
-        )
-      : new RegExp(`^${this.path}\/?$`);
+    const pattern = this.path.replace(
+      /:(\w+)/g, 
+      (_, paramName) => `(?<${paramName}>[^/]+)`
+    );
+    
+    return new RegExp(`^${pattern}/?$`);
   }
 
   override match(ctx: RequestContext<S>): boolean {
-    if (
-      this.regexPath.test(ctx.url.pathname) &&
-      this.method === ctx.request.method
-    ) {
-      const pathBits = ctx.url.pathname.split("/");
-      for (const param in this.params) {
-        ctx.params[param] = pathBits[this.params[param]];
+    const match = this.regexPath.exec(ctx.url.pathname);
+    
+    if (match && this.method === ctx.request.method) {
+      if (match.groups) {
+        Object.assign(ctx.params, match.groups);
       }
       return true;
     }

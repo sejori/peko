@@ -72,22 +72,20 @@ export class Router<
    */
   public async handle(request: Request): Promise<Response> {
     const ctx = new RequestContext(request, this.state);
-    const middlewareRes = await new Cascade<S>(ctx, this.middleware).run();
-    if (middlewareRes) return middlewareRes;
+    const middleware = [...this.middleware];
 
     for (const routeKey in this.routes) {
       const route = this.routes[routeKey];
       if (route.match(ctx)) {
-        const cascade = new Cascade<S>(ctx, [
+        middleware.push(
           ...route.middleware,
           ...(route.handler ? [route.handler] : []),
-        ]);
-        const routeRes = await cascade.run();
-        if (routeRes) return routeRes;
+        );
       }
     }
-
-    return new Response("", { status: 404 })
+    
+    const res = await new Cascade(ctx, middleware).run();
+    return res ? res : new Response("", { status: 404 });
   }
 
   /**

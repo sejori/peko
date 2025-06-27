@@ -1,6 +1,6 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import { HttpRouter } from "../HttpRouter.ts";
-import { DefaultState } from "../../core/context.ts";
+import { DefaultState, RequestContext } from "../../core/context.ts";
 
 
 Deno.test("ROUTER: HttpRouter", async (t) => {
@@ -64,9 +64,9 @@ Deno.test("ROUTER: HttpRouter", async (t) => {
     const router = new HttpRouter();
     const route = router.GET("/hello/:id/world/:name", () => new Response("Hi!"));
 
-    assert(route.regexPath.test("/hello/123/world/bruno"));
-    assert(!route.regexPath.test("/hello/123/world/"));
-    assert(!route.regexPath.test("/hello/123/world/bruno/extra"));
+    assert(route.match(new RequestContext(new Request("http://localhost/hello/123/world/bruno"))));
+    assert(!route.match(new RequestContext(new Request("http://localhost/hello/123/world/"))));
+    assert(!route.match(new RequestContext(new Request("http://localhost/hello/123/world/bruno/extra"))));
   });
 
   await t.step("Class based declaration works", () => {

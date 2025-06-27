@@ -8,7 +8,7 @@ import {
   CascadeTestContext,
 } from "./mocks/middleware.ts";
 
-Deno.test("ROUTER: BaseRouter managing routes", async (t) => {
+Deno.test("ROUTER: Router managing routes", async (t) => {
   const router = new Router<CascadeTestContext>();
   const addedRoutes: Route<CascadeTestContext>[] = [];
 
@@ -56,21 +56,17 @@ Deno.test("ROUTER: BaseRouter managing routes", async (t) => {
   });
 
   await t.step("routers on server can be subsequently editted", () => {
-    const aBaseRouter = new Router<CascadeTestContext>();
-    const routes = aBaseRouter.addRoutes([
+    const aRouter = new Router<CascadeTestContext>();
+    const routes = aRouter.addRoutes([
       { path: "route", middleware: [], handler: testHandler },
       { path: "route2", handler: testHandler },
       { path: "route3", handler: testHandler },
     ]);
 
-    const firstRouteKey = routes[0].routeKey;
+    aRouter.removeRoute(routes[0].routeKey);
 
-    aBaseRouter.use(aBaseRouter.middleware);
-
-    aBaseRouter.removeRoute(routes[0].routeKey);
-
-    assert(!aBaseRouter.routes[firstRouteKey]);
-    assert(Object.keys(router.routes).length === 2);
+    assert(!aRouter.routes[routes[0].routeKey]);
+    assert(Object.keys(aRouter.routes).length === 2);
   });
 });
 
@@ -98,19 +94,20 @@ Deno.test("ROUTER: BaseRouter - request handling", async (t) => {
   });
 
   await t.step("custom 500", async () => {
-    router.use(async (_, next) => {
+    const aRouter = new Router();
+    aRouter.use(async (_, next) => {
       try {
         await next();
       } catch (_) {
         return new Response("Error! :(", { status: 500 });
       }
     });
-    router.addRoute("/error-test", () => {
+    aRouter.addRoute("/error-test", () => {
       throw new Error("Oopsie!");
     });
 
     const request = new Request("http://localhost:7777/error-test");
-    const response = await router.handle(request);
+    const response = await aRouter.handle(request);
 
     assert(response.status === 500);
     assert((await response.text()) === "Error! :(");
