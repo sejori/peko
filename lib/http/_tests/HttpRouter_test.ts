@@ -1,6 +1,12 @@
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import { HttpRouter } from "../HttpRouter.ts";
 import { DefaultState, RequestContext } from "../../core/context.ts";
+import { auth, AuthState } from "../../core/middleware/auth.ts";
+import { cache } from "../../core/middleware/cache.ts";
+import { Krypto } from "../../core/utils/Krypto.ts";
+import { HttpRouterFactory } from "../HttpRouter.ts";
+import { Middleware } from "../../core/types.ts";
+import { CacheState } from "../../../mod.ts";
 
 
 Deno.test("ROUTER: HttpRouter", async (t) => {
@@ -54,7 +60,7 @@ Deno.test("ROUTER: HttpRouter", async (t) => {
     });
 
     const res = await newBaseRouter.handle(
-      new Request("http://localhost:7777/hello/123/world/bruno")
+      new Request("http://localhost:7777/hello/123/world/mylena")
     );
     const json = await res.json() as { id: string; name: string };
     assert(json.id === "123" && json.name === "bruno");
@@ -69,9 +75,50 @@ Deno.test("ROUTER: HttpRouter", async (t) => {
     assert(!route.match(new RequestContext(new Request("http://localhost/hello/123/world/bruno/extra"))));
   });
 
-  await t.step("Class based declaration works", () => {
-    class MyRouter extends HttpRouter {
-      hello = this.GET("/hello", () => new Response("Hello!"));
+  await t.step("Class based declaration", () => {
+    const TestMiddleware: Middleware<AuthState & DefaultState> = (ctx) => {
+      ctx.state.userPosts = ctx.state.auth ? [ctx.state.auth.person + "'s post"] : [];
+    };
+
+    class MyRouter extends HttpRouter<AuthState & CacheState> {
+      constructor() {
+        super([
+          auth(new Krypto('test123')), 
+          cache()
+        ]);
+      }
+
+      hello = this.GET("/hello", [TestMiddleware], (ctx) => {
+        ctx.state.auth = { person: "John Doe" };
+        return new Response("Hello!");
+      });
+    }
+
+    const myRouter = new MyRouter();
+    assert(Object.keys(myRouter.routes).length === 1);
+    assert(myRouter.hello.method === "GET");
+  });
+
+  await t.step("Factory-function based declaration", () => {
+    const TestMiddleware: Middleware<AuthState & DefaultState> = (ctx) => {
+      ctx.state.userPosts = ctx.state.auth ? [ctx.state.auth.person + "'s post"] : [];
+    };
+    
+    class MyRouter extends HttpRouterFactory({
+      middleware: [
+        auth(new Krypto('test123')),
+        cache(),
+        // bodyParser(),
+      ]
+    }) {
+      hello = this.GET("/hello", [
+        // validateBody([PublicUser]), 
+        TestMiddleware
+      ], (ctx) => {
+        ctx.state.auth = { person: "John Doe" };
+        ctx.state.hitCache = true;
+        return new Response("Hello!")
+      });
     }
 
     const myRouter = new MyRouter();

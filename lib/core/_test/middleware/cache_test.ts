@@ -104,7 +104,8 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
     const ctx = new RequestContext(
       new Request("http://localhost/static-content?test-thing=hello", {
         headers: new Headers({ "if-none-match": ETag }),
-      })
+      }),
+      { hitCache: false }
     );
 
     const memRes = await customCacher(

@@ -1,6 +1,5 @@
 export interface DefaultState {
-  auth: Record<string, unknown> | null;
-  hitCache: boolean;
+  [key: string]: unknown;
 }
 
 export class RequestContext<S extends DefaultState = DefaultState> {
@@ -9,10 +8,7 @@ export class RequestContext<S extends DefaultState = DefaultState> {
 
   constructor(
     public request: Request, 
-    public state: S = {
-      auth: null,
-      hitCache: false
-    } as S
+    public state: S = {} as S
   ) {
     this.url = new URL(request.url);
   }

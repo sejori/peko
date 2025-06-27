@@ -1,5 +1,5 @@
 import { RequestContext } from "../core/context.ts";
-import { Middleware, Handler } from "../core/types.ts";
+import { Middleware, Handler, CombineMiddlewareStates } from "../core/types.ts";
 import { Route, Router, RouteConfig, AddRouteOverloads } from "../core/Router.ts";
 import { DefaultState } from "../core/context.ts";
 
@@ -56,11 +56,11 @@ export class HttpRouter<
   override Route = HttpRoute<S>;
 
   constructor(
-    public override state?: S, 
     public override middleware: Middleware<S>[] = [], 
+    public override state?: S, 
     public override routes: Record<string, R> = {}
   ) {
-    super(state, middleware, routes);
+    super(middleware, state, routes);
   }
 
   private createMethod(method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE") {
@@ -83,5 +83,20 @@ export class HttpRouter<
   DELETE = this.createMethod("DELETE") as AddRouteOverloads<S, Config, R>;
 }
 
-const test = new HttpRouter();
-test.GET('/test', () => new Response("GET response"));
+export function HttpRouterFactory<
+  M extends Middleware<DefaultState>[] = []
+>(
+  opts: {
+    middleware?: [...M];
+    state?: CombineMiddlewareStates<M>;
+  } = {}
+) {
+  return class extends HttpRouter<CombineMiddlewareStates<M>> {
+    constructor() {
+      super(
+        opts.middleware as unknown as  Middleware<CombineMiddlewareStates<M>>[] || [],
+        opts.state
+      );
+    }
+  };
+}

@@ -1,6 +1,10 @@
 import { Krypto } from "../utils/Krypto.ts";
 import { Middleware } from "../types.ts";
 
+export type AuthState = {
+  auth: Record<string, unknown> | null;
+};
+
 /**
  * Auth middleware, uses Crypto utility class to verify JWTs
  * @param crypto: Crypto instance to be used
@@ -9,7 +13,7 @@ import { Middleware } from "../types.ts";
 export function auth(
   krypto: Krypto,
   opts?: { cookie: string }
-): Middleware {
+): Middleware<AuthState> {
   return async function authMiddleware(ctx, next) {
     let token = opts
       ? ctx.request.headers.get("Cookies") //!.cookie // <- fix

@@ -1,6 +1,10 @@
 import { CacheItem, defaultKeyGen } from "../utils/CacheItem.ts";
 import { Middleware } from "../../core/types.ts";
 
+export type CacheState = {
+  hitCache: boolean;
+};
+
 interface CacheOptions {
   itemLifetime?: number;
   keyGen?: typeof defaultKeyGen;
@@ -31,7 +35,7 @@ interface CacheOptions {
  * @param cacheOptions: CacheOptions
  * @returns cacheMiddleware: Middleware
  */
-export const cache = (opts?: CacheOptions): Middleware => {
+export const cache = (opts?: CacheOptions): Middleware<CacheState> => {
   const items: CacheItem[] = [];
   const getKey = opts && opts.keyGen ? opts.keyGen : defaultKeyGen;
   const getItem = (key: string) =>

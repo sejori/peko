@@ -20,3 +20,12 @@ export type BodyInit =
   | URLSearchParams
   | ReadableStream<Uint8Array>
   | null;
+
+export type CombineMiddlewareStates<M extends Middleware<DefaultState>[]> = 
+  M extends [infer First, ...infer Rest]
+    ? First extends Middleware<infer S>
+      ? Rest extends Middleware<any>[]
+        ? S & CombineMiddlewareStates<Rest>
+        : DefaultState
+    : DefaultState
+  : DefaultState;

@@ -17,7 +17,7 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
   request.headers.set("Authorization", `Bearer ${token}`);
 
   await t.step("Response authorized as expected", async () => {
-    const ctx = new RequestContext(request);
+    const ctx = new RequestContext(request, { auth: null });
     const response = await auth(crypto)(ctx, () => new Response('test'));
 
     assert(response instanceof Response && response.status === 200);
@@ -26,7 +26,7 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
 
   await t.step("Response unauthorized as expected", async () => {
     const noAuthRequest = new Request("https://localhost:7777");
-    const ctx = new RequestContext(noAuthRequest);
+    const ctx = new RequestContext(noAuthRequest, { auth: null });
     await auth(crypto)(ctx, () => new Response('test'));
 
     assert(!ctx.state.auth);
@@ -36,7 +36,7 @@ Deno.test("MIDDLEWARE: Authenticator", async (t) => {
     const request2 = new Request("https://localhost:7777");
     request2.headers.set("Cookies", `Bearer ${token}`);
 
-    const ctx = new RequestContext(request);
+    const ctx = new RequestContext(request, { auth: null });
     const response = await auth(crypto)(ctx, () => new Response('test'));
 
     assert(response instanceof Response && response.status === 200);

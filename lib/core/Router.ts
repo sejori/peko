@@ -60,8 +60,8 @@ export class Router<
   Route = Route<S>;
 
   constructor(
-    public state?: S,
     public middleware: Middleware<S>[] = [],
+    public state?: S,
     public routes: Record<string, R> = {}
   ) {}
 
@@ -177,6 +177,3 @@ export class Router<
     return Object.keys(this.routes).length;
   }
 }
-
-const test = new Router<DefaultState>();
-test.addRoute('test', () => new Response("Hello World"));
