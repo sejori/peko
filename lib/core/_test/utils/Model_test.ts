@@ -1,9 +1,9 @@
 import { assertEquals } from "jsr:@std/assert";
 import { Field, ResolvedField } from "../../utils/Field.ts";
-import { Model } from "../../utils/Model.ts";
-import { RequestContext } from "../../../core/context.ts";
+import { ModelFactory } from "../../utils/Model.ts";
+import { RequestContext } from "../../context.ts";
 
-class PublicUser extends Model({
+class PublicUser extends ModelFactory({
   id: Field(String),
   username: Field(String, {
     validator: (value) => ({
@@ -12,7 +12,6 @@ class PublicUser extends Model({
     })
   }),
   followsIds: Field([String], {
-    hidden: true,
     validator: (value) => ({
       valid: value.length > 3,
       message: "Username must be longer than 3 characters"
@@ -22,7 +21,7 @@ class PublicUser extends Model({
   follows = ResolvedField([PublicUser], {
     nullable: true,
     description: "List of users this user follows",
-    resolve: () => {
+    resolve: (_ctx) => {
       return new Promise(res => res(this.followsIds.map(id => new PublicUser({ 
         id, 
         username: `User${id}`, 
@@ -32,7 +31,7 @@ class PublicUser extends Model({
   });
 }
 
-class Menu extends Model({
+class Menu extends ModelFactory({
   title: Field(String),
 
   content: Field(String, { 

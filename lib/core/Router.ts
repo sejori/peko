@@ -10,22 +10,25 @@ import { Cascade } from "./utils/Cascade.ts";
  */
 export type RouteKey = `${string}-${string}`;
 
-export interface RouteConfig<S extends DefaultState = DefaultState> {
+// deno-lint-ignore no-explicit-any
+export interface RouteConfig<S extends DefaultState = any> {
   path: string;
+  method: string;
   middleware?: Middleware<S> | Middleware<S>[];
   handler?: Handler<S>;
 }
 
 export class Route<S extends DefaultState = DefaultState> {
   path: string;
+  method: string;
   routeKey: RouteKey;
   middleware: Middleware<S>[];
   handler?: Handler<S>;
 
   constructor(routeObj: RouteConfig<S>) {
     this.path = routeObj.path;
-    // this.method = routeObj.method;
-    this.routeKey = `route-${this.path}`;
+    this.method = routeObj.method.toUpperCase();
+    this.routeKey = `${this.method}-${this.path}`;
     this.handler = routeObj.handler && Cascade.promisify(routeObj.handler);
     this.middleware = [routeObj.middleware]
       .flat()
@@ -109,34 +112,38 @@ export class Router<
    * @param arg3?: Handler
    * @returns route: Route - added route object
    */
-  addRoute = ((
-    arg1: Config | Config["path"],
-    arg2?: Middleware<S> | Middleware<S>[] | Omit<Config, "path"> | Handler<S>,
-    arg3?: Handler<S>
-  ): R => {
-    // Implementation using parameters instead of arguments
+  addRoute<C extends RouteConfig>(method: C): R;
+  addRoute<C extends RouteConfig>(method: C["method"], path: C["path"], data: Omit<C, "path" | "method"> | Handler<S>): R;
+  addRoute<C extends RouteConfig>(method: C["method"], path: C["path"], middleware: Middleware<S> | Middleware<S>[], handler: Handler<S>): R;
+  addRoute<C extends RouteConfig>(
+    arg1: C | C["method"],
+    arg2?: C["path"],
+    arg3?: Middleware<S> | Middleware<S>[] | Omit<C, "path"> | Handler<S>,
+    arg4?: Handler<S>
+  ): R {
     const routeObj =
       typeof arg1 !== "string"
         ? arg1
-        : arg3 !== undefined
+        : arg4 !== undefined
         ? {
-            path: arg1,
-            middleware: arg2 as Middleware<S> | Middleware<S>[],
-            handler: arg3,
+            method: arg1,
+            path: arg2 as C["path"],
+            middleware: arg3 as Middleware,
+            handler: arg4,
           }
-        : typeof arg2 === "function"
-        ? { path: arg1, handler: arg2 as Handler<S> }
-        : { path: arg1, ...(arg2 as Omit<Config, "path">) };
+        : typeof arg3 === "function"
+        ? { method: arg1, path: arg2 as string, handler: arg3 as Handler }
+        : { method: arg1, path: arg2 as string, ...(arg3 as Omit<C, "path" | "method">) };
 
     const fullRoute = new this.Route(routeObj);
-    const fullRouteKey = `route-${fullRoute.path}`;
+    const fullRouteKey = fullRoute.routeKey;
     if (this.routes[fullRouteKey]) {
-      throw new Error(`Route with path ${routeObj.path} already exists!`);
+      throw new Error(`Route with key ${fullRouteKey} already exists!`);
     }
 
     this.routes[fullRouteKey] = fullRoute as R;
     return fullRoute as R;
-  }) as AddRouteOverloads<S, Config, R>;
+  };
 
   /**
    * Add Routes

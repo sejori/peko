@@ -5,11 +5,11 @@ import { Profile } from "../../utils/Profile.ts";
 Deno.test("UTIL: Profiler", async (t) => {
   const router = new Router();
 
-  router.addRoute("/hello", () => {
+  router.addRoute("GET", "/hello", () => {
     return new Response("Hello, World!");
   });
 
-  router.addRoute("/goodbye", () => {
+  router.addRoute("GET", "/goodbye", () => {
     return new Response("Goodbye, World!");
   });
 

@@ -1,63 +1,62 @@
-import { RequestContext } from "../../core/context.ts";
+import { RequestContext } from "../context.ts";
 import { Model } from "./Model.ts";
 import { ValidationError } from "./ValidationError.ts";
 
 // deno-lint-ignore no-explicit-any
 export type Constructor<O = any> = new (...args: any[]) => O;
 
-export interface FieldOptions<T extends Constructor<unknown> | Constructor<unknown>[]> {
+export interface FieldOptions<T extends Constructor | Constructor[]> {
   description?: string;
   nullable?: boolean;
-  hidden?: boolean;
-  defaultValue?: InstanceType<T extends Constructor<unknown>[] ? T[0] : T>;
+  defaultValue?: InstanceType<T extends Constructor[] ? T[0] : T>;
   validator?: (
-    value: InstanceType<T extends Constructor<unknown>[] ? T[0] : T>
-  ) => { valid: boolean; message: string };
+    value: InstanceType<T extends Constructor[] ? T[0] : T>
+  ) => { valid: boolean; message?: string };
 }
 
 export interface FieldInterface<
-  T extends Constructor<unknown> | Constructor<unknown>[], 
+  T extends Constructor | Constructor[], 
   Nullable extends boolean
 > {
   new (
     parent: InstanceType<Constructor>,
     name: string,
     input: Nullable extends true 
-      ? InstanceType<T extends Constructor<unknown>[] ? T[0] : T> | null 
-      : InstanceType<T extends Constructor<unknown>[] ? T[0] : T>
+      ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
+      : InstanceType<T extends Constructor[] ? T[0] : T>
   ): {
     value: Nullable extends true 
-    ? InstanceType<T extends Constructor<unknown>[] ? T[0] : T> | null 
-    : InstanceType<T extends Constructor<unknown>[] ? T[0] : T>
+    ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
+    : InstanceType<T extends Constructor[] ? T[0] : T>
     errors: ValidationError[];
   };
   type: T;
   nullable: boolean;
-  defaultValue: InstanceType<T extends Constructor<unknown>[] ? T[0] : T> | undefined;
+  defaultValue: InstanceType<T extends Constructor[] ? T[0] : T> | undefined;
   validator?: (
-    value: InstanceType<T extends Constructor<unknown>[] ? T[0] : T>
+    value: InstanceType<T extends Constructor[] ? T[0] : T>
   ) => { 
     valid: boolean; 
-    message: string 
+    message?: string 
   };
 }
 
-export function Field<T extends Constructor<unknown> | Constructor<unknown>[]>(
+export function Field<T extends Constructor | Constructor[]>(
   type: T
 ): FieldInterface<T, false>;
-export function Field<T extends Constructor<unknown> | Constructor<unknown>[], N extends boolean>(
+export function Field<T extends Constructor | Constructor[], N extends boolean>(
   type: T,
   opts: FieldOptions<T> & { nullable: true }
 ): FieldInterface<T, true>;
-export function Field<T extends Constructor<unknown> | Constructor<unknown>[], N extends boolean>(
+export function Field<T extends Constructor | Constructor[], N extends boolean>(
   type: T,
   opts: FieldOptions<T> & { nullable?: false }
 ): FieldInterface<T, false>;
-export function Field<T extends Constructor<unknown> | Constructor<unknown>[], N extends boolean>(
+export function Field<T extends Constructor | Constructor[], N extends boolean>(
   type: T,
   opts: FieldOptions<T>
 ): FieldInterface<T, boolean>;
-export function Field<T extends Constructor<unknown> | Constructor<unknown>[], N extends boolean>(
+export function Field<T extends Constructor | Constructor[], N extends boolean>(
   type: T, 
   opts: FieldOptions<T> = {}
 ): FieldInterface<T, N> {
@@ -68,21 +67,21 @@ export function Field<T extends Constructor<unknown> | Constructor<unknown>[], N
     static defaultValue = opts.defaultValue;
     static validator = opts.validator;
     value: N extends true 
-      ? InstanceType<T extends Constructor<unknown>[] ? T[0] : T> | null 
-      : InstanceType<T extends Constructor<unknown>[] ? T[0] : T>;
+      ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
+      : InstanceType<T extends Constructor[] ? T[0] : T>;
     errors: ValidationError[] = [];
 
     constructor(
       parent: InstanceType<Constructor>,
       name: string,
       input: N extends true 
-        ? InstanceType<T extends Constructor<unknown>[] ? T[0] : T> | null 
-        : InstanceType<T extends Constructor<unknown>[] ? T[0] : T>,
+        ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
+        : InstanceType<T extends Constructor[] ? T[0] : T>,
     ) {
       if (input) {
         if (opts.validator) {
           const { valid, message } = opts.validator(
-            input as InstanceType<T extends Constructor<unknown>[] ? T[0] : T>
+            input as InstanceType<T extends Constructor[] ? T[0] : T>
           );
           if (!valid) {
             this.errors.push(
@@ -94,19 +93,7 @@ export function Field<T extends Constructor<unknown> | Constructor<unknown>[], N
             );
           }
         }  
-      }
-
-      const singularType = Array.isArray(type) ? type[0] : type as Constructor<unknown>;
-      const fallback = input || opts.defaultValue || null;
-      this.value = (
-        Array.isArray(fallback) 
-          ? fallback.map(v => new singularType(v)) 
-          : new singularType(fallback)
-      ) as N extends true 
-          ? InstanceType<T extends Constructor<unknown>[] ? T[0] : T> | null 
-          : InstanceType<T extends Constructor<unknown>[] ? T[0] : T>;
-      
-      if (!this.value && !opts.nullable) {
+      } else if (!opts.nullable && !opts.defaultValue) {
         this.errors.push(
           new ValidationError(
             `${parent.constructor.name} ${name} field of type ${Array.isArray(type) 
@@ -115,6 +102,16 @@ export function Field<T extends Constructor<unknown> | Constructor<unknown>[], N
           )
         );
       }
+
+      const singularType = Array.isArray(type) ? type[0] : type as Constructor;
+      const fallback = input || opts.defaultValue || null;
+      this.value = (
+        Array.isArray(fallback) 
+          ? fallback.map((v: Constructor) => opts.nullable && v === null ? null : new singularType(v)) 
+          :  opts.nullable && fallback === null ? null : new singularType(fallback)
+      ) as N extends true 
+          ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
+          : InstanceType<T extends Constructor[] ? T[0] : T>;
 
       Object.freeze(this);
     }
@@ -173,7 +170,7 @@ export function ResolvedField<
     static resolve = opts.resolve;
 
     constructor(
-      parent: InstanceType<ReturnType<typeof Model>>,
+      parent: Model,
       name: string,
       input: N extends true 
         ? InstanceType<T extends Constructor[] ? T[0] : T> | null 

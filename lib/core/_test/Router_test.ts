@@ -15,13 +15,14 @@ Deno.test("ROUTER: Router managing routes", async (t) => {
   await t.step(
     "routes added with full route and string arg options",
     async () => {
-      addedRoutes.push(router.addRoute("route1", testHandler));
-      addedRoutes.push(router.addRoute("route2", testMiddleware1, testHandler));
-      addedRoutes.push(router.addRoute("route3", {
+      addedRoutes.push(router.addRoute("TEST", "route1", testHandler));
+      addedRoutes.push(router.addRoute("TEST", "route2", testMiddleware1, testHandler));
+      addedRoutes.push(router.addRoute("TEST", "route3", {
         middleware: [testMiddleware1, testMiddleware2],
         handler: testHandler,
       }))
       addedRoutes.push(router.addRoute(
+        "TEST",
         "route4",
         [testMiddleware1, testMiddleware2],
         testHandler
@@ -58,9 +59,9 @@ Deno.test("ROUTER: Router managing routes", async (t) => {
   await t.step("routers on server can be subsequently editted", () => {
     const aRouter = new Router<CascadeTestContext>();
     const routes = aRouter.addRoutes([
-      { path: "route", middleware: [], handler: testHandler },
-      { path: "route2", handler: testHandler },
-      { path: "route3", handler: testHandler },
+      { method: "ROUTE", path: "route", middleware: [], handler: testHandler },
+      { method: "ROUTE", path: "route2", handler: testHandler },
+      { method: "ROUTE", path: "route3", handler: testHandler },
     ]);
 
     aRouter.removeRoute(routes[0].routeKey);
@@ -102,7 +103,7 @@ Deno.test("ROUTER: BaseRouter - request handling", async (t) => {
         return new Response("Error! :(", { status: 500 });
       }
     });
-    aRouter.addRoute("/error-test", () => {
+    aRouter.addRoute("TEST", "/error-test", () => {
       throw new Error("Oopsie!");
     });
 
@@ -115,6 +116,7 @@ Deno.test("ROUTER: BaseRouter - request handling", async (t) => {
 
   await t.step("all middleware and handlers run", async () => {
     router.addRoute({
+      method: "TEST",
       path: "test",
       middleware: [testMiddleware1, testMiddleware2, testMiddleware3],
       handler: testHandler,

@@ -3,7 +3,8 @@ import { DefaultState, RequestContext } from "./context.ts";
 export type Result = void | Response | undefined;
 export type Next = () => Promise<Result> | Result;
 
-export type Middleware<S extends DefaultState = DefaultState> = (
+// deno-lint-ignore no-explicit-any
+export type Middleware<S extends DefaultState = any> = (
   ctx: RequestContext<S>,
   next: Next
 ) => Promise<Result> | Result;
@@ -21,10 +22,10 @@ export type BodyInit =
   | ReadableStream<Uint8Array>
   | null;
 
-export type CombineMiddlewareStates<M extends Middleware<DefaultState>[]> = 
+export type CombineMiddlewareStates<M extends Middleware[]> = 
   M extends [infer First, ...infer Rest]
     ? First extends Middleware<infer S>
-      ? Rest extends Middleware<any>[]
+      ? Rest extends Middleware[]
         ? S & CombineMiddlewareStates<Rest>
         : DefaultState
     : DefaultState

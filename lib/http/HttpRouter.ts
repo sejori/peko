@@ -1,17 +1,16 @@
 import { RequestContext } from "../core/context.ts";
 import { Middleware, Handler, CombineMiddlewareStates } from "../core/types.ts";
-import { Route, Router, RouteConfig, AddRouteOverloads } from "../core/Router.ts";
+import { Route, Router, RouteConfig } from "../core/Router.ts";
 import { DefaultState } from "../core/context.ts";
 
 export interface HttpRouteConfig<S extends DefaultState = DefaultState> extends RouteConfig<S> {
   path: `/${string}`;
-  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   handler: Handler<S>;
 }
 
 export class HttpRoute<S extends DefaultState = DefaultState> extends Route<S> {
   declare path: `/${string}`;
-  declare method: HttpRouteConfig<S>["method"];
 
   constructor(routeObj: HttpRouteConfig<S>) {
     super(routeObj);
@@ -63,28 +62,104 @@ export class HttpRouter<
     super(middleware, state, routes);
   }
 
-  private createMethod(method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE") {
-    return (
-        arg1: Config | Config["path"],
-        arg2?: Middleware<S> | Middleware<S>[] | Omit<Config, "path"> | Handler<S>,
-        arg3?: Handler<S>
-    ): R => {
-      // deno-lint-ignore no-explicit-any
-        const newRoute = this.addRoute(arg1 as any, arg2 as any, arg3 as any);
-        newRoute.method = method;
-        return newRoute;
-    };
-  }
+  GET(path: Config["path"], middleware: Handler<S>): R;
+  GET<M extends Middleware[]>(
+    path: Config["path"],
+    middleware: [...M],
+    handler: Handler<CombineMiddlewareStates<M>>
+  ): R
+  GET<M extends Middleware[]>(
+    path: Config["path"],
+    middleware: [...M] | Handler<S>,
+    handler?: Handler<CombineMiddlewareStates<M>>
+  ): R {
+    return this.addRoute({
+      method: "GET",
+      path,
+      middleware: handler ? middleware : [],
+      handler: handler ? handler : middleware,
+    } as unknown as Config);
+  };
 
-  GET = this.createMethod("GET") as AddRouteOverloads<S, Config, R>;
-  POST = this.createMethod("POST") as AddRouteOverloads<S, Config, R>;
-  PUT = this.createMethod("PUT") as AddRouteOverloads<S, Config, R>;
-  PATCH = this.createMethod("PATCH") as AddRouteOverloads<S, Config, R>;
-  DELETE = this.createMethod("DELETE") as AddRouteOverloads<S, Config, R>;
+  POST(path: Config["path"], middleware: Handler<S>): R;
+  POST<M extends Middleware[]>(
+    path: Config["path"],
+    middleware: [...M],
+    handler: Handler<CombineMiddlewareStates<M>>
+  ): R
+  POST<M extends Middleware[]>(
+    path: Config["path"],
+    middleware: [...M] | Handler<S>,
+    handler?: Handler<CombineMiddlewareStates<M>>
+  ): R {
+    return this.addRoute({
+      method: "POST",
+      path,
+      middleware: handler ? middleware : [],
+      handler: handler ? handler : middleware,
+    } as unknown as Config);
+  };
+
+  PUT(path: Config["path"], middleware: Handler<S>): R;
+  PUT<M extends Middleware[]>(
+    path: Config["path"],
+    middleware: [...M],
+    handler: Handler<CombineMiddlewareStates<M>>
+  ): R
+  PUT<M extends Middleware[]>(
+    path: Config["path"],
+    middleware: [...M] | Handler<S>,
+    handler?: Handler<CombineMiddlewareStates<M>>
+  ): R {
+    return this.addRoute({
+      method: "PUT",
+      path,
+      middleware: handler ? middleware : [],
+      handler: handler ? handler : middleware,
+    } as unknown as Config);
+  };
+
+  PATCH(path: Config["path"], middleware: Handler<S>): R;
+  PATCH<M extends Middleware[]>(
+    path: Config["path"],
+    middleware: [...M],
+    handler: Handler<CombineMiddlewareStates<M>>
+  ): R
+  PATCH<M extends Middleware[]>(
+    path: Config["path"],
+    middleware: [...M] | Handler<S>,
+    handler?: Handler<CombineMiddlewareStates<M>>
+  ): R {
+    return this.addRoute({
+      method: "PATCH",
+      path,
+      middleware: handler ? middleware : [],
+      handler: handler ? handler : middleware,
+    } as unknown as Config);
+  };
+
+  DELETE(path: Config["path"], middleware: Handler<S>): R;
+  DELETE<M extends Middleware[]>(
+    path: Config["path"],
+    middleware: [...M],
+    handler: Handler<CombineMiddlewareStates<M>>
+  ): R
+  DELETE<M extends Middleware[]>(
+    path: Config["path"],
+    middleware: [...M] | Handler<S>,
+    handler?: Handler<CombineMiddlewareStates<M>>
+  ): R {
+    return this.addRoute({
+      method: "DELETE",
+      path,
+      middleware: handler ? middleware : [],
+      handler: handler ? handler : middleware,
+    } as unknown as Config);
+  };
 }
 
 export function HttpRouterFactory<
-  M extends Middleware<DefaultState>[] = []
+  M extends Middleware[] = []
 >(
   opts: {
     middleware?: [...M];
