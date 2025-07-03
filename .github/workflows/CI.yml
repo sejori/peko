@@ -34,7 +34,7 @@ jobs:
       - name: setup Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.4.X
+          deno-version: v2.4.x
 
       - name: Run profile
         run: pnpm profile:deno
@@ -73,7 +73,7 @@ jobs:
       - name: setup Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.4.X
+          deno-version: v2.4.x
 
       # - name: Verify formatting
       #   run: deno fmt --check
