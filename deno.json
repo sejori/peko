@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["dom", "esnext", "deno.ns"],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "jsxImportSource": "https://esm.sh/react@18.3.1"
   }
 }
