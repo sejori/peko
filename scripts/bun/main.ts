@@ -1,4 +1,4 @@
-import router from "../../example/reactSSR/router.ts";
+import router from "../../examples/reactSSR/router.ts";
 
 declare global {
   interface Process {
@@ -16,6 +16,7 @@ declare global {
 }
 
 router.middleware.unshift((ctx) => {
+  // deno-lint-ignore no-process-global
   ctx.state.env = process.env;
 });
 
