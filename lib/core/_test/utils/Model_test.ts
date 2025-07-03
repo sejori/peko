@@ -1,3 +1,5 @@
+/// <reference lib="deno.ns" />
+
 import { assertEquals } from "jsr:@std/assert";
 import { Field, ResolvedField } from "../../utils/Field.ts";
 import { ModelFactory } from "../../utils/Model.ts";

@@ -1,3 +1,5 @@
+/// <reference lib="deno.ns" />
+
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import { Route, Router } from "../Router.ts";
 import {

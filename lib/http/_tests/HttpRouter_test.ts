@@ -1,3 +1,5 @@
+/// <reference lib="deno.ns" />
+
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import { HttpRouteConfig, HttpRouter } from "../HttpRouter.ts";
 import { DefaultState, RequestContext } from "../../core/context.ts";

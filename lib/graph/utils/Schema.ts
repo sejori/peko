@@ -1,3 +1,5 @@
+/// <reference lib="deno.ns" />
+
 // import { Middleware } from "../../core/types.ts";
 // import { Fields } from "./Model.ts";
 // import { Constructor, Resolver } from "./Field.ts";

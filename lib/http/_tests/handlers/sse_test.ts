@@ -1,3 +1,5 @@
+/// <reference lib="deno.ns" />
+
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import { RequestContext } from "../../../core/context.ts";
 import { sse } from "../../handlers/sse.ts";
