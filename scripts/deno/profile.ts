@@ -18,6 +18,11 @@ testRouter.addRoute({
   ],
   handler: testHandler
 });
+testRouter.addRoute({
+  path: "/bench",
+  method: "TEST",
+  handler: () => new Response("Hello, bench!")
+});
 
 const abortController = new AbortController();
 Deno.serve(

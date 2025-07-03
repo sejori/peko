@@ -18,6 +18,11 @@ testRouter.addRoute({
   ],
   handler: testHandler
 });
+testRouter.addRoute({
+  path: "/bench",
+  method: "TEST",
+  handler: () => new Response("Hello, bench!")
+});
 
 const handleResults = await Profile.run(testRouter, {
   mode: "handle",

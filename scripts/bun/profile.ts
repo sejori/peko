@@ -18,6 +18,11 @@ testRouter.addRoute({
   ],
   handler: testHandler
 });
+testRouter.addRoute({
+  path: "/bench",
+  method: "TEST",
+  handler: () => new Response("Hello, bench!")
+});
 
 const server = Bun.serve({
   port: 8080,
