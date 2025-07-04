@@ -127,7 +127,7 @@ Deno.test("ROUTER: BaseRouter - request handling", async (t) => {
     const request = new Request("http://localhost:7777/test");
     const response = await router.handle(request);
 
-    const body = await response.json();
+    const body: Record<string, unknown> = await response.json();
 
     assert(body["middleware1"] && body["middleware2"] && body["middleware3"]);
   });

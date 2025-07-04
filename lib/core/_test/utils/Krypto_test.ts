@@ -1,12 +1,14 @@
+/// <reference lib="deno.ns" />
+
 import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import {
   encode,
   decode,
 } from "https://deno.land/std@0.198.0/encoding/base64.ts";
-import { Crypto } from "../../lib/utils/Crypto.ts";
+import { Krypto } from "../../utils/Krypto.ts";
 
-Deno.test("UTIL: Crypto", async (t) => {
-  const hmacCrypto = new Crypto("SUPER_SECRET_KEY_123");
+Deno.test("UTIL: Krypto", async (t) => {
+  const hmacCrypto = new Krypto("SUPER_SECRET_KEY_123");
 
   const generatedKeyPair: CryptoKeyPair = await crypto.subtle.generateKey(
     {
@@ -18,22 +20,22 @@ Deno.test("UTIL: Crypto", async (t) => {
     true,
     ["sign", "verify"]
   );
-  const rsaPrivateCrypto = new Crypto(generatedKeyPair.privateKey, {
+  const rsaPrivateCrypto = new Krypto(generatedKeyPair.privateKey, {
     name: "RSA",
     hash: "SHA-512",
   });
-  const rsaPublicCrypto = new Crypto(generatedKeyPair.publicKey, {
+  const rsaPublicCrypto = new Krypto(generatedKeyPair.publicKey, {
     name: "RSA",
     hash: "SHA-512",
   });
 
-  const rsaPrivateCrypto_fromCert = new Crypto(
+  const rsaPrivateCrypto_fromCert = new Krypto(
     await Deno.readTextFile(
       new URL("../mocks/crypto_rsa_private.key", import.meta.url)
     ),
     { name: "RSA", hash: "SHA-256" }
   );
-  const rsaPublicCrypto_fromCert = new Crypto(
+  const rsaPublicCrypto_fromCert = new Krypto(
     await Deno.readTextFile(
       new URL("../mocks/crypto_rsa_public_key.crt", import.meta.url)
     ),

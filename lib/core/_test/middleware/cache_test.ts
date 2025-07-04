@@ -95,8 +95,8 @@ Deno.test("MIDDLEWARE: Cacher", async (t) => {
     const memRes = await customCacher(ctx, () => testHandler(ctx));
     assert(memRes);
 
-    const testJSON = await testRes.json();
-    const memJSON2 = memRes && await memRes.json();
+    const testJSON: Record<string, unknown> = await testRes.json();
+    const memJSON2: Record<string, unknown> = memRes && await memRes.json();
 
     assert(testJSON["foo"] === memJSON2["foo"]);
   });

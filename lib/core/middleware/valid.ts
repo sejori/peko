@@ -1,5 +1,5 @@
 import { Middleware } from '../types.ts';
-import { ModelInterface, ModelSchemaType } from "../utils/Model.ts";
+import { ModelInterface, ModelSchema, ModelSchemaType } from "../utils/Model.ts";
 
 export type ValidJSON<M extends ModelInterface> = {
   json: ModelSchemaType<M["schema"]>;
@@ -21,7 +21,7 @@ export function validJSON<M extends ModelInterface>(
       ctx.request.headers.get('Content-Type') === "application/json"
     ) {
       try {
-        const json = await ctx.request.json();
+        const json: ModelSchemaType<ModelSchema> = await ctx.request.json();
         if (model) {
           const modelInstance = new model(json);
           const errors = Object.entries(modelInstance._errors).filter(([_property, errors]) => errors.length > 0);
