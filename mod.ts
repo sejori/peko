@@ -1,5 +1,5 @@
 /**
- * Featherweight routing and middleware handling for worker environments.
+ * Featherweight Request handling for TypeScript workers.
  */
 
 // CORE Router
