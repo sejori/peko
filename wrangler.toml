@@ -1,6 +1,7 @@
 name = "peko"
 main = "scripts/wrangler/main.ts"
-compatibility_date = "2024-02-23"
+compatibility_date = "2024-09-23"
+compatibility_flags = [ "nodejs_compat" ]
 
 [vars]
 ENVIRONMENT = 'production'

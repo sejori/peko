@@ -9,6 +9,12 @@ const user = {
   password: await crypto.hash("test-password"),
 };
 
+type JWTPayload = {
+  iat: number,
+  exp: number,
+  data: { user: string },
+}
+
 const validateUser = async (username: string, password: string) => {
   return (
     username &&
@@ -32,12 +38,13 @@ class SimpleAuthRouter extends Peko.HttpRouterFactory({
 
     const exp = new Date();
     exp.setMonth(exp.getMonth() + 1);
-    const jwt = await crypto.sign({
-      iat: Date.now(),
-      exp: exp.valueOf(),
-      data: { user: user.username },
-    });
-
+    const jwtPayload: JWTPayload = {
+    iat: Date.now(),
+    exp: exp.valueOf(),
+    data: { user: username },
+    }
+    const jwt = await crypto.sign(jwtPayload);
+    
     return new Response(jwt, {
       status: 201,
       headers: new Headers({
@@ -48,8 +55,15 @@ class SimpleAuthRouter extends Peko.HttpRouterFactory({
 
   verify = this.GET(
     "/verify",
-    [Peko.auth(crypto)],
-    () => new Response("You are authenticated!")
+    [Peko.auth<JWTPayload>(crypto)],
+    (ctx) => {
+      console.log(ctx.state.auth)
+      return ctx.state.auth 
+        ? new Response(`You are authenticated as ${ctx.state.auth.data.user}`)
+        : new Response("You are not authenticated", {
+          status: 401
+        })
+      }
   );
 
   authPage = this.GET(

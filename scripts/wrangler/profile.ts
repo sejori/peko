@@ -24,6 +24,12 @@ testRouter.addRoute({
   handler: () => new Response("Hello, bench!")
 });
 
+export default {
+  fetch(request: Request) {
+    return testRouter.handle(request);
+  },
+};
+
 const handleResults = await Profile.run(testRouter, {
   mode: "handle",
   count: 100,

@@ -7,7 +7,7 @@ type RSAData = { name: "RSA"; hash: "SHA-256" | "SHA-384" | "SHA-512" };
 type AlgData = HMACData | RSAData;
 
 /**
- * Crypto class, generates hashes and signs/verifies JWTs using provided key.
+ * Krypto class, generates hashes and signs/verifies JWTs using provided key.
  * @param key: CryptoKey | string
  */
 export class Krypto {

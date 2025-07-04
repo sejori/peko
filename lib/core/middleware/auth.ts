@@ -1,19 +1,20 @@
 import { Krypto } from "../utils/Krypto.ts";
 import { Middleware } from "../types.ts";
 
-export type AuthState = {
-  auth: Record<string, unknown> | null;
+export type AuthState<Payload = Record<string, unknown>> = {
+  auth: Payload | null;
 };
 
 /**
- * Auth middleware, uses Crypto utility class to verify JWTs
+ * Basic auth middleware, uses Krypto utility class to verify JWTs and add payload to state
+ * Note: this middleware DOES NOT check expiry of token since that is payload specific.
  * @param crypto: Crypto instance to be used
  * @returns Middleware
  */
-export function auth(
+export function auth<S extends Record<string, unknown> = Record<string, unknown>>(
   krypto: Krypto,
   opts?: { cookie: string }
-): Middleware<AuthState> {
+): Middleware<AuthState<S>> {
   return async function authMiddleware(ctx, next) {
     let token = opts
       ? ctx.request.headers.get("Cookies") //!.cookie // <- fix
@@ -25,7 +26,7 @@ export function auth(
       const payload = await krypto.verify(token);
 
       if (payload) {
-        ctx.state.auth = payload;
+        ctx.state.auth = payload as S;
         return next();
       }
     }
