@@ -1,93 +1,162 @@
-// import { RequestContext } from "../context.ts";
-// import { Middleware, Handler } from "../types.ts";
-// import { BaseRoute, BaseRouter, BaseRouteConfig } from "../core/BaseRouter.ts";
+import { RequestContext } from "../core/context.ts";
+import { Middleware } from "../core/types.ts";
+import { Route, Router, RouteConfig } from "../core/Router.ts";
+import { ModelInterface } from "../core/utils/Model.ts";
+import { query, QueryState } from "./middleware/query.ts";
+import { queryResult } from "./handler/queryResults.ts";
+import { GraphOperation } from "./types.ts";
 
-// export interface GraphRouteConfig<S extends object = object> extends BaseRouteConfig<S> {
-//   name: string;
-//   operation: "QUERY" | "MUTATION" | "RESOLVER";
-//   handler: Handler<S>;
-// }
+export interface GraphRouteConfig<S extends QueryState = QueryState> extends RouteConfig<S> {
+  name: string;
+  operation: GraphOperation;
+  type: ModelInterface | ModelInterface[];
+  resolver: Middleware<S>;
+}
 
-// export class GraphRoute<S extends object = object> extends BaseRoute<S> {
-//   declare name: string;
-//   declare operation: GraphRouteConfig<S>["operation"];
+export class GraphRoute<S extends QueryState = QueryState> extends Route<S> {
+  declare name: string;
+  declare operation: GraphRouteConfig<S>["operation"];
+  type: ModelInterface | ModelInterface[]
 
-//   constructor(routeObj: GraphRouteConfig<S>) {
-//     super(routeObj);
-//     this.operation = routeObj.operation || "QUERY";
-//   }
+  constructor(routeObj: GraphRouteConfig<S>) {
+    super(routeObj);
+    this.operation = routeObj.operation;
+    this.type = routeObj.type;
+  }
 
-//   get params() {
-//     const x: Record<string, number> = {};
-//     this.path.split("/").forEach((str, i) => {
-//       if (str[0] === ":") x[str.slice(1)] = i;
-//     });
-//     return x;
-//   }
+  get fields(): string[] {
+    return Object.keys(Array.isArray(this.type)
+      ? this.type[0].schema
+      : this.type.schema
+    );
+  }
 
-//   override get regexPath() {
-//     return this.params
-//       ? new RegExp(
-//           `^${this.path.replaceAll(/(?<=\/):(.)*?(?=\/|$)/g, "(.)*")}\/?$`
-//         )
-//       : new RegExp(`^${this.path}\/?$`);
-//   }
+  override get regexPath(): RegExp {
+    return new RegExp(
+      `\\b${this.operation.toLowerCase()}\\b.*\\b${this.name}\\b`, 
+      "i"
+    );
+  }
 
-//   override match(ctx: RequestContext<S>): boolean {
-//     if (
-//       this.regexPath.test(ctx.url.pathname) &&
-//       this.method === ctx.request.method
-//     ) {
-//       const pathBits = ctx.url.pathname.split("/");
-//       for (const param in this.params) {
-//         ctx.params[param] = pathBits[this.params[param]];
-//       }
-//       return true;
-//     }
-//     return false;
-//   }
-// }
 
-// export class HttpRouter<
-//   S extends object,
-//   Config extends HttpRouteConfig<S> = HttpRouteConfig<S>,
-//   R extends HttpRoute<S> = HttpRoute<S>
-// > extends BaseRouter<S, Config, R> {
-//   override Route = HttpRoute<S>;
+  private parseFieldRequests(text: string): {
+    fields: string[],
+    directives: Record<string, string>
+  } {
+    const result: {
+      fields: string[],
+      directives: Record<string, string>
+    } = { 
+      fields: [],
+      directives: {} 
+    };
+    if (!text) return result;
 
-//   constructor(
-//     public override state?: S, 
-//     public override middleware: Middleware<S>[] = [], 
-//     public override routes: R[] = []
-//   ) {
-//     super(state, middleware, routes);
-//   }
+    const fieldPattern = new RegExp(
+      `\\b${this.name}\\b\\s*[^{]*\\{([^}]*)\\}`
+    );
+    const match = text.match(fieldPattern);
+    if (!match) return result;
 
-//   get: typeof this.addRoute = function () {
-//     // @ts-ignore supply overload args
-//     const newRoute = this.addRoute(...arguments);
-//     newRoute.method = "GET";
-//     return newRoute;
-//   };
+    const selectionSet = match[1];
+    const selections = selectionSet
+      .split(/(?<!\w)\s*(?![^{]*\})/)
+      .map(s => s.trim())
+      .filter(Boolean);
 
-//   post: typeof this.addRoute = function () {
-//     // @ts-ignore supply overload args
-//     const newRoute = this.addRoute(...arguments);
-//     newRoute.method = "POST";
-//     return newRoute;
-//   };
+    for (const selection of selections) {
+      const fieldMatch = selection.match(/^(?:(\w+)\s*:\s*)?(\w+)/);
+      if (!fieldMatch) continue;
+      
+      const fieldName = fieldMatch[2] || fieldMatch[1];
+      result.fields.push(fieldName);
 
-//   put: typeof this.addRoute = function () {
-//     // @ts-ignore supply overload args
-//     const newRoute = this.addRoute(...arguments);
-//     newRoute.method = "PUT";
-//     return newRoute;
-//   };
+      const directiveMatches = selection.matchAll(/@(\w+)(?:\(([^)]*)\))?/g);
+      for (const [_, name, args] of directiveMatches) {
+        result.directives[name] = args || '';
+      }
+    }
 
-//   delete: typeof this.addRoute = function () {
-//     // @ts-ignore supply overload args
-//     const newRoute = this.addRoute(...arguments);
-//     newRoute.method = "DELETE";
-//     return newRoute;
-//   };
-// }
+    return result;
+  }
+
+  override match(ctx: RequestContext<S>): boolean {
+    if (!ctx.state.text) return false;
+    if (!this.regexPath.test(ctx.state.query)) return false;
+
+    const fieldRequests = this.parseFieldRequests(ctx.state.query);
+    
+    // Validate fields against schema
+    const invalidFields = fieldRequests.fields.filter(
+      f => !this.fields.includes(f)
+    );
+    
+    if (invalidFields.length > 0) {
+      ctx.state.errors = ctx.state.errors || [];
+      invalidFields.forEach(field => {
+        ctx.state.errors.push({
+          message: `Field '${field}' not found in type '${this.name}'`,
+          path: [this.name, field]
+        });
+      });
+    }
+    
+    // Store field requests in context
+    ctx.state.fieldRequests = ctx.state.fieldRequests || {};
+    ctx.state.fieldRequests[this.name] = fieldRequests;
+    
+    return true;
+  }
+}
+
+export class GraphRouter<
+  S extends QueryState,
+  Config extends GraphRouteConfig<S> = GraphRouteConfig<S>,
+  R extends Route<S> = GraphRoute<S>
+> extends Router<S, Config, R> {
+  override Route = GraphRoute<S>;
+
+  constructor(
+    middleware: Middleware<S>[] = [], 
+    state?: S, 
+    routes: Record<string, R> = {}
+  ) {
+    super(
+      [query, ...middleware], 
+      state, 
+      routes
+    );
+  }
+
+  query: typeof this.addRoute = function () {
+    // @ts-ignore supply overload args
+    const newRoute = this.addRoute(...arguments);
+    newRoute.method = "QUERY";
+    newRoute.handler = queryResult;
+    return newRoute;
+  };
+
+  mutation: typeof this.addRoute = function () {
+    // @ts-ignore supply overload args
+    const newRoute = this.addRoute(...arguments);
+    newRoute.method = "MUTATION";
+    newRoute.handler = queryResult;
+    return newRoute;
+  };
+
+  subscription: typeof this.addRoute = function () {
+    // @ts-ignore supply overload args
+    const newRoute = this.addRoute(...arguments);
+    newRoute.method = "SUBSCRIPTION";
+    newRoute.handler = queryResult;
+    return newRoute;
+  };
+
+  resolver: typeof this.addRoute = function () {
+    // @ts-ignore supply overload args
+    const newRoute = this.addRoute(...arguments);
+    newRoute.method = "RESOLVER";
+    newRoute.handler = queryResult;
+    return newRoute;
+  };
+}

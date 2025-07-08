@@ -55,9 +55,9 @@ export class HttpRouter<
   override Route = HttpRoute<S>;
 
   constructor(
-    public override middleware: Middleware<S>[] = [], 
-    public override state?: S, 
-    public override routes: Record<string, R> = {}
+    middleware: Middleware<S>[] = [], 
+    state?: S, 
+    routes: Record<string, R> = {}
   ) {
     super(middleware, state, routes);
   }

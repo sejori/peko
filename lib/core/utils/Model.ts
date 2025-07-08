@@ -46,9 +46,9 @@ export class Model<TSchema extends ModelSchema = ModelSchema> {
 
 // deno-lint-ignore no-explicit-any
 export interface ModelInterface<TFields extends ModelSchema = any> {
-    new (input: ModelSchemaType<TFields>): ModelSchemaType<TFields> & Model<TFields>;
-    schema: TFields;
-  }
+  new (input: ModelSchemaType<TFields>): ModelSchemaType<TFields> & Model<TFields>;
+  schema: TFields;
+}
 
 export function ModelFactory<TFields extends ModelSchema>(schema: TFields) {
   return class extends Model<TFields> {
