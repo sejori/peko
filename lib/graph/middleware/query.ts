@@ -1,39 +1,31 @@
 import { DefaultState } from "../../core/context.ts";
 import { Middleware } from "../../core/types.ts";
-import { QueryParser } from "../utils/QueryParser.ts";
+import { QueryParser, QueryObjectValueType, QueryObject, QueryOperation } from "../utils/QueryParser.ts";
 
 export interface QueryState extends DefaultState {
-  query: QueryParser;
+  operation: QueryOperation;
+  ast: QueryObject;
+  query: string;
+  operationName: string | undefined;
+  variables: QueryObjectValueType | undefined;
+  extensions: Record<string, string> | undefined;
 }
 
 export const query: Middleware<QueryState> = async (ctx) => {
-  let bodyText: string | null = null;
   const contentType = ctx.request.headers.get("Content-Type");
-  
   try {
     if (contentType?.includes("application/json")) {
       const body = await ctx.request.json();
-      bodyText = body.query || body.mutation || body.subscription;
+      ctx.state.query = body.query;
+      ctx.state.operationName = body.operationName;
+      ctx.state.variables = body.variables;
+      ctx.state.extensions = body.extensions;
     } else {
-      bodyText = await ctx.request.text();
+      ctx.state.query = await ctx.request.text();
     }
+    ctx.state.ast = new QueryParser(ctx.state.query).ast;
   } catch {
-    return new Response("Error parsing request body.", {
-      status: 400
-    });
-  }
-  
-  if (bodyText === null || bodyText.trim() === '') {
-    return new Response("No query provided", {
-      status: 400
-    });
-  }
-  
-    try {
-    // Parse the query into AST
-    ctx.state.query = new QueryParser(bodyText);
-  } catch (error) {
-    return new Response("GraphQL parse error: " + (error as Error).message, {
+    return new Response("Error parsing query from request body.", {
       status: 400
     });
   }

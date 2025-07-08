@@ -4,11 +4,12 @@ import { Route, Router, RouteConfig } from "../core/Router.ts";
 import { ModelInterface } from "../core/utils/Model.ts";
 import { query, QueryState } from "./middleware/query.ts";
 import { queryResult } from "./handler/queryResults.ts";
-import { GraphOperation } from "./types.ts";
+import { QueryOperation } from "./utils/QueryParser.ts";
+import { Cascade } from "../core/utils/Cascade.ts";
 
 export interface GraphRouteConfig<S extends QueryState = QueryState> extends RouteConfig<S> {
-  name: string;
-  operation: GraphOperation;
+  name: QueryOperation["name"];
+  operation: QueryOperation["type"];
   type: ModelInterface | ModelInterface[];
   resolver: Middleware<S>;
 }
@@ -37,76 +38,6 @@ export class GraphRoute<S extends QueryState = QueryState> extends Route<S> {
       "i"
     );
   }
-
-
-  private parseFieldRequests(text: string): {
-    fields: string[],
-    directives: Record<string, string>
-  } {
-    const result: {
-      fields: string[],
-      directives: Record<string, string>
-    } = { 
-      fields: [],
-      directives: {} 
-    };
-    if (!text) return result;
-
-    const fieldPattern = new RegExp(
-      `\\b${this.name}\\b\\s*[^{]*\\{([^}]*)\\}`
-    );
-    const match = text.match(fieldPattern);
-    if (!match) return result;
-
-    const selectionSet = match[1];
-    const selections = selectionSet
-      .split(/(?<!\w)\s*(?![^{]*\})/)
-      .map(s => s.trim())
-      .filter(Boolean);
-
-    for (const selection of selections) {
-      const fieldMatch = selection.match(/^(?:(\w+)\s*:\s*)?(\w+)/);
-      if (!fieldMatch) continue;
-      
-      const fieldName = fieldMatch[2] || fieldMatch[1];
-      result.fields.push(fieldName);
-
-      const directiveMatches = selection.matchAll(/@(\w+)(?:\(([^)]*)\))?/g);
-      for (const [_, name, args] of directiveMatches) {
-        result.directives[name] = args || '';
-      }
-    }
-
-    return result;
-  }
-
-  override match(ctx: RequestContext<S>): boolean {
-    if (!ctx.state.text) return false;
-    if (!this.regexPath.test(ctx.state.query)) return false;
-
-    const fieldRequests = this.parseFieldRequests(ctx.state.query);
-    
-    // Validate fields against schema
-    const invalidFields = fieldRequests.fields.filter(
-      f => !this.fields.includes(f)
-    );
-    
-    if (invalidFields.length > 0) {
-      ctx.state.errors = ctx.state.errors || [];
-      invalidFields.forEach(field => {
-        ctx.state.errors.push({
-          message: `Field '${field}' not found in type '${this.name}'`,
-          path: [this.name, field]
-        });
-      });
-    }
-    
-    // Store field requests in context
-    ctx.state.fieldRequests = ctx.state.fieldRequests || {};
-    ctx.state.fieldRequests[this.name] = fieldRequests;
-    
-    return true;
-  }
 }
 
 export class GraphRouter<
@@ -126,6 +57,17 @@ export class GraphRouter<
       state, 
       routes
     );
+  }
+
+  override async handle(request: Request): Promise<Response> {
+    const ctx = new RequestContext(request, this.state);
+    const middleware = [...this.middleware];
+
+    // dataloader implementation using ctx.state.ast and attached routes
+    // ctx.state.ast ...
+    
+    const res = await new Cascade(ctx, middleware).run();
+    return res ? res : new Response("", { status: 404 });
   }
 
   query: typeof this.addRoute = function () {

@@ -1,30 +1,30 @@
 import { Token, Tokeniser } from "./Tokeniser.ts";
 
-type QueryValueType = string | QueryObjectType | QueryValueType[];
+type QueryValueType = string | QueryObjectValueType | QueryValueType[];
 
-interface QueryObjectType {
+export interface QueryObjectValueType {
   [key: string]: QueryValueType | QueryValueType[];
 }
 
-export type GraphQLOperation = {
+export type QueryOperation = {
   type: "query" | "mutation" | "subscription";
   name: string;
-  variables: QueryObjectType;
+  variables: QueryObjectValueType;
 };
 
-export type GraphQLField = {
+export type QueryField = {
   alias?: string;
-  args?: QueryObjectType;
+  args?: QueryObjectValueType;
   directives?: string[];
-  fields?: GraphQLObject;
+  fields?: QueryObject;
 } | null;
 
-export type GraphQLObject = Record<string, GraphQLField>;
+export type QueryObject = Record<string, QueryField>;
 
 export class QueryParser {
-  operation: GraphQLOperation;
-  ast: GraphQLObject;
-  private fragments: Record<string, GraphQLObject> = {};
+  operation: QueryOperation;
+  ast: QueryObject;
+  private fragments: Record<string, QueryObject> = {};
   private tokens: Token[] = [];
   private pos = 0;
 
@@ -48,33 +48,65 @@ export class QueryParser {
     return tok;
   }
 
-  private parseFragments(): Record<string, GraphQLObject> {
-    const fragments: Record<string, GraphQLObject> = {};
-    while (this.peek("NAME") && this.tokens[this.pos].value === "fragment") {
-      this.consume("NAME"); // fragment
-      const name = this.consume("NAME").value;
-      this.consume("NAME"); // 'on'
-      this.consume("NAME"); // type
-      this.consume("{");
-      const fields = this.parseSelectionSet();
-      fragments[name] = fields;
+  private parseFragments(): Record<string, QueryObject> {
+    const fragments: Record<string, QueryObject> = {};
+    let currentPos = 0;
+
+    while (currentPos < this.tokens.length) {
+      if (
+        this.tokens[currentPos]?.type === "NAME" && 
+        this.tokens[currentPos]?.value === "fragment"
+      ) {
+        this.pos = currentPos;
+
+        this.consume("NAME"); // fragment
+        const name = this.consume("NAME").value;
+        this.consume("NAME"); // 'on'
+        this.consume("NAME"); // type
+        this.consume("{");
+        const fields = this.parseSelectionSet();
+        fragments[name] = fields;
+
+        currentPos = this.pos;
+      }
+      currentPos++;
     }
+    
+    this.pos = 0;
+
     return fragments;
   }
 
-  private parseOperation(): GraphQLOperation {
-    const type = this.consume("NAME").value as GraphQLOperation["type"];
-    const name = this.peek("NAME") ? this.consume("NAME").value : "";
-    const variables: QueryObjectType = {};
+  private parseOperation(): QueryOperation {
+    let type: QueryOperation["type"] = "query";
+    let name = "";
+    const variables: QueryObjectValueType = {};
 
+    // Handle anonymous query (starting with selection set)
+    if (this.peek("{")) {
+      this.consume("{");
+      return { type, name, variables };
+    }
+
+    const firstToken = this.consume("NAME");
+    if (["query", "mutation", "subscription"].includes(firstToken.value)) {
+      type = firstToken.value as QueryOperation["type"];
+    } else {
+      throw new Error(`Invalid operation type: ${firstToken.value}`);
+    }
+    if (this.peek("NAME")) {
+      name = this.consume("NAME").value;
+    }
+
+    // Parse variables if present
     if (this.peek("(")) {
       this.consume("(");
       while (!this.peek(")")) {
         const variable = this.consume("VARIABLE").value.slice(1);
         this.consume(":");
-        const type = this.consume("NAME").value;
+        const varType = this.consume("NAME").value;
         if (this.peek("!")) this.consume("!");
-        variables[variable] = type + (this.tokens[this.pos - 1].value === "!" ? "!" : "");
+        variables[variable] = varType + (this.tokens[this.pos - 1].value === "!" ? "!" : "");
         if (this.peek(",")) this.consume(",");
       }
       this.consume(")");
@@ -84,8 +116,8 @@ export class QueryParser {
     return { type, name, variables };
   }
 
-  private parseSelectionSet(): GraphQLObject {
-    const fields: GraphQLObject = {};
+  private parseSelectionSet(): QueryObject {
+    const fields: QueryObject = {};
 
     while (!this.peek("}")) {
       if (this.peek("ELLIPSIS")) {
@@ -111,7 +143,7 @@ export class QueryParser {
         name = this.consume("NAME").value;
       }
 
-      let args: QueryObjectType | undefined;
+      let args: QueryObjectValueType | undefined;
       if (this.peek("(")) {
         args = this.parseArgs();
       }
@@ -135,7 +167,7 @@ export class QueryParser {
         directives.push(dir);
       }
 
-      let subFields: GraphQLObject | undefined;
+      let subFields: QueryObject | undefined;
       if (this.peek("{")) {
         this.consume("{");
         subFields = this.parseSelectionSet();
@@ -153,8 +185,8 @@ export class QueryParser {
     return fields;
   }
 
-  private parseArgs(): QueryObjectType {
-    const args: QueryObjectType = {};
+  private parseArgs(): QueryObjectValueType {
+    const args: QueryObjectValueType = {};
     this.consume("(");
     while (!this.peek(")")) {
       const key = this.consume("NAME").value;
@@ -174,8 +206,8 @@ export class QueryParser {
     return this.consume().value; // fallback for simple types
   }
 
-  private parseObject(): QueryObjectType {
-    const obj: QueryObjectType = {};
+  private parseObject(): QueryObjectValueType {
+    const obj: QueryObjectValueType = {};
     this.consume("{");
     while (!this.peek("}")) {
       const key = this.consume("NAME").value;

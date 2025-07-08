@@ -50,11 +50,6 @@ Deno.test("UTIL: QueryParser - basic nested query with args", () => {
 
 Deno.test("QueryParser with fragments and variables", () => {
   const query = `
-    fragment userFields on User {
-      name
-      email
-    }
-
     query getUser($id: ID!) {
       user(id: $id) {
         ...userFields
@@ -66,10 +61,14 @@ Deno.test("QueryParser with fragments and variables", () => {
         }
       }
     }
+
+    fragment userFields on User {
+      name
+      email
+    }
   `;
 
   const parsed = new QueryParser(query);
-  console.log(parsed.operation.variables)
 
   assertEquals(parsed.operation, {
     type: "query",
@@ -216,5 +215,85 @@ Deno.test("UTIL: QueryParser - directive without arguments", () => {
         id: {},
       },
     },
+  });
+});
+
+Deno.test("QueryParser - anonymous query", () => {
+  const query = `{
+    user {
+      id
+      name
+    }
+  }`;
+  
+  const parser = new QueryParser(query);
+  
+  assertEquals(parser.operation, {
+    type: "query",
+    name: "",
+    variables: {}
+  });
+  
+  assertEquals(parser.ast, {
+    user: {
+      fields: {
+        id: {},
+        name: {}
+      }
+    }
+  });
+});
+
+Deno.test("QueryParser - anonymous query with fragments", () => {
+  const query = `
+    fragment userFields on User {
+      email
+    }
+    {
+      user {
+        ...userFields
+      }
+    }
+  `;
+  
+  const parser = new QueryParser(query);
+  
+  assertEquals(parser.operation, {
+    type: "query",
+    name: "",
+    variables: {}
+  });
+  
+  assertEquals(parser.ast, {
+    user: {
+      fields: {
+        email: {}  // From fragment
+      }
+    }
+  });
+});
+
+Deno.test("QueryParser - anonymous query with directives", () => {
+  const query = `{
+    user @include(if: true) {
+      id
+    }
+  }`;
+  
+  const parser = new QueryParser(query);
+  
+  assertEquals(parser.operation, {
+    type: "query",
+    name: "",
+    variables: {}
+  });
+  
+  assertEquals(parser.ast, {
+    user: {
+      directives: ["@include(if:true)"],
+      fields: {
+        id: {}
+      }
+    }
   });
 });
