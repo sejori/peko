@@ -27,18 +27,21 @@ Deno.test("UTIL: QueryParser - basic nested query with args", () => {
 
   assertEquals(query.ast, {
     user: {
+      ref: "user",
       args: {
         id: '"123"',
       },
       fields: {
-        name: {},
-        email: {},
+        name: { ref: "name" },
+        email: { ref: "email" },
         posts: {
+          ref: "posts",
           fields: {
-            title: {},
+            title: { ref: "title" },
             comments: {
+              ref: "comments",
               fields: {
-                text: {},
+                text: { ref: "text" },
               },
             },
           },
@@ -80,16 +83,18 @@ Deno.test("QueryParser with fragments and variables", () => {
 
   assertEquals(parsed.ast, {
     user: {
+      ref: "user",
       args: { id: "$id" },
       fields: {
-        name: {},
-        email: {},
+        name: { ref: "name" },
+        email: { ref: "email" },
         profile: {
+          ref: "profile",
           fields: {
-            bio: {},
+            bio: { ref: "bio" },
           },
         },
-        createdAt: {},
+        createdAt: { ref: "createdAt" },
       },
     },
   });
@@ -128,28 +133,30 @@ Deno.test("UTIL: QueryParser - full GraphQL syntax support", () => {
 
   assertEquals(query.ast, {
     me: {
-      alias: "user",
+      ref: "user",
       args: {
         id: '"123"',
       },
       directives: ["@include(if:true)"],
       fields: {
-        name: {},
+        name: { ref: "name" },
         profilePic: {
-          alias: "avatar",
+          ref: "avatar",
           args: {
             size: '"large"',
           },
         },
-        email: {},
+        email: { ref: "email" },
         posts: {
+          ref: "posts",
           fields: {
-            title: {},
-            body: {},
+            title: { ref: "title" },
+            body: { ref: "body" },
             comments: {
+              ref: "comments",
               fields: {
-                id: {},
-                text: {},
+                id: { ref: "id" },
+                text: { ref: "text" },
               },
             },
           },
@@ -157,8 +164,11 @@ Deno.test("UTIL: QueryParser - full GraphQL syntax support", () => {
       },
     },
     stats: {
+      ref: "stats",
       fields: {
-        totalPosts: {},
+        totalPosts: {
+          ref: "totalPosts",
+        },
       },
     },
   });
@@ -183,6 +193,7 @@ Deno.test("UTIL: QueryParser - multiline input objects and arrays", () => {
 
   assertEquals(query.ast, {
     user: {
+      ref: "user",
       args: {
         filter: {
           status: '"active"',
@@ -191,8 +202,8 @@ Deno.test("UTIL: QueryParser - multiline input objects and arrays", () => {
         },
       },
       fields: {
-        id: {},
-        name: {},
+        id: { ref: "id" },
+        name: { ref: "name" },
       },
     },
   });
@@ -210,9 +221,10 @@ Deno.test("UTIL: QueryParser - directive without arguments", () => {
 
   assertEquals(query.ast, {
     viewer: {
+      ref: "viewer",
       directives: ["@skip"],
       fields: {
-        id: {},
+        id: { ref: "id" },
       },
     },
   });
@@ -236,9 +248,10 @@ Deno.test("QueryParser - anonymous query", () => {
   
   assertEquals(parser.ast, {
     user: {
+      ref: "user",
       fields: {
-        id: {},
-        name: {}
+        id: { ref: "id" },
+        name: { ref: "name" }
       }
     }
   });
@@ -246,13 +259,13 @@ Deno.test("QueryParser - anonymous query", () => {
 
 Deno.test("QueryParser - anonymous query with fragments", () => {
   const query = `
-    fragment userFields on User {
-      email
-    }
     {
       user {
         ...userFields
       }
+    }
+    fragment userFields on User {
+      email
     }
   `;
   
@@ -266,8 +279,9 @@ Deno.test("QueryParser - anonymous query with fragments", () => {
   
   assertEquals(parser.ast, {
     user: {
+      ref: "user",
       fields: {
-        email: {}  // From fragment
+        email: { ref: "email" }
       }
     }
   });
@@ -290,9 +304,10 @@ Deno.test("QueryParser - anonymous query with directives", () => {
   
   assertEquals(parser.ast, {
     user: {
+      ref: "user",
       directives: ["@include(if:true)"],
       fields: {
-        id: {}
+        id: { ref: "id" }
       }
     }
   });

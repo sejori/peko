@@ -9,19 +9,14 @@ const createTestCtx = (
   body: string | Record<string, unknown>,
   headers: Record<string, string> = {},
   state?: Partial<QueryState>
-) => {
-  const isJson = typeof body !== "string";
-  const init: RequestInit = {
-    method: "POST",
-    headers: new Headers(headers),
-    body: isJson ? JSON.stringify(body) : body as string
-  };
-  
-  return new RequestContext(
-    new Request("http://localhost/graphql", init),
-    state as QueryState
-  );
-};
+) => new RequestContext(
+  new Request("http://localhost/graphql", {
+  method: "POST",
+  headers: new Headers(headers),
+  body: typeof body !== "string" ? JSON.stringify(body) : body as string
+}),
+  state as QueryState
+);
 
 Deno.test("MIDDLEWARE: query", async (t) => {
   // Test valid JSON request with all fields
@@ -39,14 +34,15 @@ Deno.test("MIDDLEWARE: query", async (t) => {
     
     await query(ctx, () => {});
     
-    assertEquals(ctx.state.query, testBody.query);
-    assertEquals(ctx.state.operationName, testBody.operationName);
-    assertEquals(ctx.state.variables, testBody.variables);
-    assertEquals(ctx.state.extensions, testBody.extensions);
-    assertEquals(ctx.state.ast, {
+    assertEquals(ctx.state.query.text, testBody.query);
+    assertEquals(ctx.state.query.opts.operationName, testBody.operationName);
+    assertEquals(ctx.state.query.opts.variables, testBody.variables);
+    assertEquals(ctx.state.query.opts.extensions, testBody.extensions);
+    assertEquals(ctx.state.query.ast, {
       user: {
+        ref: "user",
         fields: {
-          name: {}
+          name: { ref: "name" }
         }
       }
     });
@@ -61,14 +57,15 @@ Deno.test("MIDDLEWARE: query", async (t) => {
     
     await query(ctx, () => {});
     
-    assertEquals(ctx.state.query, testBody.query);
-    assertEquals(ctx.state.operationName, undefined);
-    assertEquals(ctx.state.variables, undefined);
-    assertEquals(ctx.state.extensions, undefined);
-    assertEquals(ctx.state.ast, {
+    assertEquals(ctx.state.query.text, testBody.query);
+    assertEquals(ctx.state.query.opts.operationName, undefined);
+    assertEquals(ctx.state.query.opts.variables, undefined);
+    assertEquals(ctx.state.query.opts.extensions, undefined);
+    assertEquals(ctx.state.query.ast, {
       user: {
+        ref: "user",
         fields: {
-          id: {}
+          id: { ref: "id" }
         }
       }
     });
@@ -83,14 +80,15 @@ Deno.test("MIDDLEWARE: query", async (t) => {
     
     await query(ctx, () => {});
     
-    assertEquals(ctx.state.query, testQuery);
-    assertEquals(ctx.state.operationName, undefined);
-    assertEquals(ctx.state.variables, undefined);
-    assertEquals(ctx.state.extensions, undefined);
-    assertEquals(ctx.state.ast, {
+    assertEquals(ctx.state.query.text, testQuery);
+    assertEquals(ctx.state.query.opts.operationName, undefined);
+    assertEquals(ctx.state.query.opts.variables, undefined);
+    assertEquals(ctx.state.query.opts.extensions, undefined);
+    assertEquals(ctx.state.query.ast, {
       posts: {
+        ref: "posts",
         fields: {
-          title: {}
+          title: { ref: "title" }
         }
       }
     });
@@ -103,11 +101,12 @@ Deno.test("MIDDLEWARE: query", async (t) => {
     
     await query(ctx, () => {});
     
-    assertEquals(ctx.state.query, testQuery);
-    assertEquals(ctx.state.ast, {
+    assertEquals(ctx.state.query.text, testQuery);
+    assertEquals(ctx.state.query.ast, {
       stats: {
+        ref: "stats",
         fields: {
-          views: {}
+          views: { ref: "views" }
         }
       }
     });
@@ -140,14 +139,42 @@ Deno.test("MIDDLEWARE: query", async (t) => {
   // Test complex query with all features
   await t.step("handles complex GraphQL query", async () => {
     const testQuery = `
-      query getUserData($id: ID!) {
-        me: user(id: $id) @include(if: true) {
-          name
-          ...userFields
+      query {
+        # Basic field selection
+        user(id: "123") {
+          ...UserFields
+          email
+        }
+        
+        # Using aliases to request the same field with different arguments
+        admin: user(role: "admin") {
+          ...UserFields
+        }
+        moderator: user(role: "moderator") {
+          ...UserFields
+        }
+        
+        # Nested queries with arguments
+        posts(first: 5, sortBy: "newest") {
+          edges {
+            node {
+              title
+              author {
+                ...UserFields
+              }
+              comments(first: 3) @include(if: $includeComments) {
+                text
+                author {
+                  ...UserFields
+                }
+              }
+            }
+          }
         }
       }
-      fragment userFields on User {
-        email
+      fragment UserFields on User {
+        id
+        name
       }
     `;
     
@@ -161,18 +188,75 @@ Deno.test("MIDDLEWARE: query", async (t) => {
     
     await query(ctx, () => {});
     
-    assertEquals(ctx.state.query, testQuery);
-    assertEquals(ctx.state.variables, { id: "123" });
-    assertEquals(ctx.state.ast, {
-      me: {
-        alias: "user",
-        args: {
-          id: "$id"
-        },
-        directives: ["@include(if:true)"],
+    assertEquals(ctx.state.query.text, testQuery);
+    assertEquals(ctx.state.query.opts.variables, { id: "123" });
+    assertEquals(ctx.state.query.operation, { type: "query", name: undefined, variables: undefined });
+    assertEquals(ctx.state.query.ast, {
+      user: {
+        ref: "user",
+        args: { id: '"123"' },
         fields: {
-          name: {},
-          email: {}
+          id: { ref: "id" },
+          name: { ref: "name" },
+          email: { ref: "email" }
+        }
+      },
+      admin: {
+        ref: "user",
+        args: { role: '"admin"' },
+        fields: {
+          id: { ref: "id" },
+          name: { ref: "name" }
+        }
+      },
+      moderator: {
+        ref: "user",
+        args: { role: '"moderator"' },
+        fields: {
+          id: { ref: "id" },
+          name: { ref: "name" }
+        }
+      },
+      posts: {
+        ref: "posts",
+        args: {
+          first: "5",
+          sortBy: '"newest"'
+        },
+        fields: {
+          edges: {
+            ref: "edges",
+            fields: {
+              node: {
+                ref: "node",
+                fields: {
+                  title: { ref: "title" },
+                  author: {
+                    ref: "author",
+                    fields: {
+                      id: { ref: "id" },
+                      name: { ref: "name" }
+                    }
+                  },
+                  comments: {
+                    ref: "comments",
+                    directives: ["@include(if:$includeComments)"],
+                    args: { first: "3" },
+                    fields: {
+                      text: { ref: "text" },
+                      author: {
+                        ref: "author",
+                        fields: {
+                          id: { ref: "id" },
+                          name: { ref: "name" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     });

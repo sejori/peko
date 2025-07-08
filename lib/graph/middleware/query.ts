@@ -1,14 +1,13 @@
 import { DefaultState } from "../../core/context.ts";
 import { Middleware } from "../../core/types.ts";
-import { QueryParser, QueryObjectValueType, QueryObject, QueryOperation } from "../utils/QueryParser.ts";
+import { QueryParser, QueryObject } from "../utils/QueryParser.ts";
 
 export interface QueryState extends DefaultState {
-  operation: QueryOperation;
-  ast: QueryObject;
-  query: string;
-  operationName: string | undefined;
-  variables: QueryObjectValueType | undefined;
-  extensions: Record<string, string> | undefined;
+  query: QueryParser;
+  queryResult: {
+    data: QueryObject;
+    errors: QueryObject[];
+  }
 }
 
 export const query: Middleware<QueryState> = async (ctx) => {
@@ -16,15 +15,21 @@ export const query: Middleware<QueryState> = async (ctx) => {
   try {
     if (contentType?.includes("application/json")) {
       const body = await ctx.request.json();
-      ctx.state.query = body.query;
-      ctx.state.operationName = body.operationName;
-      ctx.state.variables = body.variables;
-      ctx.state.extensions = body.extensions;
+      ctx.state.query = new QueryParser(body.query, {
+        operationName: body.operationName,
+        variables: body.variables,
+        extensions: body.extensions
+      });
     } else {
-      ctx.state.query = await ctx.request.text();
+      ctx.state.query = new QueryParser(await ctx.request.text());
     }
-    ctx.state.ast = new QueryParser(ctx.state.query).ast;
-  } catch {
+    console.log(ctx.state.query);
+    ctx.state.queryResult = {
+      data: {},
+      errors: []
+    }
+  } catch(e) {
+    console.log(e);
     return new Response("Error parsing query from request body.", {
       status: 400
     });

@@ -1,35 +1,42 @@
 import { Token, Tokeniser } from "./Tokeniser.ts";
 
-type QueryValueType = string | QueryObjectValueType | QueryValueType[];
+type QueryValue = string | QueryObject | QueryValue[];
 
-export interface QueryObjectValueType {
-  [key: string]: QueryValueType | QueryValueType[];
+export interface QueryObject {
+  [key: string]: QueryValue | QueryValue[];
 }
 
 export type QueryOperation = {
   type: "query" | "mutation" | "subscription";
-  name: string;
-  variables: QueryObjectValueType;
+  name?: string;
+  variables?: QueryObject;
 };
 
 export type QueryField = {
-  alias?: string;
-  args?: QueryObjectValueType;
+  ref: string;
+  args?: QueryObject;
   directives?: string[];
-  fields?: QueryObject;
+  fields?: AST;
 } | null;
 
-export type QueryObject = Record<string, QueryField>;
+export type AST = Record<string, QueryField>;
+
+interface QueryOpts {
+  operationName?: string,
+  variables?: QueryObject,
+  extensions?: QueryObject
+}
 
 export class QueryParser {
   operation: QueryOperation;
-  ast: QueryObject;
-  private fragments: Record<string, QueryObject> = {};
+  ast: AST;
+  fragments: Record<string, AST> = {};
+
   private tokens: Token[] = [];
   private pos = 0;
 
-  constructor(query: string) {
-    const tokeniser = new Tokeniser(query);
+  constructor(public text: string, public opts: QueryOpts = {}) {
+    const tokeniser = new Tokeniser(text);
     this.tokens = tokeniser.tokens;
     this.fragments = this.parseFragments();
     this.operation = this.parseOperation();
@@ -48,8 +55,8 @@ export class QueryParser {
     return tok;
   }
 
-  private parseFragments(): Record<string, QueryObject> {
-    const fragments: Record<string, QueryObject> = {};
+  private parseFragments(): Record<string, AST> {
+    const fragments: Record<string, AST> = {};
     let currentPos = 0;
 
     while (currentPos < this.tokens.length) {
@@ -80,7 +87,7 @@ export class QueryParser {
   private parseOperation(): QueryOperation {
     let type: QueryOperation["type"] = "query";
     let name = "";
-    const variables: QueryObjectValueType = {};
+    const variables: QueryObject = {};
 
     // Handle anonymous query (starting with selection set)
     if (this.peek("{")) {
@@ -116,8 +123,8 @@ export class QueryParser {
     return { type, name, variables };
   }
 
-  private parseSelectionSet(): QueryObject {
-    const fields: QueryObject = {};
+  private parseSelectionSet(): AST {
+    const fields: AST = {};
 
     while (!this.peek("}")) {
       if (this.peek("ELLIPSIS")) {
@@ -143,7 +150,7 @@ export class QueryParser {
         name = this.consume("NAME").value;
       }
 
-      let args: QueryObjectValueType | undefined;
+      let args: QueryObject | undefined;
       if (this.peek("(")) {
         args = this.parseArgs();
       }
@@ -167,14 +174,14 @@ export class QueryParser {
         directives.push(dir);
       }
 
-      let subFields: QueryObject | undefined;
+      let subFields: AST | undefined;
       if (this.peek("{")) {
         this.consume("{");
         subFields = this.parseSelectionSet();
       }
 
       fields[alias || name] = {
-        ...(alias ? { alias: name } : {}),
+        ref: name,
         ...(args ? { args } : {}),
         ...(directives.length ? { directives } : {}),
         ...(subFields ? { fields: subFields } : {}),
@@ -185,8 +192,8 @@ export class QueryParser {
     return fields;
   }
 
-  private parseArgs(): QueryObjectValueType {
-    const args: QueryObjectValueType = {};
+  private parseArgs(): QueryObject {
+    const args: QueryObject = {};
     this.consume("(");
     while (!this.peek(")")) {
       const key = this.consume("NAME").value;
@@ -198,7 +205,7 @@ export class QueryParser {
     return args;
   }
 
-  private parseValue(): QueryValueType {
+  private parseValue(): QueryValue {
     const token = this.tokens[this.pos];
     if (token.type === "STRING" || token.type === "VARIABLE") return this.consume().value;
     if (token.type === "{") return this.parseObject();
@@ -206,8 +213,8 @@ export class QueryParser {
     return this.consume().value; // fallback for simple types
   }
 
-  private parseObject(): QueryObjectValueType {
-    const obj: QueryObjectValueType = {};
+  private parseObject(): QueryObject {
+    const obj: QueryObject = {};
     this.consume("{");
     while (!this.peek("}")) {
       const key = this.consume("NAME").value;
@@ -219,8 +226,8 @@ export class QueryParser {
     return obj;
   }
 
-  private parseArray(): QueryValueType[] {
-    const arr: QueryValueType[] = [];
+  private parseArray(): QueryValue[] {
+    const arr: QueryValue[] = [];
     this.consume("[");
     while (!this.peek("]")) {
       arr.push(this.parseValue());
