@@ -2,7 +2,7 @@ import { RequestContext } from "../core/context.ts";
 import { Middleware } from "../core/types.ts";
 import { Route, Router, RouteConfig } from "../core/Router.ts";
 import { ModelInterface } from "../core/utils/Model.ts";
-import { query, QueryState } from "./middleware/query.ts";
+import { QueryState } from "./middleware/query.ts";
 import { queryResult } from "./handler/queryResults.ts";
 import { QueryOperation } from "./utils/QueryParser.ts";
 import { Cascade } from "../core/utils/Cascade.ts";
@@ -23,13 +23,6 @@ export class GraphRoute<S extends QueryState = QueryState> extends Route<S> {
     super(routeObj);
     this.operation = routeObj.operation;
     this.type = routeObj.type;
-  }
-
-  get fields(): string[] {
-    return Object.keys(Array.isArray(this.type)
-      ? this.type[0].schema
-      : this.type.schema
-    );
   }
 
   override get regexPath(): RegExp {
@@ -53,7 +46,7 @@ export class GraphRouter<
     routes: Record<string, R> = {}
   ) {
     super(
-      [query, ...middleware], 
+      middleware, 
       state, 
       routes
     );
@@ -63,8 +56,15 @@ export class GraphRouter<
     const ctx = new RequestContext(request, this.state);
     const middleware = [...this.middleware];
 
-    // dataloader implementation using ctx.state.ast and attached routes
-    // ctx.state.ast ...
+    // here we will depth-first parse the AST, matching root fields as routes.
+    // and their sub-fields as InstanceType<ModelInterface> fields.
+
+    // Run root field resolvers immediately (for sequential mutations) then resolve 
+    // fields from resolved response. For fields that do not exist: add to errors,
+    // For fields that are resolved: call promise and move on (for dataloader support)
+
+    // when finished traversing AST, copy the resolved AST from ctx.state.queryResult.data
+    // into response body and send
     
     const res = await new Cascade(ctx, middleware).run();
     return res ? res : new Response("", { status: 404 });
@@ -90,14 +90,6 @@ export class GraphRouter<
     // @ts-ignore supply overload args
     const newRoute = this.addRoute(...arguments);
     newRoute.method = "SUBSCRIPTION";
-    newRoute.handler = queryResult;
-    return newRoute;
-  };
-
-  resolver: typeof this.addRoute = function () {
-    // @ts-ignore supply overload args
-    const newRoute = this.addRoute(...arguments);
-    newRoute.method = "RESOLVER";
     newRoute.handler = queryResult;
     return newRoute;
   };

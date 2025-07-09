@@ -11,7 +11,7 @@ import { Middleware } from "../../core/types.ts";
 import { CacheState } from "../../../mod.ts";
 import { validJSON, ValidJSON } from "../../core/middleware/valid.ts";
 import { Model, ModelFactory } from "../../core/utils/Model.ts";
-import { Field, FieldInterface } from "../../core/utils/Field.ts";
+import { Field, FieldFactory, FieldInterface, FieldOptions } from "../../core/utils/Field.ts";
 
 Deno.test("ROUTER: HttpRouter", async (t) => {
   await t.step("http shorthand methods work correctly", () => {
@@ -72,12 +72,15 @@ Deno.test("ROUTER: HttpRouter", async (t) => {
     };
 
     class TestModel extends Model<{
-      testUsername: FieldInterface<StringConstructor, true>;
+      testUsername: FieldInterface<StringConstructor, true, FieldOptions<StringConstructor>>;
     }> {
       static override schema = {
-        testUsername: Field(String, {
-          defaultValue: "test_person_123",
-        })
+        testUsername: class TestUsernameField extends Field<StringConstructor, true> {
+          static override type = String;
+          static override opts = {
+            defaultValue: "test_person_123",
+          }
+        }
       };
     }
 
@@ -126,7 +129,7 @@ Deno.test("ROUTER: HttpRouter", async (t) => {
 
   await t.step("Factory-function based declaration", async () => {
     class TestModel extends ModelFactory({
-      testUsername: Field(String, {
+      testUsername: FieldFactory(String, {
         defaultValue: "test_person_123",
       }),
     }) {}

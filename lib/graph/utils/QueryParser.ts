@@ -207,7 +207,6 @@ export class QueryParser {
 
   private parseValue(): QueryValue {
     const token = this.tokens[this.pos];
-    if (token.type === "STRING" || token.type === "VARIABLE") return this.consume().value;
     if (token.type === "{") return this.parseObject();
     if (token.type === "[") return this.parseArray();
     return this.consume().value; // fallback for simple types

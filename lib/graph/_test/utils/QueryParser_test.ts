@@ -53,7 +53,7 @@ Deno.test("UTIL: QueryParser - basic nested query with args", () => {
 
 Deno.test("QueryParser with fragments and variables", () => {
   const query = `
-    query getUser($id: ID!) {
+    mutation deleteUser($id: ID!) {
       user(id: $id) {
         ...userFields
         profile {
@@ -74,8 +74,8 @@ Deno.test("QueryParser with fragments and variables", () => {
   const parsed = new QueryParser(query);
 
   assertEquals(parsed.operation, {
-    type: "query",
-    name: "getUser",
+    type: "mutation",
+    name: "deleteUser",
     variables: {
       id: "ID!",
     },
@@ -103,7 +103,7 @@ Deno.test("QueryParser with fragments and variables", () => {
 
 Deno.test("UTIL: QueryParser - full GraphQL syntax support", () => {
   const queryRaw = `
-    query getUserData {
+    subscription getUserData {
       me: user(id: "123") @include(if: true) {
         name
         profilePic: avatar(size: "large")
@@ -126,7 +126,7 @@ Deno.test("UTIL: QueryParser - full GraphQL syntax support", () => {
   const query = new QueryParser(queryRaw);
 
   assertEquals(query.operation, {
-    type: "query",
+    type: "subscription",
     name: "getUserData",
     variables: {}
   });

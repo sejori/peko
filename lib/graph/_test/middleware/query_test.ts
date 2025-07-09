@@ -19,7 +19,7 @@ const createTestCtx = (
 );
 
 Deno.test("MIDDLEWARE: query", async (t) => {
-  // Test valid JSON request with all fields
+  // // Test valid JSON request with all fields
   await t.step("handles valid JSON request with all fields", async () => {
     const testBody = {
       query: "query { user { name } }",
@@ -190,7 +190,7 @@ Deno.test("MIDDLEWARE: query", async (t) => {
     
     assertEquals(ctx.state.query.text, testQuery);
     assertEquals(ctx.state.query.opts.variables, { id: "123" });
-    assertEquals(ctx.state.query.operation, { type: "query", name: undefined, variables: undefined });
+    assertEquals(ctx.state.query.operation, { type: "query", name: "", variables: {} });
     assertEquals(ctx.state.query.ast, {
       user: {
         ref: "user",
