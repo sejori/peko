@@ -1,18 +1,18 @@
 {
   "name": "@sejori/peko",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "Featherweight apps on the edge 🐣⚡",
-  "main": "mod.ts",
+  "main": "dist/mod.js",
   "directories": {
     "example": "examples",
     "lib": "lib",
-    "test": "tests"
+    "scripts": "scripts"
   },
   "type": "module",
   "scripts": {
     "build": "npm run build:js && npm run build:types",
     "build:js": "esbuild --bundle --sourcemap --target=es2020 --format=esm --outdir=./dist ./mod.ts",
-    "build:types": "tsc -p tsconfig.json --outFile dist/mod.d.ts",
+    "build:types": "tsc -p tsconfig.json && deno -A scripts/stripExtensions.ts",
     "dev:build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./examples/react/dist/pages --external:react --jsx=automatic  --tsconfig-raw={} --watch=forever ./examples/react/src/pages/*.tsx",
     "dev:deno": "deno run -A --watch scripts/deno/main.ts",
     "dev:bun": "bun run --watch scripts/bun/main.ts",
