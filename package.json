@@ -10,7 +10,7 @@
   },
   "type": "module",
   "scripts": {
-    "build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/reactSSR/dist/pages --external:react --jsx=automatic  --tsconfig-raw={} ./example/reactSSR/src/pages/*.tsx",
+    "build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./examples/react/dist/pages --external:react --jsx=automatic  --tsconfig-raw={} ./examples/react/src/pages/*.tsx",
     "start": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/main.ts",
     "start:auth": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/auth.ts",
     "test": "deno test --allow-read --allow-net --coverage",
@@ -18,7 +18,7 @@
     "profile:bun": "bun run scripts/bun/profile.ts",
     "profile:wrangler": "wrangler dev scripts/wrangler/profile.ts",
     "start:wrangler": "wrangler dev scripts/wrangler/main.ts",
-    "dev:build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./example/reactSSR/dist/pages --external:react --jsx=automatic  --tsconfig-raw={} --watch=forever ./example/reactSSR/src/pages/*.tsx",
+    "dev:build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./examples/react/dist/pages --external:react --jsx=automatic  --tsconfig-raw={} --watch=forever ./examples/react/src/pages/*.tsx",
     "dev:deno": "deno run -A --watch scripts/deno/main.ts",
     "dev:bun": "bun run --watch scripts/bun/main.ts",
     "dev:wrangler": "wrangler -e dev dev scripts/wrangler/main.ts"

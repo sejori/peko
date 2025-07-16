@@ -1,4 +1,4 @@
-// example/reactSSR/src/components/Layout.tsx
+// examples/react/src/components/Layout.tsx
 import { jsx, jsxs } from "react/jsx-runtime";
 var Layout = ({
   navColor,
@@ -97,7 +97,7 @@ var footerLinkStyle = {
 };
 var Layout_default = Layout;
 
-// example/reactSSR/src/pages/Home.tsx
+// examples/react/src/pages/Home.tsx
 import { jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
 var Home = () => {
   return /* @__PURE__ */ jsxs2(Layout_default, { navLink: "/about", navColor: "#101727", children: [
@@ -134,7 +134,7 @@ var Home = () => {
     /* @__PURE__ */ jsxs2("ol", { children: [
       /* @__PURE__ */ jsx2("li", { children: /* @__PURE__ */ jsx2("a", { href: "https://github.com/sebringrose/peko/blob/main/react.md", children: "How to build a full-stack React application with Peko and Deno" }) }),
       /* @__PURE__ */ jsxs2("li", { children: [
-        "Want to build a lightweight HTML or Preact app? Check out the",
+        "Want to build a lightweight HTML or react app? Check out the",
         " ",
         /* @__PURE__ */ jsx2("a", { href: "https://github.com/sebringrose/peko/blob/main/examples", children: "examples" }),
         "!"

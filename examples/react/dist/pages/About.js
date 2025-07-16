@@ -1,4 +1,4 @@
-// example/reactSSR/src/components/Layout.tsx
+// examples/react/src/components/Layout.tsx
 import { jsx, jsxs } from "react/jsx-runtime";
 var Layout = ({
   navColor,
@@ -97,10 +97,10 @@ var footerLinkStyle = {
 };
 var Layout_default = Layout;
 
-// example/reactSSR/src/components/App.tsx
+// examples/react/src/components/App.tsx
 import { useState as useState3, useEffect as useEffect2 } from "react";
 
-// example/reactSSR/src/components/List.tsx
+// examples/react/src/components/List.tsx
 import { useState } from "react";
 import { jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
 var List = ({ data }) => {
@@ -124,7 +124,7 @@ var List = ({ data }) => {
 };
 var List_default = List;
 
-// example/reactSSR/src/hooks/useLocalState.ts
+// examples/react/src/hooks/useLocalState.ts
 import { useState as useState2, useEffect } from "react";
 var initialState = {
   dataArray: ["Item 0", "Item 1", "Item 2"]
@@ -166,7 +166,7 @@ var setLocalStateValue = (key, value) => {
   );
 };
 
-// example/reactSSR/src/components/App.tsx
+// examples/react/src/components/App.tsx
 import { jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
 var App = () => {
   const [dataArray, setDataArray] = useLocalState("dataArray");
@@ -222,7 +222,7 @@ var btnLgStyle = {
 };
 var App_default = App;
 
-// example/reactSSR/src/pages/About.tsx
+// examples/react/src/pages/About.tsx
 import { jsx as jsx4, jsxs as jsxs4 } from "react/jsx-runtime";
 var About = (props) => {
   return /* @__PURE__ */ jsxs4(Layout_default, { navLink: "/", navColor: "blueviolet", children: [
@@ -252,9 +252,9 @@ var About = (props) => {
     ),
     /* @__PURE__ */ jsx4("img", { src: "/assets/lighthouse-score.png", alt: "lighthouse-score" }),
     /* @__PURE__ */ jsxs4("p", { children: [
-      "This website is appified with the Preact JavaScript library. It even uses localStorage to store state locally between page loads \u{1F92F}. Check out the \u{1F449}",
+      "This website is appified with the react JavaScript library. It even uses localStorage to store state locally between page loads \u{1F92F}. Check out the \u{1F449}",
       " ",
-      /* @__PURE__ */ jsx4("a", { href: "https://github.com/sejori/peko/tree/main/example/preactSSR", children: "source code here" }),
+      /* @__PURE__ */ jsx4("a", { href: "https://github.com/sejori/peko/tree/main/examples/react", children: "source code here" }),
       " ",
       "\u{1F448}."
     ] }),
