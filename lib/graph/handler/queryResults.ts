@@ -2,8 +2,7 @@ import { Handler } from "../../core/types.ts";
 import { QueryState } from "../middleware/query.ts";
 
 export const queryResult: Handler<QueryState> = (ctx) => {
-  const data = ctx.state.queryResults || {};
-  const errors = ctx.state.errors || [];
+  const { data, errors } = ctx.state.queryResult || {};
   
   if (Object.keys(data).length === 0 && errors.length === 0) {
     return new Response(JSON.stringify({
