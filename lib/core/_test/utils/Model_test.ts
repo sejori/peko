@@ -1,26 +1,26 @@
 /// <reference lib="deno.ns" />
 
 import { assertEquals } from "jsr:@std/assert";
-import { Field, ResolvedField } from "../../utils/Field.ts";
+import { FieldFactory, ResolvedFieldFactory } from "../../utils/Field.ts";
 import { ModelFactory } from "../../utils/Model.ts";
 import { RequestContext } from "../../context.ts";
 
 class PublicUser extends ModelFactory({
-  id: Field(String),
-  username: Field(String, {
+  id: FieldFactory(String),
+  username: FieldFactory(String, {
     validator: (value) => ({
       valid: value.length > 3,
       message: "Username must be longer than 3 characters"
     })
   }),
-  followsIds: Field([String], {
+  followsIds: FieldFactory([String], {
     validator: (value) => ({
       valid: value.length > 3,
       message: "Username must be longer than 3 characters"
     })
   }),
 }) {
-  follows = ResolvedField([PublicUser], {
+  follows = ResolvedFieldFactory([PublicUser], {
     nullable: true,
     description: "List of users this user follows",
     resolve: (_ctx) => {
@@ -34,9 +34,9 @@ class PublicUser extends ModelFactory({
 }
 
 class Menu extends ModelFactory({
-  title: Field(String),
+  title: FieldFactory(String),
 
-  content: Field(String, { 
+  content: FieldFactory(String, { 
     nullable: true, 
     validator: (value) => ({ 
       valid: value.length > 10,
@@ -44,14 +44,14 @@ class Menu extends ModelFactory({
     })
   }),
 
-  portions: Field(Number, { 
+  portions: FieldFactory(Number, { 
     validator: (value) => ({
       valid: value.valueOf() > 0,
       message: "Portions must be greater than 0"
     })
   }),
 
-  user: Field(PublicUser),
+  user: FieldFactory(PublicUser),
 }) {
   get summary() {
     return `${this.title} (${this.portions} portions)`;

@@ -1,93 +1,96 @@
-// import { RequestContext } from "../context.ts";
-// import { Middleware, Handler } from "../types.ts";
-// import { BaseRoute, BaseRouter, BaseRouteConfig } from "../core/BaseRouter.ts";
+import { RequestContext } from "../core/context.ts";
+import { Middleware } from "../core/types.ts";
+import { Route, Router, RouteConfig } from "../core/Router.ts";
+import { ModelInterface } from "../core/utils/Model.ts";
+import { QueryState } from "./middleware/query.ts";
+import { queryResult } from "./handler/queryResults.ts";
+import { QueryOperation } from "./utils/QueryParser.ts";
+import { Cascade } from "../core/utils/Cascade.ts";
 
-// export interface GraphRouteConfig<S extends object = object> extends BaseRouteConfig<S> {
-//   name: string;
-//   operation: "QUERY" | "MUTATION" | "RESOLVER";
-//   handler: Handler<S>;
-// }
+export interface GraphRouteConfig<S extends QueryState = QueryState> extends RouteConfig<S> {
+  name: QueryOperation["name"];
+  operation: QueryOperation["type"];
+  type: ModelInterface | ModelInterface[];
+  resolver: Middleware<S>;
+}
 
-// export class GraphRoute<S extends object = object> extends BaseRoute<S> {
-//   declare name: string;
-//   declare operation: GraphRouteConfig<S>["operation"];
+export class GraphRoute<S extends QueryState = QueryState> extends Route<S> {
+  declare name: string;
+  declare operation: GraphRouteConfig<S>["operation"];
+  type: ModelInterface | ModelInterface[]
 
-//   constructor(routeObj: GraphRouteConfig<S>) {
-//     super(routeObj);
-//     this.operation = routeObj.operation || "QUERY";
-//   }
+  constructor(routeObj: GraphRouteConfig<S>) {
+    super(routeObj);
+    this.operation = routeObj.operation;
+    this.type = routeObj.type;
+  }
 
-//   get params() {
-//     const x: Record<string, number> = {};
-//     this.path.split("/").forEach((str, i) => {
-//       if (str[0] === ":") x[str.slice(1)] = i;
-//     });
-//     return x;
-//   }
+  override get regexPath(): RegExp {
+    return new RegExp(
+      `\\b${this.operation.toLowerCase()}\\b.*\\b${this.name}\\b`, 
+      "i"
+    );
+  }
+}
 
-//   override get regexPath() {
-//     return this.params
-//       ? new RegExp(
-//           `^${this.path.replaceAll(/(?<=\/):(.)*?(?=\/|$)/g, "(.)*")}\/?$`
-//         )
-//       : new RegExp(`^${this.path}\/?$`);
-//   }
+export class GraphRouter<
+  S extends QueryState,
+  Config extends GraphRouteConfig<S> = GraphRouteConfig<S>,
+  R extends Route<S> = GraphRoute<S>
+> extends Router<S, Config, R> {
+  override Route = GraphRoute<S>;
 
-//   override match(ctx: RequestContext<S>): boolean {
-//     if (
-//       this.regexPath.test(ctx.url.pathname) &&
-//       this.method === ctx.request.method
-//     ) {
-//       const pathBits = ctx.url.pathname.split("/");
-//       for (const param in this.params) {
-//         ctx.params[param] = pathBits[this.params[param]];
-//       }
-//       return true;
-//     }
-//     return false;
-//   }
-// }
+  constructor(
+    middleware: Middleware<S>[] = [], 
+    state?: S, 
+    routes: Record<string, R> = {}
+  ) {
+    super(
+      middleware, 
+      state, 
+      routes
+    );
+  }
 
-// export class HttpRouter<
-//   S extends object,
-//   Config extends HttpRouteConfig<S> = HttpRouteConfig<S>,
-//   R extends HttpRoute<S> = HttpRoute<S>
-// > extends BaseRouter<S, Config, R> {
-//   override Route = HttpRoute<S>;
+  override async handle(request: Request): Promise<Response> {
+    const ctx = new RequestContext(request, this.state);
+    const middleware = [...this.middleware];
 
-//   constructor(
-//     public override state?: S, 
-//     public override middleware: Middleware<S>[] = [], 
-//     public override routes: R[] = []
-//   ) {
-//     super(state, middleware, routes);
-//   }
+    // here we will depth-first parse the AST, matching root fields as routes.
+    // and their sub-fields as InstanceType<ModelInterface> fields.
 
-//   get: typeof this.addRoute = function () {
-//     // @ts-ignore supply overload args
-//     const newRoute = this.addRoute(...arguments);
-//     newRoute.method = "GET";
-//     return newRoute;
-//   };
+    // Run root field resolvers immediately (for sequential mutations) then resolve 
+    // fields from resolved response. For fields that do not exist: add to errors,
+    // For fields that are resolved: call promise and move on (for dataloader support)
 
-//   post: typeof this.addRoute = function () {
-//     // @ts-ignore supply overload args
-//     const newRoute = this.addRoute(...arguments);
-//     newRoute.method = "POST";
-//     return newRoute;
-//   };
+    // when finished traversing AST, copy the resolved AST from ctx.state.queryResult.data
+    // into response body and send
+    
+    const res = await new Cascade(ctx, middleware).run();
+    return res ? res : new Response("", { status: 404 });
+  }
 
-//   put: typeof this.addRoute = function () {
-//     // @ts-ignore supply overload args
-//     const newRoute = this.addRoute(...arguments);
-//     newRoute.method = "PUT";
-//     return newRoute;
-//   };
+  query: typeof this.addRoute = function () {
+    // @ts-ignore supply overload args
+    const newRoute = this.addRoute(...arguments);
+    newRoute.method = "QUERY";
+    newRoute.handler = queryResult;
+    return newRoute;
+  };
 
-//   delete: typeof this.addRoute = function () {
-//     // @ts-ignore supply overload args
-//     const newRoute = this.addRoute(...arguments);
-//     newRoute.method = "DELETE";
-//     return newRoute;
-//   };
-// }
+  mutation: typeof this.addRoute = function () {
+    // @ts-ignore supply overload args
+    const newRoute = this.addRoute(...arguments);
+    newRoute.method = "MUTATION";
+    newRoute.handler = queryResult;
+    return newRoute;
+  };
+
+  subscription: typeof this.addRoute = function () {
+    // @ts-ignore supply overload args
+    const newRoute = this.addRoute(...arguments);
+    newRoute.method = "SUBSCRIPTION";
+    newRoute.handler = queryResult;
+    return newRoute;
+  };
+}
