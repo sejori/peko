@@ -33,7 +33,7 @@ const Home = () => {
           </a>
         </li>
         <li>
-          Want to build a lightweight HTML or Preact app? Check out the{" "}
+          Want to build a lightweight HTML or react app? Check out the{" "}
           <a href="https://github.com/sebringrose/peko/blob/main/examples">
             examples
           </a>

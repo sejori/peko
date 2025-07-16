@@ -13,7 +13,7 @@ export default (input: {
     
     <title>${input.title}</title>
     <meta name="description" content="Featherweight apps on the edge">
-    <meta name="keywords" content="deno, edge, serverless, preact, peko, cloudflare, bun, typescript, server">
+    <meta name="keywords" content="deno, edge, serverless, react, peko, cloudflare, bun, typescript, server">
     <!-- Made with https://generator.jspm.io/ --> 
     <script type="importmap">
       {

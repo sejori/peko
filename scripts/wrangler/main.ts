@@ -1,4 +1,4 @@
-import router from "../../examples/reactSSR/router.ts";
+import router from "../../examples/react/router.ts";
 
 export default {
   fetch(request: Request, env: Record<string, string>) {
