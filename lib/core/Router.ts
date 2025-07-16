@@ -60,7 +60,7 @@ export class Router<
   Config extends RouteConfig<S> = RouteConfig<S>,
   R extends Route<S> = Route<S>
 > {
-  Route = Route<S>;
+  Route: new (routeObj: Config) => R = Route as new (routeObj: Config) => R;
 
   constructor(
     public middleware: Middleware<S>[] = [],
@@ -135,6 +135,7 @@ export class Router<
         ? { method: arg1, path: arg2 as string, handler: arg3 as Handler }
         : { method: arg1, path: arg2 as string, ...(arg3 as Omit<C, "path" | "method">) };
 
+    // @ts-ignore - allow derived configs
     const fullRoute = new this.Route(routeObj);
     const fullRouteKey = fullRoute.routeKey;
     if (this.routes[fullRouteKey]) {
