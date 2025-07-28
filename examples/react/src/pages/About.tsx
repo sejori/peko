@@ -29,10 +29,10 @@ const About = (props: Record<string, ReactNode>) => {
       <img src="/assets/lighthouse-score.png" alt="lighthouse-score" />
 
       <p>
-        This website is appified with the Preact JavaScript library. It even
+        This website is appified with the react JavaScript library. It even
         uses localStorage to store state locally between page loads 🤯. Check
         out the 👉{" "}
-        <a href="https://github.com/sejori/peko/tree/main/example/preactSSR">
+        <a href="https://github.com/sejori/peko/tree/main/examples/react">
           source code here
         </a>{" "}
         👈.

@@ -2,7 +2,7 @@
     <img 
         width="270px"
         style="margin: 1rem auto;"
-        src="https://raw.githubusercontent.com/sejori/peko/main/example/reactSSR/assets/twemoji_chick.svg" alt="peko-chick" 
+        src="https://raw.githubusercontent.com/sejori/peko/main/examples/react/assets/twemoji_chick.svg" alt="peko-chick" 
     />
 </p>
 
@@ -102,7 +102,7 @@ Deno.serve((req) => router.handle(req));
 
 Check `example` directory to see implementations of:
 
-- server-side rendering Preact to HTML
+- server-side rendering react to HTML
 - streaming server-sent events to web client
 - logging requests
 - caching responses
@@ -257,7 +257,7 @@ Peko apps are designed to boot from scratch at request time and disappear once t
 
 This paradigm is often referred to as "serverless" or "edge computing" on cloud platforms, which offer code execution on shared server hardware (a.k.a JavaScript isolates). This is [much more resource efficient](https://developer.ibm.com/blogs/the-future-is-serverless/) than traditional server provisioning.
 
-Because stateless apps can "cold-start" it is important to keep their codebases small. The preact demo app only imports Peko, Preact and Htm as dependencies and is very fast as a result - [https://peko.deno.dev](https://peko.deno.dev)!
+Because stateless apps can "cold-start" it is important to keep their codebases small. The react demo app only imports Peko, react and Htm as dependencies and is very fast as a result - [https://peko.deno.dev](https://peko.deno.dev)!
 
 **Note:** In reality a single app instance will serve multiple requests, we just can't guarantee it. This is why caching is still an effective optimization strategy but in-memory user sessions are not an effective authentication strategy.
 

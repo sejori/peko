@@ -5,7 +5,7 @@ export const githubHandler =
   async (ctx: RequestContext<{ env?: { ENVIRONMENT: string } }>) => {
     const base =
       ctx.state.env?.ENVIRONMENT === "production" || !import.meta.url
-        ? `https://raw.githubusercontent.com/sejori/peko/main/example/reactSSR/`
+        ? `https://raw.githubusercontent.com/sejori/peko/main/examples/react/`
         : import.meta.url.replace("handlers/github.handler.ts", "");
 
     return (

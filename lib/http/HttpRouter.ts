@@ -9,10 +9,13 @@ export interface HttpRouteConfig<S extends DefaultState = DefaultState> extends 
   handler: Handler<S>;
 }
 
-export class HttpRoute<S extends DefaultState = DefaultState> extends Route<S> {
+export class HttpRoute<
+  S extends DefaultState = DefaultState,
+  Config extends HttpRouteConfig<S> = HttpRouteConfig<S>
+> extends Route<S> {
   declare path: `/${string}`;
 
-  constructor(routeObj: HttpRouteConfig<S>) {
+  constructor(routeObj: Config) {
     super(routeObj);
     this.method = routeObj.method || "GET";
   }
@@ -52,7 +55,7 @@ export class HttpRouter<
   Config extends HttpRouteConfig<S> = HttpRouteConfig<S>,
   R extends HttpRoute<S> = HttpRoute<S>
 > extends Router<S, Config, R> {
-  override Route = HttpRoute<S>;
+  override Route: new (routeObj: Config) => R = HttpRoute as new (routeObj: Config) => R;
 
   constructor(
     middleware: Middleware<S>[] = [], 

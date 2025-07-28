@@ -18,6 +18,8 @@ export * from "./lib/core/utils/Cascade.ts";
 export * from "./lib/core/utils/Krypto.ts";
 export * from "./lib/core/utils/_helpers.ts";
 export * from "./lib/core/utils/Profile.ts";
+export * from "./lib/core/utils/Model.ts";
+export * from "./lib/core/utils/Field.ts";
 
 // HTTP Router
 export * from "./lib/http/HttpRouter.ts";
