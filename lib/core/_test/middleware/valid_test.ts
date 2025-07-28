@@ -8,21 +8,21 @@ import {
 } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import { validJSON, ValidJSON } from "../../middleware/valid.ts";
 import { Model } from "../../utils/Model.ts";
-import { Field } from "../../utils/Field.ts";
+import { FieldFactory } from "../../utils/Field.ts";
 import { RequestContext } from "../../context.ts";
 
 
 class MockModel extends Model {
   static override schema = {
-    username: Field(String, {
+    username: FieldFactory(String, {
       validator: (v) => v.length > 3 
         ? { valid: true } 
         : { valid: false, message: "username length must be greater than 3" },
     }),
-    age: Field(Number, {
+    age: FieldFactory(Number, {
       defaultValue: 18,
     }),
-    gender: Field(String, {
+    gender: FieldFactory(String, {
       nullable: true,
       validator: (v) => v !== "Vulcan"
         ? { valid: false, message: "We don't accept your kind here" }

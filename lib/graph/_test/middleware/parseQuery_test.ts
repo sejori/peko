@@ -2,7 +2,7 @@
 
 import { assertEquals } from "https://deno.land/std@0.218.0/assert/mod.ts";
 import { RequestContext } from "../../../core/context.ts";
-import { query, QueryState } from "../../middleware/query.ts";
+import { parseQuery, QueryState } from "../../middleware/parseQuery.ts";
 
 // Helper to create test context
 const createTestCtx = (
@@ -18,7 +18,7 @@ const createTestCtx = (
   state as QueryState
 );
 
-Deno.test("MIDDLEWARE: query", async (t) => {
+Deno.test("MIDDLEWARE: parseQuery", async (t) => {
   // // Test valid JSON request with all fields
   await t.step("handles valid JSON request with all fields", async () => {
     const testBody = {
@@ -32,7 +32,7 @@ Deno.test("MIDDLEWARE: query", async (t) => {
       "Content-Type": "application/json"
     });
     
-    await query(ctx, () => {});
+    await parseQuery(ctx, () => {});
     
     assertEquals(ctx.state.query.text, testBody.query);
     assertEquals(ctx.state.query.opts.operationName, testBody.operationName);
@@ -55,7 +55,7 @@ Deno.test("MIDDLEWARE: query", async (t) => {
       "Content-Type": "application/json"
     });
     
-    await query(ctx, () => {});
+    await parseQuery(ctx, () => {});
     
     assertEquals(ctx.state.query.text, testBody.query);
     assertEquals(ctx.state.query.opts.operationName, undefined);
@@ -78,7 +78,7 @@ Deno.test("MIDDLEWARE: query", async (t) => {
       "Content-Type": "text/plain"
     });
     
-    await query(ctx, () => {});
+    await parseQuery(ctx, () => {});
     
     assertEquals(ctx.state.query.text, testQuery);
     assertEquals(ctx.state.query.opts.operationName, undefined);
@@ -99,7 +99,7 @@ Deno.test("MIDDLEWARE: query", async (t) => {
     const testQuery = "{ stats { views } }";
     const ctx = createTestCtx(testQuery);
     
-    await query(ctx, () => {});
+    await parseQuery(ctx, () => {});
     
     assertEquals(ctx.state.query.text, testQuery);
     assertEquals(ctx.state.query.ast, {
@@ -118,7 +118,7 @@ Deno.test("MIDDLEWARE: query", async (t) => {
       "Content-Type": "application/json"
     });
     
-    const response = await query(ctx, () => {});
+    const response = await parseQuery(ctx, () => {});
     
     assertEquals(response?.status, 400);
     assertEquals(await response?.text(), "Error parsing query from request body.");
@@ -130,7 +130,7 @@ Deno.test("MIDDLEWARE: query", async (t) => {
       "Content-Type": "text/plain"
     });
     
-    const response = await query(ctx, () => {});
+    const response = await parseQuery(ctx, () => {});
     
     assertEquals(response?.status, 400);
     assertEquals(await response?.text(), "Error parsing query from request body.");
@@ -186,11 +186,11 @@ Deno.test("MIDDLEWARE: query", async (t) => {
       { "Content-Type": "application/json" }
     );
     
-    await query(ctx, () => {});
+    await parseQuery(ctx, () => {});
     
     assertEquals(ctx.state.query.text, testQuery);
     assertEquals(ctx.state.query.opts.variables, { id: "123" });
-    assertEquals(ctx.state.query.operation, { type: "query", name: "", variables: {} });
+    assertEquals(ctx.state.query.operation, { type: "QUERY", name: "", variables: {} });
     assertEquals(ctx.state.query.ast, {
       user: {
         ref: "user",

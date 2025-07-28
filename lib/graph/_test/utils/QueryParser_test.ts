@@ -20,7 +20,7 @@ Deno.test("UTIL: QueryParser - basic nested query with args", () => {
   const query = new QueryParser(queryRaw);
 
   assertEquals(query.operation, {
-    type: "query",
+    type: "QUERY",
     name: "getUser",
     variables: {}
   });
@@ -74,7 +74,7 @@ Deno.test("QueryParser with fragments and variables", () => {
   const parsed = new QueryParser(query);
 
   assertEquals(parsed.operation, {
-    type: "mutation",
+    type: "MUTATION",
     name: "deleteUser",
     variables: {
       id: "ID!",
@@ -126,7 +126,7 @@ Deno.test("UTIL: QueryParser - full GraphQL syntax support", () => {
   const query = new QueryParser(queryRaw);
 
   assertEquals(query.operation, {
-    type: "subscription",
+    type: "SUBSCRIPTION",
     name: "getUserData",
     variables: {}
   });
@@ -241,7 +241,7 @@ Deno.test("QueryParser - anonymous query", () => {
   const parser = new QueryParser(query);
   
   assertEquals(parser.operation, {
-    type: "query",
+    type: "QUERY",
     name: "",
     variables: {}
   });
@@ -272,7 +272,7 @@ Deno.test("QueryParser - anonymous query with fragments", () => {
   const parser = new QueryParser(query);
   
   assertEquals(parser.operation, {
-    type: "query",
+    type: "QUERY",
     name: "",
     variables: {}
   });
@@ -297,7 +297,7 @@ Deno.test("QueryParser - anonymous query with directives", () => {
   const parser = new QueryParser(query);
   
   assertEquals(parser.operation, {
-    type: "query",
+    type: "QUERY",
     name: "",
     variables: {}
   });

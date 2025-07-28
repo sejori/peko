@@ -1,44 +1,59 @@
-import { RequestContext } from "../core/context.ts";
-import { Middleware } from "../core/types.ts";
+import { CombineMiddlewareStates, Handler, Middleware } from "../core/types.ts";
 import { Route, Router, RouteConfig } from "../core/Router.ts";
-import { ModelInterface } from "../core/utils/Model.ts";
-import { QueryState } from "./middleware/query.ts";
-import { queryResult } from "./handler/queryResults.ts";
+import { Model } from "../core/utils/Model.ts";
+import { QueryState } from "./middleware/parseQuery.ts";
+import { graphHandler } from "./handler/graphHandler.ts";
+import { RequestContext } from "../core/context.ts";
 import { QueryOperation } from "./utils/QueryParser.ts";
-import { Cascade } from "../core/utils/Cascade.ts";
 
-export interface GraphRouteConfig<S extends QueryState = QueryState> extends RouteConfig<S> {
-  name: QueryOperation["name"];
-  operation: QueryOperation["type"];
-  type: ModelInterface | ModelInterface[];
-  resolver: Middleware<S>;
+export type Resolver<
+  S extends QueryState = QueryState,
+  M extends Model | Model[] = Model | Model[]
+> = (ctx: RequestContext<S>) => Promise<M> | M;
+
+export interface GraphRouteConfig<
+  S extends QueryState = QueryState,
+  M extends Model | Model[] = Model | Model[]
+> extends RouteConfig<S> {
+  method: QueryOperation["type"];
+  resolver: Resolver<S, M>;
 }
 
-export class GraphRoute<S extends QueryState = QueryState> extends Route<S> {
-  declare name: string;
-  declare operation: GraphRouteConfig<S>["operation"];
-  type: ModelInterface | ModelInterface[]
-
-  constructor(routeObj: GraphRouteConfig<S>) {
+export class GraphRoute<
+  S extends QueryState = QueryState,
+  M extends Model | Model[] = Model | Model[],
+  Config extends GraphRouteConfig<S, M> = GraphRouteConfig<S, M>
+> extends Route<S, Config> {
+  constructor(routeObj: Config) {
     super(routeObj);
-    this.operation = routeObj.operation;
-    this.type = routeObj.type;
   }
 
-  override get regexPath(): RegExp {
-    return new RegExp(
-      `\\b${this.operation.toLowerCase()}\\b.*\\b${this.name}\\b`, 
-      "i"
-    );
+  override match(ctx: RequestContext<S>): boolean {
+    // first match by operation type (assume parseQuery middleware has ran)
+    if (ctx.state.query.operation.type === this.method) {
+      // now loop root fields to match route path (operation name) against AST key (original, not alias)
+      for (const key in ctx.state.query.ast) {
+        if (ctx.state.query.ast[key]?.ref === this.path) {
+          // found match, add final middleware to create resolver promise in queryResult data for key
+          this.middleware.push((ctx) => {
+            ctx.state.queryResult.data[key] = this.config.resolver(ctx) as Promise<Model>;
+          });
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 }
 
 export class GraphRouter<
   S extends QueryState,
-  Config extends GraphRouteConfig<S> = GraphRouteConfig<S>,
-  R extends Route<S> = GraphRoute<S>
+  Config extends GraphRouteConfig<S, Model> = GraphRouteConfig<S, Model>,
+  R extends Route<S, Config> = GraphRoute<S, Model, Config> 
 > extends Router<S, Config, R> {
-  override Route = GraphRoute<S>;
+  override Route: new (routeObj: Config) => R = GraphRoute as new (routeObj: Config) => R;
+  override defaultHandler: Handler<S> = graphHandler
 
   constructor(
     middleware: Middleware<S>[] = [], 
@@ -52,45 +67,78 @@ export class GraphRouter<
     );
   }
 
-  override async handle(request: Request): Promise<Response> {
-    const ctx = new RequestContext(request, this.state);
-    const middleware = [...this.middleware];
-
-    // here we will depth-first parse the AST, matching root fields as routes.
-    // and their sub-fields as InstanceType<ModelInterface> fields.
-
-    // Run root field resolvers immediately (for sequential mutations) then resolve 
-    // fields from resolved response. For fields that do not exist: add to errors,
-    // For fields that are resolved: call promise and move on (for dataloader support)
-
-    // when finished traversing AST, copy the resolved AST from ctx.state.queryResult.data
-    // into response body and send
-    
-    const res = await new Cascade(ctx, middleware).run();
-    return res ? res : new Response("", { status: 404 });
-  }
-
-  query: typeof this.addRoute = function () {
-    // @ts-ignore supply overload args
-    const newRoute = this.addRoute(...arguments);
-    newRoute.method = "QUERY";
-    newRoute.handler = queryResult;
-    return newRoute;
+  query(operation: Config["path"], resolver: Resolver<S, Model | Model[]>): R;
+  query<M extends Middleware[]>(
+    operation: Config["path"],
+    middleware: [...M],
+    resolver: Resolver<CombineMiddlewareStates<M, QueryState>, Model | Model[]>
+  ): R
+  query<M extends Middleware[]>(
+    operation: Config["path"],
+    middleware: [...M] | Resolver<S, Model | Model[]>,
+    resolver?: Resolver<CombineMiddlewareStates<M, QueryState>, Model | Model[]>
+  ): R {
+    return this.addRoute({
+      method: "QUERY",
+      path: operation,
+      middleware: resolver ? (middleware as unknown as Middleware): [],
+      resolver: resolver ? resolver : middleware,
+    });
   };
 
-  mutation: typeof this.addRoute = function () {
-    // @ts-ignore supply overload args
-    const newRoute = this.addRoute(...arguments);
-    newRoute.method = "MUTATION";
-    newRoute.handler = queryResult;
-    return newRoute;
+  mutation(operation: Config["path"], resolver: Resolver<S, Model | Model[]>): R;
+  mutation<M extends Middleware[]>(
+    operation: Config["path"],
+    middleware: [...M],
+    resolver: Resolver<CombineMiddlewareStates<M, QueryState>, Model | Model[]>
+  ): R
+  mutation<M extends Middleware[]>(
+    operation: Config["path"],
+    middleware: [...M] | Resolver<S, Model | Model[]>,
+    resolver?: Resolver<CombineMiddlewareStates<M, QueryState>, Model | Model[]>
+  ): R {
+    return this.addRoute({
+      method: "MUTATION",
+      path: operation,
+      middleware: resolver ? (middleware as unknown as Middleware): [],
+      resolver: resolver ? resolver : middleware,
+    });
   };
 
-  subscription: typeof this.addRoute = function () {
-    // @ts-ignore supply overload args
-    const newRoute = this.addRoute(...arguments);
-    newRoute.method = "SUBSCRIPTION";
-    newRoute.handler = queryResult;
-    return newRoute;
+  subscription(operation: Config["path"], resolver: Resolver<S, Model | Model[]>): R;
+  subscription<M extends Middleware[]>(
+    operation: Config["path"],
+    middleware: [...M],
+    resolver: Resolver<CombineMiddlewareStates<M, QueryState>, Model | Model[]>
+  ): R
+  subscription<M extends Middleware[]>(
+    operation: Config["path"],
+    middleware: [...M] | Resolver<S, Model | Model[]>,
+    resolver?: Resolver<CombineMiddlewareStates<M, QueryState>, Model | Model[]>
+  ): R {
+    return this.addRoute({
+      method: "SUBSCRIPTION",
+      path: operation,
+      middleware: resolver ? (middleware as unknown as Middleware): [],
+      resolver: resolver ? resolver : middleware,
+    });
+  };
+}
+
+export function GraphRouterFactory<
+  M extends Middleware[] = []
+>(
+  opts: {
+    middleware?: [...M];
+    state?: CombineMiddlewareStates<M>;
+  } = {}
+) {
+  return class extends GraphRouter<CombineMiddlewareStates<M>> {
+    constructor() {
+      super(
+        opts.middleware as unknown as  Middleware<CombineMiddlewareStates<M>>[] || [],
+        opts.state
+      );
+    }
   };
 }

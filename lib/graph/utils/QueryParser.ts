@@ -7,7 +7,7 @@ export interface QueryObject {
 }
 
 export type QueryOperation = {
-  type: "query" | "mutation" | "subscription";
+  type: "QUERY" | "MUTATION" | "SUBSCRIPTION";
   name?: string;
   variables?: QueryObject;
 };
@@ -85,7 +85,7 @@ export class QueryParser {
   }
 
   private parseOperation(): QueryOperation {
-    let type: QueryOperation["type"] = "query";
+    let type: QueryOperation["type"] = "QUERY";
     let name = "";
     const variables: QueryObject = {};
 
@@ -97,7 +97,7 @@ export class QueryParser {
 
     const firstToken = this.consume("NAME");
     if (["query", "mutation", "subscription"].includes(firstToken.value)) {
-      type = firstToken.value as QueryOperation["type"];
+      type = firstToken.value.toUpperCase() as QueryOperation["type"];
     } else {
       throw new Error(`Invalid operation type: ${firstToken.value}`);
     }

@@ -12,7 +12,7 @@ export interface HttpRouteConfig<S extends DefaultState = DefaultState> extends 
 export class HttpRoute<
   S extends DefaultState = DefaultState,
   Config extends HttpRouteConfig<S> = HttpRouteConfig<S>
-> extends Route<S> {
+> extends Route<S, Config> {
   declare path: `/${string}`;
 
   constructor(routeObj: Config) {
@@ -53,7 +53,7 @@ export class HttpRoute<
 export class HttpRouter<
   S extends DefaultState = DefaultState,
   Config extends HttpRouteConfig<S> = HttpRouteConfig<S>,
-  R extends HttpRoute<S> = HttpRoute<S>
+  R extends HttpRoute<S, Config> = HttpRoute<S, Config>
 > extends Router<S, Config, R> {
   override Route: new (routeObj: Config) => R = HttpRoute as new (routeObj: Config) => R;
 

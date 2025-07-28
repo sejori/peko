@@ -163,6 +163,7 @@ export interface ResolvedFieldInterface<
 
 export class ResolvedField<T extends Constructor | Constructor[], N extends boolean> extends Field<T, N> {
   static override opts: ResolvedFieldOptions<Constructor | Constructor[], boolean>;
+  static resolve: Resolver<Constructor | Constructor[], boolean>;
 
   constructor(
     parent: Model,
@@ -197,6 +198,7 @@ export function ResolvedFieldFactory<
   return class extends ResolvedField<T, N> {
     static override type = type;
     static override opts = opts;
+    static override resolve = opts.resolve;
 
     constructor(
       parent: InstanceType<Constructor>,

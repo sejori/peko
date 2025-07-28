@@ -1,16 +1,22 @@
 import { DefaultState } from "../../core/context.ts";
 import { Middleware } from "../../core/types.ts";
-import { QueryParser, QueryObject } from "../utils/QueryParser.ts";
+import { Model } from "../../core/utils/Model.ts";
+import { ValidationError } from "../../core/utils/ValidationError.ts";
+import { QueryParser } from "../utils/QueryParser.ts";
+
+export type QueryResultData = {
+  [key: string]: Model | Model[] | Promise<Model> | Promise<Model[]>
+};
 
 export interface QueryState extends DefaultState {
   query: QueryParser;
   queryResult: {
-    data: QueryObject;
-    errors: QueryObject[];
+    data: QueryResultData;
+    errors: ValidationError[];
   }
 }
 
-export const query: Middleware<QueryState> = async (ctx) => {
+export const parseQuery: Middleware<QueryState> = async (ctx) => {
   const contentType = ctx.request.headers.get("Content-Type");
   try {
     if (contentType?.includes("application/json")) {
@@ -23,7 +29,6 @@ export const query: Middleware<QueryState> = async (ctx) => {
     } else {
       ctx.state.query = new QueryParser(await ctx.request.text());
     }
-    console.log(ctx.state.query);
     ctx.state.queryResult = {
       data: {},
       errors: []

@@ -13,12 +13,7 @@ class PublicUser extends ModelFactory({
       message: "Username must be longer than 3 characters"
     })
   }),
-  followsIds: FieldFactory([String], {
-    validator: (value) => ({
-      valid: value.length > 3,
-      message: "Username must be longer than 3 characters"
-    })
-  }),
+  followsIds: FieldFactory([String]),
 }) {
   follows = ResolvedFieldFactory([PublicUser], {
     nullable: true,
@@ -63,7 +58,7 @@ Deno.test({
   fn: () => {
     const menu = new Menu({
       title: "Dinner Menu",
-      content: "2",
+      content: "This is longer than 10 characters.",
       portions: 2,
       user: new PublicUser({
         id: "test0",
