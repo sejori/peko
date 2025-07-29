@@ -94,8 +94,6 @@ export class Router<
         if (routeRes) return routeRes;
       }
     }
-
-    console.log('ctx', ctx);
     
     return this.defaultHandler(ctx);
   }

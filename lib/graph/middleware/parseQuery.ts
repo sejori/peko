@@ -4,8 +4,10 @@ import { Model } from "../../core/utils/Model.ts";
 import { ValidationError } from "../../core/utils/ValidationError.ts";
 import { QueryParser } from "../utils/QueryParser.ts";
 
+export type QueryFieldData = Model | Model[] | Promise<Model> | Promise<Model[]> | null;
+
 export type QueryResultData = {
-  [key: string]: Model | Model[] | Promise<Model> | Promise<Model[]>
+  [key: string]: QueryFieldData;
 };
 
 export interface QueryState extends DefaultState {
@@ -34,7 +36,7 @@ export const parseQuery: Middleware<QueryState> = async (ctx) => {
       errors: []
     }
   } catch(e) {
-    console.log(e);
+    console.log(e); // TODO: make user handle this error?
     return new Response("Error parsing query from request body.", {
       status: 400
     });

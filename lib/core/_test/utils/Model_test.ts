@@ -48,9 +48,12 @@ class Menu extends ModelFactory({
 
   user: FieldFactory(PublicUser),
 }) {
-  get summary() {
-    return `${this.title} (${this.portions} portions)`;
-  }
+  summary = ResolvedFieldFactory(String, {
+    description: "Summary of recipe content",
+    resolve: (_ctx) => {
+      return `${this.title} (${this.portions} portions)`;
+    }
+  });
 }
 
 Deno.test({
@@ -66,7 +69,7 @@ Deno.test({
         followsIds: ["test1", "test2", "test3"]
       })
     });
-    assertEquals(menu.summary, "Dinner Menu (2 portions)");
+    assertEquals(menu.summary.resolve(new RequestContext(new Request("/"))), "Dinner Menu (2 portions)");
 
     const ctx = new RequestContext(new Request("http://localhost:7777"));
     const followers = menu.user.follows.resolve(ctx);

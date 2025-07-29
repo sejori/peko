@@ -80,6 +80,29 @@ Deno.test("ROUTER: GraphRouter", async (t) => {
       },
       errors: []
     });
+
+    // also test non-requested fields are not returned
+    const request2 = new Request("http://localhost:7777", {
+      method: "POST",
+      body: `
+        query {
+          hello {
+            name
+          }
+        }
+      `,
+    });
+
+    const res2 = await myRouter.handle(request2);
+    const res2Json = await res2.json();
+    assertEquals(res2Json, {
+      data: {
+        hello: {
+          name: "test",
+        }
+      },
+      errors: []
+    });
   });
 });
 
