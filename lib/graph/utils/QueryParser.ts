@@ -1,20 +1,17 @@
+import { ModelSchema, ModelSchemaType } from "../../core/utils/Model.ts";
 import { Token, Tokeniser } from "./Tokeniser.ts";
 
-type QueryValue = string | QueryObject | QueryValue[];
-
-export interface QueryObject {
-  [key: string]: QueryValue | QueryValue[];
-}
+type QueryValue = string | ModelSchemaType<ModelSchema> | QueryValue[];
 
 export type QueryOperation = {
   type: "QUERY" | "MUTATION" | "SUBSCRIPTION";
   name?: string;
-  variables?: QueryObject;
+  variables?: ModelSchemaType<ModelSchema>;
 };
 
 export type QueryField = {
   ref: string;
-  args?: QueryObject;
+  args?: ModelSchemaType<ModelSchema>;
   directives?: string[];
   fields?: AST;
 } | null;
@@ -23,8 +20,8 @@ export type AST = Record<string, QueryField>;
 
 interface QueryOpts {
   operationName?: string,
-  variables?: QueryObject,
-  extensions?: QueryObject
+  variables?: ModelSchemaType<ModelSchema>,
+  extensions?: ModelSchemaType<ModelSchema>
 }
 
 export class QueryParser {
@@ -87,7 +84,7 @@ export class QueryParser {
   private parseOperation(): QueryOperation {
     let type: QueryOperation["type"] = "QUERY";
     let name = "";
-    const variables: QueryObject = {};
+    const variables: ModelSchemaType<ModelSchema> = {};
 
     // Handle anonymous query (starting with selection set)
     if (this.peek("{")) {
@@ -150,7 +147,7 @@ export class QueryParser {
         name = this.consume("NAME").value;
       }
 
-      let args: QueryObject | undefined;
+      let args: ModelSchemaType<ModelSchema> | undefined;
       if (this.peek("(")) {
         args = this.parseArgs();
       }
@@ -192,8 +189,8 @@ export class QueryParser {
     return fields;
   }
 
-  private parseArgs(): QueryObject {
-    const args: QueryObject = {};
+  private parseArgs(): ModelSchemaType<ModelSchema> {
+    const args: ModelSchemaType<ModelSchema> = {};
     this.consume("(");
     while (!this.peek(")")) {
       const key = this.consume("NAME").value;
@@ -212,8 +209,8 @@ export class QueryParser {
     return this.consume().value; // fallback for simple types
   }
 
-  private parseObject(): QueryObject {
-    const obj: QueryObject = {};
+  private parseObject(): ModelSchemaType<ModelSchema> {
+    const obj: ModelSchemaType<ModelSchema> = {};
     this.consume("{");
     while (!this.peek("}")) {
       const key = this.consume("NAME").value;

@@ -37,6 +37,8 @@ export interface FieldInterface<
 export class Field<T extends Constructor | Constructor[], N extends boolean> {
   static type: Constructor | Constructor[];
   static opts: FieldOptions<Constructor | Constructor[]>;
+  type: Constructor | Constructor[];
+  opts: FieldOptions<Constructor | Constructor[]>;
 
   value: N extends true 
     ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
@@ -50,44 +52,44 @@ export class Field<T extends Constructor | Constructor[], N extends boolean> {
       ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
       : InstanceType<T extends Constructor[] ? T[0] : T>,
   ) {
-    const type = (
+    this.type = (
       this.constructor as FieldInterface<Constructor | Constructor[], boolean>
     ).type;
-    const opts = (
+    this.opts = (
       this.constructor as FieldInterface<Constructor | Constructor[], boolean>
     ).opts;
 
     if (input) {
-      if (opts.validator) {
-        const { valid, message } = opts.validator(
+      if (this.opts.validator) {
+        const { valid, message } = this.opts.validator(
           input as InstanceType<T extends Constructor[] ? T[0] : T>
         );
         if (!valid) {
           this.errors.push(
             new ValidationError(
-              `${parent.constructor.name} ${name} field of type ${Array.isArray(type) 
-                ? `${type[0].name} array` 
-                : type.name} : ${message}`
+              `${parent.constructor.name} ${name} field of type ${Array.isArray(this.type) 
+                ? `${this.type[0].name} array` 
+                : this.type.name} : ${message}`
             )
           );
         }
       }  
-    } else if (!opts.nullable && !opts.defaultValue) {
+    } else if (!this.opts.nullable && !this.opts.defaultValue) {
       this.errors.push(
         new ValidationError(
-          `${parent.constructor.name} ${name} field of type ${Array.isArray(type) 
-            ? `${type[0].name} array` 
-            : type.name} cannot be null`
+          `${parent.constructor.name} ${name} field of type ${Array.isArray(this.type) 
+            ? `${this.type[0].name} array` 
+            : this.type.name} cannot be null`
         )
       );
     }
 
-    const singularType = Array.isArray(type) ? type[0] : type as Constructor;
-    const fallback = input || opts.defaultValue || null;
+    const singularType = Array.isArray(this.type) ? this.type[0] : this.type as Constructor;
+    const fallback = input || this.opts.defaultValue || null;
     this.value = (
       Array.isArray(fallback) 
-        ? fallback.map((v: Constructor) => opts.nullable && v === null ? null : new singularType(v)) 
-        :  opts.nullable && fallback === null ? null : new singularType(fallback)
+        ? fallback.map((v: Constructor) => this.opts.nullable && v === null ? null : new singularType(v)) 
+        :  this.opts.nullable && fallback === null ? null : new singularType(fallback)
     ) as N extends true 
         ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
         : InstanceType<T extends Constructor[] ? T[0] : T>;
@@ -153,19 +155,19 @@ export interface ResolvedFieldOptions<
   T extends Constructor | Constructor[],
   Nullable extends boolean = false
 > extends FieldOptions<T> {
-  resolve: Resolver<T, Nullable>;
+  resolver: Resolver<T, Nullable>;
 }
 
 export interface ResolvedFieldInterface<
   T extends Constructor | Constructor[], 
   Nullable extends boolean
 > extends FieldInterface<T, Nullable> {
-  resolve: Resolver<T, Nullable>;
+  resolver: Resolver<T, Nullable>;
 }
 
 export class ResolvedField<T extends Constructor | Constructor[], N extends boolean> extends Field<T, N> {
   static override opts: ResolvedFieldOptions<Constructor | Constructor[], boolean>;
-  static resolve: Resolver<Constructor | Constructor[], boolean>;
+  static resolver: Resolver<Constructor | Constructor[], boolean>;
 
   constructor(
     parent: Model,
@@ -200,7 +202,7 @@ export function ResolvedFieldFactory<
   return class extends ResolvedField<T, N> {
     static override type = type;
     static override opts = opts;
-    static override resolve = opts.resolve;
+    static override resolver = opts.resolver;
 
     constructor(
       parent: InstanceType<Constructor>,

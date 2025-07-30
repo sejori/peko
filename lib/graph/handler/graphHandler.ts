@@ -37,49 +37,48 @@ async function processWithBatching(
       }
 
       // Process fields at current level
-      for (const key in data) {
-        // ignore error fields
-        if (key !== "_errors") {
-          const fieldAst = ast?.[key];
-          if (!fieldAst) {
-            delete data[key];
-            continue;
+      if (data instanceof Model) {
+        for (const key in data) {
+          // ignore error fields
+          if (key !== "_errors") {
+            const fieldAst = ast?.[key];
+            if (!fieldAst) {
+              delete data[key];
+              continue;
+            }
+  
+            const field = data[key];
+            if (typeof field === "function") {
+              // Batch all ResolvedField resolvers at this level
+              resolvers.push(
+                Promise.resolve(field.resolve(ctx))
+                  .then(resolved => {
+                    data[key] = resolved;
+                    // Queue resolved children for next level
+                    if (resolved && typeof resolved === "object") {
+                      nextLevel.push({ 
+                        data: resolved, 
+                        ast: fieldAst.fields 
+                      });
+                    }
+                  })
+                  .catch(err => {
+                    errors.push(err);
+                    data[key] = null;
+                  })
+              );
+            } else if (field instanceof Model) {
+              // Queue Model children for next level
+              nextLevel.push({ 
+                data: field, 
+                ast: fieldAst.fields 
+              });
+            }
+          } else {
+            Object.values(data._errors).forEach(errs => errors.push(...errs));
+            delete (data as Partial<Model>)._errors;
           }
-
-          const field = data[key];
-          if (typeof field === "function") {
-            // Batch all ResolvedField resolvers at this level
-            resolvers.push(
-              Promise.resolve(field.resolve(ctx))
-                .then(resolved => {
-                  data[key] = resolved;
-                  // Queue resolved children for next level
-                  if (resolved && typeof resolved === "object") {
-                    nextLevel.push({ 
-                      data: resolved, 
-                      ast: fieldAst.fields 
-                    });
-                  }
-                })
-                .catch(err => {
-                  errors.push(err);
-                  data[key] = null;
-                })
-            );
-          } else if (field instanceof Model) {
-            // Queue Model children for next level
-            nextLevel.push({ 
-              data: field, 
-              ast: fieldAst.fields 
-            });
-          }
-        }
-      }
-
-      // Process model errors
-      if (data instanceof Model && data._errors) {
-        Object.values(data._errors).forEach(errs => errors.push(...errs));
-        delete (data as Partial<Model>)._errors;
+        } 
       }
     }
 

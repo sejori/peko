@@ -34,13 +34,16 @@ export type FieldErrors = {
 
 export class Model<TSchema extends ModelSchema = ModelSchema> {
   static schema: ModelSchema;
-  [key: string]: Field<Constructor | Constructor[], boolean> | ResolvedFieldInterface<Constructor | Constructor[], boolean> | FieldErrors | null;
+  [key: string]: Field<Constructor | Constructor[], boolean> | ResolvedFieldInterface<Constructor | Constructor[], boolean> | FieldErrors | TSchema | null;
+  _schema: TSchema;
   _errors: FieldErrors = {};
 
   
   constructor(input: ModelSchemaType<TSchema>) {
     // Get the static schema from the subclass
     const schema = (this.constructor as ModelInterface<TSchema>).schema;
+    this._schema = schema;
+
     for (const key in schema) {
       const fieldType = schema[key];
       const inputValue = input[key];

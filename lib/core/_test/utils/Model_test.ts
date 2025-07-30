@@ -18,7 +18,7 @@ class PublicUser extends ModelFactory({
   follows = ResolvedFieldFactory([PublicUser], {
     nullable: true,
     description: "List of users this user follows",
-    resolve: (_ctx) => {
+    resolver: (_ctx) => {
       return new Promise(res => res(this.followsIds.map(id => new PublicUser({ 
         id, 
         username: `User${id}`, 
@@ -50,7 +50,7 @@ class Menu extends ModelFactory({
 }) {
   summary = ResolvedFieldFactory(String, {
     description: "Summary of recipe content",
-    resolve: (_ctx) => {
+    resolver: (_ctx) => {
       return `${this.title} (${this.portions} portions)`;
     }
   });
@@ -69,10 +69,10 @@ Deno.test({
         followsIds: ["test1", "test2", "test3"]
       })
     });
-    assertEquals(menu.summary.resolve(new RequestContext(new Request("/"))), "Dinner Menu (2 portions)");
+    assertEquals(menu.summary.resolver(new RequestContext(new Request("/"))), "Dinner Menu (2 portions)");
 
     const ctx = new RequestContext(new Request("http://localhost:7777"));
-    const followers = menu.user.follows.resolve(ctx);
+    const followers = menu.user.follows.resolver(ctx);
     
     assertEquals(followers, Promise.resolve([
       new PublicUser({ id: "test1", username: "Usertest1", followsIds: ["test0"] }),

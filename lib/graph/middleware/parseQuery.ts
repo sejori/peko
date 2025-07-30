@@ -1,10 +1,13 @@
+import { Model } from "../../../mod.ts";
 import { DefaultState } from "../../core/context.ts";
 import { Middleware } from "../../core/types.ts";
-import { Model } from "../../core/utils/Model.ts";
+import { Constructor } from "../../core/utils/Field.ts";
 import { ValidationError } from "../../core/utils/ValidationError.ts";
 import { QueryParser } from "../utils/QueryParser.ts";
 
-export type QueryFieldData = Model | Model[] | Promise<Model> | Promise<Model[]> | null;
+export type QueryFieldValue = InstanceType<Constructor> | InstanceType<Constructor>[] | Model | Model[]
+
+export type QueryFieldData = QueryFieldValue | Promise<QueryFieldValue> | null;
 
 export type QueryResultData = {
   [key: string]: QueryFieldData;

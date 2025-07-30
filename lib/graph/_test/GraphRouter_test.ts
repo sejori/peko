@@ -18,20 +18,31 @@ Deno.test("ROUTER: GraphRouter", async (t) => {
   await t.step("http shorthand methods work correctly", () => {
     const router = new GraphRouter();
 
-    const queryRoute = router.query("testQuery", () => new TestModel({
-      name: "test",
-      data: 5
-    }));
+    const queryRoute = router.query("testQuery", {
+      type: TestModel, 
+      resolver: () => new TestModel({
+        name: "test",
+        data: 5
+      })
+    });
 
-    const mutationRoute = router.mutation("testMutation", () => new TestModel({
-      name: "test2",
-      data: 10
-    }));
+    const mutationRoute = router.mutation("testMutation", {
+      type: TestModel,
+      resolver: () => new TestModel({
+        name: "test2",
+        data: 10
+      })
+    });
 
-    const subscriptionRoute = router.subscription("testSubscription", () => new TestModel({
-      name: "test3",
-      data: 15
-    }));
+    const subscriptionRoute = router.subscription("testSubscription", {
+      type: [TestModel],
+      resolver: () => [
+        new TestModel({
+          name: "test3",
+          data: 15
+        })
+      ]
+    });
 
     assert(Object.keys(router.routes).length === 3);
     assert(queryRoute.method === "QUERY");
@@ -44,11 +55,14 @@ Deno.test("ROUTER: GraphRouter", async (t) => {
     class MyGraphRouter extends GraphRouterFactory({
       middleware: [parseQuery, cache()]
     }) {
-      hello = this.query("hello", () => {
-        return new TestModel({
-          name: "test",
-          data: 5
-        })
+      hello = this.query("hello", {
+        type: TestModel,
+        resolver: () => {
+          return new TestModel({
+            name: "test",
+            data: 5
+          })
+        }
       });
     }
 
