@@ -3,6 +3,7 @@ import { Router, Route } from "../Router.ts";
 type ProfileConfig = {
   mode?: "serve" | "handle";
   url?: string;
+  requestInit?: RequestInit;
   count?: number;
   excludedRoutes?: Route[];
 };
@@ -45,8 +46,8 @@ export class Profile {
           const start = performance.now();
           const response =
             mode === "serve"
-              ? await fetch(routeUrl)
-              : await router.handle(new Request(routeUrl));
+              ? await fetch(routeUrl, config?.requestInit)
+              : await router.handle(new Request(routeUrl, config?.requestInit));
           const end = performance.now();
 
           return results[route.path].requests.push({

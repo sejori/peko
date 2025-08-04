@@ -206,7 +206,9 @@ export class QueryParser {
     const token = this.tokens[this.pos];
     if (token.type === "{") return this.parseObject();
     if (token.type === "[") return this.parseArray();
-    return this.consume().value; // fallback for simple types
+    const value = this.consume().value;
+    if (value[0] === '"' || value[0] === "'") return value.slice(1, value.length-1);
+    return value; // fallback for simple types
   }
 
   private parseObject(): ModelSchemaType<ModelSchema> {

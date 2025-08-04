@@ -20,6 +20,7 @@
     "dev:bun": "bun run --watch scripts/bun/main.ts",
     "dev:wrangler": "wrangler -e dev dev scripts/wrangler/main.ts",
     "profile:deno": "deno run --allow-read --allow-net scripts/deno/profile.ts",
+    "profile:deno:graph": "deno run --allow-read --allow-net scripts/deno/profile-graph.ts",
     "profile:bun": "bun run scripts/bun/profile.ts",
     "profile:wrangler": "wrangler dev scripts/wrangler/profile.ts",
     "start": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/main.ts",

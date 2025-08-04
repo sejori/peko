@@ -1,6 +1,6 @@
 import { ValidationError } from "../../lib/core/utils/ValidationError.ts";
 import { Schema } from "../../lib/graph/utils/Schema.ts";
-import { GraphRouterFactory, ModelFactory, FieldFactory, log, auth, HttpRouterFactory, ssr, parseQuery } from "../../mod.ts";
+import { GraphRouterFactory, ModelFactory, FieldFactory, auth, HttpRouterFactory, ssr, parseQuery } from "../../mod.ts";
 import { JWTPayload, krypto, validateUser, html } from "../auth/app.ts";
 
 class User extends ModelFactory({
@@ -61,7 +61,7 @@ class MyGraphRouter extends GraphRouterFactory({
 
 class MyHTTPRouter extends HttpRouterFactory({
   middleware: [
-    log(console.log)
+    // log(console.log)
   ]
 }) {
   graphRouter = new MyGraphRouter();
