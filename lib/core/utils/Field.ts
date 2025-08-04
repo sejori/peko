@@ -1,13 +1,13 @@
-import { RequestContext } from "../context.ts";
-import { Model } from "./Model.ts";
+import { DefaultState, RequestContext } from "../context.ts";
+import { Model  } from "./Model.ts";
 import { ValidationError } from "./ValidationError.ts";
 
 // deno-lint-ignore no-explicit-any
 export type Constructor<O = any> = new (...args: any[]) => O;
 
-export interface FieldOptions<T extends Constructor | Constructor[]> {
+export interface FieldOptions<T extends Constructor | Constructor[], N extends boolean> {
   description?: string;
-  nullable?: boolean;
+  nullable?: N;
   defaultValue?: InstanceType<T extends Constructor[] ? T[0] : T>;
   validator?: (
     value: InstanceType<T extends Constructor[] ? T[0] : T>
@@ -16,29 +16,29 @@ export interface FieldOptions<T extends Constructor | Constructor[]> {
 
 export interface FieldInterface<
   T extends Constructor | Constructor[], 
-  Nullable extends boolean
+  N extends boolean
 > {
   new (
     parent: InstanceType<Constructor>,
     name: string,
-    input: Nullable extends true 
+    input: N extends true 
       ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
       : InstanceType<T extends Constructor[] ? T[0] : T>
   ): {
-    value: Nullable extends true 
+    value: N extends true 
     ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
     : InstanceType<T extends Constructor[] ? T[0] : T>
     errors: ValidationError[];
   };
   type: T;
-  opts: FieldOptions<T>;
+  opts: FieldOptions<T, N>;
 }
 
 export class Field<T extends Constructor | Constructor[], N extends boolean> {
   static type: Constructor | Constructor[];
-  static opts: FieldOptions<Constructor | Constructor[]>;
+  static opts: FieldOptions<Constructor | Constructor[], boolean>;
   type: Constructor | Constructor[];
-  opts: FieldOptions<Constructor | Constructor[]>;
+  _opts: FieldOptions<T, N>;
 
   value: N extends true 
     ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
@@ -52,16 +52,12 @@ export class Field<T extends Constructor | Constructor[], N extends boolean> {
       ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
       : InstanceType<T extends Constructor[] ? T[0] : T>,
   ) {
-    this.type = (
-      this.constructor as FieldInterface<Constructor | Constructor[], boolean>
-    ).type;
-    this.opts = (
-      this.constructor as FieldInterface<Constructor | Constructor[], boolean>
-    ).opts;
+    this.type = (this.constructor as FieldInterface<T, N>).type;
+    this._opts = (this.constructor as FieldInterface<T, N>).opts;
 
     if (input) {
-      if (this.opts.validator) {
-        const { valid, message } = this.opts.validator(
+      if (this._opts.validator) {
+        const { valid, message } = this._opts.validator(
           input as InstanceType<T extends Constructor[] ? T[0] : T>
         );
         if (!valid) {
@@ -74,7 +70,7 @@ export class Field<T extends Constructor | Constructor[], N extends boolean> {
           );
         }
       }  
-    } else if (!this.opts.nullable && !this.opts.defaultValue) {
+    } else if (!this._opts.nullable && !this._opts.defaultValue) {
       this.errors.push(
         new ValidationError(
           `${parent.constructor.name} ${name} field of type ${Array.isArray(this.type) 
@@ -85,11 +81,11 @@ export class Field<T extends Constructor | Constructor[], N extends boolean> {
     }
 
     const singularType = Array.isArray(this.type) ? this.type[0] : this.type as Constructor;
-    const fallback = input || this.opts.defaultValue || null;
+    const fallback = input || this._opts.defaultValue || null;
     this.value = (
       Array.isArray(fallback) 
-        ? fallback.map((v: Constructor) => this.opts.nullable && v === null ? null : new singularType(v)) 
-        :  this.opts.nullable && fallback === null ? null : new singularType(fallback)
+        ? fallback.map((v: Constructor) => this._opts.nullable && v === null ? null : new singularType(v)) 
+        :  this._opts.nullable && fallback === null ? null : new singularType(fallback)
     ) as N extends true 
         ? InstanceType<T extends Constructor[] ? T[0] : T> | null 
         : InstanceType<T extends Constructor[] ? T[0] : T>;
@@ -103,19 +99,19 @@ export function FieldFactory<T extends Constructor | Constructor[]>(
 ): FieldInterface<T, false>;
 export function FieldFactory<T extends Constructor | Constructor[], N extends boolean>(
   type: T,
-  opts: FieldOptions<T> & { nullable: true }
+  opts: FieldOptions<T, N> & { nullable: true }
 ): FieldInterface<T, true>;
 export function FieldFactory<T extends Constructor | Constructor[], N extends boolean>(
   type: T,
-  opts: FieldOptions<T> & { nullable?: false }
+  opts: FieldOptions<T, N> & { nullable?: false }
 ): FieldInterface<T, false>;
 export function FieldFactory<T extends Constructor | Constructor[], N extends boolean>(
   type: T,
-  opts: FieldOptions<T>
+  opts: FieldOptions<T, N>
 ): FieldInterface<T, boolean>;
 export function FieldFactory<T extends Constructor | Constructor[], N extends boolean>(
   type: T, 
-  opts: FieldOptions<T> = {}
+  opts: FieldOptions<T, N> = {}
 ): FieldInterface<T, N> {
   return class extends Field<T, N> {
       static override type = type;
@@ -144,30 +140,42 @@ export type ResolvedFieldValue<
       ? Array<InstanceType<T[0]>>
       : InstanceType<Extract<T, Constructor>>
 
-export type Resolver<
-  T extends Constructor | Constructor[],
+export interface Resolver<
+  S extends DefaultState = DefaultState,
+  T extends Constructor | Constructor[] = Constructor | Constructor[],
   N extends boolean = false
-> = (
-  ctx: RequestContext
-) => Promise<ResolvedFieldValue<T, N>> | ResolvedFieldValue<T, N>;
+> {
+  (ctx: RequestContext<S>): T extends Constructor[] 
+    ? N extends false
+      ? InstanceType<T[0]>[] | Promise<InstanceType<T[0]>>[]
+      : (InstanceType<T[0]> | null)[] | Promise<(InstanceType<T[0]> | null)[]>
+    : T extends Constructor
+      ? N extends false
+        ? InstanceType<T> | Promise<InstanceType<T>>
+        : null | InstanceType<T> | Promise<InstanceType<T> | null>
+      : null;
+}
 
 export interface ResolvedFieldOptions<
-  T extends Constructor | Constructor[],
-  Nullable extends boolean = false
-> extends FieldOptions<T> {
-  resolver: Resolver<T, Nullable>;
+  S extends DefaultState = DefaultState,
+  T extends Constructor | Constructor[] = Constructor,
+  N extends boolean = false
+> extends FieldOptions<T, N> {
+  resolver: Resolver<S, T, N>;
 }
 
 export interface ResolvedFieldInterface<
+  S extends DefaultState,
   T extends Constructor | Constructor[], 
   Nullable extends boolean
 > extends FieldInterface<T, Nullable> {
-  resolver: Resolver<T, Nullable>;
+  resolver: Resolver<S, T, Nullable>;
 }
 
-export class ResolvedField<T extends Constructor | Constructor[], N extends boolean> extends Field<T, N> {
-  static override opts: ResolvedFieldOptions<Constructor | Constructor[], boolean>;
-  static resolver: Resolver<Constructor | Constructor[], boolean>;
+export class ResolvedField<S extends DefaultState, T extends Constructor | Constructor[], N extends boolean> extends Field<T, N> {
+  static override opts: ResolvedFieldOptions<DefaultState, Constructor | Constructor[], boolean>;
+  static resolver: Resolver<DefaultState, Constructor | Constructor[], boolean>;
+  declare _opts: ResolvedFieldOptions<S, T, N>;
 
   constructor(
     parent: Model,
@@ -181,28 +189,31 @@ export class ResolvedField<T extends Constructor | Constructor[], N extends bool
 };
 
 export function ResolvedFieldFactory<
-  T extends Constructor | Constructor[]
+  S extends DefaultState = DefaultState,
+  T extends Constructor | Constructor[] = Constructor
 >(
   type: T,
-  opts: ResolvedFieldOptions<T, true> & { nullable: true }
-): ResolvedFieldInterface<T, true>;
+  opts: ResolvedFieldOptions<S, T, true> & { nullable: true }
+): ResolvedFieldInterface<S, T, true>;
 export function ResolvedFieldFactory<
-  T extends Constructor | Constructor[]
+  S extends DefaultState = DefaultState,
+  T extends Constructor | Constructor[] = Constructor
 >(
   type: T,
-  opts: ResolvedFieldOptions<T, false> & { nullable?: false }
-): ResolvedFieldInterface<T, false>;
+  opts: ResolvedFieldOptions<S, T, false> & { nullable?: false }
+): ResolvedFieldInterface<S, T, false>;
 export function ResolvedFieldFactory<
-  T extends Constructor | Constructor[],
+  S extends DefaultState = DefaultState,
+  T extends Constructor | Constructor[] = Constructor,
   N extends boolean = false
 >(
   type: T, 
-  opts: ResolvedFieldOptions<T, N>
-): ResolvedFieldInterface<T, N> {
-  return class extends ResolvedField<T, N> {
+  opts: ResolvedFieldOptions<S, T, N>
+): ResolvedFieldInterface<S, T, N> {
+  return class extends ResolvedField<S, T, N> {
     static override type = type;
-    static override opts = opts;
-    static override resolver = opts.resolver;
+    static override opts = opts as ResolvedFieldOptions<DefaultState, T, N>;
+    static override resolver = opts.resolver as Resolver;
 
     constructor(
       parent: InstanceType<Constructor>,
@@ -213,5 +224,5 @@ export function ResolvedFieldFactory<
     ) {
       super(parent, name, input);
     }
-  } as ResolvedFieldInterface<T, N>;
+  } as ResolvedFieldInterface<S, T, N>;
 }

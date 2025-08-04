@@ -1,26 +1,26 @@
 import * as Peko from "../../mod.ts"; // "https://deno.land/x/peko/mod.ts"
 
-const html = String;
-const crypto = new Peko.Krypto("SUPER_SECRET_KEY_123"); // TODO: replace with env var
+export const html = String;
+export const krypto = new Peko.Krypto("SUPER_SECRET_KEY_123"); // TODO: replace with env var
 
 // TODO: replace with db / auth provider query
-const user = {
+export const user = {
   username: "test-user",
-  password: await crypto.hash("test-password"),
+  password: await krypto.hash("test-password"),
 };
 
-type JWTPayload = {
+export type JWTPayload = {
   iat: number,
   exp: number,
-  data: { user: string },
+  data: { username: string },
 }
 
-const validateUser = async (username: string, password: string) => {
+export const validateUser = async (username: string, password: string) => {
   return (
     username &&
     password &&
     username === user.username &&
-    (await crypto.hash(password)) === user.password
+    (await krypto.hash(password)) === user.password
   );
 };
 
@@ -41,9 +41,9 @@ class SimpleAuthRouter extends Peko.HttpRouterFactory({
     const jwtPayload: JWTPayload = {
     iat: Date.now(),
     exp: exp.valueOf(),
-    data: { user: username },
+    data: { username: username },
     }
-    const jwt = await crypto.sign(jwtPayload);
+    const jwt = await krypto.sign(jwtPayload);
     
     return new Response(jwt, {
       status: 201,
@@ -55,11 +55,10 @@ class SimpleAuthRouter extends Peko.HttpRouterFactory({
 
   verify = this.GET(
     "/verify",
-    [Peko.auth<JWTPayload>(crypto)],
+    [Peko.auth<JWTPayload>(krypto)],
     (ctx) => {
-      console.log(ctx.state.auth)
       return ctx.state.auth 
-        ? new Response(`You are authenticated as ${ctx.state.auth.data.user}`)
+        ? new Response(`You are authenticated as ${ctx.state.auth.data.username}`)
         : new Response("You are not authenticated", {
           status: 401
         })

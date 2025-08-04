@@ -1,3 +1,4 @@
+import { DefaultState } from "../context.ts";
 import { Constructor, Field, FieldInterface, ResolvedFieldInterface } from "./Field.ts";
 import { ValidationError } from "./ValidationError.ts";
 
@@ -8,7 +9,8 @@ export type ModelSchema = {
   >
 };
 
-export type ModelSchemaType<TSchema extends ModelSchema> = {
+// deno-lint-ignore no-explicit-any
+export type ModelSchemaType<TSchema extends ModelSchema = any> = {
   [K in keyof TSchema]: TSchema[K] extends FieldInterface<infer C, infer N>
     ? C extends Constructor<infer U>[] 
       ? N extends true 
@@ -34,7 +36,7 @@ export type FieldErrors = {
 
 export class Model<TSchema extends ModelSchema = ModelSchema> {
   static schema: ModelSchema;
-  [key: string]: Field<Constructor | Constructor[], boolean> | ResolvedFieldInterface<Constructor | Constructor[], boolean> | FieldErrors | TSchema | null;
+  [key: string]: Field<Constructor | Constructor[], boolean> | ResolvedFieldInterface<DefaultState, Constructor | Constructor[], boolean> | FieldErrors | TSchema | null;
   _schema: TSchema;
   _errors: FieldErrors = {};
 

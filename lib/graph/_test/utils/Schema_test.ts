@@ -108,22 +108,25 @@ Deno.test("UTIL: Schema", async (t) => {
   });
 
   const RegisterUserArgs = ModelFactory({
-    userId: FieldFactory(String),
-    age: Age,
-    email: Email
+    input: FieldFactory(ModelFactory({
+      userId: FieldFactory(String),
+      age: Age,
+      email: Email
+    }))
   });
 
   type TestState = QueryState & AuthState<{ userId: string }>;
 
-  const registerUser = new GraphRoute<TestState, typeof User, typeof RegisterUserArgs>({
+  const registerUser = new GraphRoute<TestState, typeof User, typeof RegisterUserArgs, false>({
     method: "MUTATION",
     path: "RegisterUser",
     type: User,
+    nullable: false,
     args: RegisterUserArgs,
     resolver: (_ctx, args) => new User({
-      userId: args.userId,
-      age: args.age,
-      email: args.email
+      userId: args.input.userId,
+      age: args.input.age,
+      email: args.input.email
     })
   });
 
@@ -207,13 +210,13 @@ Deno.test("UTIL: Schema", async (t) => {
   });
 
   await t.step("creates the correct schema string", () => {
-    const schema = new Schema([
+    const schema = new Schema({
       registerUser,
       createContent,
       postContent,
       commentOnPost,
       getComments,
-    ]);
+    });
 
     const schemaString = schema.toString();
     console.log(schemaString);

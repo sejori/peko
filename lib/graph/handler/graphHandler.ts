@@ -13,7 +13,6 @@ async function processWithBatching(
   rootAst: AST | undefined,
   errors: ValidationError[]
 ): Promise<void> {
-  if (rootData instanceof Promise) rootData = await rootData;
   if (!rootData || typeof rootData !== "object") return;
 
   let currentLevel: ProcessingLayer = [
@@ -25,7 +24,7 @@ async function processWithBatching(
     const nextLevel: ProcessingLayer = [];
 
     for (const { data, ast } of currentLevel) {
-      if (!data) continue;
+      if (!data || !ast) continue;
       if (Array.isArray(data)) {
         // Handle arrays by adding all items to next level
         data.forEach(item => {
@@ -35,9 +34,15 @@ async function processWithBatching(
         });
         continue;
       }
+      
+      if (data instanceof Model) { // TODO: optimise double loop here
+        // Process fields at current level
+        for (const astKey in ast) {
+          if (!Object.keys(data).some(dataKey => astKey === dataKey)) {
+            errors.push(new ValidationError(`Cannot query field ${astKey} on ${data.constructor.name}`));
+          }  
+        }
 
-      // Process fields at current level
-      if (data instanceof Model) {
         for (const key in data) {
           // ignore error fields
           if (key !== "_errors") {
@@ -86,6 +91,8 @@ async function processWithBatching(
     await Promise.all(resolvers);
     currentLevel = nextLevel;
   }
+
+  return rootData;
 }
 
 export const graphHandler: Handler<QueryState> = async (ctx) => {
@@ -102,10 +109,13 @@ export const graphHandler: Handler<QueryState> = async (ctx) => {
   }
 
   await Promise.all(Object.entries(data).map(async ([opName, opResult]) => {
-    await processWithBatching(ctx, opResult, parsedQuery.ast[opName]?.fields, errors);
+    //await root fields before processing sub-fields
+    if (opResult instanceof Promise) opResult = await opResult;
+    const res = await processWithBatching(ctx, opResult, parsedQuery.ast[opName]?.fields, errors);
+    data[opName] = res;
   }));
 
-  return new Response(JSON.stringify({ data, errors }), {
+  return new Response(JSON.stringify({ data, errors: errors.map(error => error.message) }), {
     headers: { "Content-Type": "application/json" }
   });
 };

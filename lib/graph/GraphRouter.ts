@@ -5,30 +5,52 @@ import { QueryState } from "./middleware/parseQuery.ts";
 import { graphHandler } from "./handler/graphHandler.ts";
 import { RequestContext } from "../core/context.ts";
 import { QueryOperation } from "./utils/QueryParser.ts";
-import { Constructor } from "../core/utils/Field.ts";
+import { Constructor, ResolvedFieldOptions, Resolver } from "../core/utils/Field.ts";
 
-export type Resolver<
+export interface GraphResolver<
   S extends QueryState = QueryState,
   T extends Constructor | Constructor[] = Constructor | Constructor[],
   A extends ModelInterface | undefined = ModelInterface,
-> = (
-  ctx: RequestContext<S>, 
-  args: A extends ModelInterface ? ModelSchemaType<A["schema"]> : undefined
-) => T extends Constructor[] 
-  ? InstanceType<T[0]>[] | Promise<InstanceType<T[0]>>[]
-  : T extends Constructor
-  ? InstanceType<T> | Promise<InstanceType<T>>
-  : null;
+  N extends boolean = false
+> { // extends would be nice but causes type errors on arg count
+  (
+    ctx: Parameters<Resolver<S, T, N>>[0], 
+    args: A extends ModelInterface ? ModelSchemaType<A["schema"]> : undefined
+  ): ReturnType<Resolver<S, T, N>>
+}
 
 export interface GraphRouteConfig<
   S extends QueryState = QueryState,
   T extends Constructor | Constructor[] = Constructor | Constructor[],
-  A extends ModelInterface | undefined = ModelInterface
-> extends RouteConfig<S> {
+  A extends ModelInterface | undefined = ModelInterface,
+  N extends boolean = false
+> extends RouteConfig<S>, Omit<ResolvedFieldOptions<S, T, N>, "resolver"> {
   method: QueryOperation["type"];
   args?: A;
   type: T;
-  resolver: Resolver<S, T, A>;
+  resolver: GraphResolver<S, T, A, N>;
+}
+
+function resolveVariablesInArgs<T extends object>(
+  args: T,
+  variables: Record<string, unknown> = {}
+): T {
+  const resolved: {
+    [key: string]: unknown;
+  } = {};
+
+  for (const [key, value] of Object.entries(args)) {
+    if (typeof value === "string" && value.startsWith("$")) {
+      const varName = value.slice(1);
+      resolved[key] = variables[varName];
+    } else if (value && typeof value === "object") {
+      resolved[key] = resolveVariablesInArgs(value, variables);
+    } else {
+      resolved[key] = value;
+    }
+  }
+
+  return resolved as T;
 }
 
 export class GraphRoute<
@@ -36,7 +58,8 @@ export class GraphRoute<
   S extends QueryState = any,
   T extends Constructor | Constructor[] = Constructor | Constructor[],
   A extends ModelInterface = ModelInterface,
-  Config extends GraphRouteConfig<S, T, A> = GraphRouteConfig<S, T, A>
+  N extends boolean = false,
+  Config extends GraphRouteConfig<S, T, A, N> = GraphRouteConfig<S, T, A, N>
 > extends Route<S, Config> {
   constructor(routeObj: Config) {
     super(routeObj);
@@ -50,11 +73,15 @@ export class GraphRoute<
         if (ctx.state.query.ast[key]?.ref === this.path) {
           // found match, add final middleware to create resolver promise in queryResult data for key
           this.middleware.push((ctx) => {
+            const rawArgs = ctx.state.query.ast[key]?.args ?? {};
+            const resolvedArgs = resolveVariablesInArgs(rawArgs, ctx.state.query.opts.variables);
+            const modelArgs = this.config.args
+              ? new this.config.args(resolvedArgs)
+              : undefined;
+
             ctx.state.queryResult.data[key] = this.config.resolver(
-              ctx, 
-              (this.config.args && ctx.state.query.ast[key]?.args 
-                ? new this.config.args(ctx.state.query.ast[key].args) 
-                : undefined) as A extends ModelInterface ? ModelSchemaType<A["schema"]> : undefined
+              ctx,
+              modelArgs as A extends ModelInterface ? ModelSchemaType<A["schema"]> : undefined
             ) as Promise<Constructor>;
           });
           return true;
@@ -67,9 +94,9 @@ export class GraphRoute<
 }
 
 export class GraphRouter<
-  S extends QueryState,
+  S extends QueryState = QueryState,
   Config extends GraphRouteConfig<S, Constructor> = GraphRouteConfig<S, Constructor>,
-  R extends Route<S, Config> = GraphRoute<S, Constructor, ModelInterface, Config> 
+  R extends Route<S, Config> = GraphRoute<S, Constructor, ModelInterface, boolean, Config> 
 > extends Router<S, Config, R> {
   override Route: new (routeObj: Config) => R = GraphRoute as new (routeObj: Config) => R;
   override defaultHandler: Handler<S> = graphHandler
@@ -86,59 +113,80 @@ export class GraphRouter<
     );
   }
 
-  query<T extends Constructor | Constructor[], M extends Middleware[], A extends ModelInterface>(
+  query<
+    T extends Constructor | Constructor[], 
+    M extends Middleware[], 
+    A extends ModelInterface, 
+    N extends boolean
+  >(
     operation: Config["path"],
     opts: {
       args?: A,
-      type: T
+      type: T,
+      nullable?: N,
       middleware?: M,
-      resolver: Resolver<CombineMiddlewareStates<M, S>, T>
+      resolver: GraphResolver<S, T, A, N>;
     }
   ): R {
-    return this.addRoute<GraphRouteConfig<CombineMiddlewareStates<M, S>, T, A>>({
+    return this.addRoute<GraphRouteConfig<CombineMiddlewareStates<M, S>, T, A, N>>({
       method: "QUERY",
       path: operation,
       args: opts.args,
       middleware: opts.middleware,
       type: opts.type,
+      nullable: opts.nullable ? opts.nullable : false as N,
       resolver: opts.resolver,
     });
   };
 
-  mutation<T extends Constructor | Constructor[], M extends Middleware[], A extends ModelInterface>(
+  mutation<
+    T extends Constructor | Constructor[], 
+    M extends Middleware[], 
+    A extends ModelInterface,
+    N extends boolean
+  >(
     operation: Config["path"],
     opts: {
       args?: A,
       type: T
       middleware?: M,
-      resolver: Resolver<CombineMiddlewareStates<M, S>, T>
+      nullable?: N,
+      resolver: GraphResolver<S, T, A, N>;
     }
   ): R {
-    return this.addRoute<GraphRouteConfig<CombineMiddlewareStates<M, S>, T, A>>({
+    return this.addRoute<GraphRouteConfig<CombineMiddlewareStates<M, S>, T, A, N>>({
       method: "MUTATION",
       path: operation,
       args: opts.args,
       middleware: opts.middleware,
       type: opts.type,
+      nullable: opts.nullable ? opts.nullable : false as N,
       resolver: opts.resolver,
     });
   };
 
-  subscription<T extends Constructor | Constructor[], M extends Middleware[], A extends ModelInterface>(
+  subscription<
+    T extends Constructor | Constructor[], 
+    M extends Middleware[], 
+    A extends ModelInterface,
+    N extends boolean
+  >(
     operation: Config["path"],
     opts: {
       args?: A,
-      type: T
+      type: T,
       middleware?: M,
-      resolver: Resolver<CombineMiddlewareStates<M, S>, T>
+      nullable?: N,
+      resolver: GraphResolver<S, T, A, N>;
     }
   ): R {
-    return this.addRoute<GraphRouteConfig<CombineMiddlewareStates<M, S>, T, A>>({
+    return this.addRoute<GraphRouteConfig<CombineMiddlewareStates<M, S>, T, A, N>>({
       method: "SUBSCRIPTION",
       path: operation,
       args: opts.args,
       middleware: opts.middleware,
       type: opts.type,
+      nullable: opts.nullable ? opts.nullable : false as N,
       resolver: opts.resolver,
     });
   };

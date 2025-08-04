@@ -15,6 +15,8 @@
     "build:types": "tsc -p tsconfig.json && deno -A scripts/stripExtensions.ts",
     "dev:build": "esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./examples/react/dist/pages --external:react --jsx=automatic  --tsconfig-raw={} --watch=forever ./examples/react/src/pages/*.tsx",
     "dev:deno": "deno run -A --watch scripts/deno/main.ts",
+    "dev:auth": "deno run -A --watch scripts/deno/auth.ts",
+    "dev:graph": "deno run -A --watch scripts/deno/graph.ts",
     "dev:bun": "bun run --watch scripts/bun/main.ts",
     "dev:wrangler": "wrangler -e dev dev scripts/wrangler/main.ts",
     "profile:deno": "deno run --allow-read --allow-net scripts/deno/profile.ts",
@@ -22,6 +24,7 @@
     "profile:wrangler": "wrangler dev scripts/wrangler/profile.ts",
     "start": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/main.ts",
     "start:auth": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/auth.ts",
+    "start:graph": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/graph.ts",
     "start:wrangler": "wrangler dev scripts/wrangler/main.ts",
     "test": "deno test --allow-read --allow-net --coverage"
   },

@@ -1,4 +1,4 @@
-import router from "../../examples/auth/app.ts";
+import router from "../../examples/graphql/app.ts";
 
 router.middleware.unshift((ctx) => {
   ctx.state.env = Deno.env.toObject();
