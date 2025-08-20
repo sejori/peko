@@ -42,6 +42,6 @@ export const file = async (
   });
 
   return function staticHandler() {
-    return response;
+    return response.clone();
   };
 };
