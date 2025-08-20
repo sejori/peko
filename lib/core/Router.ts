@@ -37,7 +37,8 @@ export class Route<S extends DefaultState = DefaultState> {
   }
 
   get regexPath() {
-    return new RegExp(this.path);
+    const escaped = this.path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(escaped);
   }
 
   match(ctx: RequestContext<S>): boolean {
