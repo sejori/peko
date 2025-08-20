@@ -28,14 +28,15 @@ export class HttpRoute<
     return x;
   }
 
-  override get regexPath() {
-    const pattern = this.path.replace(
-      /:(\w+)/g, 
-      (_, paramName) => `(?<${paramName}>[^/]+)`
-    );
-    
-    return new RegExp(`^${pattern}/?$`);
-  }
+override get regexPath() {
+  const escaped = this.path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const pattern = escaped.replace(
+    /:(\w+)/g,
+    (_, paramName) => `(?<${paramName}>[^/]+)`
+  );
+
+  return new RegExp(`^${pattern}/?$`);
+}
 
   override match(ctx: RequestContext<S>): boolean {
     const match = this.regexPath.exec(ctx.url.pathname);

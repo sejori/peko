@@ -1,6 +1,6 @@
 {
   "name": "@sejori/peko",
-  "version": "2.4.2",
+  "version": "2.4.1",
   "description": "Featherweight apps on the edge 🐣⚡",
   "main": "dist/mod.js",
   "directories": {
@@ -30,7 +30,7 @@
     "url": "git+https://github.com/sejori/peko.git"
   },
   "author": "Seb Ringrose <sebringrose@gmail.com>",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/sejori/peko/issues"
   },
