@@ -1,6 +1,6 @@
 {
   "name": "@sejori/peko",
-  "version": "2.4.2",
+  "version": "2.4.1",
   "description": "Featherweight apps on the edge 🐣⚡",
   "main": "dist/mod.js",
   "directories": {
