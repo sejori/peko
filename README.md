@@ -120,15 +120,13 @@ Deno.serve((req) => router.handle(req));
 - Process 1: `bun dev:build`
 - Process 2: `bun dev:bun`
 
-Note: Runtimes are profiled against for speed - view the GitHub actions to see results.
+Note: Runtimes are profiled for speed - view the GitHub actions to see results.
 
 <h2 id="examples">Examples</h2>
 
-Check out the `examples` dir for React server-side rendering as well as an basic auth demo.
+Check out the `examples` dir for React server-side rendering as well as a basic auth demo.
 
-For a comprehensive product demo check out: https://panplan.ai - built entirely with Peko, React on Cloudflare Workers.
-
-**Note:** [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) and [es6-string-css](https://marketplace.visualstudio.com/items?itemName=bashmish.es6-string-css) VS Code extensions recommended.
+For a comprehensive product demo check out: https://panplan.ai - built entirely with Peko and React on Cloudflare Workers.
 
 <h2 id="recipes">Recipes</h2>
 
@@ -162,7 +160,7 @@ router.use(async (_, next) => {
 In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The configurable `cacher` middleware provides drop in handler memoization and response caching for your routes.
 
 ```js
-httoRouter.GET(
+httpRouter.GET(
   "/get-time",
   [Peko.cache({ itemLifetime: 5000 })],
   () => new Response(Date.now())
