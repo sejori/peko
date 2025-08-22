@@ -67,7 +67,7 @@ import * as Peko from "@sejori/peko"; // or https://deno.land/x/peko/mod.ts in D
 
 const router = new Peko.HttpRouter();
 
-router.use(Peko.logger(console.log));
+router.use(Peko.log(console.log));
 
 router.GET("/shorthand-route", [], () => new Response("Hello world!"));
 
