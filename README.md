@@ -65,23 +65,26 @@ The router is then used with your web server of choice, e.g. `Deno.serve` or `Bu
 ```js
 import * as Peko from "@sejori/peko"; // or https://deno.land/x/peko/mod.ts in Deno
 
-const router = new Peko.Router();
+const router = new Peko.HttpRouter();
 
 router.use(Peko.logger(console.log));
 
-router.get("/shorthand-route", () => new Response("Hello world!"));
+router.GET("/shorthand-route", [], () => new Response("Hello world!"));
 
-router.post(
+router.POST(
   "/shorthand-route-ext",
-  async (ctx, next) => {
-    await next();
-    console.log(ctx.request.headers);
-  },
+  [
+    async (ctx, next) => {
+      await next();
+      console.log(ctx.request.headers);
+    }
+  ],
   (req) => new Response(req.body)
 );
 
 router.addRoute({
   path: "/object-route",
+  method: "GET",
   middleware: async (ctx, next) => {
     await next();
     console.log(ctx.request.headers);
@@ -105,18 +108,19 @@ Deno.serve((req) => router.handle(req));
 - Process 1: `deno task dev:build`
 - Process 2: `deno task dev:deno`
 
-**Cloudflare Workers [Live Deploy](https://peko.sejori.workers.dev)**
+**Cloudflare Workers**
 
 - `npm i`
 - Process 1: `npm run dev:build`
 - Process 2: `npm run dev:wrangler`
 
 **Bun:**
-Bun is currently not deployed but it is profiled against Deno, check the GitHub actions to see results.
 
 - `bun install`
 - Process 1: `bun dev:build`
 - Process 2: `bun dev:bun`
+
+Note: Runtimes are profiled against for speed - view the GitHub actions to see results.
 
 <h2 id="examples">Examples</h2>
 
