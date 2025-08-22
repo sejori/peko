@@ -100,14 +100,6 @@ Deno.serve((req) => router.handle(req));
 
 - `git clone https://github.com/sejori/peko` && `cd peko`
 
-Check `example` directory to see implementations of:
-
-- server-side rendering react to HTML
-- streaming server-sent events to web client
-- logging requests
-- caching responses
-- JWT authentication middleware
-
 **Deno [Live Deploy](https://peko.deno.dev)**
 
 - Process 1: `deno task dev:build`
@@ -126,39 +118,13 @@ Bun is currently not deployed but it is profiled against Deno, check the GitHub 
 - Process 1: `bun dev:build`
 - Process 2: `bun dev:bun`
 
-<h2 id="types">Types</h2>
+<h2 id="examples">Examples</h2>
 
-### [**Router**](https://deno.land/x/peko/mod.ts?s=Router)
+Check out the `examples` dir for React server-side rendering as well as an basic auth demo.
 
-The main class/entrypoint of Peko.
+For a comprehensive product demo check out: https://panplan.ai - built entirely with Peko, React on Cloudflare Workers.
 
-The `handle` method generates a [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response/Response) from a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request) argument via configured routes and middleware.
-
-### [**Route**](https://deno.land/x/peko/mod.ts?s=Route)
-
-Routes are added to a `Router` and matched to a `Request` via their `path` property. Once matched, the route's `middleware` and `handlers` are invoked to process the `Request` (after global middleware on the `Router`).
-
-Dynamic path parameters are supported in the `/users/:userid` syntax.
-
-### [**RequestContext**](https://deno.land/x/peko/mod.ts?s=RequestContext)
-
-An object containing request data that is passed into middleware and handlers in the `Request` process lifecycle.
-
-The `state` property is an object designed to transfer information between middleware/handlers.
-
-### [**Middleware**](https://deno.land/x/peko/mod.ts?s=Middleware)
-
-Functions that receive `RequestContext` and `next`. They are designed to:
-
-- Return a `Response` and end the `Request` processing lifecycle (e.g. returning a `401`)
-- Call `await next()` to access the final response (e.g. logging)
-- Edit the context's `state` (e.g. rendering geolocation to HTML)
-
-### [**Handler**](https://deno.land/x/peko/mod.ts?s=Handler)
-
-The final request handling function on a `Route`, receives `RequestContext` argument.
-
-Must return/resolve to a `Response` (e.g. Render HTML or return JSON payload).
+**Note:** [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) and [es6-string-css](https://marketplace.visualstudio.com/items?itemName=bashmish.es6-string-css) VS Code extensions recommended.
 
 <h2 id="recipes">Recipes</h2>
 
@@ -192,9 +158,9 @@ router.use(async (_, next) => {
 In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The configurable `cacher` middleware provides drop in handler memoization and response caching for your routes.
 
 ```js
-router.addRoute(
+httoRouter.GET(
   "/get-time",
-  Peko.cacher({ itemLifetime: 5000 }),
+  [Peko.cache({ itemLifetime: 5000 })],
   () => new Response(Date.now())
 );
 ```
@@ -202,42 +168,26 @@ router.addRoute(
 The cacher stores response items in memory by default, but it can be extended to use any key value storage by supplying the `store` options parameter (e.g. Cloudflare Workers KV).
 
 ```js
-import { Router, CacheItem, cacher } from "@sejori/peko";
+import { HttpRouter, CacheItem, cache } from "@sejori/peko";
 
-const router = new Router();
-
+const router = new HttpRouter();
 const itemMap: Map<string, CacheItem> = new Map();
 
-router.addRoute("/get-time", {
-  middleware: cacher({
-    itemLifetime: 5000,
-    store: {
-      get: (key) => itemMap.get(key),
-      set: (key, value) => itemMap.set(key, value),
-      delete: (key) => itemMap.delete(key),
-    },
-  }),
-  handler: () => new Response(Date.now()),
-});
+router.GET(
+  "/get-time", 
+  [
+    cache({
+      itemLifetime: 5000,
+      store: {
+        get: (key) => itemMap.get(key),
+        set: (key, value) => itemMap.set(key, value),
+        delete: (key) => itemMap.delete(key),
+      },
+    })
+  ],
+  () => new Response(Date.now()),
+);
 ```
-
-<h2 id="showcase">Showcase</h2>
-
-PR to add your project 🙌
-
-### [shineon.systems](https://shineon.systems)
-
-- **Stack:** React, Cloudflare Workers, KV and R2
-- **Features:** KV cache, R2 email list, Markdown rendering
-- [source](https://github.com/shine-systems/shineponics/blob/main/server.ts)
-
-### [thesebsite.deno.dev](https://thesebsite.deno.dev)
-
-- **Stack:** HTML5
-- **Features:** UI TS scripts transpiled to JS and cached for browser
-- [source](https://github.com/sebringrose/peko/blob/main/examples/auth/app.ts)
-
-**Note:** [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) and [es6-string-css](https://marketplace.visualstudio.com/items?itemName=bashmish.es6-string-css) VS Code extensions recommended.
 
 <h2 id="motivations">Motivations</h2>
 
