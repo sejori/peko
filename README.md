@@ -160,7 +160,7 @@ router.use(async (_, next) => {
 In stateless computing, memory should only be used for source code and disposable cache data. Response caching ensures that we only store data that can be regenerated or refetched. The configurable `cacher` middleware provides drop in handler memoization and response caching for your routes.
 
 ```js
-httpRouter.GET(
+router.GET(
   "/get-time",
   [Peko.cache({ itemLifetime: 5000 })],
   () => new Response(Date.now())
