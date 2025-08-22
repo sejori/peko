@@ -22,11 +22,11 @@ export type BodyInit =
   | ReadableStream<Uint8Array>
   | null;
 
-export type CombineMiddlewareStates<M extends Middleware[]> = 
+export type CombineMiddlewareStates<M extends Middleware[], D extends DefaultState = DefaultState> = 
   M extends [infer First, ...infer Rest]
     ? First extends Middleware<infer S>
       ? Rest extends Middleware[]
         ? S & CombineMiddlewareStates<Rest>
-        : DefaultState
-    : DefaultState
-  : DefaultState;
+        : S
+    : D
+  : D;

@@ -1,29 +1,24 @@
 /// <reference lib="deno.ns" />
 
 import { assertEquals } from "jsr:@std/assert";
-import { Field, ResolvedField } from "../../utils/Field.ts";
+import { FieldFactory, ResolvedFieldFactory } from "../../utils/Field.ts";
 import { ModelFactory } from "../../utils/Model.ts";
 import { RequestContext } from "../../context.ts";
 
 class PublicUser extends ModelFactory({
-  id: Field(String),
-  username: Field(String, {
+  id: FieldFactory(String),
+  username: FieldFactory(String, {
     validator: (value) => ({
       valid: value.length > 3,
       message: "Username must be longer than 3 characters"
     })
   }),
-  followsIds: Field([String], {
-    validator: (value) => ({
-      valid: value.length > 3,
-      message: "Username must be longer than 3 characters"
-    })
-  }),
+  followsIds: FieldFactory([String]),
 }) {
-  follows = ResolvedField([PublicUser], {
+  follows = ResolvedFieldFactory([PublicUser], {
     nullable: true,
     description: "List of users this user follows",
-    resolve: (_ctx) => {
+    resolver: (_ctx) => {
       return new Promise(res => res(this.followsIds.map(id => new PublicUser({ 
         id, 
         username: `User${id}`, 
@@ -34,9 +29,9 @@ class PublicUser extends ModelFactory({
 }
 
 class Menu extends ModelFactory({
-  title: Field(String),
+  title: FieldFactory(String),
 
-  content: Field(String, { 
+  content: FieldFactory(String, { 
     nullable: true, 
     validator: (value) => ({ 
       valid: value.length > 10,
@@ -44,18 +39,21 @@ class Menu extends ModelFactory({
     })
   }),
 
-  portions: Field(Number, { 
+  portions: FieldFactory(Number, { 
     validator: (value) => ({
       valid: value.valueOf() > 0,
       message: "Portions must be greater than 0"
     })
   }),
 
-  user: Field(PublicUser),
+  user: FieldFactory(PublicUser),
 }) {
-  get summary() {
-    return `${this.title} (${this.portions} portions)`;
-  }
+  summary = ResolvedFieldFactory(String, {
+    description: "Summary of recipe content",
+    resolver: (_ctx) => {
+      return `${this.title} (${this.portions} portions)`;
+    }
+  });
 }
 
 Deno.test({
@@ -63,7 +61,7 @@ Deno.test({
   fn: () => {
     const menu = new Menu({
       title: "Dinner Menu",
-      content: "2",
+      content: "This is longer than 10 characters.",
       portions: 2,
       user: new PublicUser({
         id: "test0",
@@ -71,10 +69,10 @@ Deno.test({
         followsIds: ["test1", "test2", "test3"]
       })
     });
-    assertEquals(menu.summary, "Dinner Menu (2 portions)");
+    assertEquals(menu.summary.resolver(new RequestContext(new Request("/"))), "Dinner Menu (2 portions)");
 
     const ctx = new RequestContext(new Request("http://localhost:7777"));
-    const followers = menu.user.follows.resolve(ctx);
+    const followers = menu.user.follows.resolver(ctx);
     
     assertEquals(followers, Promise.resolve([
       new PublicUser({ id: "test1", username: "Usertest1", followsIds: ["test0"] }),

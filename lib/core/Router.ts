@@ -18,14 +18,19 @@ export interface RouteConfig<S extends DefaultState = any> {
   handler?: Handler<S>;
 }
 
-export class Route<S extends DefaultState = DefaultState> {
+export class Route<
+  S extends DefaultState = DefaultState,
+  Config extends RouteConfig<S> = RouteConfig<S>
+> {
+  config: Config;
   path: string;
   method: string;
   routeKey: RouteKey;
   middleware: Middleware<S>[];
   handler?: Handler<S>;
 
-  constructor(routeObj: RouteConfig<S>) {
+  constructor(routeObj: Config) {
+    this.config = routeObj;
     this.path = routeObj.path;
     this.method = routeObj.method.toUpperCase();
     this.routeKey = `${this.method}-${this.path}`;
@@ -46,7 +51,7 @@ export class Route<S extends DefaultState = DefaultState> {
   }
 }
 
-export type AddRouteOverloads<S extends DefaultState, Config extends RouteConfig<S>, R extends Route<S>> = {
+export type AddRouteOverloads<S extends DefaultState, Config extends RouteConfig<S>, R extends Route<S, Config>> = {
     (route: Config): R;
     (route: Config["path"], data: Omit<Config, "path"> | Handler<S>): R;
     (
@@ -59,9 +64,10 @@ export type AddRouteOverloads<S extends DefaultState, Config extends RouteConfig
 export class Router<
   S extends DefaultState = DefaultState,
   Config extends RouteConfig<S> = RouteConfig<S>,
-  R extends Route<S> = Route<S>
+  R extends Route<S, Config> = Route<S, Config>
 > {
   Route: new (routeObj: Config) => R = Route as new (routeObj: Config) => R;
+  defaultHandler: Handler<S> = () => new Response("", { status: 404 });
 
   constructor(
     public middleware: Middleware<S>[] = [],
@@ -76,20 +82,21 @@ export class Router<
    */
   public async handle(request: Request): Promise<Response> {
     const ctx = new RequestContext(request, this.state);
-    const middleware = [...this.middleware];
+    const initRes = await new Cascade(ctx, this.middleware).run();
+    if (initRes) return initRes;
 
     for (const routeKey in this.routes) {
       const route = this.routes[routeKey];
       if (route.match(ctx)) {
-        middleware.push(
+        const routeRes = await new Cascade(ctx, [
           ...route.middleware,
-          ...(route.handler ? [route.handler] : []),
-        );
+          ...(route.handler ? [route.handler] : [])
+        ]).run();
+        if (routeRes) return routeRes;
       }
     }
     
-    const res = await new Cascade(ctx, middleware).run();
-    return res ? res : new Response("", { status: 404 });
+    return this.defaultHandler(ctx);
   }
 
   /**

@@ -1,93 +1,211 @@
-// import { RequestContext } from "../context.ts";
-// import { Middleware, Handler } from "../types.ts";
-// import { BaseRoute, BaseRouter, BaseRouteConfig } from "../core/BaseRouter.ts";
+import { CombineMiddlewareStates, Handler, Middleware } from "../core/types.ts";
+import { Route, Router, RouteConfig } from "../core/Router.ts";
+import { ModelInterface, ModelSchemaType } from "../core/utils/Model.ts";
+import { QueryState } from "./middleware/parseQuery.ts";
+import { graphHandler } from "./handler/graphHandler.ts";
+import { RequestContext } from "../core/context.ts";
+import { QueryOperation } from "./utils/QueryParser.ts";
+import { Constructor, ResolvedFieldOptions, Resolver } from "../core/utils/Field.ts";
 
-// export interface GraphRouteConfig<S extends object = object> extends BaseRouteConfig<S> {
-//   name: string;
-//   operation: "QUERY" | "MUTATION" | "RESOLVER";
-//   handler: Handler<S>;
-// }
+export interface GraphResolver<
+  S extends QueryState = QueryState,
+  T extends Constructor | Constructor[] = Constructor | Constructor[],
+  A extends ModelInterface | undefined = ModelInterface,
+  N extends boolean = false
+> { // extends would be nice but causes type errors on arg count
+  (
+    ctx: Parameters<Resolver<S, T, N>>[0], 
+    args: A extends ModelInterface ? ModelSchemaType<A["schema"]> : undefined
+  ): ReturnType<Resolver<S, T, N>>
+}
 
-// export class GraphRoute<S extends object = object> extends BaseRoute<S> {
-//   declare name: string;
-//   declare operation: GraphRouteConfig<S>["operation"];
+export interface GraphRouteConfig<
+  S extends QueryState = QueryState,
+  T extends Constructor | Constructor[] = Constructor | Constructor[],
+  A extends ModelInterface | undefined = ModelInterface,
+  N extends boolean = false
+> extends RouteConfig<S>, Omit<ResolvedFieldOptions<S, T, N>, "resolver"> {
+  method: QueryOperation["type"];
+  args?: A;
+  type: T;
+  resolver: GraphResolver<S, T, A, N>;
+}
 
-//   constructor(routeObj: GraphRouteConfig<S>) {
-//     super(routeObj);
-//     this.operation = routeObj.operation || "QUERY";
-//   }
+function resolveVariablesInArgs<T extends object>(
+  args: T,
+  variables: Record<string, unknown> = {}
+): T {
+  const resolved: {
+    [key: string]: unknown;
+  } = {};
 
-//   get params() {
-//     const x: Record<string, number> = {};
-//     this.path.split("/").forEach((str, i) => {
-//       if (str[0] === ":") x[str.slice(1)] = i;
-//     });
-//     return x;
-//   }
+  for (const [key, value] of Object.entries(args)) {
+    if (typeof value === "string" && value.startsWith("$")) {
+      const varName = value.slice(1);
+      resolved[key] = variables[varName];
+    } else if (value && typeof value === "object") {
+      resolved[key] = resolveVariablesInArgs(value, variables);
+    } else {
+      resolved[key] = value;
+    }
+  }
 
-//   override get regexPath() {
-//     return this.params
-//       ? new RegExp(
-//           `^${this.path.replaceAll(/(?<=\/):(.)*?(?=\/|$)/g, "(.)*")}\/?$`
-//         )
-//       : new RegExp(`^${this.path}\/?$`);
-//   }
+  return resolved as T;
+}
 
-//   override match(ctx: RequestContext<S>): boolean {
-//     if (
-//       this.regexPath.test(ctx.url.pathname) &&
-//       this.method === ctx.request.method
-//     ) {
-//       const pathBits = ctx.url.pathname.split("/");
-//       for (const param in this.params) {
-//         ctx.params[param] = pathBits[this.params[param]];
-//       }
-//       return true;
-//     }
-//     return false;
-//   }
-// }
+export class GraphRoute<
+  // deno-lint-ignore no-explicit-any
+  S extends QueryState = any,
+  T extends Constructor | Constructor[] = Constructor | Constructor[],
+  A extends ModelInterface = ModelInterface,
+  N extends boolean = false,
+  Config extends GraphRouteConfig<S, T, A, N> = GraphRouteConfig<S, T, A, N>
+> extends Route<S, Config> {
+  constructor(routeObj: Config) {
+    super(routeObj);
+  }
 
-// export class HttpRouter<
-//   S extends object,
-//   Config extends HttpRouteConfig<S> = HttpRouteConfig<S>,
-//   R extends HttpRoute<S> = HttpRoute<S>
-// > extends BaseRouter<S, Config, R> {
-//   override Route = HttpRoute<S>;
+  override match(ctx: RequestContext<S>): boolean {
+    // first match by operation type (assume parseQuery middleware has ran)
+    if (ctx.state.query.operation.type === this.method) {
+      // now loop root fields to match route path (operation name) against AST key (original, not alias)
+      for (const key in ctx.state.query.ast) {
+        if (ctx.state.query.ast[key]?.ref === this.path) {
+          // found match, add final middleware to create resolver promise in queryResult data for key
+          this.middleware.push((ctx) => {
+            const rawArgs = ctx.state.query.ast[key]?.args ?? {};
+            const resolvedArgs = resolveVariablesInArgs(rawArgs, ctx.state.query.opts.variables);
+            const modelArgs = this.config.args
+              ? new this.config.args(resolvedArgs)
+              : undefined;
 
-//   constructor(
-//     public override state?: S, 
-//     public override middleware: Middleware<S>[] = [], 
-//     public override routes: R[] = []
-//   ) {
-//     super(state, middleware, routes);
-//   }
+            ctx.state.queryResult.data[key] = this.config.resolver(
+              ctx,
+              modelArgs as A extends ModelInterface ? ModelSchemaType<A["schema"]> : undefined
+            ) as Promise<Constructor>;
+          });
+          return true;
+        }
+      }
+    }
 
-//   get: typeof this.addRoute = function () {
-//     // @ts-ignore supply overload args
-//     const newRoute = this.addRoute(...arguments);
-//     newRoute.method = "GET";
-//     return newRoute;
-//   };
+    return false;
+  }
+}
 
-//   post: typeof this.addRoute = function () {
-//     // @ts-ignore supply overload args
-//     const newRoute = this.addRoute(...arguments);
-//     newRoute.method = "POST";
-//     return newRoute;
-//   };
+export class GraphRouter<
+  S extends QueryState = QueryState,
+  Config extends GraphRouteConfig<S, Constructor> = GraphRouteConfig<S, Constructor>,
+  R extends Route<S, Config> = GraphRoute<S, Constructor, ModelInterface, boolean, Config> 
+> extends Router<S, Config, R> {
+  override Route: new (routeObj: Config) => R = GraphRoute as new (routeObj: Config) => R;
+  override defaultHandler: Handler<S> = graphHandler
 
-//   put: typeof this.addRoute = function () {
-//     // @ts-ignore supply overload args
-//     const newRoute = this.addRoute(...arguments);
-//     newRoute.method = "PUT";
-//     return newRoute;
-//   };
+  constructor(
+    middleware: Middleware<S>[] = [], 
+    state?: S, 
+    routes: Record<string, R> = {}
+  ) {
+    super(
+      middleware, 
+      state, 
+      routes
+    );
+  }
 
-//   delete: typeof this.addRoute = function () {
-//     // @ts-ignore supply overload args
-//     const newRoute = this.addRoute(...arguments);
-//     newRoute.method = "DELETE";
-//     return newRoute;
-//   };
-// }
+  query<
+    T extends Constructor | Constructor[], 
+    M extends Middleware[], 
+    A extends ModelInterface, 
+    N extends boolean
+  >(
+    operation: Config["path"],
+    opts: {
+      args?: A,
+      type: T,
+      nullable?: N,
+      middleware?: M,
+      resolver: GraphResolver<S, T, A, N>;
+    }
+  ): R {
+    return this.addRoute<GraphRouteConfig<CombineMiddlewareStates<M, S>, T, A, N>>({
+      method: "QUERY",
+      path: operation,
+      args: opts.args,
+      middleware: opts.middleware,
+      type: opts.type,
+      nullable: opts.nullable ? opts.nullable : false as N,
+      resolver: opts.resolver,
+    });
+  };
+
+  mutation<
+    T extends Constructor | Constructor[], 
+    M extends Middleware[], 
+    A extends ModelInterface,
+    N extends boolean
+  >(
+    operation: Config["path"],
+    opts: {
+      args?: A,
+      type: T
+      middleware?: M,
+      nullable?: N,
+      resolver: GraphResolver<S, T, A, N>;
+    }
+  ): R {
+    return this.addRoute<GraphRouteConfig<CombineMiddlewareStates<M, S>, T, A, N>>({
+      method: "MUTATION",
+      path: operation,
+      args: opts.args,
+      middleware: opts.middleware,
+      type: opts.type,
+      nullable: opts.nullable ? opts.nullable : false as N,
+      resolver: opts.resolver,
+    });
+  };
+
+  subscription<
+    T extends Constructor | Constructor[], 
+    M extends Middleware[], 
+    A extends ModelInterface,
+    N extends boolean
+  >(
+    operation: Config["path"],
+    opts: {
+      args?: A,
+      type: T,
+      middleware?: M,
+      nullable?: N,
+      resolver: GraphResolver<S, T, A, N>;
+    }
+  ): R {
+    return this.addRoute<GraphRouteConfig<CombineMiddlewareStates<M, S>, T, A, N>>({
+      method: "SUBSCRIPTION",
+      path: operation,
+      args: opts.args,
+      middleware: opts.middleware,
+      type: opts.type,
+      nullable: opts.nullable ? opts.nullable : false as N,
+      resolver: opts.resolver,
+    });
+  };
+}
+
+export function GraphRouterFactory<
+  M extends Middleware[] = []
+>(
+  opts: {
+    middleware?: [...M];
+    state?: CombineMiddlewareStates<M>;
+  } = {}
+) {
+  return class extends GraphRouter<CombineMiddlewareStates<M>> {
+    constructor() {
+      super(
+        opts.middleware as unknown as  Middleware<CombineMiddlewareStates<M>>[] || [],
+        opts.state
+      );
+    }
+  };
+}

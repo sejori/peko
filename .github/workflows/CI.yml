@@ -39,6 +39,27 @@ jobs:
       - name: Run profile
         run: pnpm profile:deno
 
+  profile-deno-graph:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: setup repo
+        uses: actions/checkout@v3
+
+      - name: setup pnpm
+        run: npm install -g pnpm
+
+      - name: setup packages
+        run: pnpm install
+
+      - name: setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.4.x
+
+      - name: Run profile
+        run: pnpm profile:deno:graph
+
   profile-bun:
     runs-on: ubuntu-latest
 

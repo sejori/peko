@@ -1,161 +1,225 @@
 /// <reference lib="deno.ns" />
 
-// import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
-// import {
-//   Type,
-//   Enum,
-//   Field,
-//   Int,
-//   Input,
-//   Schema,
-//   Mutation,
-//   Query,
-//   ResolvedType,
-// } from "../../utils/Schema.ts";
+import { assert } from "https://deno.land/std@0.218.0/assert/mod.ts";
+import { Schema } from "../../utils/Schema.ts";
+import { FieldFactory, FieldInterface, ResolvedFieldFactory } from "../../../core/utils/Field.ts";
+import { ModelFactory, ModelInterface } from "../../../core/utils/Model.ts";
+import { GraphRoute } from "../../GraphRouter.ts";
+import { QueryState } from "../../middleware/parseQuery.ts";
+import { AuthState } from "../../../core/middleware/auth.ts";
+import { ValidationError } from "../../../core/utils/ValidationError.ts";
 
-// Deno.test("UTIL: Profiler", async (t) => {
-//   const emailField = new Field(String, {
-//     validator: (x) => x.includes("@") && x.includes("."),
-//   });
+class Int extends Number {
+  constructor(value: unknown) {
+    super(Math.floor(Number(value)));
+  }
+}
 
-//   const ageField = new Field(Int, {
-//     nullable: true,
-//     validator: (x) => typeof x === "number" && x > 0,
-//   });
+Deno.test("UTIL: Schema", async (t) => {
+  const Email = FieldFactory(String, {
+    validator: (x) => ({
+      valid: x.includes("@") && x.includes("."),
+      message: "Email field must be a valid email with @ and . symbols."
+    })
+  });
 
-//   const user = new Type("User", {
-//     fields: {
-//       email: emailField,
-//       age: ageField,
-//     },
-//   });
+  const Age = FieldFactory(Int, {
+    nullable: true,
+    validator: (x) => ({
+      valid: typeof x === "number" && x > 0,
+      message: "Age must be an interger above 0"
+    })
+  });
 
-//   const mockUser: ResolvedType<typeof user> = {
-//     email: "test@test.com",
-//     age: 20,
-//   };
+  const User = ModelFactory({
+    userId: FieldFactory(String),
+    email: Email,
+    age: Age,
+  });
 
-//   const content = new Type("Content", {
-//     fields: {
-//       title: new Field(String),
-//       content: new Field(String),
-//     },
-//   });
+  const mockUser = new User({
+    userId: "user123",
+    email: "test@test.com",
+    age: 20,
+  });
 
-//   const mockContent: ResolvedType<typeof content> = {
-//     title: "Hello",
-//     content: "World",
-//   };
+  const Content = ModelFactory({
+    contentId: FieldFactory(String),
+    title: FieldFactory(String),
+    content: FieldFactory(String),
+  });
 
-//   enum PostStatus {
-//     draft = "draft",
-//     published = "published",
-//   }
+  const mockContent = new Content({
+    contentId: "content123",
+    title: "Hello",
+    content: "World",
+  });
 
-//   const post = new Type("Post", {
-//     fields: {
-//       author: new Field(user, {
-//         resolver: async (ctx) => [mockUser],
-//       }),
-//       content: new Field(content, {
-//         resolver: async (ctx) => [mockContent],
-//       }),
-//       status: new Field(new Enum("PostStatus", PostStatus)),
-//       likes: new Field([user], {
-//         resolver: async (ctx) => [[mockUser]],
-//       }),
-//     },
-//   });
+  // enum PostStatus {
+  //   draft = "draft",
+  //   published = "published",
+  // }
 
-//   const mockPost: ResolvedType<typeof post> = {
-//     author: mockUser,
-//     content: mockContent,
-//     status: PostStatus.published,
-//     likes: [mockUser],
-//   };
+  class Post extends ModelFactory({
+    postId: FieldFactory(String),
+    authorId: FieldFactory(String),
+    contentId: FieldFactory(String),
+    // status: FieldFactory(new Enum("PostStatus", PostStatus)),
+    likeIds: FieldFactory([String]),
+  }) {
+    author = ResolvedFieldFactory(User, {
+      resolver: () => mockUser
+    });
 
-//   const comment = new Type("Comment", {
-//     fields: {
-//       author: new Field(user, {
-//         resolver: async (ctx) => [mockUser],
-//       }),
-//       post: new Field(post, {
-//         resolver: async (ctx) => [mockPost],
-//       }),
-//       text: new Field(String),
-//     },
-//   });
+    content = ResolvedFieldFactory(Content, {
+      resolver: () => mockContent
+    });
+  }
 
-//   const mockComment: ResolvedType<typeof comment> = {
-//     author: mockUser,
-//     post: mockPost,
-//     text: "Hello",
-//   };
+  const mockPost = new Post({
+    postId: "post123",
+    authorId: "user123",
+    contentId: "content123",
+    likeIds: ["user123"]
+  });
 
-//   const registerUser = new Mutation("RegisterUser", {
-//     args: {
-//       email: emailField,
-//       age: ageField,
-//     },
-//     data: user,
-//     resolver: async (ctx) => mockUser,
-//   });
+  class Comment extends ModelFactory({
+    commentId: FieldFactory(String),
+    authorId: FieldFactory(String),
+    postId: FieldFactory(String),
+    text: FieldFactory(String),
+    likeIds: FieldFactory([String]),
+  }) {
+    author = ResolvedFieldFactory(User, {
+      resolver: () => mockUser,
+    });
 
-//   const createContent = new Mutation("CreateContent", {
-//     args: {
-//       content: new Field(
-//         new Input("CreateContentInput", {
-//           fields: content.config.fields,
-//         })
-//       ),
-//     },
-//     data: content,
-//     resolver: async (ctx) => mockContent,
-//   });
+    post = ResolvedFieldFactory(Post, {
+      resolver: () => mockPost,
+    });
+  }
 
-//   const postContent = new Mutation("PostContent", {
-//     args: {
-//       content: new Field(
-//         new Input("PostContentInput", {
-//           fields: post.config.fields,
-//         })
-//       ),
-//     },
-//     data: post,
-//     resolver: async (ctx) => mockPost,
-//   });
+  const mockComment = new Comment({
+    commentId: "comment123",
+    authorId: mockUser.userId,
+    postId: mockPost.postId,
+    text: "Hello",
+    likeIds: ["user123"]
+  });
 
-//   const commentOnPost = new Mutation("CommentOnPostInput", {
-//     args: {
-//       comment: new Field(
-//         new Input("CommentOnPost", {
-//           fields: comment.config.fields,
-//         })
-//       ),
-//     },
-//     data: comment,
-//     resolver: async (ctx) => mockComment,
-//   });
+  const RegisterUserArgs = ModelFactory({
+    input: FieldFactory(ModelFactory({
+      userId: FieldFactory(String),
+      age: Age,
+      email: Email
+    }))
+  });
 
-//   const getComments = new Query("GetComments", {
-//     args: {
-//       post: new Field(post),
-//     },
-//     data: [comment],
-//     resolver: async (ctx) => [mockComment],
-//   });
+  type TestState = QueryState & AuthState<{ userId: string }>;
 
-//   await t.step("creates the correct schema string", async () => {
-//     const schema = new Schema([
-//       registerUser,
-//       createContent,
-//       postContent,
-//       commentOnPost,
-//       getComments,
-//     ]);
+  const registerUser = new GraphRoute<TestState, typeof User, typeof RegisterUserArgs, false>({
+    method: "MUTATION",
+    path: "RegisterUser",
+    type: User,
+    nullable: false,
+    args: RegisterUserArgs,
+    resolver: (_ctx, args) => new User({
+      userId: args.input.userId,
+      age: args.input.age,
+      email: args.input.email
+    })
+  });
 
-//     const schemaString = schema.toString();
-//     console.log(schemaString);
-//     assert(schemaString);
-//   });
-// });
+  const CreateContentArgs = ModelFactory({
+    title: FieldFactory(String),
+    content: FieldFactory(String)
+  });
+
+  const createContent = new GraphRoute<TestState, typeof Content, typeof CreateContentArgs>({
+    method: "MUTATION",
+    path: "CreateContent",
+    type: Content,
+    args: CreateContentArgs,
+    resolver: (_ctx, args) => new Content({
+      contentId: crypto.randomUUID(),
+      title: args.title,
+      content: args.content,
+      // could get userId from auth state if auth middleware was here
+    })
+  });
+
+  const PostContentArgs = ModelFactory({
+    contentId: FieldFactory(String),
+  });
+
+  const postContent = new GraphRoute<TestState, typeof Post, typeof PostContentArgs>({
+    method: "MUTATION",
+    path: "PostContent",
+    type: Post,
+    args: PostContentArgs,
+    resolver: (ctx, args) => {
+      if (ctx.state.auth) { 
+        return new Post({
+          postId: crypto.randomUUID(),
+          contentId: args.contentId,
+          authorId: ctx.state.auth.userId,
+          likeIds: []
+        });
+      } else {
+        throw new ValidationError("You must be logged in to post content.")
+      }
+    }
+  });
+
+  const commentOnPost = new GraphRoute<TestState, typeof Comment, typeof Comment>({
+    method: "MUTATION",
+    path: "CommentOnPost",
+    type: Comment,
+    args: Comment,
+    resolver: (ctx, args) => {
+      if (ctx.state.auth) { 
+        return new Comment({
+          postId: crypto.randomUUID(),
+          commentId: args.commentId,
+          authorId: ctx.state.auth.userId,
+          likeIds: [],
+          text: args.text
+        });
+      } else {
+        throw new ValidationError("You must be logged in to comment.")
+      }
+    }
+  });
+
+  const getComments = new GraphRoute<
+    TestState,
+    [typeof Comment], 
+    ModelInterface<{
+      postId: FieldInterface<StringConstructor, false>
+    }>
+  >({
+    method: "QUERY",
+    path: "GetComments",
+    type: [Comment],
+    args: ModelFactory({
+      postId: FieldFactory(String)
+    }),
+    resolver: (_ctx, _args) => {
+      return [mockComment]
+    }
+  });
+
+  await t.step("creates the correct schema string", () => {
+    const schema = new Schema({
+      registerUser,
+      createContent,
+      postContent,
+      commentOnPost,
+      getComments,
+    });
+
+    const schemaString = schema.toString();
+    console.log(schemaString);
+    assert(schemaString);
+  });
+});
