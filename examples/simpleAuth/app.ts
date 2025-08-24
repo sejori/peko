@@ -1,7 +1,9 @@
-import * as Peko from "../../mod.ts"; // "https://deno.land/x/peko/mod.ts"
+import { log } from "@peko/core/mod.ts";
+import { auth, Krypto } from "@peko/auth/mod.ts";
+import { ssr, HttpRouterFactory } from "@peko/http/mod.ts";
 
 const html = String;
-const crypto = new Peko.Krypto("SUPER_SECRET_KEY_123"); // TODO: replace with env var
+const crypto = new Krypto("SUPER_SECRET_KEY_123"); // TODO: replace with env var
 
 // TODO: replace with db / auth provider query
 const user = {
@@ -24,9 +26,9 @@ const validateUser = async (username: string, password: string) => {
   );
 };
 
-class SimpleAuthRouter extends Peko.HttpRouterFactory({
+class SimpleAuthRouter extends HttpRouterFactory({
   middleware: [
-    Peko.log(console.log)
+    log(console.log)
   ]
 }) {
   login = this.POST("/login", async (ctx) => {
@@ -55,7 +57,7 @@ class SimpleAuthRouter extends Peko.HttpRouterFactory({
 
   verify = this.GET(
     "/verify",
-    [Peko.auth<JWTPayload>(crypto)],
+    [auth<JWTPayload>(crypto)],
     (ctx) => {
       console.log(ctx.state.auth)
       return ctx.state.auth 
@@ -68,7 +70,7 @@ class SimpleAuthRouter extends Peko.HttpRouterFactory({
 
   authPage = this.GET(
     "/",
-    Peko.ssr(
+    ssr(
       () => html`<!DOCTYPE html>
         <html lang="en">
           <head>

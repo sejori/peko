@@ -1,4 +1,5 @@
-import { HttpRouter, log, cache } from "../../mod.ts"; //"https://deno.land/x/peko/mod.ts"
+import { log, cache } from "@peko/core/mod.ts";
+import { HttpRouter } from "@peko/http/mod.ts";
 import { reactHandler } from "./handlers/react.handler.ts";
 import { githubHandler } from "./handlers/github.handler.ts";
 import { reqTime } from "./middleware/reqTime.middleware.ts";

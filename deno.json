@@ -1,7 +1,30 @@
 {
+  "name": "@sejori/peko",
+  "exports":{
+    ".": "./mod.ts"
+  },
+  "version": "2.4.2",
+  "description": "Peko monorepo - Featherweight apps on the edge 🐣",
   "compilerOptions": {
-    "lib": ["dom", "esnext", "deno.ns"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "react"
+    "strict": true
+  },
+  "importMap": "./import_map.json",
+  "tasks": {
+    "build:npm": "deno run -A scripts/build_npm.ts",
+
+    "dev:build": "deno run -A npm:esbuild --bundle --sourcemap --target=es2020 --platform=browser --format=esm --outdir=./examples/react/dist/pages --external:react --jsx=automatic --tsconfig-raw={} --watch=forever ./examples/react/src/pages/*.tsx",
+    "dev:deno": "deno run -A --watch scripts/deno/main.ts",
+    "dev:bun": "bun run --watch scripts/bun/main.ts",
+    "dev:wrangler": "wrangler -e dev dev scripts/wrangler/main.ts",
+
+    "profile:deno": "deno run --allow-read --allow-net scripts/deno/profile.ts",
+    "profile:bun": "bun run scripts/bun/profile.ts",
+    "profile:wrangler": "wrangler dev scripts/wrangler/profile.ts",
+
+    "start": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/main.ts",
+    "start:auth": "deno run --allow-net --allow-read --allow-env --allow-run scripts/deno/auth.ts",
+    "start:wrangler": "wrangler dev scripts/wrangler/main.ts -c scripts/wrangler/wrangler.toml",
+
+    "test": "deno test --allow-read --allow-net --coverage"
   }
 }

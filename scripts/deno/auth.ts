@@ -1,4 +1,4 @@
-import router from "../../examples/simpleAuth/app.ts";
+import router from "@examples/simpleAuth/app.ts";
 
 router.middleware.unshift((ctx) => {
   ctx.state.env = Deno.env.toObject();

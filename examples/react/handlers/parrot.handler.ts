@@ -1,4 +1,4 @@
-import { Handler } from "../../../mod.ts";
+import { Handler } from "@peko/core/mod.ts";
 
 export const parrotHandler: Handler = async (ctx) => {
   const reader = ctx.request.body?.getReader();

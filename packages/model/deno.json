@@ -1,0 +1,12 @@
+{
+  "extends": "../../deno.json",
+  "name": "@peko/model",
+  "version": "2.4.2",
+  "description": "@peko/model - Featherweight data models on the edge 🐣",
+  "tasks": {
+    "build": "deno bundle --target=es2020 --output dist/index.js mod.ts",
+    "test": "deno test --allow-read --allow-net --coverage"
+  },
+  "exports": "./mod.ts",
+  "license": "MIT"
+}

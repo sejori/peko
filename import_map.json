@@ -1,0 +1,13 @@
+{
+  "imports": {
+    "@examples/": "./examples/",
+    "@peko/core/": "./packages/core/",
+    "@peko/http/": "./packages/http/",
+    "@peko/auth/": "./packages/auth/",
+    "@peko/dev/": "./packages/dev/",
+    "@peko/model/": "./packages/model/",
+    "@peko/graph/": "./packages/graph/",
+    "react": "npm:react@19",
+    "react-dom": "npm:react-dom@19"
+  }
+}

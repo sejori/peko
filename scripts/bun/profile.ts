@@ -1,11 +1,11 @@
-import Profile from "../../lib/core/utils/Profile.ts";
-import { Router } from "../../lib/core/Router.ts";
+import Profile from "@peko/dev/utils/Profile.ts";
+import { Router } from "@peko/core/utils/Router.ts";
 import { 
   testMiddleware1, 
   testMiddleware2, 
   testMiddleware3, 
   testHandler 
-} from "../../lib/core/_test/mocks/middleware.ts"
+} from "@peko/core/_test/mocks/middleware.ts"
 
 const testRouter = new Router();
 testRouter.addRoute({

@@ -1,4 +1,5 @@
-import { Handler, sse } from "../../../mod.ts";
+import { Handler } from "@peko/core/mod.ts";
+import { sse } from "@peko/http/mod.ts";
 
 const demoEventTarget = new EventTarget();
 export const randomEventHandler: Handler = (ctx) => {

@@ -1,6 +1,7 @@
-import router from "../../examples/react/router.ts";
+import router from "@examples/react/router.ts";
+import { RequestContext } from "@peko/core/types.ts";
 
-router.middleware.unshift((ctx) => {
+router.middleware.unshift((ctx: RequestContext) => {
   ctx.state.env = Deno.env.toObject();
 });
 

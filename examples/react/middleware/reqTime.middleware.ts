@@ -1,4 +1,4 @@
-import { Middleware } from "../../../mod.ts";
+import { Middleware } from "../../../packages/core/mod.ts";
 
 export const reqTime: Middleware = (ctx) => {
   ctx.state = {

@@ -1,4 +1,5 @@
-import { Handler, RequestContext, file } from "../../../mod.ts";
+import { Handler, RequestContext } from "@peko/core/mod.ts";
+import { file } from "@peko/http/mod.ts";
 
 export const githubHandler =
   (path: string, type?: string): Handler =>

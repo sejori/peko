@@ -1,6 +1,7 @@
 import { JSX, ReactNode } from "react";
 import { renderToString } from "react-dom/server";
-import { Handler, RequestContext, ssr } from "../../../mod.ts";
+import { Handler, RequestContext } from "@peko/core/mod.ts";
+import { ssr } from "@peko/http/mod.ts";
 import htmlTemplate from "../src/document.ts";
 
 export const reactHandler =
